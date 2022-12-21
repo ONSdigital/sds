@@ -1,0 +1,7 @@
+fastapi
+black
+uvicorn
+gunicorn
+pytest
+python-dotenv
+httpx
