@@ -9,7 +9,7 @@
       "properties": {
         "sample_unit": {
           "units_of_sale": "MILES MAPPED",
-          "currency_description": "GOLD COINS",
+          "currency_description": "SILVER COINS",
           "time_items": [
             {
               "ref": "M1",

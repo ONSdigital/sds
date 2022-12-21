@@ -5,3 +5,5 @@ gunicorn
 pytest
 python-dotenv
 httpx
+firebase_admin
+isort
