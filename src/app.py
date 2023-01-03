@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 import database
 
@@ -9,12 +10,14 @@ from fastapi import Body, FastAPI, Header
 app = FastAPI(docs_url=None, redoc_url=None)
 
 
-@app.put("/publish")
+@app.post("/publish")
 async def publish(payload: dict = Body(...)):
+    """Put a dataset file into the database and return the data_set id."""
     print(payload)
+    data_set_id = str(uuid.uuid4())
     for sup_data in payload["data"]:
-        database.set_data(payload["data_set_id"], sup_data)
-    """Put a dataset file into the database."""
+        database.set_data(data_set_id, sup_data)
+    return {"data_set_id": data_set_id}
 
 
 @app.get("/unit_data")
