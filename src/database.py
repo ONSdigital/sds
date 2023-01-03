@@ -1,7 +1,11 @@
+import os
+
 import firebase_admin
 from firebase_admin import firestore
 
-cred_obj = firebase_admin.credentials.Certificate("../firebase_key.json")
+cred_obj = firebase_admin.credentials.Certificate(
+    os.environ.get("FIREBASE_KEYFILE_LOCATION")
+)
 default_app = firebase_admin.initialize_app(cred_obj)
 db = firestore.client()
 data_sets_collection = db.collection("data_sets")

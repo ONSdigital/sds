@@ -5,9 +5,9 @@ import database
 
 logging.basicConfig(level=logging.INFO)
 
-from fastapi import Body, FastAPI, Header
+from fastapi import Body, FastAPI
 
-app = FastAPI(docs_url=None, redoc_url=None)
+app = FastAPI()
 
 
 @app.post("/publish")
