@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "default": {},
+  "title": "Root Schema",
+  "required": [
+    "$schema",
+    "$id",
+    "title",
+    "description",
+    "type",
+    "properties"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "default": "",
+      "title": "The $schema Schema",
+      "examples": [
+        "https://json-schema.org/draft/draft-04/schema"
+      ]
+    },
+    "$id": {
+      "type": "string",
+      "default": "",
+      "title": "The $id Schema",
+      "examples": [
+        "https://ons.gov.uk/supplementary_data_set.schema.json"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "default": "",
+      "title": "The title Schema",
+      "examples": [
+        "SPPI supplementary data set"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "title": "The description Schema",
+      "examples": [
+        "supplementary data for SPPI Survey"
+      ]
+    },
+    "type": {
+      "type": "string",
+      "default": "",
+      "title": "The type Schema",
+      "examples": [
+        "object"
+      ]
+    },
+    "properties": {
+      "type": "object",
+      "default": {},
+      "title": "The properties Schema",
+      "required": [
+        "sample_unit"
+      ],
+      "properties": {
+        "sample_unit": {
+          "type": "object",
+          "title": "The sample_unit Schema",
+          "required": [
+            "units_of_sale",
+            "currency_description",
+            "qtrs_outstanding"
+          ],
+          "properties": {
+            "units_of_sale": {
+              "type": "string",
+              "title": "The units_of_sale Schema",
+              "examples": [
+                "MILES MAPPED"
+              ]
+            },
+            "currency_description": {
+              "type": "string",
+              "title": "The currency_description Schema",
+              "examples": [
+                "GOLD COINS"
+              ]
+            },
+            "qtrs_outstanding": {
+              "type": "string",
+              "title": "The qtrs_outstanding Schema",
+              "examples": [
+                "1"
+              ]
+            },
+            "previous_item_date1": {
+              "type": "string",
+              "title": "The previous_item_date1 Schema",
+              "examples": [
+                "01-SEPT-2022"
+              ]
+            },
+            "time_items": {
+              "type": "array",
+              "title": "The time_items Schema",
+              "items": {
+                "type": "object",
+                "title": "A Schema",
+                "required": [
+                  "ref",
+                  "grade"
+                ],
+                "properties": {
+                  "ref": {
+                    "type": "string",
+                    "title": "The ref Schema",
+                    "examples": [
+                      "M1",
+                      "M2",
+                      "M3"
+                    ]
+                  },
+                  "grade": {
+                    "type": "string",
+                    "title": "The grade Schema",
+                    "examples": [
+                      "Chief mapper",
+                      "Junior mapper",
+                      "Bag carrier"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

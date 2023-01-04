@@ -1,16 +1,18 @@
 import json
 
 from fastapi.testclient import TestClient
+import os
 
+os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
 from app import app
 
 client = TestClient(app)
 
 
-def test_publish_retrieve():
+def test_data_set():
     with open("data/data_set.json") as f:
         dataset = json.load(f)
-    response = client.post("/publish", json=dataset)
+    response = client.post("/data_set", json=dataset)
     data_set_id = response.json()["data_set_id"]
     assert response.status_code == 200
     unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
@@ -33,3 +35,14 @@ def test_publish_retrieve():
             }
         },
     }
+
+
+def test_schema():
+    with open("data/schema.json") as f:
+        schema = json.load(f)
+    response = client.post("/schema", json=schema)
+    schema_id = response.json()["schema_id"]
+    assert response.status_code == 200
+    response = client.get(f"/schema?schema_id={schema_id}")
+    assert response.status_code == 200
+    assert response.json() == schema
