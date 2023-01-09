@@ -1,7 +1,7 @@
 import json
+import os
 
 from fastapi.testclient import TestClient
-import os
 
 os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
 from app import app
@@ -9,20 +9,17 @@ from app import app
 client = TestClient(app)
 
 
-def test_data_set():
-    with open("data/data_set.json") as f:
+def test_dataset():
+    with open("data/dataset.json") as f:
         dataset = json.load(f)
-    response = client.post("/data_set", json=dataset)
-    data_set_id = response.json()["data_set_id"]
+    response = client.post("/dataset", json=dataset)
+    dataset_id = response.json()["dataset_id"]
     assert response.status_code == 200
     unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    response = client.get(f"/unit_data?data_set_id={data_set_id}&unit_id={unit_id}")
+    response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
     assert response.status_code == 200
     assert response.json() == {
         "unit_id": "55e64129-6acd-438b-a23a-3cf9524ab912",
-        "title": "SPPI supplementary data set",
-        "description": "supplementary data for SPPI Survey",
-        "type": "object",
         "properties": {
             "sample_unit": {
                 "units_of_sale": "MILES MAPPED",
@@ -37,12 +34,17 @@ def test_data_set():
     }
 
 
-def test_schema():
+def test_dataset_design():
     with open("data/schema.json") as f:
         schema = json.load(f)
-    response = client.post("/schema", json=schema)
-    schema_id = response.json()["schema_id"]
+    dataset_design_id = "sppi_dataset_design"
+    response = client.post(
+        f"/dataset_design?dataset_design_id={dataset_design_id}", json=schema
+    )
+    version = response.json()["version"]
     assert response.status_code == 200
-    response = client.get(f"/schema?schema_id={schema_id}")
+    response = client.get(
+        f"/dataset_design?dataset_design_id={dataset_design_id}&version={version}"
+    )
     assert response.status_code == 200
     assert response.json() == schema

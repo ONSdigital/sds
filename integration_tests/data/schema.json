@@ -26,7 +26,7 @@
       "default": "",
       "title": "The $id Schema",
       "examples": [
-        "https://ons.gov.uk/supplementary_data_set.schema.json"
+        "https://ons.gov.uk/supplementary_dataset.schema.json"
       ]
     },
     "title": {
