@@ -1,0 +1,99 @@
+{
+  "$id": "https://ons.gov.uk/supplementary_data_set.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "??",
+  "description": "??",
+  "required": [
+    "reporting_unit"
+  ],
+  "type": "object",
+  "properties": {
+    "reporting_unit": {
+      "type": "object",
+      "items": {
+        "$ref": "#/$defs/reporting_unit"
+      }
+    }
+  },
+  "$defs": {
+    "reporting_unit": {
+      "type": "object",
+      "required": [
+        "runame",
+        "ruaddr1",
+        "rupostcode"
+      ],
+      "properties": {
+        "runame": {
+          "type": "string"
+        },
+        "ruaddr1": {
+          "type": "string"
+        },
+        "ruaddr2": {
+          "type": "string"
+        },
+        "ruaddr3": {
+          "type": "string"
+        },
+        "ruaddr4": {
+          "type": "string"
+        },
+        "ruaddr5": {
+          "type": "string"
+        },
+        "rupostcode": {
+          "type": "string"
+        },
+        "vatref": {
+          "type": "string"
+        },
+        "payeref": {
+          "type": "string"
+        },
+        "busdesc": {
+          "type": "string"
+        },
+        "local_unit": {
+          "type": "array",
+          "required": [
+            "luname",
+            "luaddr1"
+          ],
+          "properties": {
+            "luname": {
+              "type": "string"
+            },
+            "luaddr1": {
+              "type": "string"
+            },
+            "luaddr2": {
+              "type": "string"
+            },
+            "luaddr3": {
+              "type": "string"
+            },
+            "luaddr4": {
+              "type": "string"
+            },
+            "luaddr5": {
+              "type": "string"
+            },
+            "lupostcode": {
+              "type": "string"
+            },
+            "tradstyle": {
+              "type": "string"
+            },
+            "busdesc": {
+              "type": "string"
+            },
+            "busluref": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

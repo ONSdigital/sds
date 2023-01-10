@@ -1,0 +1,11 @@
+{
+  "reporting_unit": {
+    "runame": "Pipes and Maps Ltd",
+    "ruaddr1": "111 Under Hill",
+    "ruaddr2": "Hobbitton",
+    "ruaddr4": "The Shire",
+    "rupostcode": "HO1 1AA",
+    "payeref": "123AB456",
+    "busdesc": "Provision of equipment for hobbit adventures"
+  }
+}
