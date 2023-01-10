@@ -11,6 +11,10 @@ This is the repo for the Supplementary Data Service (SDS), which is described in
 At the time of writing, what is stored here should be considered a prototype and hasn't been endorsed as a 
 concrete implementation.
 
+# Requirements gathering aid
+
+![sds_sequence_diagram](sds_sequence_diagram.png "sds_sequence_diagram")
+
 # Running locally
 
 To run this prototype locally, you will need the following:
