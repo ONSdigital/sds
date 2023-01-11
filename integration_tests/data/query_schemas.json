@@ -1,5 +1,5 @@
 {
-  "survey": "Survey 1",
+  "survey_id": "Survey 1",
   "dataset_schemas": [
     {
       "dataset_schema_id": "sppi_sds_schema",

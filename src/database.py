@@ -30,15 +30,15 @@ def get_data(dataset_id, unit_id):
 def set_schema(dataset_schema_id, survey_id, dataset_schema):
     dataset_schema_versions = schemas_collection.document(dataset_schema_id)
     if not dataset_schema_versions.get().exists:
-        dataset_schema_versions.set({"latest": 1, "survey_id": survey_id})
+        dataset_schema_versions.set({"latest_version": 1, "survey_id": survey_id})
         latest_version = 1
     else:
-        latest_version = dataset_schema_versions.get().to_dict()["latest"]
+        latest_version = dataset_schema_versions.get().to_dict()["latest_version"]
         latest_version += 1
     dataset_schema_versions.collection("versions").document(str(latest_version)).set(
         dataset_schema
     )
-    dataset_schema_versions.update({"latest": latest_version})
+    dataset_schema_versions.update({"latest_version": latest_version})
     return latest_version
 
 
@@ -50,3 +50,25 @@ def get_schema(dataset_schema_id, version):
         .get()
         .to_dict()
     )
+
+
+def get_schemas(survey_id):
+    dataset_schemas = []
+    schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
+    for schema in schemas_result:
+        return_schema = schema.to_dict()
+        return_schema.pop("survey_id")
+        return_schema["dataset_schema_id"] = schema.id
+        dataset_schemas.append(return_schema)
+    return {"survey_id": survey_id, "dataset_schemas": dataset_schemas}
+
+
+def get_datasets(survey_id):
+    datasets = []
+    datasets_result = datasets_collection.where("survey_id", "==", survey_id).stream()
+    for dataset in datasets_result:
+        return_dataset = dataset.to_dict()
+        return_dataset.pop("survey_id")
+        return_dataset["dataset_id"] = dataset.id
+        datasets.append(return_dataset)
+    return {"survey_id": survey_id, "datasets": datasets}
