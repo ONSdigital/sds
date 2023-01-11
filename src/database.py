@@ -12,6 +12,11 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
+def set_dataset(dataset_id, dataset):
+    dataset.pop("data")
+    datasets_collection.document(dataset_id).set(dataset)
+
+
 def set_data(dataset_id, data):
     units_collection = datasets_collection.document(dataset_id).collection("units")
     units_collection.document(data["unit_id"]).set(data)
@@ -22,24 +27,24 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema(dataset_design_id, dataset_design):
-    dataset_design_versions = schemas_collection.document(dataset_design_id)
-    if not dataset_design_versions.get().exists:
-        dataset_design_versions.set({"latest": 1})
+def set_schema(dataset_schema_id, survey_id, dataset_schema):
+    dataset_schema_versions = schemas_collection.document(dataset_schema_id)
+    if not dataset_schema_versions.get().exists:
+        dataset_schema_versions.set({"latest": 1, "survey_id": survey_id})
         latest_version = 1
     else:
-        latest_version = dataset_design_versions.get().to_dict()["latest"]
+        latest_version = dataset_schema_versions.get().to_dict()["latest"]
         latest_version += 1
-    dataset_design_versions.collection("versions").document(str(latest_version)).set(
-        dataset_design
+    dataset_schema_versions.collection("versions").document(str(latest_version)).set(
+        dataset_schema
     )
-    dataset_design_versions.update({"latest": latest_version})
+    dataset_schema_versions.update({"latest": latest_version})
     return latest_version
 
 
-def get_schema(dataset_design_id, version):
+def get_schema(dataset_schema_id, version):
     return (
-        schemas_collection.document(dataset_design_id)
+        schemas_collection.document(dataset_schema_id)
         .collection("versions")
         .document(str(version))
         .get()

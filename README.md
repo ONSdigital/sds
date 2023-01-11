@@ -72,20 +72,20 @@ the data set (assumed to be the SDX). The following example demonstrates how you
 
 Schema files are published by another component. An example of a schema file can be found in 
 [schema.json](integration_tests/data/schema.json).  This data is then "posted" to the SDS
-`/dataset_design?dataset_design_id=my_data_set`
+`/dataset_schema?dataset_schema_id=my_data_set`
 endpoint as a JSON HTTP body. The following is returned:
 
 ```json
 {
-  "dataset_design_id": "my_data_set",
+  "dataset_schema_id": "my_data_set",
   "version": 2
 }
 ```
 
 ## Retrieve Schema files
 
-To retrieve the schema file, the user (EQ Author) will need to supply the `dataset_design_id`
+To retrieve the schema file, the user (EQ Author) will need to supply the `dataset_schema_id`
 and `version`. 
 The following example demonstrates how you would call the "Retrieve Schema" endpoint `/schema`.
 
-* http://localhost:8000/dataset_design?dataset_design_id=my_data_set&version=2
+* http://localhost:8000/dataset_schema?dataset_schema_id=my_data_set&version=2

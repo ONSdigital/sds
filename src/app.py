@@ -16,6 +16,7 @@ async def dataset(payload: dict = Body(...)):
     dataset_id = str(uuid.uuid4())
     for sup_data in payload["data"]:
         database.set_data(dataset_id, sup_data)
+    database.set_dataset(dataset_id, payload)
     return {"dataset_id": dataset_id}
 
 
@@ -27,15 +28,31 @@ async def unit_data(dataset_id: str, unit_id: str):
     return data
 
 
-@app.post("/dataset_design")
-async def publish_schema(dataset_design_id: str, payload: dict = Body(...)):
+@app.post("/dataset_schema")
+async def publish_schema(
+    dataset_schema_id: str, survey_id: str, payload: dict = Body(...)
+):
     """Put a schema into the database and return the schema_id."""
-    version = database.set_schema(dataset_design_id, payload)
-    return {"dataset_design_id": dataset_design_id, "version": version}
+    version = database.set_schema(dataset_schema_id, survey_id, payload)
+    return {"dataset_schema_id": dataset_schema_id, "version": version}
 
 
-@app.get("/dataset_design")
-async def retrieve_schema(dataset_design_id: str, version: int):
+@app.get("/dataset_schema")
+async def retrieve_schema(dataset_schema_id: str, version: int):
     """Retrieve the schema, given the schema_id."""
-    data = database.get_schema(dataset_design_id, version)
+    data = database.get_schema(dataset_schema_id, version)
+    return data
+
+
+@app.get("/dataset_schemas")
+async def query_schemas(survey_id: str):
+    """Retrieve the schemas, given the survey_id."""
+    data = database.get_schemas(survey_id)
+    return data
+
+
+@app.get("/datasets")
+async def query_datasets(survey_id: str):
+    """Retrieve the datasets, given the survey_id."""
+    data = database.get_datasets(survey_id)
     return data

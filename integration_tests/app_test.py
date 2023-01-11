@@ -34,17 +34,19 @@ def test_dataset():
     }
 
 
-def test_dataset_design():
+def test_dataset_schema():
     with open("data/schema.json") as f:
         schema = json.load(f)
-    dataset_design_id = "sppi_dataset_design"
+    dataset_schema_id = "sppi_dataset_schema"
+    survey_id = "Survey 1"
     response = client.post(
-        f"/dataset_design?dataset_design_id={dataset_design_id}", json=schema
+        f"/dataset_schema?dataset_schema_id={dataset_schema_id}&survey_id={survey_id}",
+        json=schema,
     )
     version = response.json()["version"]
     assert response.status_code == 200
     response = client.get(
-        f"/dataset_design?dataset_design_id={dataset_design_id}&version={version}"
+        f"/dataset_schema?dataset_schema_id={dataset_schema_id}&version={version}"
     )
     assert response.status_code == 200
     assert response.json() == schema

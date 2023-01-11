@@ -1,0 +1,7 @@
+{
+  "dataset_schema_id": "sppi_sds_schema",
+  "title": "SPPI supplementary data set schema",
+  "description": "supplementary data for SPPI Survey schema",
+  "version": 1,
+  "survey_id": "Survey 1"
+}
