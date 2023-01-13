@@ -1,11 +1,4 @@
-import os
-
-os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
-
-import database
-
-
-def test_set_get_data():
+def test_set_get_data(database):
     expected_data = {
         "unit_id": "2",
         "title": "Hello",

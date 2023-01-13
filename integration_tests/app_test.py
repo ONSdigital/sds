@@ -1,15 +1,7 @@
 import json
-import os
-
-from fastapi.testclient import TestClient
-
-os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
-from app import app
-
-client = TestClient(app)
 
 
-def test_dataset():
+def test_dataset(client):
     with open("data/dataset.json") as f:
         dataset = json.load(f)
     response = client.post("/dataset", json=dataset)
@@ -34,7 +26,7 @@ def test_dataset():
     }
 
 
-def test_dataset_schema():
+def test_dataset_schema(client):
     with open("data/schema.json") as f:
         schema = json.load(f)
     dataset_schema_id = "sppi_dataset_schema"
