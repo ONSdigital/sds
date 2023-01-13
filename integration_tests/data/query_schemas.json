@@ -1,10 +1,5 @@
 {
-  "survey_id": "Survey 1",
-  "dataset_schemas": [
-    {
-      "dataset_schema_id": "sppi_sds_schema",
-      "latest_version": 3,
-      "versions": [1,2,3]
-    }
-  ]
+  "survey_id": "abc",
+  "latest_version": 3,
+  "versions": [1,2,3]
 }
