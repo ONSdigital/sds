@@ -1,7 +1,7 @@
 import json
 import logging
-
 from argparse import ArgumentParser
+
 from jsonschema import SchemaError, ValidationError, validate
 
 

@@ -1,11 +1,12 @@
 import logging
 import uuid
 
+from fastapi import Body, FastAPI
+
 import database
 
 logging.basicConfig(level=logging.INFO)
 
-from fastapi import Body, FastAPI
 
 app = FastAPI()
 
