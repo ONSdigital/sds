@@ -22,6 +22,7 @@ jobs:
           pip install -r requirements.txt
       - name: Lint
         run: |
+          export PYTHONPATH=src
           black . --check
           isort . --check-only --profile black
           flake8 .  --max-line-length=127
