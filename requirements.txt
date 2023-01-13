@@ -8,3 +8,4 @@ httpx
 firebase_admin
 isort
 jsonschema
+flake8
