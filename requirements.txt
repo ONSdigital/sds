@@ -9,3 +9,5 @@ firebase_admin
 isort
 jsonschema
 flake8
+coverage
+pytest-cov
