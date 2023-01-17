@@ -1,0 +1,11 @@
+version: '2.1'
+
+services:
+  api:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - FIREBASE_KEYFILE_LOCATION=firebase_key.json

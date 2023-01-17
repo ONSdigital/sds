@@ -1,28 +1,17 @@
-![overview](little_diagram.png "Overview")
-
 # Background
 
-This is the repo for the Supplementary Data Service (SDS), which is described in the following pages:
-
-* https://confluence.ons.gov.uk/display/SDC/Pre-Population+Solution+Architecture
-* https://confluence.ons.gov.uk/pages/viewpage.action?spaceKey=SDC&title=Pre-Population+Data+Architecture
-* https://confluence.ons.gov.uk/display/SDC/Provisioning+supplementary+datasets+to+the+SDC+platform
-
-At the time of writing, what is stored here should be considered a prototype and hasn't been endorsed as a 
-concrete implementation.
-
-# Requirements gathering aid
-
-![sds_sequence_diagram](sds_sequence_diagram.png "sds_sequence_diagram")
+This is the repo for the Supplementary Data Service (SDS), which is described in 
+https://confluence.ons.gov.uk/display/SDC/SDS
 
 # Running locally
 
-To run this prototype locally, you will need the following:
+To run this service locally, you will need the following:
 
 * Python 3.11
 * A Google Firebase key file (see https://www.youtube.com/watch?v=MU7O6emzAc0)
+* Docker or Rancher desktop (optional but needed if you want to run the docker image)
 
-To run, set up a local virtual environment and install the libraries described in the requirements file.
+To run, set up a local virtual environment and install the libraries described in the requirements file (see below).
 
 ```bash
 python venv .venv
@@ -33,6 +22,36 @@ pip install -r requirement.txt
 Copy the firebase key file to `firebase_key.json` (in this directory) and run the `run.sh` file in (in the virtual
 environment).
 
+## Running linting and unit tests
+
+To run all the checks that run as part of the CI, run the following (assuming you have set up a virtual environment
+with al the requirements), run the following:
+
+```bash
+black . --check
+isort . --check-only --profile black
+flake8 src integration_tests --max-line-length=127
+export PYTHONPATH=src
+pytest --cov=src src
+coverage report --fail-under=90
+```
+
+To correct any problems that `isort` or `black` complain about, run the following:
+
+```bash
+black .
+isort . --profile black
+```
+
+## Building and running on Docker
+
+To build and run on docker, run the following commands:
+
+```bash
+docker-compose build
+docker-compose up
+```
+
 # OpenAPI Specification
 
 As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
@@ -40,52 +59,3 @@ can be reached by going to the following URLs (once running):
 
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
-
-
-# How to use
-
-## Publish Data
-
-Data is published by the SDX as "sets" or "data sets". An example of a data set file can be found in 
-[dataset.json](integration_tests/data/dataset.json).  This data is then "posted" to the SDS `/dataset`
-endpoint as a JSON HTTP body. The following is returned:
-
-```json
-{
-  "dataset_id": "ee677cde-863c-4fb6-ac0b-b99be2b1307c"
-}
-```
-
-The returned "dataset_id" is then associated by the SDX with a survey and period. Internally the dataset is broken
-down into units with each unit being stored as a retrievable document within the database.
-
-## Retrieve Data
-
-To retrieve the data, the user (EQ Runner) will need to supply the `unit_id` and `dataset_id`. The `dataset_id`
-is set by the SDS when the SDX publishes the data set and the `unit_id` is set by the component which generates 
-the data set (assumed to be the SDX). The following example demonstrates how you would call the "Retrieve Data" endpoint
-`/unit_data`
-
-* http://localhost:8000/unit_data?dataset_id=ee677cde-863c-4fb6-ac0b-b99be2b1307c&unit_id=55e64129-6acd-438b-a23a-3cf9524ab912 
-
-## Publish Schema files
-
-Schema files are published by another component. An example of a schema file can be found in 
-[schema.json](integration_tests/data/schema.json).  This data is then "posted" to the SDS
-`/dataset_schema?dataset_schema_id=my_data_set`
-endpoint as a JSON HTTP body. The following is returned:
-
-```json
-{
-  "dataset_schema_id": "my_data_set",
-  "version": 2
-}
-```
-
-## Retrieve Schema files
-
-To retrieve the schema file, the user (EQ Author) will need to supply the `dataset_schema_id`
-and `version`. 
-The following example demonstrates how you would call the "Retrieve Schema" endpoint `/schema`.
-
-* http://localhost:8000/dataset_schema?dataset_schema_id=my_data_set&version=2
