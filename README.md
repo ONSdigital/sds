@@ -24,8 +24,7 @@ environment).
 
 ## Running linting and unit tests
 
-To run all the checks that run as part of the CI, run the following (assuming you have set up a virtual environment
-with al the requirements), run the following:
+To run all the checks that run as part of the CI, run the following:
 
 ```bash
 black . --check
