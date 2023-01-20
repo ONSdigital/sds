@@ -39,4 +39,4 @@ def test_get_dataset_schemas(client):
 def test_get_datasets(client):
     survey_id = "Survey 1"
     response = client.get(f"/datasets?&survey_id={survey_id}")
-    assert response.status_code == 200
+    assert response.status_code == 300
