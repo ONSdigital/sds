@@ -1,23 +1,44 @@
-# Background
+# Supplementary Data Service (sds)
 
-This is the repo for the Supplementary Data Service (SDS), which is described in 
-https://confluence.ons.gov.uk/display/SDC/SDS
+Information on the service can be found on Confluence:
 
-# Running locally
+* https://confluence.ons.gov.uk/display/SDC/SDS
+
+## Running locally
 
 To run this service locally, you will need the following:
 
 * Python 3.11
-* A Google Firebase key file (see https://www.youtube.com/watch?v=MU7O6emzAc0)
-* Docker or Rancher desktop (optional but needed if you want to run the docker image)
+* VirtualEnv
+* Docker
 
-To run, set up a local virtual environment and install the libraries described in the requirements file (see below).
+### Creating, activating and deactivating a virtual environment
 
-```bash
-python venv .venv
-. .venv/bin/activate
+Check that you have the correct version of Python installed and then run the following commands:
+
+```
+virtualenv venv
+source venv/bin/activate
+```
+
+This will create and activate the virtual environment. To deactivate the environment, run the following command:
+
+```
+deactivate
+```
+
+### Installing the dependencies
+
+Assuming that the virtual environment is activated, run the following command:
+
+```
 pip install -r requirement.txt
 ```
+
+## Miscellaneous
+
+* A Google Firebase key file (see https://www.youtube.com/watch?v=MU7O6emzAc0)
+* Docker or Rancher desktop (optional but needed if you want to run the docker image)
 
 Copy the firebase key file to `firebase_key.json` (in this directory) and run the `run.sh` file in (in the virtual
 environment).
