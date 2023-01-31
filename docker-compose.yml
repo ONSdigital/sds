@@ -1,20 +1,20 @@
-version: '2.1'
+version: "2.1"
 
 services:
   firestore:
       image: mtlynch/firestore-emulator
       environment:
-          - FIRESTORE_PROJECT_ID=local
-          - PORT=8080
+          - FIRESTORE_PROJECT_ID=localhost
+          - PORT=8200
       ports:
-          - 8080:8080
+          - 8200:8200
       container_name: firestore
 
   api:
     build:
       context: .
     ports:
-      - "3000:3000"
+      - 3000:3000
     environment:
       - PORT=3000
       - FIREBASE_KEYFILE_LOCATION=firebase_key.json

@@ -12,7 +12,7 @@ To run this service locally, you will need the following:
 * VirtualEnv
 * Docker
 
-### Creating, activating and deactivating a virtual environment
+### Creating, activating and deactivating a Python virtual environment
 
 Check that you have the correct version of Python installed and then run the following commands:
 
@@ -34,6 +34,10 @@ Assuming that the virtual environment is activated, run the following command:
 ```
 pip install -r requirement.txt
 ```
+
+### Storing environment variables
+
+Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables then please add the file name to the `.gitignore` file in the repository root.
 
 ### Installing and running Firestore with Docker
 
@@ -62,9 +66,28 @@ To delete the container once and for all, whether currently running or not, run 
 docker-compose down
 ```
 
-The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that the Docker compose file can be found, unless you want to explicitly specify its path. 
+The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that the Docker compose file can be found, unless you want to explicitly specify its path.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Miscellaneous
+
+
+https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json
+
+https://groups.google.com/g/firebase-talk/c/IKo6PsXMqlQ
+
 
 * A Google Firebase key file (see https://www.youtube.com/watch?v=MU7O6emzAc0)
 * Docker or Rancher desktop (optional but needed if you want to run the docker image)
