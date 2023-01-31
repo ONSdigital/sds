@@ -35,7 +35,34 @@ Assuming that the virtual environment is activated, run the following command:
 pip install -r requirement.txt
 ```
 
-### Docker configuration
+### Installing and running Firestore with Docker
+
+There are seemingly no official Firestore images, however there are numerous emulators. Assuming that you have Docker installed, run the following command:
+
+```
+docker-compouse up -d firestore
+```
+
+And to check that the image is running:
+
+```
+docker ps
+```
+
+To subsequently stop and start the container, run the following commands respectively:
+
+```
+docker start firestore
+docker stop firestore
+```
+
+To delete the container once and for all, whether currently running or not, run the following command:
+
+```
+docker-compose down
+```
+
+The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that the Docker compose file can be found, unless you want to explicitly specify its path. 
 
 ## Miscellaneous
 
