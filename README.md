@@ -37,17 +37,28 @@ pip install -r requirement.txt
 
 ### Storing environment variables
 
-Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables then please add the file name to the `.gitignore` file in the repository root.
+Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables then please add the file name to the `.gitignore` file in the repository root. At the very least you need to include the following:
+
+```
+FIRESTORE_PROJECT_ID=localhost
+FIRESTORE_EMULATOR_HOST=localhost:8200
+
+GOOGLE_APPLICATION_CREDENTIALS=local_firebase_credentials.json
+
+FIREBASE_KEYFILE_LOCATION=firebase_key.json
+```
+
+Note that the `FIRESTORE_PROJECT_ID` and `FIRESTORE_EMULATOR_HOST` environment variables match the settings in the `docker-compose.yml` file. The other two are covered in a later subsection.
 
 ### Installing and running Firestore with Docker
 
-There are seemingly no official Firestore images, however there are numerous emulators. Assuming that you have Docker installed, run the following command:
+In order to install the Firestore emulator, and assuming that you have Docker installed, run the following command:
 
 ```
 docker-compouse up -d firestore
 ```
 
-And to check that the image is running:
+And to check that the container is running:
 
 ```
 docker ps
@@ -68,7 +79,9 @@ docker-compose down
 
 The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that the Docker compose file can be found, unless you want to explicitly specify its path.
 
+### Connecting to the Firestore instance
 
+There is a `scratch.py` file that can be run 
 
 
 

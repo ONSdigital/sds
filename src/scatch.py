@@ -5,11 +5,12 @@ from firebase_admin import firestore
 
 
 FIRESTORE_PROJECT_ID = os.environ.get("FIRESTORE_PROJECT_ID")
+FIREBASE_KEYFILE_LOCATION = os.environ.get("FIREBASE_KEYFILE_LOCATION")
 
+credentials = firebase_admin.credentials.Certificate(FIREBASE_KEYFILE_LOCATION)
+# credentials = firebase_admin.credentials.ApplicationDefault()
 
 projectId = FIRESTORE_PROJECT_ID
-
-credentials = firebase_admin.credentials.ApplicationDefault()
 
 options = {
     'projectId': projectId
