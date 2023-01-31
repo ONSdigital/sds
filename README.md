@@ -35,6 +35,8 @@ Assuming that the virtual environment is activated, run the following command:
 pip install -r requirement.txt
 ```
 
+### Docker configuration
+
 ## Miscellaneous
 
 * A Google Firebase key file (see https://www.youtube.com/watch?v=MU7O6emzAc0)
