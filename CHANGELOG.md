@@ -6,4 +6,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Add versioning (issue #SDSS-37)
+- Add CloudBuild file (issue #SDSS-37)

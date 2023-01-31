@@ -1,0 +1,15 @@
+steps:
+  - name: docker
+    id: build_and_push
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        if [ $_ENV = "staging" ]; then
+          docker build -t "europe-west2-docker.pkg.dev/ons-sds-images/sds:$SHORT_SHA" .
+          docker push "europe-west2-docker.pkg.dev/ons-sds-images/sds:$SHORT_SHA"
+        else
+          echo "*************************************************************"
+          echo "* Build not required                                        *"
+          echo "*************************************************************"
+        fi
