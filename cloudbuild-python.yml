@@ -1,0 +1,8 @@
+steps:
+  - name: python
+    entrypoint: pip
+    args: [ "install", "-r", "requirements.txt", "--user" ]
+    env: [ PYTHONPATH=src ]
+  - name: python
+    entrypoint: black
+    args: [ ".", "--check" ]
