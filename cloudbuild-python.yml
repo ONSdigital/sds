@@ -2,8 +2,24 @@ steps:
   - name: python
     id: "Setup Python"
     entrypoint: pip
-    args: [ "install", "-r", "requirements.txt" , "--user" ]
+    args: [ "install", "-r", "requirements.txt" , "--user"]
   - name: python
-    id: "Black"
-    entrypoint: black
-    args: [ ".", "--check" ]
+    id: "black"
+    entrypoint: python
+    args: ["-m", "black", ".", "--check"]
+  - name: python
+    id: "isort"
+    entrypoint: python
+    args: ["-m", "isort", ".", "--check-only",  "--profile", "black"]
+  - name: python
+    id: "flake8"
+    entrypoint: python
+    args: ["-m", "flake8", ".", "--max-line-length=127"]
+  - name: python
+    id: "pytest"
+    entrypoint: python
+    args: ["-m", "pytest", "--cov=src", "src"]
+  - name: python
+    id: "coverage"
+    entrypoint: python
+    args: ["-m", "coverage", "report", "--fail-under=90"]
