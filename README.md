@@ -59,7 +59,7 @@ Note that the `FIRESTORE_PROJECT_ID` and `FIRESTORE_EMULATOR_HOST` environment v
 In order to install the Firestore emulator, and assuming that you have Docker installed, run the following command:
 
 ```
-docker-compouse up -d firestore
+docker-compose up -d firestore
 ```
 
 And to check that the container is running:
