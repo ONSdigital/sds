@@ -1,13 +1,9 @@
 steps:
   - name: python
-    id: "setup Python"
+    id: "Setup Python"
     entrypoint: pip
-    args: [ "install", "-r", "requirements.txt" ]
-    env: [ "PYTHONPATH=src" ]
+    args: [ "install", "-r", "requirements.txt" , "--user"]
   - name: python
-    id: "lint"
-    args:
-      - "-c"
-      - |
-        python -m black . --check
-    entrypoint: /bin/bash
+    id: "Lint"
+    entrypoint: python
+    args: ["-m", "black", ".", "--check"]
