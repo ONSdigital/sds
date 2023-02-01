@@ -2,8 +2,8 @@ steps:
   - name: python
     id: "Setup Python"
     entrypoint: pip
-    args: [ "install", "-r", "requirements.txt" , "--user"]
+    args: [ "install", "-r", "requirements.txt" , "--user" ]
   - name: python
-    id: "Lint"
-    entrypoint: python
-    args: ["-m", "black", ".", "--check"]
+    id: "Black"
+    entrypoint: black
+    args: [ ".", "--check" ]
