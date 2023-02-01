@@ -9,5 +9,5 @@ steps:
     args:
       - "-c"
       - |
-        black . --check
+        python -m black . --check
     entrypoint: /bin/bash
