@@ -29,11 +29,5 @@ steps:
     args:
       - '-c'
       - |
-        if [ $_ENV = "staging" ]; then
-          docker build -t "eu.gcr.io/ons-sds-dns/sds:$SHORT_SHA" .
-          docker push "eu.gcr.io/ons-sds-dns/sds:$SHORT_SHA"
-        else
-          echo "*************************************************************"
-          echo "* Build not required                                        *"
-          echo "*************************************************************"
-        fi
+        docker build -t "eu.gcr.io/ons-sds-dns/sds:$SHORT_SHA" .
+        docker push "eu.gcr.io/ons-sds-dns/sds:$SHORT_SHA"
