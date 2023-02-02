@@ -11,9 +11,7 @@ credentials = firebase_admin.credentials.Certificate(FIREBASE_KEYFILE_LOCATION)
 
 projectId = FIRESTORE_PROJECT_ID
 
-options = {
-    'projectId': projectId
-}
+options = {"projectId": projectId}
 
 firebase_admin.initialize_app(credentials, options)
 
