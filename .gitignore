@@ -4,3 +4,4 @@ firebase_key.json
 .venv
 venv
 local.env
+pycharm.local.env
