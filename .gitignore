@@ -2,3 +2,5 @@
 firebase_key.json
 .coverage
 .venv
+venv
+local.env
