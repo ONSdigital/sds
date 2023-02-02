@@ -5,7 +5,10 @@ from fastapi import Body, FastAPI
 
 import database
 
-logging.basicConfig(level=logging.INFO)
+
+level = logging.INFO
+
+logging.basicConfig(level=level)
 
 
 app = FastAPI()

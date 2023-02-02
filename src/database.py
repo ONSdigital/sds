@@ -1,15 +1,8 @@
-import os
+from client import client
 
-import firebase_admin
-from firebase_admin import firestore
+datasets_collection = client.collection("datasets")
 
-cred_obj = firebase_admin.credentials.Certificate(
-    os.environ.get("FIREBASE_KEYFILE_LOCATION")
-)
-default_app = firebase_admin.initialize_app(cred_obj)
-db = firestore.client()
-datasets_collection = db.collection("datasets")
-schemas_collection = db.collection("schemas")
+schemas_collection = client.collection("schemas")
 
 
 def set_dataset(dataset_id, dataset):
