@@ -1,0 +1,3 @@
+SCHEMAS = "schemas"
+
+DATASETS = "datasets"

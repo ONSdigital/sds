@@ -1,8 +1,10 @@
 from client import client
+from constants import SCHEMAS, DATASETS
 
-datasets_collection = client.collection("datasets")
 
-schemas_collection = client.collection("schemas")
+schemas_collection = client.collection(SCHEMAS)
+
+datasets_collection = client.collection(DATASETS)
 
 
 def set_dataset(dataset_id, dataset):
