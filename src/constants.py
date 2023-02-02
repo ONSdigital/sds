@@ -1,3 +1,5 @@
+OK = "OK"
+
 DATA = "data"
 
 UNITS = "units"
