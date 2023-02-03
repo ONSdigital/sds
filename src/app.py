@@ -1,7 +1,9 @@
 import logging
 import uuid
+import uvicorn
 
 from fastapi import Body, FastAPI, Response
+
 
 
 import database
@@ -27,7 +29,7 @@ app = FastAPI()
 
 @app.get(HEALTHCHECK_PATH)
 async def get_healthcheck(response: Response):
-    print("setting headers...")
+    print("setting headers!")
 
     response.headers["content-type"] = "text/plain"
 
@@ -73,3 +75,5 @@ async def post_dataset_schema(dataset_schema_id: str, survey_id: str, payload: d
     return {"dataset_schema_id": dataset_schema_id, "version": version}
 
 
+if __name__ == "__main__":
+    uvicorn.run("app:app")
