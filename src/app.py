@@ -1,7 +1,7 @@
 import logging
 import uuid
 
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Response
 
 
 import database
@@ -26,7 +26,11 @@ app = FastAPI()
 
 
 @app.get(HEALTHCHECK_PATH)
-async def get_healthcheck():
+async def get_healthcheck(response: Response):
+    print("setting headers...")
+
+    response.headers["content-type"] = "text/plain"
+
     return OK
 
 

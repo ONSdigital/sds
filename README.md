@@ -106,6 +106,19 @@ In order to create the requisite credentials, see here:
 
 * https://www.youtube.com/watch?v=MU7O6emzAc0
 
+### Running uvicorn
+
+Assuming the above steps have been completed, the server can be run with the following command:
+
+```
+ uvicorn src.app:app --reload
+```
+
+Try the healthcheck path first:
+
+* http://localhost/healthcheck
+
+
 ## Running linting and unit tests locally
 
 To run all the checks that run as part of the CI, run the following commands:
