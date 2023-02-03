@@ -39,20 +39,20 @@ pip install -r requirement.txt
 
 ### Storing environment variables
 
-Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables then please it to the `.gitignore` file. 
+Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables 
+then please add it to the `.gitignore` file. 
 
 At the very least you need to include the following:
 
 ```
 export FIRESTORE_PROJECT_ID=localhost
 export FIRESTORE_EMULATOR_HOST=localhost:8200
-
-export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
-
+export GOOGLE_APPLICATION_CREDENTIALS=integration_tests/google_application_credentials.json
 export FIREBASE_KEYFILE_LOCATION=firebase_key.json
 ```
 
-Note that the `FIRESTORE_PROJECT_ID` and `FIRESTORE_EMULATOR_HOST` environment variables match the settings in the `docker-compose.yml` file. The other two are covered in a later subsection.
+Note that the `FIRESTORE_PROJECT_ID` and `FIRESTORE_EMULATOR_HOST` environment variables match the settings in
+the `docker-compose.yml` file. The other two are covered in a later subsection.
 
 ### Installing and running Firestore with Docker
 
@@ -81,11 +81,15 @@ To delete the container once and for all, whether currently running or not, run 
 docker-compose down
 ```
 
-The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that the `docker-compose.yml` file can be found, unless you want to explicitly specify its path.
+The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that
+the `docker-compose.yml` file can be found, unless you want to explicitly specify its path.
 
 ### Connecting to the Firestore instance
 
-The Firebase emulator instance running inside Docker needs to be configured with default application credentials. These are found in the `google_application_credentials.json` file in the repository root and the instance is made aware of them by way on the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. The credentials are not meant to be secure, see the following discussion: 
+The Firebase emulator instance running inside Docker needs to be configured with default application credentials. These
+are found in the `google_application_credentials.json` file in the `integration_tests` directory and the instance is
+made aware of them by way on the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. The credentials are not meant to be secure,
+see the following discussion: 
 
 * https://groups.google.com/g/firebase-talk/c/IKo6PsXMqlQ
 
@@ -93,7 +97,8 @@ The credentials can be found here:
 
 * https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json
 
-There is a `scratch.py` file that can be run to check the connection to Firestore instance. Before running the file, copy the default application credentials to a new file...
+There is a `scratch.py` file that can be run to check the connection to Firestore instance. Before running the file,
+copy the default application credentials to a new file...
 
 ```
 cp google_application_credentials.json firebase_key.json 

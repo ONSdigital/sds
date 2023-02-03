@@ -1,0 +1,33 @@
+steps:
+  - name: python
+    id: "Setup Python"
+    entrypoint: pip
+    args: [ "install", "-r", "requirements.txt" , "--user"]
+  - name: python
+    id: "black"
+    entrypoint: python
+    args: ["-m", "black", ".", "--check"]
+  - name: python
+    id: "isort"
+    entrypoint: python
+    args: ["-m", "isort", ".", "--check-only",  "--profile", "black"]
+  - name: python
+    id: "flake8"
+    entrypoint: python
+    args: ["-m", "flake8", ".", "--max-line-length=127"]
+  - name: python
+    id: "pytest"
+    entrypoint: python
+    args: ["-m", "pytest", "--cov=src", "src"]
+  - name: python
+    id: "coverage"
+    entrypoint: python
+    args: ["-m", "coverage", "report", "--fail-under=90"]
+  - name: docker
+    id: build_and_push
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        docker build -t "eu.gcr.io/ons-sds-images/sds:$SHORT_SHA" .
+        docker push "eu.gcr.io/ons-sds-images/sds:$SHORT_SHA"
