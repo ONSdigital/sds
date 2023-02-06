@@ -18,6 +18,8 @@ SURVEY_ID = "survey_id"
 
 DATASET_ID = "dataset_id"
 
+CONTENT_TYPE = "content-type"
+
 DOUBLE_EQUALS = "=="
 
 LATEST_VERSION = "latest_version"

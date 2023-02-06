@@ -7,7 +7,8 @@ from fastapi import Body, FastAPI, Response
 
 import database
 
-from constants import OK
+from constants import OK, CONTENT_TYPE
+from content_types import TEXT_PLAIN_CONTENT_TYPE
 from paths import (
     HEALTHCHECK_PATH,
     DATASET_PATH,
@@ -31,7 +32,7 @@ async def get_healthcheck():
     content = OK
 
     headers = {
-        "content-type": "text/plain"
+        CONTENT_TYPE: TEXT_PLAIN_CONTENT_TYPE
     }
 
     response = Response(content=content, headers=headers)
