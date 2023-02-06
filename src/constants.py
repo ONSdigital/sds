@@ -16,6 +16,8 @@ PROJECTID = "projectId"
 
 SURVEY_ID = "survey_id"
 
+SCHEMA_ID = "schema_id"
+
 DATASET_ID = "dataset_id"
 
 CONTENT_TYPE = "content-type"

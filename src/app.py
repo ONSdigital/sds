@@ -10,6 +10,7 @@ import database
 from content_types import TEXT_PLAIN_CONTENT_TYPE
 from constants import (
     OK,
+    SCHEMAS,
     DATASETS,
     SURVEY_ID,
     CONTENT_TYPE
@@ -17,6 +18,7 @@ from constants import (
 from paths import (
     HEALTHCHECK_PATH,
     DATASET_PATH,
+    SCHEMAS_PATH,
     DATASETS_PATH,
     UNIT_DATA_PATH,
     DATASET_SCHEMA_PATH,
@@ -52,6 +54,19 @@ async def get_datasets(survey_id: str):
 
     json = {
         DATASETS: datasets,
+        SURVEY_ID: survey_id
+    }
+
+    return json
+
+
+@app.get(SCHEMAS_PATH)
+async def get_schemas(survey_id: str):
+
+    schemas = database.get_schemas(survey_id)
+
+    json = {
+        SCHEMAS: schemas,
         SURVEY_ID: survey_id
     }
 

@@ -6,6 +6,7 @@ from constants import (
     SCHEMAS,
     DATASETS,
     VERSIONS,
+    SCHEMA_ID,
     SURVEY_ID,
     DATASET_ID,
     DOUBLE_EQUALS,
@@ -73,23 +74,20 @@ def get_schema(dataset_schema_id, version):
 
 
 def get_schemas(survey_id):
-    dataset_schemas = []
+    schemas = []
 
     schemas_result = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
 
     for schema in schemas_result:
-        return_schema = schema.to_dict()
+        schema = schema.to_dict()
 
-        return_schema.pop(SURVEY_ID)
+        schema.pop(SURVEY_ID)
 
-        return_schema[DATASET_SCHEMA_ID] = schema.id
+        schema[SCHEMA_ID] = schema.id
 
-        dataset_schemas.append(return_schema)
+        schemas.append(schema)
 
-    return {
-        SURVEY_ID: survey_id,
-        DATASET_SCHEMAS: dataset_schemas
-    }
+    return schemas
 
 
 def get_datasets(survey_id):
@@ -98,12 +96,12 @@ def get_datasets(survey_id):
     datasets_result = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
 
     for dataset in datasets_result:
-        return_dataset = dataset.to_dict()
+        dataset = dataset.to_dict()
 
-        return_dataset.pop(SURVEY_ID)
+        dataset.pop(SURVEY_ID)
 
-        return_dataset[DATASET_ID] = dataset.id
+        dataset[DATASET_ID] = dataset.id
 
-        datasets.append(return_dataset)
+        datasets.append(dataset)
 
     return datasets
