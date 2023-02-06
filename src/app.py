@@ -5,7 +5,6 @@ import uvicorn
 from fastapi import Body, FastAPI, Response
 
 
-
 import database
 
 from constants import OK
@@ -28,12 +27,16 @@ app = FastAPI()
 
 
 @app.get(HEALTHCHECK_PATH)
-async def get_healthcheck(response: Response):
-    print("setting headers!")
+async def get_healthcheck():
+    content = OK
 
-    response.headers["content-type"] = "text/plain"
+    headers = {
+        "content-type": "text/plain"
+    }
 
-    return OK
+    response = Response(content=content, headers=headers)
+
+    return response
 
 
 @app.get(DATASETS_PATH)
