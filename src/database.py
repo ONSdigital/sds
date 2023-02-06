@@ -106,7 +106,4 @@ def get_datasets(survey_id):
 
         datasets.append(return_dataset)
 
-    return {
-        SURVEY_ID: survey_id,
-        DATASETS: datasets
-    }
+    return datasets

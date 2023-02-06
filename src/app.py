@@ -7,8 +7,13 @@ from fastapi import Body, FastAPI, Response
 
 import database
 
-from constants import OK, CONTENT_TYPE
 from content_types import TEXT_PLAIN_CONTENT_TYPE
+from constants import (
+    OK,
+    DATASETS,
+    SURVEY_ID,
+    CONTENT_TYPE
+)
 from paths import (
     HEALTHCHECK_PATH,
     DATASET_PATH,
@@ -42,8 +47,15 @@ async def get_healthcheck():
 
 @app.get(DATASETS_PATH)
 async def get_datasets(survey_id: str):
-    data = database.get_datasets(survey_id)
-    return data
+
+    datasets = database.get_datasets(survey_id)
+
+    json = {
+        DATASETS: datasets,
+        SURVEY_ID: survey_id
+    }
+
+    return json
 
 
 @app.get(UNIT_DATA_PATH)
