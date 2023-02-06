@@ -1,21 +1,12 @@
-import os
-
 import pytest
+
 from fastapi.testclient import TestClient
 
 
 @pytest.fixture
-def client():
-    os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
+def test_client():
     from app import app
 
-    client = TestClient(app)
-    yield client
+    test_client = TestClient(app)
 
-
-@pytest.fixture
-def database():
-    os.environ["FIREBASE_KEYFILE_LOCATION"] = "../firebase_key.json"
-    import database
-
-    yield database
+    yield test_client

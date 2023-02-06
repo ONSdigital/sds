@@ -6,3 +6,4 @@ venv
 local.env
 pycharm.local.env
 __pycache__
+scratch.py
