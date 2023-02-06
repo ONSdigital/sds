@@ -7,3 +7,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add CloudBuild file (issue #SDSS-37)
+- Build docker image (issue #SDSS-38)
+- Push to artefact registry (issue #SDSS-39)

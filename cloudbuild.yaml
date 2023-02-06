@@ -29,5 +29,5 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t "eu.gcr.io/ons-sds-images/sds:$SHORT_SHA" .
-        docker push "eu.gcr.io/ons-sds-images/sds:$SHORT_SHA"
+        docker build -t "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA" .
+        docker push "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA"
