@@ -116,13 +116,18 @@ In order to create the requisite credentials, see here:
 Assuming the above steps have been completed, the server can be run with the following command:
 
 ```
- uvicorn src.app:app --reload
+uvicorn src.app:app --reload
 ```
 
 Try the healthcheck path first:
 
 * http://localhost/healthcheck
 
+If running Uvicorn directly means that your debugger will not work, you can run it programmatically with the following command.
+
+```
+python src/app.py PYTHONPATH=src
+```
 
 ## Running linting and unit tests locally
 
