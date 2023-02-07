@@ -25,7 +25,9 @@ def test_get_schemas(test_client):
 
     response = test_client.get(url)
 
-    assert response.status_code == 200
+    status_code = response.status_code
+
+    assert status_code == 200
 
 
 def _test_dataset(test_client):
