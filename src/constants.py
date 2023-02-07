@@ -4,9 +4,13 @@ DATA = "data"
 
 UNITS = "units"
 
+SCHEMA = "schema"
+
 UNIT_ID = "unit_id"
 
 SCHEMAS = "schemas"
+
+VERSION = "version"
 
 DATASETS = "datasets"
 
