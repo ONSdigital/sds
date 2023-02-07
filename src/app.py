@@ -21,11 +21,10 @@ from paths import (
     SCHEMAS_PATH,
     DATASETS_PATH,
     UNIT_DATA_PATH,
-    DATASET_SCHEMA_PATH,
-    DATASET_SCHEMAS_PATH
+    DATASET_SCHEMA_PATH
 )
 
-""
+
 level = logging.INFO
 
 logging.basicConfig(level=level)
@@ -47,19 +46,6 @@ async def get_healthcheck():
     return response
 
 
-@app.get(DATASETS_PATH)
-async def get_datasets(survey_id: str):
-
-    datasets = database.get_datasets(survey_id)
-
-    json = {
-        DATASETS: datasets,
-        SURVEY_ID: survey_id
-    }
-
-    return json
-
-
 @app.get(SCHEMAS_PATH)
 async def get_schemas(survey_id: str):
 
@@ -67,6 +53,19 @@ async def get_schemas(survey_id: str):
 
     json = {
         SCHEMAS: schemas,
+        SURVEY_ID: survey_id
+    }
+
+    return json
+
+
+@app.get(DATASETS_PATH)
+async def get_datasets(survey_id: str):
+
+    datasets = database.get_datasets(survey_id)
+
+    json = {
+        DATASETS: datasets,
         SURVEY_ID: survey_id
     }
 
@@ -82,12 +81,6 @@ async def get_unit_data(dataset_id: str, unit_id: str):
 @app.get(DATASET_SCHEMA_PATH)
 async def get_dataset_schema(dataset_schema_id: str, version: int):
     data = database.get_schema(dataset_schema_id, version)
-    return data
-
-
-@app.get(DATASET_SCHEMAS_PATH)
-async def get_dataset_schemas(survey_id: str):
-    data = database.get_schemas(survey_id)
     return data
 
 
