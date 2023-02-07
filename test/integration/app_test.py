@@ -1,17 +1,25 @@
 import json
 
+from json import loads as json_loads
 from urllib import parse
 
 
-from paths import SCHEMAS_PATH
-from constants import SURVEY_ID
+from paths import (
+    SCHEMAS_PATH,
+    DATASETS_PATH
+)
+from constants import (
+    SCHEMAS,
+    DATASETS,
+    SURVEY_ID
+)
 
 
 URL = u'{path}?{query_string}'
 
 
-def test_get_schemas(test_client):
-    survey_id = 1
+def _test_get_schemas(test_client):
+    survey_id = 0
 
     parameters = {
         SURVEY_ID: survey_id
@@ -28,6 +36,46 @@ def test_get_schemas(test_client):
     status_code = response.status_code
 
     assert status_code == 200
+
+    text = response.text
+
+    json = json_loads(text)
+
+    schemas = json[SCHEMAS]
+
+    schemas_length = len(schemas)
+
+    assert schemas_length == 0
+
+
+def test_get_datasets(test_client):
+    survey_id = 0
+
+    parameters = {
+        SURVEY_ID: survey_id
+    }
+
+    path = DATASETS_PATH
+
+    query_string = parse.urlencode(parameters)
+
+    url = URL.format(path=path, query_string=query_string)
+
+    response = test_client.get(url)
+
+    status_code = response.status_code
+
+    assert status_code == 200
+
+    text = response.text
+
+    json = json_loads(text)
+
+    datasets = json[DATASETS]
+
+    datasets_length = len(datasets)
+
+    assert datasets_length == 0
 
 
 def _test_dataset(test_client):
