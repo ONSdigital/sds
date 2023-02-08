@@ -56,20 +56,18 @@ class Schemas(BaseModel):
     supplementary_dataset_schema: dict[str, SchemaMetadata]
 
 
-@app.get("/v1/schema_metadata")
-async def query_schemas(survey_id: str) -> Schemas:
-    """Retrieve the schemas, given the survey_id."""
-    # data = database.get_schemas(survey_id)
-    return Schemas(
-        supplementary_dataset_schema={
-            "x": SchemaMetadata(
-                survey_id="x",
-                schema_location="y",
-                sds_schema_version=1,
-                sds_published_at="x",
-            )
+@app.get("/v1/schema_metadata", response_model=Schemas)
+async def query_schemas(survey_id: str) -> dict:
+    return {
+        "supplementary_dataset_schema": {
+            "111-222-xxx-fff": {
+                "survey_id": "xxx",
+                "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
+                "sds_schema_version": 1,
+                "sds_published_at": "2023-02-06T13:33:44Z",
+            }
         }
-    )
+    }
 
 
 @app.get("/datasets")
