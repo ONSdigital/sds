@@ -3,7 +3,6 @@ from constants import (
     SCHEMAS,
     VERSION,
     DATASETS,
-    VERSIONS,
     SURVEY_ID,
     DOUBLE_EQUALS
 )
@@ -12,48 +11,6 @@ from constants import (
 schemas_collection = client.collection(SCHEMAS)
 
 datasets_collection = client.collection(DATASETS)
-
-
-def get_schema(schema_id, version):
-    schemas_collection_document = schemas_collection.document(schema_id)
-
-    schema = schemas_collection_document \
-        .collection(VERSIONS) \
-        .document(version) \
-        .get() \
-        .to_dict()
-
-    return schema
-
-
-def get_schemas(survey_id):
-    schemas = []
-
-    schema_results = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
-
-    for schema_result in schema_results:
-        schema = schema_result.to_dict()
-
-        schema.pop(SURVEY_ID)
-
-        schemas.append(schema)
-
-    return schemas
-
-
-def get_datasets(survey_id):
-    datasets = []
-
-    dataset_results = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
-
-    for dataset_result in dataset_results:
-        dataset = dataset_result.to_dict()
-
-        dataset.pop(SURVEY_ID)
-
-        datasets.append(dataset)
-
-    return datasets
 
 
 def set_schema(schema_id, survey_id, payload):
@@ -86,7 +43,53 @@ def set_schema(schema_id, survey_id, payload):
     return version
 
 
+def get_schema(schema_id, version):
+    schemas_collection_document = schemas_collection.document(schema_id)
+
+    schema_result = schemas_collection_document.get()
+
+    schema = schema_result.to_dict()
+
+    return schema
+
+
+def get_schemas(survey_id):
+    schemas = []
+
+    schema_results = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+
+    for schema_result in schema_results:
+        schema = schema_result.to_dict()
+
+        schema.pop(SURVEY_ID)
+
+        schemas.append(schema)
+
+    return schemas
+
+
+def delete_schema(schema_id):
+    schemas_collection_document = schemas_collection.document(schema_id)
+
+    schemas_collection_document.delete()
+
+
 def set_dataset(dataset_id, payload):
     datasets_collection_document = datasets_collection.document(dataset_id)
 
     datasets_collection_document.set(payload)
+
+
+def get_datasets(survey_id):
+    datasets = []
+
+    dataset_results = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+
+    for dataset_result in dataset_results:
+        dataset = dataset_result.to_dict()
+
+        dataset.pop(SURVEY_ID)
+
+        datasets.append(dataset)
+
+    return datasets

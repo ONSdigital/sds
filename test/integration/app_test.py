@@ -17,15 +17,25 @@ from constants import (
     SCHEMA_ID,
     DATASET_ID
 )
-from database import schemas_collection
+from database import (
+    set_schema,
+    delete_schema
+)
 
 
 URL = u'{path}?{query_string}'
 
 
 def test_get_schema(test_client):
-    version = "1"
+    survey_id = "test_get_schema"
+
     schema_id = "0"
+
+    payload = {}
+
+    delete_schema(schema_id)
+
+    version = set_schema(schema_id, survey_id, payload)
 
     parameters = {
         VERSION: version,
@@ -53,8 +63,8 @@ def test_get_schema(test_client):
     assert schema is not None
 
 
-def _test_get_schemas(test_client):
-    survey_id = "0"
+def test_get_schemas(test_client):
+    survey_id = "test_get_schemas"
 
     parameters = {
         SURVEY_ID: survey_id
@@ -83,8 +93,8 @@ def _test_get_schemas(test_client):
     assert schemas_length == 0
 
 
-def _test_get_datasets(test_client):
-    survey_id = "0"
+def test_get_datasets(test_client):
+    survey_id = "test_get_datasets"
 
     parameters = {
         SURVEY_ID: survey_id
@@ -113,14 +123,12 @@ def _test_get_datasets(test_client):
     assert datasets_length == 0
 
 
-def _test_post_schema(test_client):
-    schema_id = "1"
+def test_post_schema(test_client):
+    survey_id = "test_post_schema"
 
-    survey_id = "1"
+    schema_id = "0"
 
-    schemas_collection_document = schemas_collection.document(schema_id)
-
-    schemas_collection_document.delete()
+    delete_schema(schema_id)
 
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
@@ -150,10 +158,10 @@ def _test_post_schema(test_client):
 
     version = json[VERSION]
 
-    assert version == "2"
+    assert version == "1"
 
 
-def _test_post_dataset(test_client):
+def test_post_dataset(test_client):
     with open("test/integration/data/dataset.json") as dataset_json_file:
         dataset_json = json_load(dataset_json_file)
 
