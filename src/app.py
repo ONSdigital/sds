@@ -16,14 +16,15 @@ from constants import (
     DATASETS,
     SCHEMA_ID,
     SURVEY_ID,
+    DATASET_ID,
     CONTENT_TYPE
 )
 from paths import (
-    HEALTHCHECK_PATH,
     SCHEMA_PATH,
     DATASET_PATH,
     SCHEMAS_PATH,
-    DATASETS_PATH
+    DATASETS_PATH,
+    HEALTHCHECK_PATH
 )
 
 
@@ -98,14 +99,17 @@ async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...))
     return json
 
 
-# @app.post(DATASET_PATH)
-# async def post_dataset(payload: dict = Body(...)):
-#     dataset_id = str(uuid.uuid4())
-#
-#     for sup_data in payload["data"]:
-#         database.set_data(dataset_id, sup_data)
-#     database.set_dataset(dataset_id, payload)
-#     return {"dataset_id": dataset_id}
+@app.post(DATASET_PATH)
+async def post_dataset(payload: dict = Body(...)):
+    dataset_id = str(uuid.uuid4())
+
+    database.set_dataset(dataset_id, payload)
+
+    json = {
+        DATASET_ID: dataset_id
+    }
+
+    return json
 
 
 if __name__ == "__main__":
