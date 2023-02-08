@@ -4,13 +4,13 @@ from constants import (
     UNITS,
     UNIT_ID,
     SCHEMAS,
+    VERSION,
     DATASETS,
     VERSIONS,
     SCHEMA_ID,
     SURVEY_ID,
     DATASET_ID,
     DOUBLE_EQUALS,
-    LATEST_VERSION,
     DATASET_SCHEMAS,
     DATASET_SCHEMA_ID
 )
@@ -19,12 +19,6 @@ from constants import (
 schemas_collection = client.collection(SCHEMAS)
 
 datasets_collection = client.collection(DATASETS)
-
-
-def set_dataset(dataset_id, dataset):
-    dataset.pop(DATA)
-
-    datasets_collection.document(dataset_id).set(dataset)
 
 
 def set_data(dataset_id, data):
@@ -39,34 +33,46 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema(dataset_schema_id, survey_id, dataset_schema):
-    dataset_schema_versions = schemas_collection.document(dataset_schema_id)
+def set_schema(schema_id, survey_id, payload):
+    schemas_collection_document = schemas_collection.document(schema_id)
 
-    if not dataset_schema_versions.get().exists:
-        dataset_schema_versions.set({LATEST_VERSION: 1, SURVEY_ID: survey_id})
+    schema_result = schemas_collection_document.get()
 
-        latest_version = 1
+    if not schema_result.exists:
+        version = 1
+
+        schemas_collection_document.set({
+            SURVEY_ID: survey_id
+        })
 
     else:
-        latest_version = dataset_schema_versions.get().to_dict()[LATEST_VERSION]
+        schema = schema_result.to_dict()
 
-        latest_version += 1
+        version = schema[VERSION]
 
-    dataset_schema_versions.collection(VERSIONS).document(str(latest_version)).set(
-        dataset_schema
-    )
+        version += 1
 
-    dataset_schema_versions.update({LATEST_VERSION: latest_version})
+    schemas_collection_document.update({
+        VERSION: version
+    })
 
-    return latest_version
+    version = str(version)
+
+    return version
 
 
-def get_schema(dataset_schema_id, version):
-    version_string = str(version)
+def set_dataset(dataset_id, dataset):
+    dataset.pop(DATA)
 
-    schema = schemas_collection.document(dataset_schema_id) \
+    datasets_collection.document(dataset_id).set(dataset)
+
+
+def get_schema(schema_id, version):
+    schemas_collection_document = schemas_collection.document(schema_id)
+
+    schema = schemas_collection_document \
         .collection(VERSIONS) \
-        .document(version_string) \
+        .document(version) \
         .get() \
         .to_dict()
 
@@ -76,14 +82,12 @@ def get_schema(dataset_schema_id, version):
 def get_schemas(survey_id):
     schemas = []
 
-    schemas_result = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+    schema_results = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
 
-    for schema in schemas_result:
-        schema = schema.to_dict()
+    for schema_result in schema_results:
+        schema = schema_result.to_dict()
 
         schema.pop(SURVEY_ID)
-
-        schema[SCHEMA_ID] = schema.id
 
         schemas.append(schema)
 
@@ -93,14 +97,12 @@ def get_schemas(survey_id):
 def get_datasets(survey_id):
     datasets = []
 
-    datasets_result = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+    dataset_results = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
 
-    for dataset in datasets_result:
-        dataset = dataset.to_dict()
+    for dataset_result in dataset_results:
+        dataset = dataset_result.to_dict()
 
         dataset.pop(SURVEY_ID)
-
-        dataset[DATASET_ID] = dataset.id
 
         datasets.append(dataset)
 

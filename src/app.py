@@ -23,8 +23,7 @@ from paths import (
     SCHEMA_PATH,
     DATASET_PATH,
     SCHEMAS_PATH,
-    DATASETS_PATH,
-    UNIT_DATA_PATH
+    DATASETS_PATH
 )
 
 
@@ -50,7 +49,7 @@ async def get_healthcheck():
 
 
 @app.get(SCHEMA_PATH)
-async def get_schema(schema_id: str, version: int):
+async def get_schema(schema_id: str, version: str):
     schema = database.get_schema(schema_id, version)
 
     json = {
@@ -86,25 +85,27 @@ async def get_datasets(survey_id: str):
     return json
 
 
-@app.get(UNIT_DATA_PATH)
-async def get_unit_data(dataset_id: str, unit_id: str):
-    data = database.get_data(dataset_id=dataset_id, unit_id=unit_id)
-    return data
-
-
-@app.post(DATASET_PATH)
-async def post_dataset(payload: dict = Body(...)):
-    dataset_id = str(uuid.uuid4())
-    for sup_data in payload["data"]:
-        database.set_data(dataset_id, sup_data)
-    database.set_dataset(dataset_id, payload)
-    return {"dataset_id": dataset_id}
-
-
 @app.post(SCHEMA_PATH)
-async def post_dataset_schema(dataset_schema_id: str, survey_id: str, payload: dict = Body(...)):
-    version = database.set_schema(dataset_schema_id, survey_id, payload)
-    return {"dataset_schema_id": dataset_schema_id, "version": version}
+async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...)):
+    version = database.set_schema(schema_id, survey_id, payload)
+
+    json = {
+        VERSION: version,
+        SCHEMA_ID: schema_id,
+        SURVEY_ID: survey_id
+    }
+
+    return json
+
+
+# @app.post(DATASET_PATH)
+# async def post_dataset(payload: dict = Body(...)):
+#     dataset_id = str(uuid.uuid4())
+#
+#     for sup_data in payload["data"]:
+#         database.set_data(dataset_id, sup_data)
+#     database.set_dataset(dataset_id, payload)
+#     return {"dataset_id": dataset_id}
 
 
 if __name__ == "__main__":
