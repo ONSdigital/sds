@@ -31,6 +31,7 @@ def test_get_dataset_schema(client):
 
 
 def test_query_schemas(client, database):
+    get_schemas = database.get_schemas
     schema_meta_data = {
         "supplementary_dataset_schema": {
             "111-222-xxx-fff": {
@@ -46,6 +47,7 @@ def test_query_schemas(client, database):
     response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
     assert response.json() == schema_meta_data
+    database.get_schemas = get_schemas
 
 
 def test_get_datasets(client):
