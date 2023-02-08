@@ -30,10 +30,22 @@ def test_get_dataset_schema(client):
     assert response.status_code == 200
 
 
-def test_query_schemas(client):
+def test_query_schemas(client, database):
+    schema_meta_data = {
+        "supplementary_dataset_schema": {
+            "111-222-xxx-fff": {
+                "survey_id": "xxx",
+                "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
+                "sds_schema_version": 1,
+                "sds_published_at": "2023-02-06T13:33:44Z",
+            }
+        }
+    }
+    database.get_schemas = lambda _: schema_meta_data
     survey_id = "Survey 1"
     response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
+    assert response.json() == schema_meta_data
 
 
 def test_get_datasets(client):
