@@ -30,9 +30,9 @@ def test_get_dataset_schema(client):
     assert response.status_code == 200
 
 
-def test_get_dataset_schemas(client):
+def test_query_schemas(client):
     survey_id = "Survey 1"
-    response = client.get(f"/dataset_schemas?&survey_id={survey_id}")
+    response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
 
 
