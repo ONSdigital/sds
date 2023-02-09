@@ -2,12 +2,7 @@ from json import load as json_load, loads as json_loads
 from urllib import parse
 
 
-from paths import (
-    SCHEMA_PATH,
-    DATASET_PATH,
-    SCHEMAS_PATH,
-    DATASETS_PATH
-)
+from paths import SCHEMA_PATH, DATASET_PATH, SCHEMAS_PATH, DATASETS_PATH
 from constants import (
     SCHEMA,
     VERSION,
@@ -15,15 +10,12 @@ from constants import (
     DATASETS,
     SURVEY_ID,
     SCHEMA_ID,
-    DATASET_ID
+    DATASET_ID,
 )
-from database import (
-    set_schema,
-    delete_schema
-)
+from database import set_schema, delete_schema
 
 
-URL = u'{path}?{query_string}'
+URL = "{path}?{query_string}"
 
 
 def test_get_schema(test_client):
@@ -37,10 +29,7 @@ def test_get_schema(test_client):
 
     version = set_schema(schema_id, survey_id, payload)
 
-    parameters = {
-        VERSION: version,
-        SCHEMA_ID: schema_id
-    }
+    parameters = {VERSION: version, SCHEMA_ID: schema_id}
 
     path = SCHEMA_PATH
 
@@ -66,9 +55,7 @@ def test_get_schema(test_client):
 def test_get_schemas(test_client):
     survey_id = "test_get_schemas"
 
-    parameters = {
-        SURVEY_ID: survey_id
-    }
+    parameters = {SURVEY_ID: survey_id}
 
     path = SCHEMAS_PATH
 
@@ -96,9 +83,7 @@ def test_get_schemas(test_client):
 def test_get_datasets(test_client):
     survey_id = "test_get_datasets"
 
-    parameters = {
-        SURVEY_ID: survey_id
-    }
+    parameters = {SURVEY_ID: survey_id}
 
     path = DATASETS_PATH
 
@@ -133,10 +118,7 @@ def test_post_schema(test_client):
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
 
-    parameters = {
-        SURVEY_ID: survey_id,
-        SCHEMA_ID: schema_id
-    }
+    parameters = {SURVEY_ID: survey_id, SCHEMA_ID: schema_id}
 
     json = schema_json
 

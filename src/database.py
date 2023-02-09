@@ -1,10 +1,5 @@
 from client import client
-from constants import (
-    SCHEMAS,
-    VERSION,
-    DATASETS,
-    SURVEY_ID
-)
+from constants import SCHEMAS, VERSION, DATASETS, SURVEY_ID
 
 
 schemas_collection = client.collection(SCHEMAS)
@@ -27,15 +22,11 @@ def set_schema(schema_id, survey_id, payload):
         version += 1
 
     else:
-        schemas_collection_document.set({
-            SURVEY_ID: survey_id
-        })
+        schemas_collection_document.set({SURVEY_ID: survey_id})
 
         version = 1
 
-    schemas_collection_document.update({
-        VERSION: version
-    })
+    schemas_collection_document.update({VERSION: version})
 
     version = str(version)
 
@@ -82,7 +73,9 @@ def set_dataset(dataset_id, payload):
 def get_datasets(survey_id):
     datasets = []
 
-    dataset_results = datasets_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+    dataset_results = datasets_collection.where(
+        SURVEY_ID, DOUBLE_EQUALS, survey_id
+    ).stream()
 
     for dataset_result in dataset_results:
         dataset = dataset_result.to_dict()
