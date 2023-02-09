@@ -153,7 +153,7 @@ isort . --profile black
 
 To build and run on docker, run the following commands:
 
-```bash
+```
 docker-compose build
 docker-compose up
 ```
