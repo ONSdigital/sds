@@ -149,15 +149,6 @@ black .
 isort . --profile black
 ```
 
-## Building and running on Docker
-
-To build and run on docker, run the following commands:
-
-```
-docker-compose build
-docker-compose up
-```
-
 ## Running the integration tests
 
 Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
