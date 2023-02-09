@@ -72,9 +72,7 @@ def set_dataset(dataset_id, payload):
 def get_datasets(survey_id):
     datasets = []
 
-    dataset_results = datasets_collection.where(
-        SURVEY_ID, "==", survey_id
-    ).stream()
+    dataset_results = datasets_collection.where(SURVEY_ID, "==", survey_id).stream()
 
     for dataset_result in dataset_results:
         dataset = dataset_result.to_dict()
