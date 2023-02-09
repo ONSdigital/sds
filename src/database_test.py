@@ -27,8 +27,8 @@ def test_get_data(database):
     database.get_data(dataset_id="1", unit_id="1")
 
 
-def test_set_schema(database):
-    database.set_schema(dataset_schema_id="1", survey_id="1", dataset_schema={})
+def test_set_schema_metadata(database):
+    database.set_schema_metadata(survey_id="1", schema_location="/")
 
 
 def test_get_schema(database):

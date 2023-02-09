@@ -1,7 +1,12 @@
 import os
+import uuid
+from dataclasses import asdict
+from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+
+from models import SchemaMetadata
 
 cred_obj = firebase_admin.credentials.Certificate(
     os.environ.get("FIREBASE_KEYFILE_LOCATION")
@@ -10,6 +15,7 @@ default_app = firebase_admin.initialize_app(cred_obj)
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
+surveys_collection = db.collection("surveys")
 
 
 def set_dataset(dataset_id, dataset):
@@ -27,19 +33,22 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema(dataset_schema_id, survey_id, dataset_schema):
-    dataset_schema_versions = schemas_collection.document(dataset_schema_id)
-    if not dataset_schema_versions.get().exists:
-        dataset_schema_versions.set({"latest_version": 1, "survey_id": survey_id})
+def set_schema_metadata(survey_id, schema_location):
+    surveys = surveys_collection.document(survey_id)
+    if not surveys.get().exists:
+        surveys.set({"latest_schema_version": 1})
         latest_version = 1
     else:
-        latest_version = dataset_schema_versions.get().to_dict()["latest_version"]
+        latest_version = surveys.get().to_dict()["latest_schema_version"]
         latest_version += 1
-    dataset_schema_versions.collection("versions").document(str(latest_version)).set(
-        dataset_schema
+    guid = uuid.uuid4()
+    schema_meta_data = SchemaMetadata(
+        schema_location=schema_location,
+        sds_schema_version=latest_version,
+        survey_id=survey_id,
+        sds_published_at=str(datetime.now()),
     )
-    dataset_schema_versions.update({"latest_version": latest_version})
-    return latest_version
+    schemas_collection.document(guid).set(asdict(schema_meta_data))
 
 
 def get_schema(dataset_schema_id, version):
@@ -53,14 +62,12 @@ def get_schema(dataset_schema_id, version):
 
 
 def get_schemas(survey_id):
-    dataset_schemas = []
+    dataset_schemas = {}
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
     for schema in schemas_result:
         return_schema = schema.to_dict()
-        return_schema.pop("survey_id")
-        return_schema["dataset_schema_id"] = schema.id
-        dataset_schemas.append(return_schema)
-    return {"survey_id": survey_id, "dataset_schemas": dataset_schemas}
+        dataset_schemas[schema.id] = return_schema
+    return {"supplementary_dataset_schema": dataset_schemas}
 
 
 def get_datasets(survey_id):
