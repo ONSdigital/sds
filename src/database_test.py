@@ -1,3 +1,20 @@
+from unittest.mock import MagicMock
+
+import firebase_admin
+import pytest
+from firebase_admin import firestore
+
+
+@pytest.fixture
+def database(monkeypatch):
+    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
+    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
+    monkeypatch.setattr(firestore, "client", MagicMock())
+    import database
+
+    yield database
+
+
 def test_set_dataset(database):
     database.set_dataset(dataset_id="1", dataset={"data": {}})
 

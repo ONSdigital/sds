@@ -2,9 +2,9 @@ import logging
 import uuid
 
 from fastapi import Body, FastAPI
-from pydantic import BaseModel
 
 import database
+from models import Schemas
 
 logging.basicConfig(level=logging.INFO)
 
@@ -45,20 +45,9 @@ async def retrieve_schema(dataset_schema_id: str, version: int):
     return data
 
 
-class SchemaMetadata(BaseModel):
-    survey_id: str
-    schema_location: str
-    sds_schema_version: int
-    sds_published_at: str
-
-
-class Schemas(BaseModel):
-    supplementary_dataset_schema: dict[str, SchemaMetadata]
-
-
 @app.get("/v1/schema_metadata", response_model=Schemas)
 async def query_schemas(survey_id: str) -> dict:
-    """Retrieve the schemas metadata, given the survey_id."""
+    """Retrieve the metadata for all the schemas that have a given survey_id."""
     data = database.get_schemas(survey_id)
     return data
 

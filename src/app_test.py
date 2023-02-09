@@ -1,3 +1,29 @@
+from unittest.mock import MagicMock
+
+import firebase_admin
+import pytest
+from fastapi.testclient import TestClient
+from firebase_admin import firestore
+
+
+@pytest.fixture
+def database():
+    database = MagicMock()
+    yield database
+
+
+@pytest.fixture
+def client(database, monkeypatch):
+    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
+    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
+    monkeypatch.setattr(firestore, "client", MagicMock())
+    import app
+
+    app.database = database
+    client = TestClient(app.app)
+    yield client
+
+
 def test_post_dataset(client):
     response = client.post("/dataset", json={"data": {}})
     dataset_id = response.json()["dataset_id"]
@@ -42,7 +68,7 @@ def test_query_schemas(client, database):
             }
         }
     }
-    database.get_schemas = lambda _: schema_meta_data
+    database.get_schemas.return_value = schema_meta_data
     survey_id = "Survey 1"
     response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
