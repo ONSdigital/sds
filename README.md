@@ -131,17 +131,7 @@ python src/app.py PYTHONPATH=src
 
 ## Linting locally
 
-With the virtual environment activated, run the following commands to check:
-
-```
-black . --check
-isort . --check-only --profile black
-export PYTHONPATH=src
-pytest --cov=src src
-coverage report --fail-under=90
-```
-
-To correct any problems that `isort` or `black` complain about, run the following:
+With the virtual environment activated, run the following commands:
 
 ```
 black .
@@ -149,40 +139,19 @@ isort . --profile black
 flake8 src test --max-line-length=127
 ```
 
-## Running linting and unit tests locally
-
-To run all the checks that run as part of the CI, run the following commands:
-
-```
-black . --check
-isort . --check-only --profile black
-flake8 src integration_tests --max-line-length=127
-export PYTHONPATH=src
-pytest --cov=src src
-coverage report --fail-under=90
-```
-
-To correct any problems that `isort` or `black` complain about, run the following:
-
-```
-black .
-isort . --profile black
-```
-
 ## Running the integration tests
 
 Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
 
 ```
-pytest test/integration PYTHONPATH=src
+pytest test/integration
+coverage report --fail-under=90
 ```
 
-## OpenAPI Specification
+## API documentation
 
-As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
-can be reached by going to the following URLs (once running):
+This is auto-generated from the Python code and can be viewed when the application is running at the following URL:
 
-* http://localhost:8000/openapi.json
 * http://localhost:8000/docs
 
 # Contact
