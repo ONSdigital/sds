@@ -4,7 +4,7 @@ More information on this service can be found on Confluence:
 
 * https://confluence.ons.gov.uk/display/SDC/SDS
 
-## Running locally
+## Running and developing locally
 
 To run this service locally, you will need the following:
 
@@ -105,13 +105,7 @@ cp google_application_credentials.json firebase_key.json
 ```
 ...and make sure the `FIREBASE_KEYFILE_LOCATION` environment variable is set to point to that file.
 
-### Connecting to a remote Firebase instance
-
-In order to create the requisite credentials, see here:
-
-* https://www.youtube.com/watch?v=MU7O6emzAc0
-
-### Running uvicorn
+### Running the application
 
 Assuming the above steps have been completed, the server can be run with the following command:
 
@@ -129,7 +123,7 @@ If running Uvicorn directly means that your debugger will not work, you can run 
 python src/app.py PYTHONPATH=src
 ```
 
-### Linting locally
+### Linting, etc
 
 With the virtual environment activated, run the following commands:
 
@@ -139,7 +133,7 @@ isort . --profile black
 flake8 src test --max-line-length=127
 ```
 
-### Running the integration tests
+### Integration tests
 
 Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
 
