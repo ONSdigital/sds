@@ -3,8 +3,7 @@ from constants import (
     SCHEMAS,
     VERSION,
     DATASETS,
-    SURVEY_ID,
-    DOUBLE_EQUALS
+    SURVEY_ID
 )
 
 
@@ -56,7 +55,7 @@ def get_schema(schema_id, version):
 def get_schemas(survey_id):
     schemas = []
 
-    schema_results = schemas_collection.where(SURVEY_ID, DOUBLE_EQUALS, survey_id).stream()
+    schema_results = schemas_collection.where(SURVEY_ID, "==", survey_id).stream()
 
     for schema_result in schema_results:
         schema = schema_result.to_dict()
