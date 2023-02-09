@@ -158,6 +158,14 @@ docker-compose build
 docker-compose up
 ```
 
+## Running the integration tests
+
+Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
+
+```
+pytest test/integration PYTHONPATH=src
+```
+
 ## OpenAPI Specification
 
 As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
@@ -165,22 +173,6 @@ can be reached by going to the following URLs (once running):
 
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
-
-## Running the integration tests
-
-The integration tests can be run locally but don't currently work on a CI environment. Unlike the unit tests,
-the integration tests require credentials to connect to a Firestore database. In the future, communicating with a 
-real Cloud Firestore database could be replaced with https://cloud.google.com/firestore/docs/emulator for integration
-testing purposes, which may also then open the possibility of running the integration tests in CI or folding them
-into the unit test suit.
-
-To run the integration tests, ensure you have a Firebase key file and then do the following:
-
-```
-cd integration_tests
-export PYTHONPATH=../src
-pytest
-```
 
 # Contact
 
