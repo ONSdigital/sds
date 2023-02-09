@@ -34,6 +34,12 @@ def get_data(dataset_id, unit_id):
 
 
 def set_schema_metadata(survey_id, schema_location):
+    """
+    Takes the survey_id and schema_location (assumed to be in a bucket),
+    and creates the metadata and stores it in Firebase. The latest version
+    is kept track of in a separate collection using the survey_id as the
+    key. This version is incremented and added to the meta-data.
+    """
     surveys = surveys_collection.document(survey_id)
     if not surveys.get().exists:
         surveys.set({"latest_schema_version": 1})
