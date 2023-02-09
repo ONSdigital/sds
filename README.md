@@ -129,7 +129,7 @@ If running Uvicorn directly means that your debugger will not work, you can run 
 python src/app.py PYTHONPATH=src
 ```
 
-## Linting locally
+### Linting locally
 
 With the virtual environment activated, run the following commands:
 
@@ -139,7 +139,7 @@ isort . --profile black
 flake8 src test --max-line-length=127
 ```
 
-## Running the integration tests
+### Running the integration tests
 
 Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
 
