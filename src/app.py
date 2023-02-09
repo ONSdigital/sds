@@ -1,32 +1,29 @@
 import logging
 import uuid
-import uvicorn
 
+import uvicorn
 from fastapi import Body, FastAPI, Response
 
-
 import database
-
-from content_types import TEXT_PLAIN_CONTENT_TYPE
 from constants import (
+    CONTENT_TYPE,
+    DATASET_ID,
+    DATASETS,
     OK,
     SCHEMA,
-    SCHEMAS,
-    VERSION,
-    DATASETS,
     SCHEMA_ID,
+    SCHEMAS,
     SURVEY_ID,
-    DATASET_ID,
-    CONTENT_TYPE,
+    VERSION,
 )
+from content_types import TEXT_PLAIN_CONTENT_TYPE
 from paths import (
-    SCHEMA_PATH,
     DATASET_PATH,
-    SCHEMAS_PATH,
     DATASETS_PATH,
     HEALTHCHECK_PATH,
+    SCHEMA_PATH,
+    SCHEMAS_PATH,
 )
-
 
 level = logging.INFO
 

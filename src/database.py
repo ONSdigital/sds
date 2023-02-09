@@ -1,6 +1,5 @@
 from client import client
-from constants import SCHEMAS, VERSION, DATASETS, SURVEY_ID
-
+from constants import DATASETS, SCHEMAS, SURVEY_ID, VERSION
 
 schemas_collection = client.collection(SCHEMAS)
 

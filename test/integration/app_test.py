@@ -1,19 +1,18 @@
-from json import load as json_load, loads as json_loads
+from json import load as json_load
+from json import loads as json_loads
 from urllib import parse
 
-
-from paths import SCHEMA_PATH, DATASET_PATH, SCHEMAS_PATH, DATASETS_PATH
 from constants import (
-    SCHEMA,
-    VERSION,
-    SCHEMAS,
-    DATASETS,
-    SURVEY_ID,
-    SCHEMA_ID,
     DATASET_ID,
+    DATASETS,
+    SCHEMA,
+    SCHEMA_ID,
+    SCHEMAS,
+    SURVEY_ID,
+    VERSION,
 )
-from database import set_schema, delete_schema
-
+from database import delete_schema, set_schema
+from paths import DATASET_PATH, DATASETS_PATH, SCHEMA_PATH, SCHEMAS_PATH
 
 URL = "{path}?{query_string}"
 
