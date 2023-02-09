@@ -41,7 +41,8 @@ def set_schema_metadata(survey_id, schema_location):
     else:
         latest_version = surveys.get().to_dict()["latest_schema_version"]
         latest_version += 1
-    guid = uuid.uuid4()
+    surveys.update({"latest_schema_version": latest_version})
+    guid = str(uuid.uuid4())
     schema_meta_data = SchemaMetadata(
         schema_location=schema_location,
         sds_schema_version=latest_version,

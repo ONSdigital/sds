@@ -26,19 +26,17 @@ def test_dataset(client):
     }
 
 
-def test_dataset_schema(client):
-    with open("data/schema.json") as f:
-        schema = json.load(f)
-    dataset_schema_id = "sppi_dataset_schema"
-    survey_id = "Survey 1"
-    response = client.post(
-        f"/dataset_schema?dataset_schema_id={dataset_schema_id}&survey_id={survey_id}",
-        json=schema,
-    )
-    version = response.json()["version"]
+def test_get_schema_metadata(client, database):
+    survey_id = "xyz"
+    schema_location = "/home_of_schema"
+    database.set_schema_metadata(survey_id=survey_id, schema_location=schema_location)
+    response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
-    response = client.get(
-        f"/dataset_schema?dataset_schema_id={dataset_schema_id}&version={version}"
-    )
-    assert response.status_code == 200
-    assert response.json() == schema
+    json_response = response.json()
+    for schema in json_response["supplementary_dataset_schema"].values():
+        assert schema == {
+            "survey_id": survey_id,
+            "schema_location": schema_location,
+            "sds_schema_version": schema["sds_schema_version"],
+            "sds_published_at": schema["sds_published_at"],
+        }
