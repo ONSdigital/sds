@@ -73,7 +73,7 @@ def get_datasets(survey_id):
     datasets = []
 
     dataset_results = datasets_collection.where(
-        SURVEY_ID, DOUBLE_EQUALS, survey_id
+        SURVEY_ID, "==", survey_id
     ).stream()
 
     for dataset_result in dataset_results:

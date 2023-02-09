@@ -129,6 +129,26 @@ If running Uvicorn directly means that your debugger will not work, you can run 
 python src/app.py PYTHONPATH=src
 ```
 
+## Linting locally
+
+With the virtual environment activated, run the following commands to check:
+
+```
+black . --check
+isort . --check-only --profile black
+export PYTHONPATH=src
+pytest --cov=src src
+coverage report --fail-under=90
+```
+
+To correct any problems that `isort` or `black` complain about, run the following:
+
+```
+black .
+isort . --profile black
+flake8 src test --max-line-length=127
+```
+
 ## Running linting and unit tests locally
 
 To run all the checks that run as part of the CI, run the following commands:
