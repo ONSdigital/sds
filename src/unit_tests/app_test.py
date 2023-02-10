@@ -57,6 +57,13 @@ def test_get_dataset_schema(client):
 
 
 def test_query_schemas(client, database):
+    """
+    Checks that query_schemas calls the get_schemas function in
+    the database module and returns the returned dictionary.
+    Furthermore, it checks that the FAST API response model
+    is set up properly, as it should only allow through a valid schema_meta_data
+    structure (like the example below).
+    """
     get_schemas = database.get_schemas
     schema_meta_data = {
         "supplementary_dataset_schema": {

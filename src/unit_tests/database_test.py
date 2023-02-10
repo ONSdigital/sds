@@ -36,6 +36,11 @@ def test_get_schema(database):
 
 
 def test_get_schemas(database):
+    """
+    Mocks out the imports that talk to Firestore. This test will emulate that Firestore
+    has returned a list of schemas and show that the get_schemas function has formulated
+    them correctly into the expected structure.
+    """
     expected_schema = {
         "survey_id": "xxx",
         "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
