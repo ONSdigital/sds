@@ -1,6 +1,6 @@
 name: Lint and tests
 
-on: [ push, pull_request ]
+on: [ push ]
 
 jobs:
   build:
@@ -20,11 +20,11 @@ jobs:
           pip install -r requirements.txt
       - name: Lint
         run: |
-          export PYTHONPATH=src/app
           black src --check
           isort src --check-only --profile black
           flake8 src  --max-line-length=127
       - name: Test with pytest
-        run: |
+        run: |          
+          export PYTHONPATH=src/app
           pytest --cov=src/app src/unit_tests
           coverage report --fail-under=90
