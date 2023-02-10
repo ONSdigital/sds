@@ -31,3 +31,5 @@ LATEST_VERSION = "latest_version"
 DATASET_SCHEMAS = "dataset_schemas"
 
 DATASET_SCHEMA_ID = "dataset_schema_id"
+
+DATETIME_PUBLISHED = "datetime_published"

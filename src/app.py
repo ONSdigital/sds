@@ -2,6 +2,7 @@ import logging
 import uuid
 
 import uvicorn
+from datetime import datetime
 from fastapi import Body, FastAPI, Response
 
 import database
@@ -14,6 +15,7 @@ from constants import (
     SCHEMA_ID,
     SCHEMAS,
     SURVEY_ID,
+    DATETIME_PUBLISHED,
     VERSION,
 )
 from content_types import TEXT_PLAIN_CONTENT_TYPE
@@ -80,7 +82,9 @@ async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...))
     """Post a schema given an identifier and survey identifier."""
     version = database.set_schema(schema_id, survey_id, payload)
 
-    json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id}
+    datetime_published = datetime.now()
+
+    json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id, DATETIME_PUBLISHED: datetime_published}
 
     return json
 
@@ -92,7 +96,9 @@ async def post_dataset(payload: dict = Body(...)):
 
     database.set_dataset(dataset_id, payload)
 
-    json = {DATASET_ID: dataset_id}
+    datetime_published = datetime.now()
+
+    json = {DATASET_ID: dataset_id, DATETIME_PUBLISHED: datetime_published}
 
     return json
 
