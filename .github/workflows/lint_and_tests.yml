@@ -24,7 +24,7 @@ jobs:
           isort src --check-only --profile black
           flake8 src  --max-line-length=127
       - name: Test with pytest
-        run: |          
+        run: |
           export PYTHONPATH=src/app
           pytest --cov=src/app src/unit_tests
           coverage report --fail-under=90
