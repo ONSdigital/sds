@@ -28,7 +28,22 @@ def test_get_data(database):
 
 
 def test_set_schema_metadata(database):
+    """
+    Checks that set_schema_metadata accepts the survey_id and schema_location and stores them in
+    a schema_meta_data object. Also checks that it generates a version number is which an increment
+    of 1 over the highest version number of the schema with a matching survey_id.
+    """
+    database.schemas_collection.where().order_by().limit().stream().__next__().to_dict.return_value = {
+        "sds_schema_version": 25
+    }
     database.set_schema_metadata(survey_id="1", schema_location="/")
+    schema_meta_data = database.schemas_collection.document().set.call_args[0][0]
+    assert schema_meta_data == {
+        "survey_id": "1",
+        "schema_location": "/",
+        "sds_schema_version": 26,
+        "sds_published_at": schema_meta_data["sds_published_at"],
+    }
 
 
 def test_get_schema(database):
