@@ -3,11 +3,11 @@ import uuid
 
 import uvicorn
 from datetime import datetime
-from fastapi import Body, FastAPI, Response
+from fastapi import Body, FastAPI
 
 import database
+from utilities.response import json_response, plain_response
 from constants import (
-    CONTENT_TYPE,
     DATASET_ID,
     DATASETS,
     OK,
@@ -18,7 +18,6 @@ from constants import (
     DATETIME_PUBLISHED,
     VERSION,
 )
-from content_types import TEXT_PLAIN_CONTENT_TYPE
 from paths import (
     DATASET_PATH,
     DATASETS_PATH,
@@ -38,11 +37,9 @@ app = FastAPI()
 @app.get(HEALTHCHECK_PATH)
 async def get_healthcheck():
     """The healthcheck path."""
-    content = OK
+    text = OK
 
-    headers = {CONTENT_TYPE: TEXT_PLAIN_CONTENT_TYPE}
-
-    response = Response(content=content, headers=headers)
+    response = plain_response(text)
 
     return response
 
@@ -54,7 +51,9 @@ async def get_schema(schema_id: str, version: str):
 
     json = {SCHEMA: schema, VERSION: version, SCHEMA_ID: schema_id}
 
-    return json
+    response = json_response(json)
+
+    return response
 
 
 @app.get(SCHEMAS_PATH)
@@ -64,7 +63,9 @@ async def get_schemas(survey_id: str):
 
     json = {SCHEMAS: schemas, SURVEY_ID: survey_id}
 
-    return json
+    response = json_response(json)
+
+    return response
 
 
 @app.get(DATASETS_PATH)
@@ -74,19 +75,23 @@ async def get_datasets(survey_id: str):
 
     json = {DATASETS: datasets, SURVEY_ID: survey_id}
 
-    return json
+    response = json_response(json)
+
+    return response
 
 
 @app.post(SCHEMA_PATH)
 async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...)):
     """Post a schema given an identifier and survey identifier."""
-    version = database.set_schema(schema_id, survey_id, payload)
+    datetime_published = str(datetime.now())
 
-    datetime_published = datetime.now()
+    version = database.set_schema(schema_id, survey_id, payload)
 
     json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id, DATETIME_PUBLISHED: datetime_published}
 
-    return json
+    response = json_response(json)
+
+    return response
 
 
 @app.post(DATASET_PATH)
@@ -94,13 +99,15 @@ async def post_dataset(payload: dict = Body(...)):
     """Post a dataset."""
     dataset_id = str(uuid.uuid4())
 
-    database.set_dataset(dataset_id, payload)
+    datetime_published = str(datetime.now())
 
-    datetime_published = datetime.now()
+    database.set_dataset(dataset_id, payload)
 
     json = {DATASET_ID: dataset_id, DATETIME_PUBLISHED: datetime_published}
 
-    return json
+    response = json_response(json)
+
+    return response
 
 
 if __name__ == "__main__":
