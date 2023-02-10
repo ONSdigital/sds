@@ -36,7 +36,17 @@ def test_get_schema(database):
 
 
 def test_get_schemas(database):
-    database.get_schemas(survey_id="1")
+    survey_id = "xyz"
+    schema_location = "/home_of_schema"
+    schemas = database.get_schemas(survey_id="1")
+    assert len(schemas["supplementary_dataset_schema"]) > 0
+    for schema in schemas["supplementary_dataset_schema"].values():
+        assert schema == {
+            "survey_id": survey_id,
+            "schema_location": schema_location,
+            "sds_schema_version": schema["sds_schema_version"],
+            "sds_published_at": schema["sds_published_at"],
+        }
 
 
 def test_get_datasets(database):

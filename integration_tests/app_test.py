@@ -33,6 +33,7 @@ def test_get_schema_metadata(client, database):
     response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
     assert response.status_code == 200
     json_response = response.json()
+    assert len(json_response["supplementary_dataset_schema"]) > 0
     for schema in json_response["supplementary_dataset_schema"].values():
         assert schema == {
             "survey_id": survey_id,
