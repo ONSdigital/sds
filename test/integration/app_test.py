@@ -11,7 +11,7 @@ from constants import (
     SURVEY_ID,
     VERSION,
 )
-from status_codes import OK_STATUS_CODE, UNPROCESSABLE_ENTITY
+from status_codes import OK_STATUS_CODE, UNPROCESSABLE_ENTITY_STATUS_CODE
 from database import delete_schema, set_schema
 from paths import DATASET_PATH, DATASETS_PATH, SCHEMA_PATH, SCHEMAS_PATH
 
@@ -119,15 +119,16 @@ def test_post_schema(test_client):
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
 
-    parameters = {SURVEY_ID: survey_id, SCHEMA_ID: schema_id}
-
-    json = schema_json
+    schema_json.update({
+        SURVEY_ID: survey_id,
+        SCHEMA_ID: schema_id
+    })
 
     path = SCHEMA_PATH
 
-    query_string = parse.urlencode(parameters)
+    url = path
 
-    url = URL.format(path=path, query_string=query_string)
+    json = schema_json
 
     response = test_client.post(url, json=json)
 
@@ -148,15 +149,11 @@ def test_post_dataset(test_client):
     with open("test/integration/data/dataset.json") as dataset_json_file:
         dataset_json = json_load(dataset_json_file)
 
-    parameters = {}
-
     json = dataset_json
 
     path = DATASET_PATH
 
-    query_string = parse.urlencode(parameters)
-
-    url = URL.format(path=path, query_string=query_string)
+    url = path
 
     response = test_client.post(url, json=json)
 
@@ -188,7 +185,7 @@ def test_get_schema_no_version(test_client):
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE
 
 
 def test_get_schema_no_schema_id(test_client):
@@ -206,7 +203,7 @@ def test_get_schema_no_schema_id(test_client):
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE
 
 
 def test_get_schemas_no_survey_id(test_client):
@@ -222,7 +219,7 @@ def test_get_schemas_no_survey_id(test_client):
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE
 
 
 def test_get_datasets_no_survey_id(test_client):
@@ -238,44 +235,56 @@ def test_get_datasets_no_survey_id(test_client):
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE
 
 
 def test_post_schema_no_schema_id(test_client):
     survey_id = "test_post_schema"
 
-    parameters = {SURVEY_ID: survey_id}
+    schema_id = "0"
 
-    json = {}
+    delete_schema(schema_id)
+
+    with open("test/integration/data/schema.json") as schema_json_file:
+        schema_json = json_load(schema_json_file)
+
+    schema_json.update({
+        SURVEY_ID: survey_id
+    })
 
     path = SCHEMA_PATH
 
-    query_string = parse.urlencode(parameters)
+    url = path
 
-    url = URL.format(path=path, query_string=query_string)
+    json = schema_json
 
     response = test_client.post(url, json=json)
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE
 
 
 def test_post_schema_no_survey_id(test_client):
     schema_id = "0"
 
-    parameters = {SCHEMA_ID: schema_id}
+    delete_schema(schema_id)
 
-    json = {}
+    with open("test/integration/data/schema.json") as schema_json_file:
+        schema_json = json_load(schema_json_file)
+
+    schema_json.update({
+        SCHEMA_ID: schema_id
+    })
 
     path = SCHEMA_PATH
 
-    query_string = parse.urlencode(parameters)
+    url = path
 
-    url = URL.format(path=path, query_string=query_string)
+    json = schema_json
 
     response = test_client.post(url, json=json)
 
     status_code = response.status_code
 
-    assert status_code == UNPROCESSABLE_ENTITY
+    assert status_code == UNPROCESSABLE_ENTITY_STATUS_CODE

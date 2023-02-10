@@ -1,12 +1,16 @@
 import logging
-import uuid
-
 import uvicorn
-from datetime import datetime
+
 from fastapi import Body, FastAPI
 
 import database
+from status_codes import UNPROCESSABLE_ENTITY_STATUS_CODE
+from utilities.publish import get_dataset_id, get_datetime_published
 from utilities.response import json_response, plain_response
+from errors import (
+    MISSING_SCHEMA_ID_ERROR,
+    MISSING_SURVEY_ID_ERROR,
+)
 from constants import (
     DATASET_ID,
     DATASETS,
@@ -81,15 +85,37 @@ async def get_datasets(survey_id: str):
 
 
 @app.post(SCHEMA_PATH)
-async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...)):
+async def post_schema(payload: dict = Body(...)):
     """Post a schema given an identifier and survey identifier."""
-    datetime_published = str(datetime.now())
+    if False:
+        pass
 
-    version = database.set_schema(schema_id, survey_id, payload)
+    elif SCHEMA_ID not in payload:
+        text = MISSING_SCHEMA_ID_ERROR
 
-    json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id, DATETIME_PUBLISHED: datetime_published}
+        status_code = UNPROCESSABLE_ENTITY_STATUS_CODE
 
-    response = json_response(json)
+        response = plain_response(text, status_code)
+
+    elif SURVEY_ID not in payload:
+        text = MISSING_SURVEY_ID_ERROR
+
+        status_code = UNPROCESSABLE_ENTITY_STATUS_CODE
+
+        response = plain_response(text, status_code)
+
+    else:
+        schema_id = payload[SCHEMA_ID]
+
+        survey_id = payload[SURVEY_ID]
+
+        datetime_published = get_datetime_published()
+
+        version = database.set_schema(schema_id, survey_id, payload)
+
+        json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id, DATETIME_PUBLISHED: datetime_published}
+
+        response = json_response(json)
 
     return response
 
@@ -97,9 +123,9 @@ async def post_schema(schema_id: str, survey_id: str, payload: dict = Body(...))
 @app.post(DATASET_PATH)
 async def post_dataset(payload: dict = Body(...)):
     """Post a dataset."""
-    dataset_id = str(uuid.uuid4())
+    dataset_id = get_dataset_id()
 
-    datetime_published = str(datetime.now())
+    datetime_published = get_datetime_published()
 
     database.set_dataset(dataset_id, payload)
 
