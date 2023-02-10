@@ -118,9 +118,9 @@ To run all the checks that run as part of the CI, run the following commands:
 ```
 black . --check
 isort . --check-only --profile black
-flake8 src integration_tests --max-line-length=127
-export PYTHONPATH=src
-pytest --cov=src src
+flake8 src --max-line-length=127
+export PYTHONPATH=src/app
+pytest --cov=src/app src/unit_tests
 coverage report --fail-under=90
 ```
 
@@ -159,8 +159,8 @@ into the unit test suit.
 To run the integration tests, ensure you have a Firebase key file and then do the following:
 
 ```
-cd integration_tests
-export PYTHONPATH=../src
+cd src/integration_tests
+export PYTHONPATH=../app
 pytest
 ```
 

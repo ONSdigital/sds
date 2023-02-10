@@ -21,10 +21,10 @@ jobs:
       - name: Lint
         run: |
           export PYTHONPATH=src
-          black . --check
-          isort . --check-only --profile black
-          flake8 .  --max-line-length=127
+          black src --check
+          isort src --check-only --profile black
+          flake8 src  --max-line-length=127
       - name: Test with pytest
         run: |
-          pytest --cov=src src
+          pytest --cov=src/app src/unit_tests
           coverage report --fail-under=90

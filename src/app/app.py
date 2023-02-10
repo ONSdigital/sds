@@ -1,9 +1,8 @@
 import logging
 import uuid
 
-from fastapi import Body, FastAPI
-
 import database
+from fastapi import Body, FastAPI
 from models import Schemas
 
 logging.basicConfig(level=logging.INFO)

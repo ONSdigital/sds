@@ -6,19 +6,19 @@ steps:
   - name: python
     id: "black"
     entrypoint: python
-    args: ["-m", "black", ".", "--check"]
+    args: ["-m", "black", "src", "--check"]
   - name: python
     id: "isort"
     entrypoint: python
-    args: ["-m", "isort", ".", "--check-only",  "--profile", "black"]
+    args: ["-m", "isort", "src", "--check-only",  "--profile", "black"]
   - name: python
     id: "flake8"
     entrypoint: python
-    args: ["-m", "flake8", ".", "--max-line-length=127"]
+    args: ["-m", "flake8", "src", "--max-line-length=127"]
   - name: python
     id: "pytest"
     entrypoint: python
-    args: ["-m", "pytest", "--cov=src", "src"]
+    args: ["-m", "pytest", "--cov=src/app", "src/unit_tests"]
   - name: python
     id: "coverage"
     entrypoint: python

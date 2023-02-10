@@ -5,7 +5,6 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-
 from models import SchemaMetadata
 
 cred_obj = firebase_admin.credentials.Certificate(
