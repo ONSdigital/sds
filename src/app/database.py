@@ -14,7 +14,6 @@ default_app = firebase_admin.initialize_app(cred_obj)
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
-surveys_collection = db.collection("surveys")
 
 
 def set_dataset(dataset_id, dataset):
@@ -36,17 +35,19 @@ def set_schema_metadata(survey_id, schema_location):
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
     and creates the metadata and stores it in Firebase. The latest version
-    is kept track of in a separate collection using the survey_id as the
-    key. This version is incremented and added to the meta-data.
+    is acquired through querying the collection.
+    This version is incremented and added to the meta-data.
     """
-    surveys = surveys_collection.document(survey_id)
-    if not surveys.get().exists:
-        surveys.set({"latest_schema_version": 1})
+    schemas_result = (
+        schemas_collection.where("survey_id", "==", survey_id)
+        .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+        .limit(1)
+        .stream()
+    )
+    try:
+        latest_version = next(schemas_result).to_dict()["sds_schema_version"] + 1
+    except StopIteration:
         latest_version = 1
-    else:
-        latest_version = surveys.get().to_dict()["latest_schema_version"]
-        latest_version += 1
-    surveys.update({"latest_schema_version": latest_version})
     guid = str(uuid.uuid4())
     schema_meta_data = SchemaMetadata(
         schema_location=schema_location,
