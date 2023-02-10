@@ -1,11 +1,11 @@
-HEALTHCHECK_PATH = "/healthcheck"
+VERSION_PREFEX = "/V1/"
 
-SCHEMA_PATH = "/schema"
+HEALTHCHECK_PATH = f"{VERSION_PREFEX}/healthcheck"
 
-DATASET_PATH = "/dataset"
+SCHEMA_PATH = f"{VERSION_PREFEX}/schema"
 
-SCHEMAS_PATH = "/schemas"
+DATASET_PATH = f"{VERSION_PREFEX}/dataset"
 
-DATASETS_PATH = "/datasets"
+SCHEMAS_PATH = f"{VERSION_PREFEX}/schemas"
 
-UNIT_DATA_PATH = "/unit_data"
+DATASETS_PATH = f"{VERSION_PREFEX}/datasets"
