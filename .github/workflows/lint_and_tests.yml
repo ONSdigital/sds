@@ -32,12 +32,11 @@ jobs:
 #          pytest --cov=src src
 #          coverage report --fail-under=90
       - name: Integration tests
-      - uses: actions/checkout@v3
-        env:
-          PYTHONPATH: src
-          FIRESTORE_EMULATOR_HOST: localhost:8200
-          FIRESTORE_PROJECT_ID: localhost
-          GOOGLE_APPLICATION_CREDENTIALS: google_application_credentials.json
-          FIREBASE_KEYFILE_LOCATION: firebase_key.json
+        uses: actions/checkout@v3
         run: |
+          export PYTHONPATH=src
+          export FIRESTORE_EMULATOR_HOST=localhost:8200
+          export FIRESTORE_PROJECT_ID=localhost
+          export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
+          export FIREBASE_KEYFILE_LOCATION=firebase_key.json
           pytest test/integration
