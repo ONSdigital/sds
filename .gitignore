@@ -1,5 +1,4 @@
 .idea
-firebase_key*.json
 .coverage
 .venv
 venv
