@@ -14,9 +14,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Stand up Firestore container
-        run: |
-          docker-compose up -d firestore
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -27,11 +24,9 @@ jobs:
           black . --check
           isort . --check-only --profile black
           flake8 .  --max-line-length=127
-#      - name: Unit tests
-#        run: |
-#          export PYTHONPATH=src
-#          pytest test/unit --cov=src
-#          coverage report --fail-under=90
+      - name: Stand up Firestore container
+        run: |
+          docker-compose up -d firestore
       - name: Integration tests
         run: |
           export PYTHONPATH=src
@@ -40,3 +35,8 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
           export FIREBASE_KEYFILE_LOCATION=firebase_key.json
           pytest test/integration
+#      - name: Unit tests
+#        run: |
+#          export PYTHONPATH=src
+#          pytest test/unit --cov=src
+#          coverage report --fail-under=90
