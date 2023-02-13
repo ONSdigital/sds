@@ -12,6 +12,8 @@ if os.environ.get("FIREBASE_KEYFILE_LOCATION"):
         os.environ.get("FIREBASE_KEYFILE_LOCATION")
     )
     firebase_admin.initialize_app(cred_obj)
+else:
+    firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
