@@ -1,7 +1,11 @@
 import os
+import uuid
+from dataclasses import asdict
+from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+from models import SchemaMetadata
 
 cred_obj = firebase_admin.credentials.Certificate(
     os.environ.get("FIREBASE_KEYFILE_LOCATION")
@@ -27,19 +31,31 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema(dataset_schema_id, survey_id, dataset_schema):
-    dataset_schema_versions = schemas_collection.document(dataset_schema_id)
-    if not dataset_schema_versions.get().exists:
-        dataset_schema_versions.set({"latest_version": 1, "survey_id": survey_id})
-        latest_version = 1
-    else:
-        latest_version = dataset_schema_versions.get().to_dict()["latest_version"]
-        latest_version += 1
-    dataset_schema_versions.collection("versions").document(str(latest_version)).set(
-        dataset_schema
+def set_schema_metadata(survey_id, schema_location):
+    """
+    Takes the survey_id and schema_location (assumed to be in a bucket),
+    and creates the metadata and stores it in Firebase. The latest version
+    is acquired through querying the collection.
+    This version is incremented and added to the meta-data.
+    """
+    schemas_result = (
+        schemas_collection.where("survey_id", "==", survey_id)
+        .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+        .limit(1)
+        .stream()
     )
-    dataset_schema_versions.update({"latest_version": latest_version})
-    return latest_version
+    try:
+        latest_version = next(schemas_result).to_dict()["sds_schema_version"] + 1
+    except StopIteration:
+        latest_version = 1
+    guid = str(uuid.uuid4())
+    schema_meta_data = SchemaMetadata(
+        schema_location=schema_location,
+        sds_schema_version=latest_version,
+        survey_id=survey_id,
+        sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
+    )
+    schemas_collection.document(guid).set(asdict(schema_meta_data))
 
 
 def get_schema(dataset_schema_id, version):
@@ -53,14 +69,12 @@ def get_schema(dataset_schema_id, version):
 
 
 def get_schemas(survey_id):
-    dataset_schemas = []
+    dataset_schemas = {}
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
     for schema in schemas_result:
         return_schema = schema.to_dict()
-        return_schema.pop("survey_id")
-        return_schema["dataset_schema_id"] = schema.id
-        dataset_schemas.append(return_schema)
-    return {"survey_id": survey_id, "dataset_schemas": dataset_schemas}
+        dataset_schemas[schema.id] = return_schema
+    return {"supplementary_dataset_schema": dataset_schemas}
 
 
 def get_datasets(survey_id):

@@ -1,12 +1,11 @@
 import logging
 import uuid
 
-from fastapi import Body, FastAPI
-
 import database
+from fastapi import Body, FastAPI
+from models import Schemas
 
 logging.basicConfig(level=logging.INFO)
-
 
 app = FastAPI()
 
@@ -45,9 +44,9 @@ async def retrieve_schema(dataset_schema_id: str, version: int):
     return data
 
 
-@app.get("/dataset_schemas")
-async def query_schemas(survey_id: str):
-    """Retrieve the schemas, given the survey_id."""
+@app.get("/v1/schema_metadata", response_model=Schemas)
+async def query_schemas(survey_id: str) -> dict:
+    """Retrieve the metadata for all the schemas that have a given survey_id."""
     data = database.get_schemas(survey_id)
     return data
 
