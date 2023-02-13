@@ -1,0 +1,3 @@
+TEXT_JSON_CONTENT_TYPE = "text/json"
+
+TEXT_PLAIN_CONTENT_TYPE = "text/plain"

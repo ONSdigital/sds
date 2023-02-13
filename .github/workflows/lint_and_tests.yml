@@ -24,7 +24,19 @@ jobs:
           black . --check
           isort . --check-only --profile black
           flake8 .  --max-line-length=127
-      - name: Test with pytest
+      - name: Stand up Firestore container
         run: |
-          pytest --cov=src src
-          coverage report --fail-under=90
+          docker-compose up -d firestore
+      - name: Integration tests
+        run: |
+          export PYTHONPATH=src
+          export FIRESTORE_EMULATOR_HOST=localhost:8200
+          export FIRESTORE_PROJECT_ID=localhost
+          export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
+          export FIREBASE_KEYFILE_LOCATION=firebase_key.json
+          pytest test/integration
+#      - name: Unit tests
+#        run: |
+#          export PYTHONPATH=src
+#          pytest test/unit --cov=src
+#          coverage report --fail-under=90

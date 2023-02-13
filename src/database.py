@@ -1,74 +1,84 @@
-import os
+from client import client
+from constants import DATASETS, SCHEMAS, SURVEY_ID, VERSION
 
-import firebase_admin
-from firebase_admin import firestore
+schemas_collection = client.collection(SCHEMAS)
 
-cred_obj = firebase_admin.credentials.Certificate(
-    os.environ.get("FIREBASE_KEYFILE_LOCATION")
-)
-default_app = firebase_admin.initialize_app(cred_obj)
-db = firestore.client()
-datasets_collection = db.collection("datasets")
-schemas_collection = db.collection("schemas")
+datasets_collection = client.collection(DATASETS)
 
 
-def set_dataset(dataset_id, dataset):
-    dataset.pop("data")
-    datasets_collection.document(dataset_id).set(dataset)
+def set_schema(schema_id, survey_id, payload):
+    schemas_collection_document = schemas_collection.document(schema_id)
 
+    schema_result = schemas_collection_document.get()
 
-def set_data(dataset_id, data):
-    units_collection = datasets_collection.document(dataset_id).collection("units")
-    units_collection.document(data["unit_id"]).set(data)
+    schema_result_exists = schema_result.exists
 
+    if schema_result_exists:
+        schema = schema_result.to_dict()
 
-def get_data(dataset_id, unit_id):
-    units_collection = datasets_collection.document(dataset_id).collection("units")
-    return units_collection.document(unit_id).get().to_dict()
+        version = schema[VERSION]
 
+        version += 1
 
-def set_schema(dataset_schema_id, survey_id, dataset_schema):
-    dataset_schema_versions = schemas_collection.document(dataset_schema_id)
-    if not dataset_schema_versions.get().exists:
-        dataset_schema_versions.set({"latest_version": 1, "survey_id": survey_id})
-        latest_version = 1
     else:
-        latest_version = dataset_schema_versions.get().to_dict()["latest_version"]
-        latest_version += 1
-    dataset_schema_versions.collection("versions").document(str(latest_version)).set(
-        dataset_schema
-    )
-    dataset_schema_versions.update({"latest_version": latest_version})
-    return latest_version
+        schemas_collection_document.set({SURVEY_ID: survey_id})
+
+        version = 1
+
+    schemas_collection_document.update({VERSION: version})
+
+    version = str(version)
+
+    return version
 
 
-def get_schema(dataset_schema_id, version):
-    return (
-        schemas_collection.document(dataset_schema_id)
-        .collection("versions")
-        .document(str(version))
-        .get()
-        .to_dict()
-    )
+def get_schema(schema_id, version):
+    schemas_collection_document = schemas_collection.document(schema_id)
+
+    schema_result = schemas_collection_document.get()
+
+    schema = schema_result.to_dict()
+
+    return schema
 
 
 def get_schemas(survey_id):
-    dataset_schemas = []
-    schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
-    for schema in schemas_result:
-        return_schema = schema.to_dict()
-        return_schema.pop("survey_id")
-        return_schema["dataset_schema_id"] = schema.id
-        dataset_schemas.append(return_schema)
-    return {"survey_id": survey_id, "dataset_schemas": dataset_schemas}
+    schemas = []
+
+    schema_results = schemas_collection.where(SURVEY_ID, "==", survey_id).stream()
+
+    for schema_result in schema_results:
+        schema = schema_result.to_dict()
+
+        schema.pop(SURVEY_ID)
+
+        schemas.append(schema)
+
+    return schemas
+
+
+def delete_schema(schema_id):
+    schemas_collection_document = schemas_collection.document(schema_id)
+
+    schemas_collection_document.delete()
+
+
+def set_dataset(dataset_id, payload):
+    datasets_collection_document = datasets_collection.document(dataset_id)
+
+    datasets_collection_document.set(payload)
 
 
 def get_datasets(survey_id):
     datasets = []
-    datasets_result = datasets_collection.where("survey_id", "==", survey_id).stream()
-    for dataset in datasets_result:
-        return_dataset = dataset.to_dict()
-        return_dataset.pop("survey_id")
-        return_dataset["dataset_id"] = dataset.id
-        datasets.append(return_dataset)
-    return {"survey_id": survey_id, "datasets": datasets}
+
+    dataset_results = datasets_collection.where(SURVEY_ID, "==", survey_id).stream()
+
+    for dataset_result in dataset_results:
+        dataset = dataset_result.to_dict()
+
+        dataset.pop(SURVEY_ID)
+
+        datasets.append(dataset)
+
+    return datasets

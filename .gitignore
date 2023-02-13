@@ -1,7 +1,8 @@
 .idea
-firebase_key*.json
 .coverage
 .venv
 venv
 local.env
-scratch.txt
+pycharm.local.env
+__pycache__
+scratch.py

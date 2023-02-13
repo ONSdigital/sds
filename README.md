@@ -4,7 +4,7 @@ More information on this service can be found on Confluence:
 
 * https://confluence.ons.gov.uk/display/SDC/SDS
 
-## Running locally
+## Running and developing locally
 
 To run this service locally, you will need the following:
 
@@ -105,64 +105,48 @@ cp google_application_credentials.json firebase_key.json
 ```
 ...and make sure the `FIREBASE_KEYFILE_LOCATION` environment variable is set to point to that file.
 
-### Connecting to a remote Firebase instance
+### Running the application
 
-In order to create the requisite credentials, see here:
-
-* https://www.youtube.com/watch?v=MU7O6emzAc0
-
-## Running linting and unit tests locally
-
-To run all the checks that run as part of the CI, run the following commands:
+Assuming the above steps have been completed, the server can be run with the following command:
 
 ```
-black . --check
-isort . --check-only --profile black
-flake8 src integration_tests --max-line-length=127
-export PYTHONPATH=src
-pytest --cov=src src
-coverage report --fail-under=90
+uvicorn src.app:app --reload
 ```
 
-To correct any problems that `isort` or `black` complain about, run the following:
+Try the healthcheck path first:
+
+* http://localhost/healthcheck
+
+If running Uvicorn directly means that your debugger will not work, you can run it programmatically with the following command.
+
+```
+python src/app.py PYTHONPATH=src
+```
+
+### Linting, etc
+
+With the virtual environment activated, run the following commands:
 
 ```
 black .
 isort . --profile black
+flake8 src test --max-line-length=127
 ```
 
-## Building and running on Docker
+### Integration tests
 
-To build and run on docker, run the following commands:
+Assuming that the virtual environment is activated and the Firestore emulator is running in Docker, run the following command:
 
-```bash
-docker-compose build
-docker-compose up
+```
+pytest test/integration
+coverage report --fail-under=90
 ```
 
-## OpenAPI Specification
+## API documentation
 
-As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
-can be reached by going to the following URLs (once running):
+This is auto-generated from the Python code and can be viewed when the application is running at the following URL:
 
-* http://localhost:8000/openapi.json
 * http://localhost:8000/docs
-
-## Running the integration tests
-
-The integration tests can be run locally but don't currently work on a CI environment. Unlike the unit tests,
-the integration tests require credentials to connect to a Firestore database. In the future, communicating with a 
-real Cloud Firestore database could be replaced with https://cloud.google.com/firestore/docs/emulator for integration
-testing purposes, which may also then open the possibility of running the integration tests in CI or folding them
-into the unit test suit.
-
-To run the integration tests, ensure you have a Firebase key file and then do the following:
-
-```
-cd integration_tests
-export PYTHONPATH=../src
-pytest
-```
 
 # Contact
 
