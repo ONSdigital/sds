@@ -26,7 +26,16 @@ jobs:
 #          black . --check
 #          isort . --check-only --profile black
 #          flake8 .  --max-line-length=127
-      - name: Test with pytest
+#      - name: Unit tests
+#        run: |
+#          pytest --cov=src src
+#          coverage report --fail-under=90
+      - name: Integration tests
+        env:
+          PYTHONPATH: src
+          FIRESTORE_EMULATOR_HOST: localhost:8200
+          FIRESTORE_PROJECT_ID: localhost
+          GOOGLE_APPLICATION_CREDENTIALS: google_application_credentials.json
+          FIREBASE_KEYFILE_LOCATION: firebase_key.json
         run: |
-          pytest --cov=src src
-          coverage report --fail-under=90
+          pytest test/integration
