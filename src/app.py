@@ -62,7 +62,7 @@ async def get_schema(schema_id: str, version: str):
 
 @app.get(SCHEMAS_PATH)
 async def get_schemas(survey_id: str):
-    """Get all schemas for a given survey identifier."""
+    """Get schemas for a given survey identifier."""
     schemas = database.get_schemas(survey_id)
 
     json = {SCHEMAS: schemas, SURVEY_ID: survey_id}
@@ -74,7 +74,7 @@ async def get_schemas(survey_id: str):
 
 @app.get(DATASETS_PATH)
 async def get_datasets(survey_id: str):
-    """Get all datasets for a given survey identifier."""
+    """Get datasets for a given survey identifier."""
     datasets = database.get_datasets(survey_id)
 
     json = {DATASETS: datasets, SURVEY_ID: survey_id}
