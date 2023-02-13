@@ -36,6 +36,6 @@ jobs:
           export PYTHONPATH=src
           export FIRESTORE_EMULATOR_HOST=localhost:8200
           export FIRESTORE_PROJECT_ID=localhost
-          export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
-          export FIREBASE_KEYFILE_LOCATION=firebase_key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=../../google_application_credentials.json
+          export FIREBASE_KEYFILE_LOCATION=../../firebase_key.json
           pytest test/integration
