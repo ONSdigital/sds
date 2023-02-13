@@ -15,7 +15,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Stand up Firestore container
-        run: docker-compose -f "docker-compose.yml" up -d firestore
+        run: |
+          docker-compose -f "docker-compose.yml" up -d firestore
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -38,4 +39,9 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS: google_application_credentials.json
           FIREBASE_KEYFILE_LOCATION: firebase_key.json
         run: |
+          export PYTHONPATH=src
+          export FIRESTORE_EMULATOR_HOST=localhost:8200
+          export FIRESTORE_PROJECT_ID=localhost
+          export GOOGLE_APPLICATION_CREDENTIALS=google_application_credentials.json
+          export FIREBASE_KEYFILE_LOCATION=firebase_key.json
           pytest test/integration
