@@ -16,7 +16,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Stand up Firestore container
         run: |
-          docker-compose -f "docker-compose.yml" up -d firestore
+          docker-compose up -d firestore
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

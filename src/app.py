@@ -1,27 +1,21 @@
 import logging
-import uvicorn
 
+import uvicorn
 from fastapi import Body, FastAPI
 
 import database
-from status_codes import UNPROCESSABLE_ENTITY_STATUS_CODE
-from utilities.publish import get_dataset_id, get_datetime_published
-from utilities.response import json_response, plain_response
-from errors import (
-    MISSING_SCHEMA_ID_ERROR,
-    MISSING_SURVEY_ID_ERROR,
-)
 from constants import (
     DATASET_ID,
     DATASETS,
+    DATETIME_PUBLISHED,
     OK,
     SCHEMA,
     SCHEMA_ID,
     SCHEMAS,
     SURVEY_ID,
-    DATETIME_PUBLISHED,
     VERSION,
 )
+from errors import MISSING_SCHEMA_ID_ERROR, MISSING_SURVEY_ID_ERROR
 from paths import (
     DATASET_PATH,
     DATASETS_PATH,
@@ -29,6 +23,9 @@ from paths import (
     SCHEMA_PATH,
     SCHEMAS_PATH,
 )
+from status_codes import UNPROCESSABLE_ENTITY_STATUS_CODE
+from utilities.publish import get_dataset_id, get_datetime_published
+from utilities.response import json_response, plain_response
 
 level = logging.INFO
 
@@ -113,7 +110,12 @@ async def post_schema(payload: dict = Body(...)):
 
         version = database.set_schema(schema_id, survey_id, payload)
 
-        json = {VERSION: version, SCHEMA_ID: schema_id, SURVEY_ID: survey_id, DATETIME_PUBLISHED: datetime_published}
+        json = {
+            VERSION: version,
+            SCHEMA_ID: schema_id,
+            SURVEY_ID: survey_id,
+            DATETIME_PUBLISHED: datetime_published,
+        }
 
         response = json_response(json)
 

@@ -11,10 +11,9 @@ from constants import (
     SURVEY_ID,
     VERSION,
 )
-from status_codes import OK_STATUS_CODE, UNPROCESSABLE_ENTITY_STATUS_CODE
 from database import delete_schema, set_schema
 from paths import DATASET_PATH, DATASETS_PATH, SCHEMA_PATH, SCHEMAS_PATH
-
+from status_codes import OK_STATUS_CODE, UNPROCESSABLE_ENTITY_STATUS_CODE
 
 URL = "{path}?{query_string}"
 
@@ -119,10 +118,7 @@ def test_post_schema(test_client):
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
 
-    schema_json.update({
-        SURVEY_ID: survey_id,
-        SCHEMA_ID: schema_id
-    })
+    schema_json.update({SURVEY_ID: survey_id, SCHEMA_ID: schema_id})
 
     path = SCHEMA_PATH
 
@@ -248,9 +244,7 @@ def test_post_schema_no_schema_id(test_client):
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
 
-    schema_json.update({
-        SURVEY_ID: survey_id
-    })
+    schema_json.update({SURVEY_ID: survey_id})
 
     path = SCHEMA_PATH
 
@@ -273,9 +267,7 @@ def test_post_schema_no_survey_id(test_client):
     with open("test/integration/data/schema.json") as schema_json_file:
         schema_json = json_load(schema_json_file)
 
-    schema_json.update({
-        SCHEMA_ID: schema_id
-    })
+    schema_json.update({SCHEMA_ID: schema_id})
 
     path = SCHEMA_PATH
 
