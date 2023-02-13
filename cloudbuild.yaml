@@ -18,6 +18,8 @@ steps:
   - name: python
     id: "pytest"
     entrypoint: python
+    env:
+      - 'PYTHONPATH=src/app'
     args: ["-m", "pytest", "--cov=src/app", "src/unit_tests"]
   - name: python
     id: "coverage"
