@@ -1,6 +1,7 @@
-import requests
 import json
 import os
+
+import requests
 
 CLOUD_RUN_ENDPOINT = os.environ.get("CLOUD_RUN_ENDPOINT")
 AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
