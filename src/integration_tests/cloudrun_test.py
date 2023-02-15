@@ -15,7 +15,7 @@ def test_dataset():
     * CLOUD_RUN_ENDPOINT - get the URL from the cloud run console
     * AUTH_TOKEN - get this by running "gcloud auth print-identity-token"
     """
-    with open("data/dataset.json") as f:
+    with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
     response = requests.post(
         f"{CLOUD_RUN_ENDPOINT}/dataset", json=dataset, headers=headers

@@ -17,6 +17,4 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
-      - FIREBASE_KEYFILE_LOCATION=firebase_key.json
-    volumes:
-      - ${PWD}/firebase_key.json:/firebase_key.json
+      - FIRESTORE_EMULATOR_HOST=firestore:8200

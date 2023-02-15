@@ -47,13 +47,13 @@ def test_post_dataset_schema(client, database):
         "sds_published_at": "2023-02-06T13:33:44Z",
     }
     database.set_schema_metadata.return_value = schema_meta_data
-    with open("test_schema.json") as f:
+    with open("../test_data/schema.json") as f:
         schema = json.load(f)
     response = client.post("/v1/schema", json=schema)
     assert response.status_code == 200
     assert response.json() == schema_meta_data
     assert database.set_schema_metadata.call_args[1] == {
-        "survey_id": "xxx",
+        "survey_id": "xyz",
         "schema_location": "/",
     }
 
