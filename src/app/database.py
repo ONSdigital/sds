@@ -52,13 +52,14 @@ def set_schema_metadata(survey_id, schema_location):
     except StopIteration:
         latest_version = 1
     guid = str(uuid.uuid4())
-    schema_meta_data = SchemaMetadata(
+    schema_metadata = SchemaMetadata(
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
         sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
     )
-    schemas_collection.document(guid).set(asdict(schema_meta_data))
+    schemas_collection.document(guid).set(asdict(schema_metadata))
+    return schema_metadata
 
 
 def get_schema(dataset_schema_id, version):

@@ -4,6 +4,7 @@ import firebase_admin
 import pytest
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
+import json
 
 
 @pytest.fixture
@@ -38,13 +39,23 @@ def test_get_unit_data(client):
     client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
 
 
-def test_post_dataset_schema(client):
-    dataset_schema_id = "sppi_dataset_schema"
-    survey_id = "Survey 1"
-    client.post(
-        f"/dataset_schema?dataset_schema_id={dataset_schema_id}&survey_id={survey_id}",
-        json={},
-    )
+def test_post_dataset_schema(client, database):
+    schema_meta_data = {
+        "survey_id": "xxx",
+        "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
+        "sds_schema_version": 1,
+        "sds_published_at": "2023-02-06T13:33:44Z",
+    }
+    database.set_schema_metadata.return_value = schema_meta_data
+    with open("test_schema.json") as f:
+        schema = json.load(f)
+    response = client.post("/v1/schema", json=schema)
+    assert response.status_code == 200
+    assert response.json() == schema_meta_data
+    assert database.set_schema_metadata.call_args[1] == {
+        "survey_id": "xxx",
+        "schema_location": "/",
+    }
 
 
 def test_get_dataset_schema(client):
