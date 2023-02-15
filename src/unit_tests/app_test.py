@@ -1,10 +1,10 @@
+import json
 from unittest.mock import MagicMock
 
 import firebase_admin
 import pytest
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
-import json
 
 
 @pytest.fixture
@@ -40,6 +40,10 @@ def test_get_unit_data(client):
 
 
 def test_post_dataset_schema(client, database):
+    """
+    Checks that fastAPI accepts a valid schema file
+    and returns a valid schema metadata file.
+    """
     schema_meta_data = {
         "survey_id": "xxx",
         "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",

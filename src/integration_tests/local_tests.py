@@ -1,7 +1,8 @@
 import json
 import os
-import requests
+
 import pytest
+import requests
 from fastapi.testclient import TestClient
 
 FIREBASE_KEYFILE_LOCATION = "../../firebase_key.json"
@@ -10,6 +11,12 @@ FIRESTORE_EMULATOR_HOST = "localhost:8200"
 
 @pytest.fixture
 def database():
+    """
+    This database fixture will auto-switch between the firestore emulator
+    and the real Firestore, depending on whether firebase_key.json present.
+    If this file is not present and the emulator is not running it will fail
+    with a useful message.
+    """
     if os.path.exists(FIREBASE_KEYFILE_LOCATION):
         os.environ["FIREBASE_KEYFILE_LOCATION"] = FIREBASE_KEYFILE_LOCATION
     else:
@@ -61,6 +68,10 @@ def test_dataset(client):
 
 
 def test_get_schema_metadata(client, database):
+    """
+    Artificially put schema data in the database and check it can be read
+    successfully.
+    """
     survey_id = "xyz"
     schema_location = "/"
     database.set_schema_metadata(survey_id=survey_id, schema_location=schema_location)
@@ -78,6 +89,10 @@ def test_get_schema_metadata(client, database):
 
 
 def test_publish_schema(client):
+    """
+    Post a schema using the /schema api endpoint and check it can
+    be retrieved.
+    """
     survey_id = "xyz"
     schema_location = "/"
     with open("../test_data/schema.json") as f:
