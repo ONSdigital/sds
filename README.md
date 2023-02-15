@@ -94,18 +94,15 @@ can be reached by going to the following URLs (once running):
 
 ## Running the integration tests
 
-The integration tests can be run locally but don't currently work on a CI environment. Unlike the unit tests,
-the integration tests require credentials to connect to a Firestore database. In the future, communicating with a 
-real Cloud Firestore database could be replaced with https://cloud.google.com/firestore/docs/emulator for integration
-testing purposes, which may also then open the possibility of running the integration tests in CI or folding them
-into the unit test suit.
-
-To run the integration tests, ensure you have a Firebase key file and then do the following:
+The integration tests in `src/integration_tests/local_tests.py` require a database and like the app, can be run
+against a real database or the emulator. This tests will auto-switch between the firestore emulator
+and the real Firestore, depending on whether firebase_key.json present. If this file is not present and the emulator
+is not running it will fail with a useful message. To run the tests, run the following:
 
 ```
 cd src/integration_tests
 export PYTHONPATH=../app
-pytest
+pytest local_tests.py
 ```
 
 # Contact
