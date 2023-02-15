@@ -32,3 +32,7 @@ steps:
       - |
         docker build -t "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA" .
         docker push "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA"
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA',
+            '--region', 'europe-west2' ]
