@@ -11,3 +11,4 @@ jsonschema
 flake8
 coverage
 pytest-cov
+google-cloud-storage

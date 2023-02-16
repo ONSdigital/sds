@@ -31,7 +31,7 @@ In order to create the credentials, watch https://www.youtube.com/watch?v=MU7O6e
 Put the credentials in a file called `firebase_key.json` and set the following environment variable:
 
 ```bash
-export FIREBASE_KEYFILE_LOCATION=firebase_key.json
+export KEYFILE_LOCATION=firebase_key.json
 ```
 
 ### Connecting to the Firestore emulator
@@ -41,7 +41,7 @@ To connect to the emulator running locally in Docker, run the following commands
 
 ```bash
 docker-compose up -d firestore
-unset FIREBASE_KEYFILE_LOCATION
+unset KEYFILE_LOCATION
 export FIRESTORE_EMULATOR_HOST=localhost:8200
 ```
 

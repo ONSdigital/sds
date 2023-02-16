@@ -2,6 +2,7 @@ import logging
 import uuid
 
 import database
+import storage
 from fastapi import Body, FastAPI
 from models import Schema, SchemaMetadata, Schemas
 
@@ -36,7 +37,9 @@ async def publish_schema(schema: Schema = Body(...)):
     with the survey_id and schema_location and returned the generated
     schema metadata.
     """
-    return database.set_schema_metadata(survey_id=schema.survey_id, schema_location="/")
+    schema_id = str(uuid.uuid4())
+    location = storage.store_schema(schema=schema,schema_id=schema_id)
+    return database.set_schema_metadata(survey_id=schema.survey_id, schema_location=location, schema_id=schema_id)
 
 
 @app.get("/dataset_schema")

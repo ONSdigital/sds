@@ -1,11 +1,12 @@
 import json
 import os
+import uuid
 
 import pytest
 import requests
 from fastapi.testclient import TestClient
 
-FIREBASE_KEYFILE_LOCATION = "../../firebase_key.json"
+KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
 
 
@@ -17,8 +18,8 @@ def database():
     If this file is not present and the emulator is not running it will fail
     with a useful message.
     """
-    if os.path.exists(FIREBASE_KEYFILE_LOCATION):
-        os.environ["FIREBASE_KEYFILE_LOCATION"] = FIREBASE_KEYFILE_LOCATION
+    if os.path.exists(KEYFILE_LOCATION):
+        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
     else:
         try:
             requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=0.1)
@@ -67,34 +68,12 @@ def test_dataset(client):
     }
 
 
-def test_get_schema_metadata(client, database):
-    """
-    Artificially put schema data in the database and check it can be read
-    successfully.
-    """
-    survey_id = "xyz"
-    schema_location = "/"
-    database.set_schema_metadata(survey_id=survey_id, schema_location=schema_location)
-    response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
-    assert response.status_code == 200
-    json_response = response.json()
-    assert len(json_response["supplementary_dataset_schema"]) > 0
-    for schema in json_response["supplementary_dataset_schema"].values():
-        assert schema == {
-            "survey_id": survey_id,
-            "schema_location": schema_location,
-            "sds_schema_version": schema["sds_schema_version"],
-            "sds_published_at": schema["sds_published_at"],
-        }
-
-
 def test_publish_schema(client):
     """
     Post a schema using the /schema api endpoint and check it can
     be retrieved.
     """
     survey_id = "xyz"
-    schema_location = "/"
     with open("../test_data/schema.json") as f:
         schema = json.load(f)
     client.post("/v1/schema", json=schema)
@@ -102,10 +81,10 @@ def test_publish_schema(client):
     assert response.status_code == 200
     json_response = response.json()
     assert len(json_response["supplementary_dataset_schema"]) > 0
-    for schema in json_response["supplementary_dataset_schema"].values():
+    for guid, schema in json_response["supplementary_dataset_schema"].items():
         assert schema == {
             "survey_id": survey_id,
-            "schema_location": schema_location,
+            "schema_location": f"{survey_id}/{guid}.json",
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }

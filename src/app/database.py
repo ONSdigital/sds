@@ -1,5 +1,4 @@
 import os
-import uuid
 from dataclasses import asdict
 from datetime import datetime
 
@@ -7,9 +6,9 @@ import firebase_admin
 from firebase_admin import firestore
 from models import SchemaMetadata
 
-if os.environ.get("FIREBASE_KEYFILE_LOCATION"):
+if os.environ.get("KEYFILE_LOCATION"):
     cred_obj = firebase_admin.credentials.Certificate(
-        os.environ.get("FIREBASE_KEYFILE_LOCATION")
+        os.environ.get("KEYFILE_LOCATION")
     )
     firebase_admin.initialize_app(cred_obj)
 else:
@@ -34,7 +33,7 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema_metadata(survey_id, schema_location):
+def set_schema_metadata(survey_id, schema_location, schema_id):
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
     and creates the metadata and stores it in Firebase. The latest version
@@ -51,14 +50,13 @@ def set_schema_metadata(survey_id, schema_location):
         latest_version = next(schemas_result).to_dict()["sds_schema_version"] + 1
     except StopIteration:
         latest_version = 1
-    guid = str(uuid.uuid4())
     schema_metadata = SchemaMetadata(
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
         sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
     )
-    schemas_collection.document(guid).set(asdict(schema_metadata))
+    schemas_collection.document(schema_id).set(asdict(schema_metadata))
     return schema_metadata
 
 
