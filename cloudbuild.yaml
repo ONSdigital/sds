@@ -23,6 +23,7 @@ steps:
     args: ["-m", "pytest", "--cov=../app", "."]
   - name: python
     id: "coverage"
+    dir: "src/unit_tests"
     entrypoint: python
     args: ["-m", "coverage", "report", "--fail-under=90"]
   - name: docker
