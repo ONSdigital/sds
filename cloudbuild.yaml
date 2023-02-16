@@ -18,10 +18,12 @@ steps:
   - name: python
     id: "pytest"
     entrypoint: python
-    env: ['PYTHONPATH=src/app']
-    args: ["-m", "pytest", "--cov=src/app", "src/unit_tests"]
+    env: ['PYTHONPATH=../app']
+    dir: "src/unit_tests"
+    args: ["-m", "pytest", "--cov=../app", "."]
   - name: python
     id: "coverage"
+    dir: "src/unit_tests"
     entrypoint: python
     args: ["-m", "coverage", "report", "--fail-under=90"]
   - name: docker
@@ -32,3 +34,5 @@ steps:
       - |
         docker build -t "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA" .
         docker push "europe-west2-docker.pkg.dev/ons-sds-images/sds/sds:$SHORT_SHA"
+options:
+  logging: CLOUD_LOGGING_ONLY

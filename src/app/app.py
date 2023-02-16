@@ -3,9 +3,10 @@ import uuid
 
 import database
 from fastapi import Body, FastAPI
-from models import Schemas
+from models import Schema, SchemaMetadata, Schemas
 
 logging.basicConfig(level=logging.INFO)
+
 
 app = FastAPI()
 
@@ -28,13 +29,14 @@ async def unit_data(dataset_id: str, unit_id: str):
     return data
 
 
-@app.post("/dataset_schema")
-async def publish_schema(
-    dataset_schema_id: str, survey_id: str, payload: dict = Body(...)
-):
-    """Put a schema into the database and return the schema_id."""
-    version = database.set_schema(dataset_schema_id, survey_id, payload)
-    return {"dataset_schema_id": dataset_schema_id, "version": version}
+@app.post("/v1/schema", response_model=SchemaMetadata)
+async def publish_schema(schema: Schema = Body(...)):
+    """
+    Grab the survey_id from the schema file and call set_schema_metadata
+    with the survey_id and schema_location and returned the generated
+    schema metadata.
+    """
+    return database.set_schema_metadata(survey_id=schema.survey_id, schema_location="/")
 
 
 @app.get("/dataset_schema")

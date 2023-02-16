@@ -9,107 +9,51 @@ More information on this service can be found on Confluence:
 To run this service locally, you will need the following:
 
 * Python 3.11
-* VirtualEnv
-* Docker
+* Docker or credentials for GCloud
 
-### Creating, activating and deactivating a Python virtual environment
+You will need to make a choice to run with either the Firestore emulator or a real firestore instance.
+Instructions for setting up both are included below.
+
+### Setting up a virtual environment
 
 Check that you have the correct version of Python installed and then run the following commands:
 
-```
-virtualenv venv
-source venv/bin/activate
-```
-
-This will create and activate the virtual environment. To deactivate the environment, run the following command:
-
-```
-deactivate
-```
-
-You can use another name for the virtual environment's directory if you wish but please add it to the `.gitignore` file.
-
-### Installing the dependencies
-
-Assuming that the virtual environment is activated, run the following command:
-
-```
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
 pip install -r requirement.txt
 ```
 
-### Storing environment variables
+### Connecting to Firestore running in GCloud
 
-Git is configured to ignore the `local.env` file. If you want to use another file to store environment variables 
-then please add it to the `.gitignore` file. 
+In order to create the credentials, watch https://www.youtube.com/watch?v=MU7O6emzAc0 .
 
-At the very least you need to include the following:
+Put the credentials in a file called `firebase_key.json` and set the following environment variable:
 
-```
-export FIRESTORE_PROJECT_ID=localhost
-export FIRESTORE_EMULATOR_HOST=localhost:8200
-export GOOGLE_APPLICATION_CREDENTIALS=integration_tests/google_application_credentials.json
+```bash
 export FIREBASE_KEYFILE_LOCATION=firebase_key.json
 ```
 
-Note that the `FIRESTORE_PROJECT_ID` and `FIRESTORE_EMULATOR_HOST` environment variables match the settings in
-the `docker-compose.yml` file. The other two are covered in a later subsection.
+### Connecting to the Firestore emulator
 
-### Installing and running Firestore with Docker
+To connect to the emulator running locally in Docker, run the following commands:
 
-In order to install the Firestore emulator, and assuming that you have Docker installed, run the following command:
 
-```
+```bash
 docker-compose up -d firestore
+unset FIREBASE_KEYFILE_LOCATION
+export FIRESTORE_EMULATOR_HOST=localhost:8200
 ```
 
-And to check that the container is running:
+### Run SDS locally
 
+To run SDS locally, activate the virtual environment, export the appropriate environment variables (see above)
+then run the following commands:
+
+```bash
+export PYTHONPATH=src/app
+python -m uvicorn src.app.app:app --reload --port 8013
 ```
-docker ps
-```
-
-To subsequently stop and start the container, run the following commands respectively:
-
-```
-docker stop firestore
-docker start firestore
-```
-
-To delete the container once and for all, whether currently running or not, run the following command:
-
-```
-docker-compose down
-```
-
-The `docker` commands can be run anywhere. The `docker-compose` commands should be run from the repository root so that
-the `docker-compose.yml` file can be found, unless you want to explicitly specify its path.
-
-### Connecting to the Firestore instance
-
-The Firebase emulator instance running inside Docker needs to be configured with default application credentials. These
-are found in the `google_application_credentials.json` file in the `integration_tests` directory and the instance is
-made aware of them by way on the `GOOGLE_APPLICATION_CREDENTIALS` environment variable. The credentials are not meant to be secure,
-see the following discussion: 
-
-* https://groups.google.com/g/firebase-talk/c/IKo6PsXMqlQ
-
-The credentials can be found here:
-
-* https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json
-
-There is a `scratch.py` file that can be run to check the connection to Firestore instance. Before running the file,
-copy the default application credentials to a new file...
-
-```
-cp google_application_credentials.json firebase_key.json 
-```
-...and make sure the `FIREBASE_KEYFILE_LOCATION` environment variable is set to point to that file.
-
-### Connecting to a remote Firebase instance
-
-In order to create the requisite credentials, see here:
-
-* https://www.youtube.com/watch?v=MU7O6emzAc0
 
 ## Running linting and unit tests locally
 
@@ -150,18 +94,15 @@ can be reached by going to the following URLs (once running):
 
 ## Running the integration tests
 
-The integration tests can be run locally but don't currently work on a CI environment. Unlike the unit tests,
-the integration tests require credentials to connect to a Firestore database. In the future, communicating with a 
-real Cloud Firestore database could be replaced with https://cloud.google.com/firestore/docs/emulator for integration
-testing purposes, which may also then open the possibility of running the integration tests in CI or folding them
-into the unit test suit.
-
-To run the integration tests, ensure you have a Firebase key file and then do the following:
+The integration tests in `src/integration_tests/local_tests.py` require a database and like the app, can be run
+against a real database or the emulator. This tests will auto-switch between the firestore emulator
+and the real Firestore, depending on whether firebase_key.json present. If this file is not present and the emulator
+is not running it will fail with a useful message. To run the tests, run the following:
 
 ```
 cd src/integration_tests
 export PYTHONPATH=../app
-pytest
+pytest local_tests.py
 ```
 
 # Contact
