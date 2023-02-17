@@ -60,16 +60,6 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
     return schema_metadata
 
 
-def get_schema(dataset_schema_id, version):
-    return (
-        schemas_collection.document(dataset_schema_id)
-        .collection("versions")
-        .document(str(version))
-        .get()
-        .to_dict()
-    )
-
-
 def get_schemas(survey_id):
     dataset_schemas = {}
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()

@@ -1,10 +1,11 @@
 import logging
 import uuid
+from typing import Dict
 
 import database
 import storage
 from fastapi import Body, FastAPI
-from models import Schema, SchemaMetadata, Schemas
+from models import SchemaMetadata, Schemas
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,22 +32,17 @@ async def unit_data(dataset_id: str, unit_id: str):
 
 
 @app.post("/v1/schema", response_model=SchemaMetadata)
-async def publish_schema(schema: Schema = Body(...)):
+async def publish_schema(schema: Dict = Body(...)):
     """
     Grab the survey_id from the schema file and call set_schema_metadata
     with the survey_id and schema_location and returned the generated
     schema metadata.
     """
     schema_id = str(uuid.uuid4())
-    location = storage.store_schema(schema=schema,schema_id=schema_id)
-    return database.set_schema_metadata(survey_id=schema.survey_id, schema_location=location, schema_id=schema_id)
-
-
-@app.get("/dataset_schema")
-async def retrieve_schema(dataset_schema_id: str, version: int):
-    """Retrieve the schema, given the schema_id."""
-    data = database.get_schema(dataset_schema_id, version)
-    return data
+    location = storage.store_schema(schema=schema, schema_id=schema_id)
+    return database.set_schema_metadata(
+        survey_id=schema["survey_id"], schema_location=location, schema_id=schema_id
+    )
 
 
 @app.get("/v1/schema_metadata", response_model=Schemas)

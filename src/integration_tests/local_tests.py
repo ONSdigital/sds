@@ -1,6 +1,5 @@
 import json
 import os
-import uuid
 
 import pytest
 import requests
@@ -8,6 +7,13 @@ from fastapi.testclient import TestClient
 
 KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
+
+
+@pytest.fixture
+def storage():
+    import storage
+
+    yield storage
 
 
 @pytest.fixture
@@ -68,16 +74,18 @@ def test_dataset(client):
     }
 
 
-def test_publish_schema(client):
+def test_publish_schema(client, storage):
     """
-    Post a schema using the /schema api endpoint and check it can
-    be retrieved.
+    Post a schema using the /schema api endpoint and check the metadata
+    can retrieved. Also check that schema can be retrieved directly from storage.
     """
     survey_id = "xyz"
     with open("../test_data/schema.json") as f:
-        schema = json.load(f)
-    client.post("/v1/schema", json=schema)
-    response = client.get(f"/v1/schema_metadata?survey_id={schema['survey_id']}")
+        test_schema = json.load(f)
+    response = client.post("/v1/schema", json=test_schema)
+    print(response.text)
+    assert response.status_code == 200
+    response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200
     json_response = response.json()
     assert len(json_response["supplementary_dataset_schema"]) > 0
@@ -88,3 +96,4 @@ def test_publish_schema(client):
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
+        assert storage.get_schema(f"{survey_id}/{guid}.json") == test_schema
