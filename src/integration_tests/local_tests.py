@@ -46,7 +46,7 @@ def database():
         os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
     else:
         try:
-            requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=0.1)
+            requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=5)
         except requests.exceptions.ConnectionError:
             pytest.fail(
                 "You need to run the Firestore emulator or fill "
