@@ -26,6 +26,15 @@ steps:
     dir: "src/unit_tests"
     entrypoint: python
     args: ["-m", "coverage", "report", "--fail-under=90"]
+  - name: python
+    id: "integration tests"
+    dir: "src/integration_tests"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        docker-compose up -d firestore
+        python -m pytest local_tests.py
   - name: docker
     id: build_and_push
     entrypoint: sh

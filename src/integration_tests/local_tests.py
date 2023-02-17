@@ -11,16 +11,34 @@ FIRESTORE_EMULATOR_HOST = "localhost:8200"
 
 @pytest.fixture
 def storage():
+    """
+    This storage fixture will auto-switch between the emulator
+    and the real thing, depending on whether key.json present.
+    """
+    server = None
+    if os.path.exists(KEYFILE_LOCATION):
+        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
+    else:
+        from gcp_storage_emulator.server import create_server
+
+        server = create_server(
+            "localhost", 9023, in_memory=True, default_bucket="bucket"
+        )
+        server.start()
+        os.environ["STORAGE_EMULATOR_HOST"] = "http://localhost:9023"
+        os.environ["SCHEMA_BUCKET_NAME"] = "bucket"
     import storage
 
     yield storage
+    if server:
+        server.stop()
 
 
 @pytest.fixture
 def database():
     """
     This database fixture will auto-switch between the firestore emulator
-    and the real Firestore, depending on whether firebase_key.json present.
+    and the real Firestore, depending on whether key.json present.
     If this file is not present and the emulator is not running it will fail
     with a useful message.
     """
@@ -42,7 +60,7 @@ def database():
 
 
 @pytest.fixture
-def client(database):
+def client(database, storage):
     from app import app
 
     client = TestClient(app)
