@@ -18,3 +18,8 @@ services:
     environment:
       - PORT=3000
       - FIRESTORE_EMULATOR_HOST=firestore:8200
+
+networks:
+  default:
+    external:
+      name: cloudbuild

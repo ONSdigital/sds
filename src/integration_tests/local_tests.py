@@ -6,7 +6,7 @@ import requests
 from fastapi.testclient import TestClient
 
 KEYFILE_LOCATION = "../../key.json"
-FIRESTORE_EMULATOR_HOST = "localhost:8200"
+FIRESTORE_EMULATOR_HOST = "firestore:8200"
 
 
 @pytest.fixture
