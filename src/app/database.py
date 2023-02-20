@@ -78,3 +78,13 @@ def get_datasets(survey_id):
         return_dataset["dataset_id"] = dataset.id
         datasets.append(return_dataset)
     return {"survey_id": survey_id, "datasets": datasets}
+
+
+def get_schema(survey_id, version) -> SchemaMetadata:
+    schemas_result = (
+        schemas_collection.where("survey_id", "==", survey_id)
+        .where("sds_schema_version", "==", int(version))
+        .stream()
+    )
+    for schema in schemas_result:
+        return SchemaMetadata(**schema.to_dict())

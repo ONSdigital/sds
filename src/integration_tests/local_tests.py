@@ -92,7 +92,7 @@ def test_dataset(client):
     }
 
 
-def test_publish_schema(client, storage):
+def test_publish_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
     can retrieved. Also check that schema can be retrieved directly from storage.
@@ -114,4 +114,8 @@ def test_publish_schema(client, storage):
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
-        assert storage.get_schema(f"{survey_id}/{guid}.json") == test_schema
+        response = client.get(
+            f"/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}"
+        )
+        assert response.status_code == 200
+        assert response.json() == test_schema
