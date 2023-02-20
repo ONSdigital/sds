@@ -11,7 +11,7 @@ To run this service locally, you will need the following:
 * Python 3.11
 * Docker or credentials for GCloud
 
-You will need to make a choice to run with either the Firestore emulator or a real firestore instance.
+You will need to make a choice to run with either GCP service emulators or the real thing.
 Instructions for setting up both are included below.
 
 ### Setting up a virtual environment
@@ -24,24 +24,31 @@ source .venv/bin/activate
 pip install -r requirement.txt
 ```
 
-### Connecting to Firestore running in GCloud
+### Connecting to services running in GCloud
 
-In order to create the credentials, watch https://www.youtube.com/watch?v=MU7O6emzAc0 .
+In order to connect to real services in GCloud, you will need a key file. To create one:
 
-Put the credentials in a file called `firebase_key.json` and set the following environment variable:
+* Go the IAM page and select Service accounts
+* Create a new service account
+* Call it "test"
+* Add whatever roles are needed for testing. "Owner" will work but this is potentially too much access
+* Go into service account and create a key. This will download a JSON file to your machine
+ 
+Copy the downloaded JSON file to this director and rename to `key.json` and set the following environment variable:
 
 ```bash
-export FIREBASE_KEYFILE_LOCATION=firebase_key.json
+export KEYFILE_LOCATION=key.json
 ```
 
-### Connecting to the Firestore emulator
+### Connecting to the emulators
 
-To connect to the emulator running locally in Docker, run the following commands:
+The Firestore emulator runs in Docker and the Google Cloud Storage emulator runs locally as part of the integration
+tests. To connect to the Firestore emulator running locally in Docker, run the following commands:
 
 
 ```bash
 docker-compose up -d firestore
-unset FIREBASE_KEYFILE_LOCATION
+unset KEYFILE_LOCATION
 export FIRESTORE_EMULATOR_HOST=localhost:8200
 ```
 

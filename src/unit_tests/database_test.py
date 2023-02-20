@@ -1,19 +1,5 @@
 from unittest.mock import MagicMock
 
-import firebase_admin
-import pytest
-from firebase_admin import firestore
-
-
-@pytest.fixture
-def database(monkeypatch):
-    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
-    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
-    monkeypatch.setattr(firestore, "client", MagicMock())
-    import database
-
-    yield database
-
 
 def test_set_dataset(database):
     database.set_dataset(dataset_id="1", dataset={"data": {}})
@@ -36,7 +22,7 @@ def test_set_schema_metadata(database):
     database.schemas_collection.where().order_by().limit().stream().__next__().to_dict.return_value = {
         "sds_schema_version": 25
     }
-    database.set_schema_metadata(survey_id="1", schema_location="/")
+    database.set_schema_metadata(survey_id="1", schema_location="/", schema_id="1")
     schema_meta_data = database.schemas_collection.document().set.call_args[0][0]
     assert schema_meta_data == {
         "survey_id": "1",
@@ -46,10 +32,6 @@ def test_set_schema_metadata(database):
     }
 
 
-def test_get_schema(database):
-    database.get_schema(dataset_schema_id="1", version="1")
-
-
 def test_get_schemas(database):
     """
     Mocks out the imports that talk to Firestore. This test will emulate that Firestore
@@ -57,7 +39,7 @@ def test_get_schemas(database):
     them correctly into the expected structure.
     """
     expected_schema = {
-        "survey_id": "xxx",
+        "survey_id": "xyz",
         "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
         "sds_schema_version": 1,
         "sds_published_at": "2023-02-06T13:33:44Z",

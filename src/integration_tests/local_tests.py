@@ -5,23 +5,48 @@ import pytest
 import requests
 from fastapi.testclient import TestClient
 
-FIREBASE_KEYFILE_LOCATION = "../../firebase_key.json"
+KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
+
+
+@pytest.fixture
+def storage():
+    """
+    This storage fixture will auto-switch between the emulator
+    and the real thing, depending on whether key.json present.
+    """
+    server = None
+    if os.path.exists(KEYFILE_LOCATION):
+        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
+    else:
+        from gcp_storage_emulator.server import create_server
+
+        server = create_server(
+            "localhost", 9023, in_memory=True, default_bucket="bucket"
+        )
+        server.start()
+        os.environ["STORAGE_EMULATOR_HOST"] = "http://localhost:9023"
+        os.environ["SCHEMA_BUCKET_NAME"] = "bucket"
+    import storage
+
+    yield storage
+    if server:
+        server.stop()
 
 
 @pytest.fixture
 def database():
     """
     This database fixture will auto-switch between the firestore emulator
-    and the real Firestore, depending on whether firebase_key.json present.
+    and the real Firestore, depending on whether key.json present.
     If this file is not present and the emulator is not running it will fail
     with a useful message.
     """
-    if os.path.exists(FIREBASE_KEYFILE_LOCATION):
-        os.environ["FIREBASE_KEYFILE_LOCATION"] = FIREBASE_KEYFILE_LOCATION
+    if os.path.exists(KEYFILE_LOCATION):
+        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
     else:
         try:
-            requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=0.1)
+            requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=5)
         except requests.exceptions.ConnectionError:
             pytest.fail(
                 "You need to run the Firestore emulator or fill "
@@ -35,7 +60,7 @@ def database():
 
 
 @pytest.fixture
-def client(database):
+def client(database, storage):
     from app import app
 
     client = TestClient(app)
@@ -67,45 +92,26 @@ def test_dataset(client):
     }
 
 
-def test_get_schema_metadata(client, database):
+def test_publish_schema(client, storage):
     """
-    Artificially put schema data in the database and check it can be read
-    successfully.
-    """
-    survey_id = "xyz"
-    schema_location = "/"
-    database.set_schema_metadata(survey_id=survey_id, schema_location=schema_location)
-    response = client.get(f"/v1/schema_metadata?survey_id={survey_id}")
-    assert response.status_code == 200
-    json_response = response.json()
-    assert len(json_response["supplementary_dataset_schema"]) > 0
-    for schema in json_response["supplementary_dataset_schema"].values():
-        assert schema == {
-            "survey_id": survey_id,
-            "schema_location": schema_location,
-            "sds_schema_version": schema["sds_schema_version"],
-            "sds_published_at": schema["sds_published_at"],
-        }
-
-
-def test_publish_schema(client):
-    """
-    Post a schema using the /schema api endpoint and check it can
-    be retrieved.
+    Post a schema using the /schema api endpoint and check the metadata
+    can retrieved. Also check that schema can be retrieved directly from storage.
     """
     survey_id = "xyz"
-    schema_location = "/"
     with open("../test_data/schema.json") as f:
-        schema = json.load(f)
-    client.post("/v1/schema", json=schema)
-    response = client.get(f"/v1/schema_metadata?survey_id={schema['survey_id']}")
+        test_schema = json.load(f)
+    response = client.post("/v1/schema", json=test_schema)
+    print(response.text)
+    assert response.status_code == 200
+    response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200
     json_response = response.json()
     assert len(json_response["supplementary_dataset_schema"]) > 0
-    for schema in json_response["supplementary_dataset_schema"].values():
+    for guid, schema in json_response["supplementary_dataset_schema"].items():
         assert schema == {
             "survey_id": survey_id,
-            "schema_location": schema_location,
+            "schema_location": f"{survey_id}/{guid}.json",
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
+        assert storage.get_schema(f"{survey_id}/{guid}.json") == test_schema
