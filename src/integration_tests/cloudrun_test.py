@@ -47,7 +47,7 @@ def test_dataset():
 def test_publish_schema():
     """
     Post a schema using the /schema api endpoint and check the metadata
-    can retrieved. Also check that schema can be retrieved directly from storage.
+    can retrieved. Also check that schema can be retrieved.
     """
     survey_id = "xyz"
     with open("../test_data/schema.json") as f:
@@ -71,3 +71,10 @@ def test_publish_schema():
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
+        response = requests.get(
+            f"{CLOUD_RUN_ENDPOINT}/v1/schema?survey_id={survey_id}&version={schema['sds_schema_version']}",
+            headers=headers,
+        )
+        print(response.text)
+        assert response.status_code == 200
+        assert response.json() == test_schema
