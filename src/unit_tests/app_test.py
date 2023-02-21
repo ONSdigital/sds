@@ -60,6 +60,28 @@ def test_query_schemas(client, database):
     )
 
 
+def test_get_schema(client, database):
+    """
+    Checks that we get schema metadata when we get the
+    survey_id and version and that we use that to return
+    the schema file from storage.
+    """
+    expected_metadata = {
+        "survey_id": "xyz",
+        "schema_location": "/xyz/111-222-xxx-fff.json",
+        "sds_schema_version": 2,
+        "sds_published_at": "2023-02-06T13:33:44Z",
+    }
+    schema_guid = "abc"
+    mock_stream_obj = MagicMock()
+    mock_stream_obj.to_dict.return_value = expected_metadata
+    mock_stream_obj.id = schema_guid
+    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
+    response = client.get("/v1/schema?survey_id=xzy&version=2")
+    assert response.status_code == 200
+    assert response.json() == {"hello": "json"}
+
+
 def test_get_datasets(client):
     survey_id = "Survey 1"
     response = client.get(f"/datasets?&survey_id={survey_id}")
