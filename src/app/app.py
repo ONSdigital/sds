@@ -48,7 +48,7 @@ async def publish_schema(schema: Dict = Body(...)):
 @app.get("/v1/schema")
 async def get_schema(survey_id: str, version: str) -> dict:
     """
-    Lookup the schema metadata, gvien the survey_id and version. Then use
+    Lookup the schema metadata, given the survey_id and version. Then use
     that to lookup the location of the schema file in the bucket and
     return that file.
     """
