@@ -11,6 +11,8 @@ To run this service locally, you will need the following:
 * Python 3.11
 * Docker or credentials for GCloud
 
+It is also strongly recommended you install the Google SDK (`brew install --cask google-cloud-sdk`)
+
 You will need to make a choice to run with either GCP service emulators or the real thing.
 Instructions for setting up both are included below.
 
@@ -24,7 +26,7 @@ source .venv/bin/activate
 pip install -r requirement.txt
 ```
 
-### Connecting to services running in GCloud
+### Running SDS and integration tests with services running in GCloud
 
 In order to connect to real services in GCloud, you will need a key file. To create one:
 
@@ -32,15 +34,34 @@ In order to connect to real services in GCloud, you will need a key file. To cre
 * Create a new service account
 * Call it "test"
 * Add whatever roles are needed for testing. "Owner" will work but this is potentially too much access
-* Go into service account and create a key. This will download a JSON file to your machine
- 
-Copy the downloaded JSON file to this director and rename to `key.json` and set the following environment variable:
+* Go into service account and create a key. This will download a JSON file to your machine 
+* Copy the downloaded JSON file to this director and rename to `key.json` and set the following environment variable
+
+You will also need a bucket to put schema files in. Go to the Google Cloud Storage page and create this or 
+refer to an existing one. Make a note of the name and replace `my-schema-bucket` with that name in these instructions.
+
+To run SDS locally, activate the virtual environment, then run the following commands:
 
 ```bash
-export KEYFILE_LOCATION=key.json
+export PYTHONPATH=src/app
+export SCHEMA_BUCKET_NAME=my-schema-bucket
+export GOOGLE_APPLICATION_CREDENTIALS=key.json
+python -m uvicorn src.app.app:app --reload --port 8013
 ```
 
-### Connecting to the emulators
+There are a set of integration tests that allow you to debug SDS but can talk to real Google services. The following
+commands will run those:
+
+```bash
+cd src/integration_tests
+export PYTHONPATH=../app
+export SCHEMA_BUCKET_NAME=my-schema-bucket
+pytest local_tests.py
+```
+
+
+
+### Running SDS and integration tests with service emulators
 
 The Firestore emulator runs in Docker and the Google Cloud Storage emulator runs locally as part of the integration
 tests. To connect to the Firestore emulator running locally in Docker, run the following commands:
@@ -48,21 +69,24 @@ tests. To connect to the Firestore emulator running locally in Docker, run the f
 
 ```bash
 docker-compose up -d firestore
-unset KEYFILE_LOCATION
+docker-compose up -d storage
 export FIRESTORE_EMULATOR_HOST=localhost:8200
-```
-
-### Run SDS locally
-
-To run SDS locally, activate the virtual environment, export the appropriate environment variables (see above)
-then run the following commands:
-
-```bash
+export STORAGE_EMULATOR_HOST=http://localhost:9023
 export PYTHONPATH=src/app
 python -m uvicorn src.app.app:app --reload --port 8013
 ```
 
-## Running linting and unit tests locally
+To run the debuggable integration tests with the emulator, run the following commands:
+
+```bash
+docker-compose up -d firestore
+docker-compose up -d storage
+cd src/integration_tests
+export PYTHONPATH=../app
+pytest local_tests.py
+```
+
+## Running linting and unit tests
 
 To run all the checks that run as part of the CI, run the following commands:
 

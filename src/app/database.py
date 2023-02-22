@@ -1,4 +1,3 @@
-import os
 from dataclasses import asdict
 from datetime import datetime
 
@@ -6,13 +5,8 @@ import firebase_admin
 from firebase_admin import firestore
 from models import SchemaMetadata
 
-if os.environ.get("KEYFILE_LOCATION"):
-    cred_obj = firebase_admin.credentials.Certificate(
-        os.environ.get("KEYFILE_LOCATION")
-    )
-    firebase_admin.initialize_app(cred_obj)
-else:
-    firebase_admin.initialize_app()
+
+firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
