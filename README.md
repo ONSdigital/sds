@@ -63,8 +63,8 @@ pytest local_tests.py
 
 ### Running SDS and integration tests with service emulators
 
-The Firestore emulator runs in Docker and the Google Cloud Storage emulator runs locally as part of the integration
-tests. To connect to the Firestore emulator running locally in Docker, run the following commands:
+The Firestore and Cloud Storage emulator run in Docker. To connect to the Firestore emulator running locally in Docker,
+run the following commands:
 
 
 ```bash
