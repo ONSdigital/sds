@@ -35,7 +35,7 @@ In order to connect to real services in GCloud, you will need a key file. To cre
 * Call it "test"
 * Add whatever roles are needed for testing. "Owner" will work but this is potentially too much access
 * Go into service account and create a key. This will download a JSON file to your machine 
-* Copy the downloaded JSON file to this director and rename to `key.json` and set the following environment variable
+* Copy the downloaded JSON file to this directory and rename to `key.json`
 
 You will also need a bucket to put schema files in. Go to the Google Cloud Storage page and create this or 
 refer to an existing one. Make a note of the name and replace `my-schema-bucket` with that name in these instructions.
