@@ -122,18 +122,6 @@ can be reached by going to the following URLs (once running):
 
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
-
-## Running the integration tests
-
-The integration tests in `src/integration_tests/local_tests.py` require a database and like the app, can be run
-against a real database or the emulator. This tests will auto-switch between the firestore emulator
-and the real Firestore, depending on whether firebase_key.json present. If this file is not present and the emulator
-is not running it will fail with a useful message. To run the tests, run the following:
-
-```
-cd src/integration_tests
-export PYTHONPATH=../app
-pytest local_tests.py
 ```
 
 # Contact
