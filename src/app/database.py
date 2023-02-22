@@ -5,7 +5,6 @@ import firebase_admin
 from firebase_admin import firestore
 from models import SchemaMetadata
 
-
 firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
