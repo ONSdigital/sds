@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
+STORAGE_EMULATOR_HOST = "http://localhost:9023"
 
 
 @pytest.fixture
@@ -17,15 +18,17 @@ def storage():
     """
     server = None
     if os.path.exists(KEYFILE_LOCATION):
-        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
     else:
-        from gcp_storage_emulator.server import create_server
-
-        server = create_server(
-            "localhost", 9023, in_memory=True, default_bucket="bucket"
-        )
-        server.start()
-        os.environ["STORAGE_EMULATOR_HOST"] = "http://localhost:9023"
+        try:
+            requests.get(STORAGE_EMULATOR_HOST, timeout=5)
+        except requests.exceptions.ConnectionError:
+            pytest.fail(
+                "You need to run the Firestore emulator or fill "
+                "in firebase_key.json with creds for a real"
+                "database instance."
+            )
+        os.environ["STORAGE_EMULATOR_HOST"] = STORAGE_EMULATOR_HOST
         os.environ["SCHEMA_BUCKET_NAME"] = "bucket"
     import storage
 
@@ -43,7 +46,7 @@ def database():
     with a useful message.
     """
     if os.path.exists(KEYFILE_LOCATION):
-        os.environ["KEYFILE_LOCATION"] = KEYFILE_LOCATION
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
     else:
         try:
             requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=5)

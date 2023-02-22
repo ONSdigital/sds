@@ -1,6 +1,14 @@
 version: "2.1"
 
 services:
+  storage:
+    image: oittaa/gcp-storage-emulator
+    environment:
+      - PORT=9023
+    ports:
+      - 9023:9023
+    container_name: storage-sds
+
   firestore:
       image: mtlynch/firestore-emulator
       environment:
@@ -18,3 +26,4 @@ services:
     environment:
       - PORT=3000
       - FIRESTORE_EMULATOR_HOST=firestore:8200
+      - STORAGE_EMULATOR_HOST=http://storage:9023
