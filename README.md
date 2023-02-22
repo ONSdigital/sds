@@ -23,7 +23,7 @@ Check that you have the correct version of Python installed and then run the fol
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 ### Running SDS and integration tests with services running in GCloud
