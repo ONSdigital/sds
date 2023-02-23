@@ -104,7 +104,6 @@ def test_publish_schema(client):
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
     response = client.post("/v1/schema", json=test_schema)
-    print(response.text)
     assert response.status_code == 200
     response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200
