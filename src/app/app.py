@@ -5,7 +5,7 @@ from typing import Dict
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import SchemaMetadata, Schemas, Schema
+from models import Schema, SchemaMetadata, Schemas
 
 logging.basicConfig(level=logging.INFO)
 
