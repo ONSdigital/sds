@@ -1,13 +1,21 @@
 import json
 import os
+import uuid
+from time import sleep
 
 import pytest
 import requests
 from fastapi.testclient import TestClient
+from google.cloud import storage as gcp_storage
 
 KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
 STORAGE_EMULATOR_HOST = "http://localhost:9023"
+DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
+
+storage_client = gcp_storage.Client()
+
+bucket = storage_client.bucket(DATASET_BUCKET)
 
 
 @pytest.fixture
@@ -16,7 +24,6 @@ def storage():
     This storage fixture will auto-switch between the emulator
     and the real thing, depending on whether key.json present.
     """
-    server = None
     if os.path.exists(KEYFILE_LOCATION):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
     else:
@@ -33,8 +40,6 @@ def storage():
     import storage
 
     yield storage
-    if server:
-        server.stop()
 
 
 @pytest.fixture
@@ -71,27 +76,57 @@ def client(database, storage):
 
 
 def test_dataset(client):
+    """
+    Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
+
+    * We load the sample dataset json file
+    * Generate a dataset_id which is guaranteed to be unique
+    * Upload the dataset file to the dataset bucket with the dataset_id as the name
+    * We then use the API to get some unit data back using the dataset_id and a known ru_ref
+    """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    response = client.post("/dataset", json=dataset)
-    dataset_id = response.json()["dataset_id"]
-    assert response.status_code == 200
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
+    dataset_id = str(uuid.uuid4())
+    filename = f"{dataset_id}.json"
+    blob = bucket.blob(filename)
+    blob.upload_from_string(
+        json.dumps(dataset, indent=2), content_type="application/json"
+    )
+    unit_id = "43532"
+    sleep(2)
     response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
     assert response.status_code == 200
     assert response.json() == {
-        "unit_id": "55e64129-6acd-438b-a23a-3cf9524ab912",
-        "properties": {
-            "sample_unit": {
-                "units_of_sale": "MILES MAPPED",
-                "currency_description": "SILVER COINS",
-                "time_items": [
-                    {"ref": "M1", "grade": "Chief mapper"},
-                    {"ref": "M2", "grade": "Junior mapper"},
-                    {"ref": "M3", "grade": "Bag carrier"},
-                ],
-            }
-        },
+        "ruref": "43532",
+        "runame": "Pipes and Maps Ltd",
+        "ruaddr1": "111 Under Hill",
+        "ruaddr2": "Hobbitton",
+        "ruaddr4": "The Shire",
+        "rupostcode": "HO1 1AA",
+        "payeref": "123AB456",
+        "busdesc": "Provision of equipment for hobbit adventures",
+        "local_unit": [
+            {
+                "luref": "2012763A",
+                "luname": "Maps Factory",
+                "luaddr1": "1 Bag End",
+                "luaddr2": "Underhill",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AA",
+                "tradstyle": "Also Does Adventures Ltd",
+                "busdesc": "Creates old fashioned looking paper maps",
+            },
+            {
+                "luref": "20127364B",
+                "luname": "Pipes R Us Subsidiary",
+                "luaddr1": "12 The Farmstead",
+                "luaddr2": "Maggotsville",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AB",
+                "busdesc": "Quality pipe manufacturer",
+                "buslref": "pipe123",
+            },
+        ],
     }
 
 
@@ -104,7 +139,6 @@ def test_publish_schema(client):
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
     response = client.post("/v1/schema", json=test_schema)
-    print(response.text)
     assert response.status_code == 200
     response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200

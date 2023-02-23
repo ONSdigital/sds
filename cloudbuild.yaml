@@ -38,5 +38,19 @@ steps:
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2' ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        cd src/app/
+        gcloud functions deploy new-dataset-function \
+        --gen2 \
+        --runtime=python311 \
+        --region=europe-west2 \
+        --source=. \
+        --entry-point=new_dataset \
+        --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
+        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
 options:
   logging: CLOUD_LOGGING_ONLY

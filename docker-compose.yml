@@ -3,21 +3,13 @@ version: "2.1"
 services:
   storage:
     image: oittaa/gcp-storage-emulator
-    environment:
-      - PORT=9023
+    volumes:
+      - ./build/gcp-storage-emulator/data:/storage
     ports:
       - 9023:9023
+    environment:
+      - PORT=9023
     container_name: storage-sds
-
-  firestore:
-      image: mtlynch/firestore-emulator
-      environment:
-          - FIRESTORE_PROJECT_ID=localhost
-          - PORT=8200
-      ports:
-          - 8200:8200
-      container_name: firestore-sds
-
   api:
     build:
       context: .
@@ -25,5 +17,28 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
-      - FIRESTORE_EMULATOR_HOST=firestore:8200
       - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=emulatorsuite:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - SCHEMA_BUCKET_NAME=bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
+    volumes:
+      - ./src/app:/src
+      - ./build/devtools:/devtools
+    restart: on-failure
+    depends_on:
+      - emulatorsuite
+      - storage
+    container_name: api-sds
+  emulatorsuite:
+    image: spine3/firebase-emulator
+    ports:
+      - 8080:8080
+      - 4000:4000
+    environment:
+      - GCP_PROJECT=mock-project-id
+      - ENABLE_UI=true
+    volumes:
+      - ./build/firebase-emulator:/firebase
+      - ./build/firebase-emulator:/firebase/baseline-data
+    container_name: emulatorsuite-sds
