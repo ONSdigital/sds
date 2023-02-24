@@ -38,6 +38,15 @@ def test_post_dataset_schema(client, database, storage):
     assert json.loads(schema_string) == schema
 
 
+def test_post_bad_schema(client, database, storage):
+    """
+    Checks that fastAPI returns a 422 error if the schema
+    is badly formatted.
+    """
+    response = client.post("/v1/schema", json={"schema": "is missing some fields"})
+    assert response.status_code == 422
+
+
 def test_query_schemas(client, database):
     """
     Checks that query_schemas calls the get_schemas function in
