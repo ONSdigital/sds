@@ -1,8 +1,8 @@
 import json
 import os
-from typing import Dict
 
 from google.cloud import storage
+from models import Schema
 
 storage_client = storage.Client()
 
@@ -14,11 +14,12 @@ else:
     raise Exception("You need to set SCHEMA_BUCKET_NAME")
 
 
-def store_schema(schema: Dict, schema_id):
-    filename = f"{schema['survey_id']}/{schema_id}.json"
+def store_schema(schema: Schema, schema_id):
+    filename = f"{schema.survey_id}/{schema_id}.json"
     blob = bucket.blob(filename)
     blob.upload_from_string(
-        json.dumps(schema, indent=2), content_type="application/json"
+        json.dumps(schema.dict(by_alias=True), indent=2),
+        content_type="application/json",
     )
     return filename
 

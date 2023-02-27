@@ -16,7 +16,7 @@ def test_get_unit_data(client):
     client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
 
 
-def test_post_dataset_schema(client, database):
+def test_post_dataset_schema(client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
     and returns a valid schema metadata file.
@@ -32,6 +32,19 @@ def test_post_dataset_schema(client, database):
         "sds_schema_version": schema_meta_data["sds_schema_version"],
         "sds_published_at": schema_meta_data["sds_published_at"],
     }
+    schema_string = (
+        storage.storage_client.bucket().blob().upload_from_string.call_args[0][0]
+    )
+    assert json.loads(schema_string) == schema
+
+
+def test_post_bad_schema(client, database, storage):
+    """
+    Checks that fastAPI returns a 422 error if the schema
+    is badly formatted.
+    """
+    response = client.post("/v1/schema", json={"schema": "is missing some fields"})
+    assert response.status_code == 422
 
 
 def test_query_schemas(client, database):
