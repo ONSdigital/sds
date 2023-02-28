@@ -1,9 +1,8 @@
 import json
 
+import database
 import functions_framework
 from google.cloud import storage
-
-import database
 
 storage_client = storage.Client()
 
