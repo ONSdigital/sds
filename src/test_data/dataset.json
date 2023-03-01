@@ -1,55 +1,82 @@
 {
-  "title": "SPPI supplementary data set",
-  "description": "supplementary data for SPPI Survey",
-  "schema_version" : 1,
-  "survey_id": "Survey 1",
-  "ce_id": "2312",
+  "survey_id": "xyz",
+  "period_id": "ttt",
+  "form_id": "yyy",
+  "title": "Which side was better?",
+  "sds_schema_version": 4,
+  "schema_version": "v1.0.0",
   "data": [
     {
-      "unit_id": "55e64129-6acd-438b-a23a-3cf9524ab912",
-      "properties": {
-        "sample_unit": {
-          "units_of_sale": "MILES MAPPED",
-          "currency_description": "SILVER COINS",
-          "time_items": [
-            {
-              "ref": "M1",
-              "grade": "Chief mapper"
-            },
-            {
-              "ref": "M2",
-              "grade": "Junior mapper"
-            },
-            {
-              "ref": "M3",
-              "grade": "Bag carrier"
-            }
-          ]
+      "ruref": "43532",
+      "runame": "Pipes and Maps Ltd",
+      "ruaddr1": "111 Under Hill",
+      "ruaddr2": "Hobbitton",
+      "ruaddr4": "The Shire",
+      "rupostcode": "HO1 1AA",
+      "payeref": "123AB456",
+      "busdesc": "Provision of equipment for hobbit adventures",
+      "local_unit": [
+        {
+          "luref": "2012763A",
+          "luname": "Maps Factory",
+          "luaddr1": "1 Bag End",
+          "luaddr2": "Underhill",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AA",
+          "tradstyle": "Also Does Adventures Ltd",
+          "busdesc": "Creates old fashioned looking paper maps"
+        },
+        {
+          "luref": "20127364B",
+          "luname": "Pipes R Us Subsidiary",
+          "luaddr1": "12 The Farmstead",
+          "luaddr2": "Maggotsville",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AB",
+          "busdesc": "Quality pipe manufacturer",
+          "buslref": "pipe123"
         }
-      }
+      ]
     },
     {
-      "unit_id": "f6f1c355-5465-4063-aa7a-f290e649aa00",
-      "properties": {
-        "sample_unit": {
-          "units_of_sale": "MILES MAPPED",
-          "currency_description": "GOLD COINS",
-          "time_items": [
-            {
-              "ref": "M1",
-              "grade": "Chief mapper"
-            },
-            {
-              "ref": "M2",
-              "grade": "Junior mapper"
-            },
-            {
-              "ref": "M3",
-              "grade": "Bag carrier"
-            }
-          ]
+      "ruref": "65871",
+      "runame": "Boats and Floats Ltd",
+      "ruaddr1": "111 Upper Hill",
+      "ruaddr2": "Mordor",
+      "rupostcode": "HO10 1AA",
+      "payeref": "8888",
+      "busdesc": "Provision of equipment for the bad guys.",
+      "local_unit": [
+        {
+          "luref": "2012763A",
+          "luname": "Arms Factory",
+          "luaddr1": "1 Bag End",
+          "luaddr2": "Underhill",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AA",
+          "tradstyle": "Also Does Adventures Ltd",
+          "busdesc": "Creates old fashioned looking paper maps"
+        },
+        {
+          "luref": "20127364B",
+          "luname": "Swords Subsidiary",
+          "luaddr1": "12 The Farmstead",
+          "luaddr2": "Maggotsville",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AB",
+          "busdesc": "Quality pipe manufacturer",
+          "buslref": "pipe123"
+        },
+        {
+          "luref": "20127365C",
+          "luname": "Armor N Things",
+          "luaddr1": "5 Barrow Lane",
+          "luaddr2": "Striderton",
+          "luaddr3": "Bree",
+          "lupostcode": "BR1 1AC",
+          "busdesc": "Magic ring foundry"
         }
-      }
+      ]
     }
   ]
 }

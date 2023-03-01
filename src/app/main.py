@@ -1,10 +1,6 @@
-import json
-
 import database
+import dataset_storage
 import functions_framework
-from google.cloud import storage
-
-storage_client = storage.Client()
 
 
 # Triggered by a change in a storage bucket
@@ -30,9 +26,6 @@ def new_dataset(cloud_event):
     print(f"Updated: {updated}")
     dataset_id = filename.split(".json")[0]
     print(f"dataset_id: {dataset_id}")
-    bucket = storage_client.bucket(bucket_name)
-    dataset = json.loads(bucket.blob(filename).download_as_string())
 
-    for sup_data in dataset["data"]:
-        database.set_data(dataset_id, sup_data)
-    database.set_dataset(dataset_id, dataset)
+    dataset = dataset_storage.get_dataset(filename=filename, bucket_name=bucket_name)
+    database.set_dataset(dataset_id=dataset_id, dataset=dataset)

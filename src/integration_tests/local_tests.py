@@ -70,31 +70,6 @@ def client(database, storage):
     yield client
 
 
-def test_dataset(client):
-    with open("../test_data/dataset.json") as f:
-        dataset = json.load(f)
-    response = client.post("/dataset", json=dataset)
-    dataset_id = response.json()["dataset_id"]
-    assert response.status_code == 200
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-    assert response.status_code == 200
-    assert response.json() == {
-        "unit_id": "55e64129-6acd-438b-a23a-3cf9524ab912",
-        "properties": {
-            "sample_unit": {
-                "units_of_sale": "MILES MAPPED",
-                "currency_description": "SILVER COINS",
-                "time_items": [
-                    {"ref": "M1", "grade": "Chief mapper"},
-                    {"ref": "M2", "grade": "Junior mapper"},
-                    {"ref": "M3", "grade": "Bag carrier"},
-                ],
-            }
-        },
-    }
-
-
 def test_publish_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata

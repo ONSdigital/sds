@@ -1,12 +1,11 @@
+import json
 from unittest.mock import MagicMock
 
 
 def test_set_dataset(database):
-    database.set_dataset(dataset_id="1", dataset={"data": {}})
-
-
-def test_set_data(database):
-    database.set_data(dataset_id="1", data={"unit_id": "fake_id"})
+    with open("../test_data/dataset.json") as f:
+        dataset = json.load(f)
+    database.set_dataset(dataset_id="1", dataset=dataset)
 
 
 def test_get_data(database):

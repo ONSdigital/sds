@@ -143,7 +143,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member serviceAccount:$SERVICE_ACCOUNT \
   --role roles/pubsub.publisher
 
-cd src/cloud_functions/
+cd src/app/
 
 gcloud functions deploy new-dataset-function \
 --gen2 \
