@@ -2,14 +2,6 @@ import json
 from unittest.mock import MagicMock
 
 
-def test_post_dataset(client):
-    response = client.post("/dataset", json={"data": {}})
-    dataset_id = response.json()["dataset_id"]
-    assert response.status_code == 200
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-
 def test_get_unit_data(client):
     unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
     dataset_id = "55e64129-6acd-438b-a23a-3cf9524ab912"

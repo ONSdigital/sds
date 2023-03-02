@@ -31,9 +31,17 @@ def storage(monkeypatch):
 
 
 @pytest.fixture
-def client(database, storage, monkeypatch):
+def client(database, storage):
     os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
     import app
 
     client = TestClient(app.app)
     yield client
+
+
+@pytest.fixture
+def cloud_functions(database, storage):
+    os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
+    import main
+
+    yield main

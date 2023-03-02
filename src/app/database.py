@@ -12,13 +12,11 @@ schemas_collection = db.collection("schemas")
 
 
 def set_dataset(dataset_id, dataset):
-    dataset.pop("data")
+    data = dataset.pop("data")
     datasets_collection.document(dataset_id).set(dataset)
-
-
-def set_data(dataset_id, data):
     units_collection = datasets_collection.document(dataset_id).collection("units")
-    units_collection.document(data["unit_id"]).set(data)
+    for unit_data in data:
+        units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
 def get_data(dataset_id, unit_id):

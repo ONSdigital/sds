@@ -12,16 +12,6 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
-@app.post("/dataset")
-async def dataset(payload: dict = Body(...)):
-    """Put a dataset file into the database and return the dataset id."""
-    dataset_id = str(uuid.uuid4())
-    for sup_data in payload["data"]:
-        database.set_data(dataset_id, sup_data)
-    database.set_dataset(dataset_id, payload)
-    return {"dataset_id": dataset_id}
-
-
 @app.get("/unit_data")
 async def unit_data(dataset_id: str, unit_id: str):
     """Retrieve supplementary data for a particular unit given the unit id

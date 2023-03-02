@@ -122,7 +122,40 @@ can be reached by going to the following URLs (once running):
 
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
+
+## Cloud Functions
+
+The Cloud Function setup is heavily based on https://cloud.google.com/functions/docs/tutorials/storage
+
+To deploy the Cloud Functions, run the following locally, but set PROJECT_NAME and DATASET_BUCKET
+environment variables first:
+
+```bash
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+
+PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
+
+SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member serviceAccount:$SERVICE_ACCOUNT \
+  --role roles/pubsub.publisher
+
+cd src/app/
+
+gcloud functions deploy new-dataset-function \
+--gen2 \
+--runtime=python311 \
+--region=europe-west2 \
+--source=. \
+--entry-point=new_dataset \
+--trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
+--trigger-event-filters="bucket=$DATASET_BUCKET"
 ```
+
+
 
 # Contact
 
