@@ -6,12 +6,12 @@ from time import sleep
 import pytest
 import requests
 from fastapi.testclient import TestClient
+from google.cloud import storage as gcp_storage
 
 KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
 STORAGE_EMULATOR_HOST = "http://localhost:9023"
 DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
-from google.cloud import storage as gcp_storage
 
 storage_client = gcp_storage.Client()
 
