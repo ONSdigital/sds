@@ -1,5 +1,7 @@
 import json
 import os
+import uuid
+from time import sleep
 
 import pytest
 import requests
@@ -8,6 +10,12 @@ from fastapi.testclient import TestClient
 KEYFILE_LOCATION = "../../key.json"
 FIRESTORE_EMULATOR_HOST = "localhost:8200"
 STORAGE_EMULATOR_HOST = "http://localhost:9023"
+DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
+from google.cloud import storage as gcp_storage
+
+storage_client = gcp_storage.Client()
+
+bucket = storage_client.bucket(DATASET_BUCKET)
 
 
 @pytest.fixture
@@ -68,6 +76,53 @@ def client(database, storage):
 
     client = TestClient(app)
     yield client
+
+
+def test_dataset(client):
+    with open("../test_data/dataset.json") as f:
+        dataset = json.load(f)
+    dataset_id = str(uuid.uuid4())
+    filename = f"{dataset_id}.json"
+    blob = bucket.blob(filename)
+    blob.upload_from_string(
+        json.dumps(dataset, indent=2), content_type="application/json"
+    )
+    unit_id = "43532"
+    sleep(2)
+    response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+    assert response.status_code == 200
+    assert response.json() == {
+        "ruref": "43532",
+        "runame": "Pipes and Maps Ltd",
+        "ruaddr1": "111 Under Hill",
+        "ruaddr2": "Hobbitton",
+        "ruaddr4": "The Shire",
+        "rupostcode": "HO1 1AA",
+        "payeref": "123AB456",
+        "busdesc": "Provision of equipment for hobbit adventures",
+        "local_unit": [
+            {
+                "luref": "2012763A",
+                "luname": "Maps Factory",
+                "luaddr1": "1 Bag End",
+                "luaddr2": "Underhill",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AA",
+                "tradstyle": "Also Does Adventures Ltd",
+                "busdesc": "Creates old fashioned looking paper maps",
+            },
+            {
+                "luref": "20127364B",
+                "luname": "Pipes R Us Subsidiary",
+                "luaddr1": "12 The Farmstead",
+                "luaddr2": "Maggotsville",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AB",
+                "busdesc": "Quality pipe manufacturer",
+                "buslref": "pipe123",
+            },
+        ],
+    }
 
 
 def test_publish_schema(client):
