@@ -1,29 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ons.gov.uk/bres_schema_for_data.schema.json",
-  "survey_id": "xyz",
-  "title": "BRES Schema for BRES data",
-  "description": "BRES data validation for use with SDS",
-  "schema_version": "1",
-  "schema_version_date": "01-SEP-2022",
-  "required": [
+  "$id": "https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json",
+  "survey_id": "068",
+  "title": "Roofing Tiles",
+  "description": "Roofing Tiles",
+  "schema_version": "v1.0.0",
+  "sample_unit_key_field": "ruref",
+  "properties": [
     {
-      "sample_unit_type_name": "reporting_unit",
-      "sample_unit_key_name": "ruref"
-    },
-    {
-      "sub_unit_type_name": "local_unit",
-      "sub-unit_key_name": "luref"
-    }
-  ],
-  "properties": {
-    "reporting_unit": {
       "type": "object",
       "required": [
-        "ruref",
-        "runame",
-        "ruaddr1",
-        "rupostcode"
+        "ruref"
       ],
       "properties": {
         "ruref": {
@@ -33,127 +20,81 @@
           "type": "string",
           "Description": "The reporting unit name."
         },
-        "ruaddr1": {
-          "type": "string"
+        "ruaddr": {
+          "type": "List",
+          "Description": "This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr"
         },
-        "ruaddr2": {
-          "type": "string"
-        },
-        "ruaddr3": {
-          "type": "string"
-        },
-        "ruaddr4": {
-          "type": "string"
-        },
-        "ruaddr5": {
-          "type": "string"
-        },
-        "rupostcode": {
-          "type": "string"
-        },
-        "vatref": {
-          "type": "string"
-        },
-        "payeref": {
-          "type": "string"
-        },
-        "busdesc": {
-          "type": "string"
-        },
-        "local_unit": {
+        "repeats": {
           "type": "array",
           "required": [
-            "luref",
-            "luname",
-            "luaddr1"
+            "luref"
           ],
           "properties": {
+            "key_field": "luref",
             "luref": {
               "type": "string"
             },
             "luname": {
               "type": "string"
             },
-            "luaddr1": {
-              "type": "string"
-            },
-            "luaddr2": {
-              "type": "string"
-            },
-            "luaddr3": {
-              "type": "string"
-            },
-            "luaddr4": {
-              "type": "string"
-            },
-            "luaddr5": {
-              "type": "string"
-            },
-            "lupostcode": {
-              "type": "string"
-            },
-            "tradstyle": {
-              "type": "string"
-            },
-            "busdesc": {
-              "type": "string"
-            },
-            "busluref": {
-              "type": "string"
+            "luaddr": {
+              "type": "List",
+              "Description": "This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr"
             }
           }
         }
       }
     }
-  },
+  ],
   "examples": [
     {
       "ruref": "43532",
       "runame": "Pipes and Maps Ltd",
-      "ruaddr1": "111 Under Hill",
-      "ruaddr2": "Hobbitton",
-      "ruaddr4": "The Shire",
-      "rupostcode": "HO1 1AA",
-      "payeref": "123AB456",
-      "busdesc": "Provision of equipment for hobbit adventures",
+      "ruaddr": [
+        "111 Under Hill",
+        "Hobbitton",
+        "The Shire",
+        "HO1 1AA"
+      ],
       "local_unit": [
         {
           "luref": "2012763A",
           "luname": "Maps Factory",
-          "luaddr1": "1 Bag End",
-          "luaddr2": "Underhill",
-          "luaddr3": "Hobbiton",
-          "lupostcode": "HO1 1AA",
-          "tradstyle": "Also Does Adventures Ltd",
-          "busdesc": "Creates old fashioned looking paper maps"
+          "luaddr": [
+            "1 Bag End",
+            "Underhill",
+            "Hobbiton",
+            "HO1 1AA"
+          ]
         },
         {
           "luref": "20127364B",
           "luname": "Pipes R Us Subsidiary",
-          "luaddr1": "12 The Farmstead",
-          "luaddr2": "Maggotsville",
-          "luaddr3": "Hobbiton",
-          "lupostcode": "HO1 1AB",
-          "busdesc": "Quality pipe manufacturer",
-          "buslref": "pipe123"
+          "luaddr": [
+            "12 The Farmstead",
+            "Maggotsville",
+            "Hobbiton",
+            "HO1 1AB"
+          ]
         },
         {
           "luref": "20127365C",
           "luname": "Rings N Things",
-          "luaddr1": "5 Barrow Lane",
-          "luaddr2": "Striderton",
-          "luaddr3": "Bree",
-          "lupostcode": "BR1 1AC",
-          "busdesc": "Magic ring foundry"
+          "luaddr": [
+            "5 Barrow Lane",
+            "Striderton",
+            "Bree",
+            "BR1 1AC"
+          ]
         },
         {
           "luref": "20127366D",
           "luname": "Tobacco Sales Inc",
-          "luaddr1": "23 Rosie Avenue",
-          "luaddr2": "Buckhampton",
-          "lupostcode": "BU55 9ZZ",
-          "tradstyle": "Old Smoky",
-          "busdesc": "Pipeweed processing"
+          "luaddr": [
+            "23 Rosie Avenue",
+            "Buckhampton",
+            "BU55 9ZZ"
+          ]
         }
       ]
     }

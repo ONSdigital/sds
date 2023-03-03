@@ -16,10 +16,11 @@ def test_post_dataset_schema(client, database, storage):
     with open("../test_data/schema.json") as f:
         schema = json.load(f)
     response = client.post("/v1/schema", json=schema)
+    print(response.text)
     assert response.status_code == 200
     schema_meta_data = response.json()
     assert schema_meta_data == {
-        "survey_id": "xyz",
+        "survey_id": "068",
         "schema_location": schema_meta_data["schema_location"],
         "sds_schema_version": schema_meta_data["sds_schema_version"],
         "sds_published_at": schema_meta_data["sds_published_at"],
