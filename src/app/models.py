@@ -2,10 +2,6 @@ from dataclasses import dataclass
 
 from pydantic import BaseModel, Field
 
-class x:
-    def __int__(self, y):
-        self.y = y
-
 
 @dataclass
 class SchemaMetadata:
