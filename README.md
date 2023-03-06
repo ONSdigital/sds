@@ -125,8 +125,6 @@ can be reached by going to the following URLs (once running):
 
 ## Cloud Functions
 
-Hello
-
 The Cloud Function setup is heavily based on https://cloud.google.com/functions/docs/tutorials/storage
 
 To deploy the Cloud Functions, run the following locally, but set PROJECT_NAME and DATASET_BUCKET
