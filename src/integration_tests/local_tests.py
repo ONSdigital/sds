@@ -24,7 +24,6 @@ def storage():
     This storage fixture will auto-switch between the emulator
     and the real thing, depending on whether key.json present.
     """
-    server = None
     if os.path.exists(KEYFILE_LOCATION):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
     else:
@@ -41,8 +40,6 @@ def storage():
     import storage
 
     yield storage
-    if server:
-        server.stop()
 
 
 @pytest.fixture
