@@ -164,9 +164,10 @@ the real dataset bucket):
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
-AUTH_TOKEN=$(gcloud auth print-identity-token)
-CLOUD_RUN_ENPOINT=https://sds-blahblah.a.run.app
-DATASET_BUCKET=a-place-for-datasets
+export AUTH_TOKEN=$(gcloud auth print-identity-token)
+export CLOUD_RUN_ENDPOINT=https://sds-blahblah.a.run.app
+export DATASET_BUCKET=a-place-for-datasets
+export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
 cd src/integration_tests
 pytest cloudrun_test.py
 ```
