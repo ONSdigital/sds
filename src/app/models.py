@@ -20,9 +20,9 @@ class Schema(BaseModel):
     survey_id: str
     title: str
     description: str
-    schemaVersion: str
-    schemaVersionDate: str
-    properties: dict
+    schema_version: str
+    sample_unit_key_field: str
+    properties: list
     examples: list
     d_schema: str = Field(alias="$schema")
     d_id: str = Field(alias="$id")

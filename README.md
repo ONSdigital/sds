@@ -155,6 +155,22 @@ gcloud functions deploy new-dataset-function \
 --trigger-event-filters="bucket=$DATASET_BUCKET"
 ```
 
+## Cloud Run Tests
+
+These are integration tests which make calls into SDS running on GCloud via the API. Run them like this
+(replacing `https://sds-blahblah.a.run.app` with the actual cloud run endpoint and `a-place-for-datasets` with
+the real dataset bucket):
+
+```bash
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+export AUTH_TOKEN=$(gcloud auth print-identity-token)
+export CLOUD_RUN_ENDPOINT=https://sds-blahblah.a.run.app
+export DATASET_BUCKET=a-place-for-datasets
+export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
+cd src/integration_tests
+pytest cloudrun_test.py
+```
 
 
 # Contact

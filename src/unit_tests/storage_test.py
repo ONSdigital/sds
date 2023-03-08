@@ -10,9 +10,9 @@ def test_store_schema(storage):
                 "survey_id": "abc",
                 "title": "BRES Schema for BRES data",
                 "description": "BRES data validation for use with SDS",
-                "schemaVersion": "1",
-                "schemaVersionDate": "01-SEP-2022",
-                "properties": {},
+                "schema_version": "v1.0.0",
+                "sample_unit_key_field": "ruref",
+                "properties": [],
                 "examples": [],
             }
         ),
