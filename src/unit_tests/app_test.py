@@ -16,7 +16,6 @@ def test_post_dataset_schema(client, database, storage):
     with open("../test_data/schema.json") as f:
         schema = json.load(f)
     response = client.post("/v1/schema", json=schema)
-    print(response.text)
     assert response.status_code == 200
     schema_meta_data = response.json()
     assert schema_meta_data == {

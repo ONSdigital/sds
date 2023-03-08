@@ -17,6 +17,14 @@ headers = {"Authorization": f"Bearer {AUTH_TOKEN}"}
 
 
 def test_dataset():
+    """
+    Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
+
+    * We load the sample dataset json file
+    * Generate a dataset_id which is guaranteed to be unique
+    * Upload the dataset file to the dataset bucket with the dataset_id as the name
+    * We then use the API to get some unit data back using the dataset_id and a known ru_ref
+    """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
     dataset_id = str(uuid.uuid4())
@@ -77,7 +85,6 @@ def test_publish_schema():
     response = requests.post(
         f"{CLOUD_RUN_ENDPOINT}/v1/schema", json=test_schema, headers=headers
     )
-    print(response.text)
     assert response.status_code == 200
     response = requests.get(
         f"{CLOUD_RUN_ENDPOINT}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
@@ -97,6 +104,5 @@ def test_publish_schema():
             f"{CLOUD_RUN_ENDPOINT}/v1/schema?survey_id={survey_id}&version={schema['sds_schema_version']}",
             headers=headers,
         )
-        print(response.text)
         assert response.status_code == 200
         assert response.json() == test_schema

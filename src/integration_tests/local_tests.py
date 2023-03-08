@@ -76,6 +76,14 @@ def client(database, storage):
 
 
 def test_dataset(client):
+    """
+    Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
+
+    * We load the sample dataset json file
+    * Generate a dataset_id which is guaranteed to be unique
+    * Upload the dataset file to the dataset bucket with the dataset_id as the name
+    * We then use the API to get some unit data back using the dataset_id and a known ru_ref
+    """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
     dataset_id = str(uuid.uuid4())
