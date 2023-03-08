@@ -1,81 +1,9 @@
 import json
-import os
 import uuid
 from time import sleep
 
-import pytest
-import requests
-from fastapi.testclient import TestClient
-from google.cloud import storage as gcp_storage
 
-KEYFILE_LOCATION = "../../key.json"
-FIRESTORE_EMULATOR_HOST = "localhost:8200"
-STORAGE_EMULATOR_HOST = "http://localhost:9023"
-DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
-
-storage_client = gcp_storage.Client()
-
-bucket = storage_client.bucket(DATASET_BUCKET)
-
-
-@pytest.fixture
-def storage():
-    """
-    This storage fixture will auto-switch between the emulator
-    and the real thing, depending on whether key.json present.
-    """
-    if os.path.exists(KEYFILE_LOCATION):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
-    else:
-        try:
-            requests.get(STORAGE_EMULATOR_HOST, timeout=5)
-        except requests.exceptions.ConnectionError:
-            pytest.fail(
-                "You need to run the Firestore emulator or fill "
-                "in firebase_key.json with creds for a real"
-                "database instance."
-            )
-        os.environ["STORAGE_EMULATOR_HOST"] = STORAGE_EMULATOR_HOST
-        os.environ["SCHEMA_BUCKET_NAME"] = "bucket"
-    import storage
-
-    yield storage
-
-
-@pytest.fixture
-def database():
-    """
-    This database fixture will auto-switch between the firestore emulator
-    and the real Firestore, depending on whether key.json present.
-    If this file is not present and the emulator is not running it will fail
-    with a useful message.
-    """
-    if os.path.exists(KEYFILE_LOCATION):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = KEYFILE_LOCATION
-    else:
-        try:
-            requests.get(f"http://{FIRESTORE_EMULATOR_HOST}", timeout=5)
-        except requests.exceptions.ConnectionError:
-            pytest.fail(
-                "You need to run the Firestore emulator or fill "
-                "in firebase_key.json with creds for a real"
-                "database instance."
-            )
-        os.environ["FIRESTORE_EMULATOR_HOST"] = FIRESTORE_EMULATOR_HOST
-    import database
-
-    yield database
-
-
-@pytest.fixture
-def client(database, storage):
-    from app import app
-
-    client = TestClient(app)
-    yield client
-
-
-def test_dataset(client):
+def test_dataset(client, bucket_loader):
     """
     Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
 
@@ -88,10 +16,8 @@ def test_dataset(client):
         dataset = json.load(f)
     dataset_id = str(uuid.uuid4())
     filename = f"{dataset_id}.json"
-    blob = bucket.blob(filename)
-    blob.upload_from_string(
-        json.dumps(dataset, indent=2), content_type="application/json"
-    )
+    bucket_loader(filename, dataset)
+
     unit_id = "43532"
     sleep(2)
     response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")

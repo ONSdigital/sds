@@ -172,6 +172,11 @@ cd src/integration_tests
 pytest cloudrun_test.py
 ```
 
+```bash
+export FIRESTORE_EMULATOR_HOST=localhost:8200
+export STORAGE_EMULATOR_HOST=http://localhost:9023
+```
+
 
 # Contact
 
