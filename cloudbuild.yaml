@@ -62,6 +62,6 @@ steps:
         export API_URL=$_API_URL
         export DATASET_BUCKET=$_DATASET_BUCKET
         cd src/integration_tests
-        pytest integration_tests.py
+        python -m pytest integration_tests.py
 options:
   logging: CLOUD_LOGGING_ONLY
