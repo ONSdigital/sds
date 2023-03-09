@@ -13,7 +13,7 @@ storage_client = gcp_storage.Client()
 
 
 class RequestWrapper:
-    def __int__(self, api_url, headers=None):
+    def __init__(self, api_url, headers=None):
         self.api_url = api_url
         self.headers = headers
 
@@ -21,7 +21,7 @@ class RequestWrapper:
         return requests.get(f"{self.api_url}{endpoint}", headers=self.headers)
 
     def post(self, endpoint, json):
-        return requests.get(
+        return requests.post(
             f"{self.api_url}{endpoint}", headers=self.headers, json=json
         )
 

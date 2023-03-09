@@ -61,10 +61,11 @@ def test_publish_schema(client):
     Post a schema using the /schema api endpoint and check the metadata
     can retrieved. Also check that schema can be retrieved directly from storage.
     """
-    survey_id = "xyz"
+    survey_id = "068"
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
     response = client.post("/v1/schema", json=test_schema)
+    print(response.text)
     assert response.status_code == 200
     response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200

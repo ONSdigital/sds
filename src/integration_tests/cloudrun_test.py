@@ -11,7 +11,7 @@ storage_client = storage.Client()
 DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
 bucket = storage_client.bucket(DATASET_BUCKET)
 
-CLOUD_RUN_ENDPOINT = os.environ.get("CLOUD_RUN_ENDPOINT")
+API_URL = os.environ.get("API_URL")
 AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
 headers = {"Authorization": f"Bearer {AUTH_TOKEN}"}
 
@@ -36,7 +36,7 @@ def test_dataset():
     unit_id = "43532"
     sleep(2)
     response = requests.get(
-        f"{CLOUD_RUN_ENDPOINT}/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+        f"{API_URL}/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
         headers=headers,
     )
     assert response.status_code == 200
@@ -82,12 +82,10 @@ def test_publish_schema():
     survey_id = "068"
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
-    response = requests.post(
-        f"{CLOUD_RUN_ENDPOINT}/v1/schema", json=test_schema, headers=headers
-    )
+    response = requests.post(f"{API_URL}/v1/schema", json=test_schema, headers=headers)
     assert response.status_code == 200
     response = requests.get(
-        f"{CLOUD_RUN_ENDPOINT}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
+        f"{API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
         headers=headers,
     )
     assert response.status_code == 200
@@ -101,7 +99,7 @@ def test_publish_schema():
             "sds_published_at": schema["sds_published_at"],
         }
         response = requests.get(
-            f"{CLOUD_RUN_ENDPOINT}/v1/schema?survey_id={survey_id}&version={schema['sds_schema_version']}",
+            f"{API_URL}/v1/schema?survey_id={survey_id}&version={schema['sds_schema_version']}",
             headers=headers,
         )
         assert response.status_code == 200

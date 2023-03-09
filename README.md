@@ -145,7 +145,7 @@ gcloud config set project $PROJECT_NAME
 
 # To talk to the REST endpoint
 export AUTH_TOKEN=$(gcloud auth print-identity-token)  
-export CLOUD_RUN_ENDPOINT=https://sds-blahblah.a.run.app
+export API_URL=https://sds-blahblah.a.run.app
 
 # To talk to Cloud Storage
 export DATASET_BUCKET=a-place-for-datasets  
