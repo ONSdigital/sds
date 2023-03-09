@@ -39,6 +39,7 @@ steps:
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2' ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Deploy cloud function"
     entrypoint: sh
     args:
       - '-c'
@@ -52,5 +53,15 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+  - name: python
+    id: "Run integration test"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        export API_URL=$_API_URL
+        export DATASET_BUCKET=$_DATASET_BUCKET
+        cd src/integration_tests
+        pytest integration_tests.py
 options:
   logging: CLOUD_LOGGING_ONLY
