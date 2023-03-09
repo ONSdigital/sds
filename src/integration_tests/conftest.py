@@ -1,3 +1,4 @@
+import json
 import os
 from unittest.mock import MagicMock
 
@@ -5,9 +6,7 @@ import pytest
 import requests
 from fastapi.testclient import TestClient
 from google.cloud import storage as gcp_storage
-import json
 from main import new_dataset
-
 
 storage_client = gcp_storage.Client()
 
