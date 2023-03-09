@@ -6,7 +6,6 @@ import pytest
 import requests
 from fastapi.testclient import TestClient
 from google.cloud import storage as gcp_storage
-from main import new_dataset
 
 storage_client = gcp_storage.Client()
 
@@ -54,6 +53,8 @@ def upload_dataset(filename, dataset):
         json.dumps(dataset, indent=2), content_type="application/json"
     )
     if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+        from main import new_dataset
+
         cloud_event = MagicMock()
         cloud_event.data = {
             "bucket": dataset_bucket,
