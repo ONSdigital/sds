@@ -2,6 +2,8 @@ import json
 import os
 from unittest.mock import MagicMock
 
+import google.auth.transport.requests
+import google.oauth2.id_token
 import pytest
 import requests
 from fastapi.testclient import TestClient
@@ -27,14 +29,12 @@ class RequestWrapper:
 @pytest.fixture
 def client():
     api_url = os.environ.get("API_URL")
-    auth_token = os.environ.get("AUTH_TOKEN")
     if api_url:
-        if auth_token:
-            client = RequestWrapper(
-                api_url, headers={"Authorization": f"Bearer {auth_token}"}
-            )
-        else:
-            client = RequestWrapper(api_url)
+        auth_req = google.auth.transport.requests.Request()
+        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
+        client = RequestWrapper(
+            api_url, headers={"Authorization": f"Bearer {auth_token}"}
+        )
     else:
         from app import app
 

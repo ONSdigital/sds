@@ -143,11 +143,7 @@ Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual c
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
-# To talk to the REST endpoint
-export AUTH_TOKEN=$(gcloud auth print-identity-token)  
 export API_URL=https://sds-blahblah.a.run.app
-
-# To talk to Cloud Storage
 export DATASET_BUCKET=a-place-for-datasets  
 export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
 
