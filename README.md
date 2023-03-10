@@ -76,8 +76,9 @@ To run all the checks that run as part of the CI, run the following commands:
 black . --check
 isort . --check-only --profile black
 flake8 src --max-line-length=127
-export PYTHONPATH=src/app
-pytest --cov=src/app src/unit_tests
+cd src/unit_tests
+export PYTHONPATH=../app
+pytest --cov=../app .
 coverage report --fail-under=90
 ```
 

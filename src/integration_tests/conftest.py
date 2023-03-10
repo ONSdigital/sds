@@ -7,9 +7,23 @@ import google.oauth2.id_token
 import pytest
 import requests
 from fastapi.testclient import TestClient
+from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
 
 storage_client = gcp_storage.Client()
+
+
+def pytest_sessionstart():
+    """Create the buckets before running the test."""
+    if os.environ.get("STORAGE_EMULATOR_HOST"):
+        try:
+            storage_client.create_bucket(os.environ.get("DATASET_BUCKET"))
+        except exceptions.Conflict:
+            pass
+        try:
+            storage_client.create_bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
+        except exceptions.Conflict:
+            pass
 
 
 class RequestWrapper:
@@ -34,14 +48,7 @@ def client():
             auth_req = google.auth.transport.requests.Request()
             auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
         else:
-            # credentials, project_id = google.auth.default(
-            #     scopes=["https://www.googleapis.com/auth/cloud-platform"]
-            # )
-            # if credentials.expired and credentials.refresh_token:
-            #     credentials.refresh(google.auth.transport.requests.Request())
-            # auth_token = credentials.token
             auth_token = os.environ.get("ACCESS_TOKEN")
-            print(f"auth_token: {auth_token}")
 
         client = RequestWrapper(
             api_url, headers={"Authorization": f"Bearer {auth_token}"}
@@ -54,8 +61,10 @@ def client():
 
 
 def upload_dataset(filename, dataset):
-    """If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the real thing so emulate
-    the behaviour of the new_dataset function instead."""
+    """
+    If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the
+    real Cloud Function, so emulate the behaviour of the new_dataset function instead.
+    """
     dataset_bucket = os.environ.get("DATASET_BUCKET")
     bucket = storage_client.bucket(dataset_bucket)
     blob = bucket.blob(filename)
