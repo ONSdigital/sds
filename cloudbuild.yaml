@@ -54,10 +54,11 @@ steps:
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET}"
   - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'gcloud'
+    entrypoint: sh
     args:
-    - 'auth'
-    - 'print-access-token'
+      - '-c'
+      - |
+        gcloud auth print-access-token > /workspace/token
     id: 'get_token'
   - name: python
     id: "Run integration test"
