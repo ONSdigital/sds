@@ -67,7 +67,6 @@ steps:
       - '-c'
       - |
         export ACCESS_TOKEN=$(cat /workspace/token)
-        echo $ACCESS_TOKEN
         export API_URL=$_API_URL
         export DATASET_BUCKET=$_DATASET_BUCKET
         cd src/integration_tests
