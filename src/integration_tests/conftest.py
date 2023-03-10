@@ -41,6 +41,7 @@ def client():
             #     credentials.refresh(google.auth.transport.requests.Request())
             # auth_token = credentials.token
             auth_token = os.environ.get("ACCESS_TOKEN")
+            print(f"auth_token: {auth_token}")
 
         client = RequestWrapper(
             api_url, headers={"Authorization": f"Bearer {auth_token}"}
@@ -53,16 +54,15 @@ def client():
 
 
 def upload_dataset(filename, dataset):
-    """If GOOGLE_APPLICATION_CREDENTIALS is set, we
-    assume we can talk to the real thing and make use
-    of the hosted cloud function."""
+    """If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the real thing so emulate
+    the behaviour of the new_dataset function instead."""
     dataset_bucket = os.environ.get("DATASET_BUCKET")
     bucket = storage_client.bucket(dataset_bucket)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-    if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+    if os.environ.get("STORAGE_EMULATOR_HOST"):
         from main import new_dataset
 
         cloud_event = MagicMock()
