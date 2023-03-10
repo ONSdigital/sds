@@ -30,8 +30,17 @@ class RequestWrapper:
 def client():
     api_url = os.environ.get("API_URL")
     if api_url:
-        auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
+        if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+            auth_req = google.auth.transport.requests.Request()
+            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
+        else:
+            credentials, project_id = google.auth.default(
+                scopes=["https://www.googleapis.com/auth/cloud-platform"]
+            )
+            if credentials.expired and credentials.refresh_token:
+                credentials.refresh(google.auth.transport.requests.Request())
+            auth_token = credentials.token
+
         client = RequestWrapper(
             api_url, headers={"Authorization": f"Bearer {auth_token}"}
         )
