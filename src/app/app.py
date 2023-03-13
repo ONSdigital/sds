@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Schema, SchemaMetadata, Schemas
+from models import Schema, SchemaMetadata, Schemas, Datasets
 
 logging.basicConfig(level=logging.INFO)
 
@@ -60,7 +60,7 @@ async def query_datasets(survey_id: str):
     data = database.get_datasets(survey_id)
     return data
 
-@app.get("/v1/dataset")
+@app.get("/v1/dataset", response_model=Datasets)
 async def get_dataset(survey_id: str, period_id: str) -> dict:
     """Retrieve the matching datasets, given the survey_id and period_id."""
     dataset = database.get_dataset_details(survey_id, period_id)
