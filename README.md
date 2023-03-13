@@ -100,6 +100,8 @@ docker-compose up
 
 ## OpenAPI Specification
 
+hello
+
 As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
 can be reached by going to the following URLs (once running):
 
