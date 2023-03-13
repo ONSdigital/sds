@@ -26,33 +26,33 @@ steps:
     dir: "src/unit_tests"
     entrypoint: python
     args: ["-m", "coverage", "report", "--fail-under=90"]
-#  - name: docker
-#    id: build_and_push
-#    entrypoint: sh
-#    args:
-#      - '-c'
-#      - |
-#        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" .
-#        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#    entrypoint: gcloud
-#    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
-#            '--region', 'europe-west2' ]
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#    id: "Deploy cloud function"
-#    entrypoint: sh
-#    args:
-#      - '-c'
-#      - |
-#        cd src/app/
-#        gcloud functions deploy new-dataset-function \
-#        --gen2 \
-#        --runtime=python311 \
-#        --region=europe-west2 \
-#        --source=. \
-#        --entry-point=new_dataset \
-#        --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
-#        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+  - name: docker
+    id: build_and_push
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" .
+        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
+            '--region', 'europe-west2' ]
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Deploy cloud function"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        cd src/app/
+        gcloud functions deploy new-dataset-function \
+        --gen2 \
+        --runtime=python311 \
+        --region=europe-west2 \
+        --source=. \
+        --entry-point=new_dataset \
+        --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
+        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
   - name: 'gcr.io/cloud-builders/gcloud'
     id: "Get token"
     entrypoint: sh
