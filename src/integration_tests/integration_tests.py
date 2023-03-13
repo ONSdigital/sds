@@ -1,6 +1,6 @@
 import json
-from time import sleep
 from datetime import datetime
+from time import sleep
 
 
 def test_dataset(client, bucket_loader):
