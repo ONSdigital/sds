@@ -106,7 +106,7 @@ can be reached by going to the following URLs (once running):
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
 
-## new_dataset loud Function
+## new_dataset cloud Function
 
 `new_dataset` runs as a Cloud Function. It is Triggered by uploading a new dataset file to the dataset storage bucket.
 To deploy the Cloud Function, run the following locally, but set the DATASET_BUCKET environment variables first:
