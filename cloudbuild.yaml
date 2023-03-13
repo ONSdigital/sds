@@ -58,7 +58,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud auth print-access-token --impersonate-service-account=952850485884-compute@developer.gserviceaccount.com > /workspace/token
+        gcloud auth print-identity-token --impersonate-service-account=952850485884-compute@developer.gserviceaccount.com > /workspace/token
         cat /workspace/token
   - name: 'gcr.io/cloud-builders/curl'
     args:
