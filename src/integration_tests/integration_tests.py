@@ -19,7 +19,7 @@ def test_dataset(client, bucket_loader):
     bucket_loader(filename, dataset)
 
     unit_id = "43532"
-    sleep(2)
+    sleep(3)
     response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
     assert response.status_code == 200
     assert response.json() == {
