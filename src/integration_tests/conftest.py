@@ -9,6 +9,8 @@ import requests
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 storage_client = gcp_storage.Client()
 
@@ -26,13 +28,24 @@ def pytest_sessionstart():
             pass
 
 
+
+
+
 class RequestWrapper:
     def __init__(self, api_url, headers=None):
         self.api_url = api_url
         self.headers = headers
+        retry_strategy = Retry(
+            total=50,  # Retry for up to 50 times
+            backoff_factor=0.1,  # Wait between retries, increasing each time (0.1s, 0.2s, 0.4s, ...)
+            status_forcelist=[404],  # Retry on these status codes
+        )
+        self.session = requests.Session()
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session.mount("https://", adapter)
 
     def get(self, endpoint):
-        return requests.get(f"{self.api_url}{endpoint}", headers=self.headers)
+        return self.get(f"{self.api_url}{endpoint}", headers=self.headers)
 
     def post(self, endpoint, json):
         return requests.post(
