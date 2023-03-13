@@ -58,12 +58,12 @@ steps:
     args:
       - '-c'
       - |
-        gcloud auth print-identity-token --impersonate-service-account=952850485884-compute@developer.gserviceaccount.com > /workspace/token
+        gcloud auth print-identity-token > /workspace/token
         cat /workspace/token
   - name: 'gcr.io/cloud-builders/curl'
     args:
       - '-H'
-      - 'Authorization: Bearer $(cat /workspace/token)'
+      - '"Authorization: Bearer `cat /workspace/token`"'
       - '${_API_URL}/docs'
     id: 'make_request'
 #  - name: python
