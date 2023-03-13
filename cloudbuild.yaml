@@ -60,13 +60,27 @@ steps:
 #      - |
 #        gcloud auth print-access-token > /workspace/token
 #    id: 'get_token'
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      # Set the Cloud Run service name and region
+      SERVICE_NAME=sds
+      REGION=europe-west2
+      
+      # Get the Cloud Run service URL
+      SERVICE_URL=$(gcloud run services describe --platform=managed --region=$REGION $SERVICE_NAME --format='value(status.url)')
+      # Get the authentication token using the Cloud Build service account
+      AUTH_TOKEN=$(gcloud auth print-identity-token)
+      # Make a request to the Cloud Run service using the authentication token
+      curl -H "Authorization: Bearer ${AUTH_TOKEN}" $SERVICE_URL
   - name: python
     id: "Run integration test"
     entrypoint: sh
     args:
       - '-c'
       - |
-#        export ACCESS_TOKEN=$(cat /workspace/token)
         export API_URL=$_API_URL
         export DATASET_BUCKET=$_DATASET_BUCKET
         cd src/integration_tests
