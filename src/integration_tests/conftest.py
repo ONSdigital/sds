@@ -42,7 +42,7 @@ class RequestWrapper:
         self.session.mount("https://", adapter)
 
     def get(self, endpoint):
-        return self.get(f"{self.api_url}{endpoint}", headers=self.headers)
+        return self.session.get(f"{self.api_url}{endpoint}", headers=self.headers)
 
     def post(self, endpoint, json):
         return requests.post(
