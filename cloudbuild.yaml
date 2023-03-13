@@ -63,7 +63,7 @@ steps:
   - name: 'gcr.io/cloud-builders/curl'
     args:
       - '-H'
-      - 'Authorization: Bearer $(cat /workspace/token)'
+      - 'Authorization: Bearer '"$(cat /workspace/token)"''
       - '${_API_URL}/docs'
     id: 'make_request'
 #  - name: python
