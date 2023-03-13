@@ -63,7 +63,7 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     script: |
       SERVICE_URL=$(gcloud run services describe --platform=managed --region=europe-west2 sds --format='value(status.url)')
-      AUTH_TOKEN=$(gcloud auth print-identity-token)
+      AUTH_TOKEN=$(gcloud auth print-access-token)
       curl -H "Authorization: Bearer ${AUTH_TOKEN}" $SERVICE_URL
 #  - name: python
 #    id: "Run integration test"
