@@ -64,6 +64,7 @@ steps:
     script: |
       SERVICE_URL=$(gcloud run services describe --platform=managed --region=europe-west2 sds --format='value(status.url)')
       AUTH_TOKEN=$(gcloud auth print-access-token)
+      echo $AUTH_TOKEN
       curl -H "Authorization: Bearer ${AUTH_TOKEN}" $SERVICE_URL
 #  - name: python
 #    id: "Run integration test"
