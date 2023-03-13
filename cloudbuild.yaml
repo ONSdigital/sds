@@ -61,7 +61,6 @@ steps:
 #        gcloud auth print-access-token > /workspace/token
 #    id: 'get_token'
   - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
     script: |
       SERVICE_URL=$(gcloud run services describe --platform=managed --region=europe-west2 sds --format='value(status.url)')
       AUTH_TOKEN=$(gcloud auth print-identity-token)
