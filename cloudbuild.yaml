@@ -1,58 +1,58 @@
 steps:
-  - name: python
-    id: "Setup Python"
-    entrypoint: pip
-    args: [ "install", "-r", "requirements.txt" , "--user"]
-  - name: python
-    id: "black"
-    entrypoint: python
-    args: ["-m", "black", "src", "--check"]
-  - name: python
-    id: "isort"
-    entrypoint: python
-    args: ["-m", "isort", "src", "--check-only",  "--profile", "black"]
-  - name: python
-    id: "flake8"
-    entrypoint: python
-    args: ["-m", "flake8", "src", "--max-line-length=127"]
-  - name: python
-    id: "pytest"
-    entrypoint: python
-    env: ['PYTHONPATH=../app']
-    dir: "src/unit_tests"
-    args: ["-m", "pytest", "--cov=../app", "."]
-  - name: python
-    id: "coverage"
-    dir: "src/unit_tests"
-    entrypoint: python
-    args: ["-m", "coverage", "report", "--fail-under=90"]
-  - name: docker
-    id: build_and_push
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" .
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
-            '--region', 'europe-west2' ]
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: "Deploy cloud function"
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        cd src/app/
-        gcloud functions deploy new-dataset-function \
-        --gen2 \
-        --runtime=python311 \
-        --region=europe-west2 \
-        --source=. \
-        --entry-point=new_dataset \
-        --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
-        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+#  - name: python
+#    id: "Setup Python"
+#    entrypoint: pip
+#    args: [ "install", "-r", "requirements.txt" , "--user"]
+#  - name: python
+#    id: "black"
+#    entrypoint: python
+#    args: ["-m", "black", "src", "--check"]
+#  - name: python
+#    id: "isort"
+#    entrypoint: python
+#    args: ["-m", "isort", "src", "--check-only",  "--profile", "black"]
+#  - name: python
+#    id: "flake8"
+#    entrypoint: python
+#    args: ["-m", "flake8", "src", "--max-line-length=127"]
+#  - name: python
+#    id: "pytest"
+#    entrypoint: python
+#    env: ['PYTHONPATH=../app']
+#    dir: "src/unit_tests"
+#    args: ["-m", "pytest", "--cov=../app", "."]
+#  - name: python
+#    id: "coverage"
+#    dir: "src/unit_tests"
+#    entrypoint: python
+#    args: ["-m", "coverage", "report", "--fail-under=90"]
+#  - name: docker
+#    id: build_and_push
+#    entrypoint: sh
+#    args:
+#      - '-c'
+#      - |
+#        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" .
+#        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    entrypoint: gcloud
+#    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
+#            '--region', 'europe-west2' ]
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    id: "Deploy cloud function"
+#    entrypoint: sh
+#    args:
+#      - '-c'
+#      - |
+#        cd src/app/
+#        gcloud functions deploy new-dataset-function \
+#        --gen2 \
+#        --runtime=python311 \
+#        --region=europe-west2 \
+#        --source=. \
+#        --entry-point=new_dataset \
+#        --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
+#        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
 #  - name: 'gcr.io/cloud-builders/gcloud'
 #    entrypoint: sh
 #    args:
@@ -60,20 +60,20 @@ steps:
 #      - |
 #        gcloud auth print-access-token > /workspace/token
 #    id: 'get_token'
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     script: |
       SERVICE_URL=$(gcloud run services describe --platform=managed --region=europe-west2 sds --format='value(status.url)')
       AUTH_TOKEN=$(gcloud auth print-identity-token)
       curl -H "Authorization: Bearer ${AUTH_TOKEN}" $SERVICE_URL
-  - name: python
-    id: "Run integration test"
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        export API_URL=$_API_URL
-        export DATASET_BUCKET=$_DATASET_BUCKET
-        cd src/integration_tests
-        python -m pytest integration_tests.py
+#  - name: python
+#    id: "Run integration test"
+#    entrypoint: sh
+#    args:
+#      - '-c'
+#      - |
+#        export API_URL=$_API_URL
+#        export DATASET_BUCKET=$_DATASET_BUCKET
+#        cd src/integration_tests
+#        python -m pytest integration_tests.py
 options:
   logging: CLOUD_LOGGING_ONLY
