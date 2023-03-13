@@ -172,6 +172,8 @@ pytest integration_tests.py
 
 ### Everything is local
 
+hello
+
 This configuration makes use of the firestore and storage services running in Docker. The cloud function behaviour
 is emulated by the test itself.
 
