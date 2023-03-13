@@ -58,7 +58,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud auth application-default print-access-token > /workspace/token
+        gcloud auth print-access-token --impersonate-service-account=ons-sds-cloudbuild-sa@ons-sds-sandbox.iam.gserviceaccount.com > /workspace/token
         cat /workspace/token
   - name: 'gcr.io/cloud-builders/curl'
     args:
