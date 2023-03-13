@@ -13,10 +13,10 @@ schemas_collection = db.collection("schemas")
 
 def set_dataset(dataset_id, dataset):
     data = dataset.pop("data")
+    # Added published date/time stamp and number of reporting units as new fields in the dataset dictionary
     dataset["sds_published_at"]=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
     dataset["total_reporting_units"] = len(data)
     datasets_collection.document(dataset_id).set(dataset)
-    print(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
         units_collection.document(unit_data["ruref"]).set(unit_data)
@@ -73,6 +73,15 @@ def get_datasets(survey_id):
         datasets.append(return_dataset)
     return {"survey_id": survey_id, "datasets": datasets}
 
+def get_dataset_details(survey_id, period_id):
+    datasets = {}
+    datasets["supplementary_dataset"] = {}
+    datasets_result = datasets_collection.where("survey_id", "==", survey_id).where("period_id", "==", period_id).stream()
+    for dataset in datasets_result:
+        return_dataset = dataset.to_dict()
+        return_dataset.pop("form_id")
+        datasets["supplementary_dataset"][dataset.id] = return_dataset
+    return datasets
 
 def get_schema(survey_id, version) -> SchemaMetadata:
     schemas_result = (
