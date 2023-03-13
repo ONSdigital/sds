@@ -59,8 +59,7 @@ steps:
       - '-c'
       - |
         gcloud auth print-identity-token  --impersonate-service-account=ons-sds-cloudbuild-sa@ons-sds-sandbox.iam.gserviceaccount.com > /workspace/token
-        cat /workspace/token
-        curl -H "Authorization: Bearer $(cat /workspace/token)" ${_API_URL}/docs
+        curl --fail-with-body -H "Authorization: Berer $(cat /workspace/token)" ${_API_URL}/docs
 #  - name: 'gcr.io/cloud-builders/curl'
 #    args:
 #      - '-H'
