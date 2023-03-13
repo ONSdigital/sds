@@ -44,11 +44,11 @@ class RequestWrapper:
 def client():
     api_url = os.environ.get("API_URL")
     if api_url:
-        # if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
-        auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
-        # else:
-        #     auth_token = os.environ.get("ACCESS_TOKEN")
+        if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+            auth_req = google.auth.transport.requests.Request()
+            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
+        else:
+            auth_token = os.environ.get("ACCESS_TOKEN")
 
         client = RequestWrapper(
             api_url, headers={"Authorization": f"Bearer {auth_token}"}
