@@ -39,6 +39,7 @@ steps:
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2' ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Deploy cloud function"
     entrypoint: sh
     args:
       - '-c'
@@ -52,5 +53,24 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: "Get token"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud auth print-identity-token  --impersonate-service-account=ons-sds-cloudbuild-sa@ons-sds-sandbox.iam.gserviceaccount.com > /workspace/token
+        curl -H "Authorization: Bearer $(cat /workspace/token)" ${_API_URL}/docs
+  - name: python
+    id: "Run integration test"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        export ACCESS_TOKEN=$(cat /workspace/token)
+        export API_URL=$_API_URL
+        export DATASET_BUCKET=$_DATASET_BUCKET
+        cd src/integration_tests
+        python -m pytest integration_tests.py
 options:
   logging: CLOUD_LOGGING_ONLY
