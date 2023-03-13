@@ -28,9 +28,6 @@ def pytest_sessionstart():
             pass
 
 
-
-
-
 class RequestWrapper:
     def __init__(self, api_url, headers=None):
         self.api_url = api_url
