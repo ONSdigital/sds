@@ -75,13 +75,15 @@ def get_datasets(survey_id):
 
 def get_dataset_details(survey_id, period_id):
     datasets = {}
-    datasets["supplementary_dataset"] = {}
     datasets_result = datasets_collection.where("survey_id", "==", survey_id).where("period_id", "==", period_id).stream()
     for dataset in datasets_result:
         return_dataset = dataset.to_dict()
         return_dataset.pop("form_id")
-        datasets["supplementary_dataset"][dataset.id] = return_dataset
-    return datasets
+        datasets[dataset.id] = return_dataset
+    if(len(datasets) > 0):
+        return {"supplementary_dataset": datasets}
+    else:
+        return None
 
 def get_schema(survey_id, version) -> SchemaMetadata:
     schemas_result = (

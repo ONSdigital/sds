@@ -64,4 +64,6 @@ async def query_datasets(survey_id: str):
 async def get_dataset(survey_id: str, period_id: str) -> dict:
     """Retrieve the matching datasets, given the survey_id and period_id."""
     dataset = database.get_dataset_details(survey_id, period_id)
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
     return dataset
