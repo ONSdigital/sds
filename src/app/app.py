@@ -59,3 +59,15 @@ async def query_datasets(survey_id: str):
     """Retrieve the datasets, given the survey_id."""
     data = database.get_datasets(survey_id)
     return data
+
+@app.get("/v1/dataset")
+async def get_dataset(survey_id: str, period_id: str):
+    data = database.get_datasets(survey_id)
+    filter_datasets = []
+    for dataset in data['datasets']:
+        if dataset['period_id'] == period_id:
+            filter_datasets.append(dataset)
+
+    data['datasets'] = filter_datasets
+    print(len(data['datasets']))
+    return data
