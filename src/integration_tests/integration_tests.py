@@ -1,7 +1,6 @@
 import json
-import uuid
 from time import sleep
-
+from datetime import datetime
 
 def test_dataset(client, bucket_loader):
     """
@@ -14,10 +13,10 @@ def test_dataset(client, bucket_loader):
     """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    dataset_id = str(uuid.uuid4())
+    dataset_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
+    print(dataset_id)
     filename = f"{dataset_id}.json"
     bucket_loader(filename, dataset)
-
     unit_id = "43532"
     sleep(3)
     response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
