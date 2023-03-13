@@ -62,9 +62,7 @@ steps:
 #    id: 'get_token'
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
-    args:
-    - '-c'
-    - |
+    script: |
       SERVICE_URL=$(gcloud run services describe --platform=managed --region=europe-west2 sds --format='value(status.url)')
       AUTH_TOKEN=$(gcloud auth print-identity-token)
       curl -H "Authorization: Bearer ${AUTH_TOKEN}" $SERVICE_URL
