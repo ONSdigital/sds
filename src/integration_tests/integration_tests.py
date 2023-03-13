@@ -2,6 +2,7 @@ import json
 from time import sleep
 from datetime import datetime
 
+
 def test_dataset(client, bucket_loader):
     """
     Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
