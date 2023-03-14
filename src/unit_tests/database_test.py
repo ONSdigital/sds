@@ -71,6 +71,6 @@ def test_get_dataset_metadata(database):
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_metadata
     mock_stream_obj.id = dataset_id
-    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]    
+    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
     dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="ttt")
     assert dataset_metadata["supplementary_dataset"][dataset_id] == expected_metadata
