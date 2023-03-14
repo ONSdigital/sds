@@ -38,6 +38,7 @@ class DatasetMetadata:
     total_reporting_units: int
     schema_version: str
 
+
 @dataclass
 class Datasets:
     supplementary_dataset: dict[str, DatasetMetadata]
