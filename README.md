@@ -26,44 +26,36 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Running SDS and integration tests with services running in GCloud
+### Running SDS locally with services running in GCloud
 
-In order to connect to real services in GCloud, you will need a key file. To create one:
+In order to connect to real services in GCloud, you will need a GCP test project or make
+use of the sandbox project. Instructions for setting this up  are included in the IaC repo. 
+You will need to take note of the schema and dataset bucket names for the project you are using.
+
+Once you have setup your project, you will need a key file to allow SDS to talk to bucket storage
+and the database. To create one:
 
 * Go the IAM page and select Service accounts
 * Create a new service account
 * Call it "test"
-* Add whatever roles are needed for testing. "Owner" will work but this is potentially too much access
+* Add the roles that are needed for testing
 * Go into service account and create a key. This will download a JSON file to your machine 
 * Copy the downloaded JSON file to this directory and rename to `key.json`
 
-You will also need a bucket to put schema files in. Go to the Google Cloud Storage page and create this or 
-refer to an existing one. Make a note of the name and replace `my-schema-bucket` with that name in these instructions.
-
-To run SDS locally, activate the virtual environment, then run the following commands:
+To run SDS locally, activate the virtual environment, then run the following commands (replacing `my-schema-bucket`
+and `dataset-bucket` appropriately:
 
 ```bash
 export PYTHONPATH=src/app
 export SCHEMA_BUCKET_NAME=my-schema-bucket
+export DATASET_BUCKET_NAME=my-dataset-bucket
 export GOOGLE_APPLICATION_CREDENTIALS=key.json
 python -m uvicorn src.app.app:app --reload --port 8013
 ```
 
-There are a set of integration tests that allow you to debug SDS but can talk to real Google services. The following
-commands will run those:
+### Running the SDS with service emulators
 
-```bash
-cd src/integration_tests
-export PYTHONPATH=../app
-export SCHEMA_BUCKET_NAME=my-schema-bucket
-pytest local_tests.py
-```
-
-
-
-### Running SDS and integration tests with service emulators
-
-The Firestore and Cloud Storage emulator run in Docker. To connect to the Firestore emulator running locally in Docker,
+The Firestore and Cloud Storage emulators run in Docker. To connect to the Firestore emulator running locally in Docker,
 run the following commands:
 
 
@@ -76,16 +68,6 @@ export PYTHONPATH=src/app
 python -m uvicorn src.app.app:app --reload --port 8013
 ```
 
-To run the debuggable integration tests with the emulator, run the following commands:
-
-```bash
-docker-compose up -d firestore
-docker-compose up -d storage
-cd src/integration_tests
-export PYTHONPATH=../app
-pytest local_tests.py
-```
-
 ## Running linting and unit tests
 
 To run all the checks that run as part of the CI, run the following commands:
@@ -94,8 +76,9 @@ To run all the checks that run as part of the CI, run the following commands:
 black . --check
 isort . --check-only --profile black
 flake8 src --max-line-length=127
-export PYTHONPATH=src/app
-pytest --cov=src/app src/unit_tests
+cd src/unit_tests
+export PYTHONPATH=../app
+pytest --cov=../app .
 coverage report --fail-under=90
 ```
 
@@ -123,28 +106,16 @@ can be reached by going to the following URLs (once running):
 * http://localhost:8000/openapi.json
 * http://localhost:8000/docs
 
-## Cloud Functions
+## new_dataset cloud Function
 
-The Cloud Function setup is heavily based on https://cloud.google.com/functions/docs/tutorials/storage
-
-To deploy the Cloud Functions, run the following locally, but set PROJECT_NAME and DATASET_BUCKET
-environment variables first:
+`new_dataset` runs as a Cloud Function. It is Triggered by uploading a new dataset file to the dataset storage bucket.
+To deploy the Cloud Function, run the following locally, but set the DATASET_BUCKET environment variables first:
 
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
-PROJECT_ID=$(gcloud config get-value project)
-PROJECT_NUMBER=$(gcloud projects list --filter="project_id:$PROJECT_ID" --format='value(project_number)')
-
-SERVICE_ACCOUNT=$(gsutil kms serviceaccount -p $PROJECT_NUMBER)
-
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-  --member serviceAccount:$SERVICE_ACCOUNT \
-  --role roles/pubsub.publisher
-
 cd src/app/
-
 gcloud functions deploy new-dataset-function \
 --gen2 \
 --runtime=python311 \
@@ -155,23 +126,68 @@ gcloud functions deploy new-dataset-function \
 --trigger-event-filters="bucket=$DATASET_BUCKET"
 ```
 
-## Cloud Run Tests
+## Running the integration tests
 
-These are integration tests which make calls into SDS running on GCloud via the API. Run them like this
-(replacing `https://sds-blahblah.a.run.app` with the actual cloud run endpoint and `a-place-for-datasets` with
-the real dataset bucket):
+The integration tests will work in a number of different ways depending on how you want to test the SDS API service
+and SDS cloud function. The following sections describe a number of combinations
+
+### Everything running in the cloud
+
+In this configuration, the SDS API service is running in Cloud Run and the new-dataset-function is deployed
+to Cloud Functions on your test/dev GCP project. These services both talk to Firestore and Cloud Storage running
+on the same project. This test configuration is also what is run at the end of the Cloud Build deployment.
+
+Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual cloud run endpoint and
+`a-place-for-datasets` with the real dataset bucket):
 
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
-export AUTH_TOKEN=$(gcloud auth print-identity-token)
-export CLOUD_RUN_ENDPOINT=https://sds-blahblah.a.run.app
-export DATASET_BUCKET=a-place-for-datasets
+
+export API_URL=https://sds-blahblah.a.run.app
+export DATASET_BUCKET=a-place-for-datasets  
 export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
+
 cd src/integration_tests
-pytest cloudrun_test.py
+pytest integration_tests.py
 ```
 
+### SDS API service is local
+
+This configuration allows you to debug the SDS API locally but talk to real Google services. Run them like this 
+(replacing `my-schema-bucket` with the real schema bucket and `a-place-for-datasets` with the real dataset bucket):
+
+```bash
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+
+export SCHEMA_BUCKET_NAME=my-schema-bucket
+export DATASET_BUCKET=a-place-for-datasets
+export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
+
+export PYTHONPATH=../app
+cd src/integration_tests
+pytest integration_tests.py
+```
+
+### Everything is local
+
+This configuration makes use of the firestore and storage services running in Docker. The cloud function behaviour
+is emulated by the test itself.
+
+```bash
+docker-compose up -d firestore
+docker-compose up -d storage
+
+export FIRESTORE_EMULATOR_HOST=localhost:8200
+export STORAGE_EMULATOR_HOST=http://localhost:9023
+export SCHEMA_BUCKET_NAME=schema-bucket
+export DATASET_BUCKET=dataset-bucket
+
+export PYTHONPATH=../app
+cd src/integration_tests
+pytest integration_tests.py
+```
 
 # Contact
 
