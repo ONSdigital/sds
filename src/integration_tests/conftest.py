@@ -1,5 +1,6 @@
 import json
 import os
+from time import sleep
 from unittest.mock import MagicMock
 
 import google.auth.transport.requests
@@ -29,12 +30,19 @@ def pytest_sessionstart():
 
 
 class RequestWrapper:
+    """
+    When talking to the real API endpoint we wrap the requests library with functions calls
+    that match the client test library. Because we are dealing with a real system that potentially
+    has delays we make use of a retry strategy. This will retry up to 5 times with an exponential
+    gap between retries.
+    """
+
     def __init__(self, api_url, headers=None):
         self.api_url = api_url
         self.headers = headers
         retry_strategy = Retry(
-            total=50,  # Retry for up to 50 times
-            backoff_factor=0.1,  # Wait between retries, increasing each time (0.1s, 0.2s, 0.4s, ...)
+            total=5,  # Retry for up to 5 times
+            backoff_factor=0.5,  # Wait between retries, increasing each time (0.5, 1.5, 3.5, 7.5, 15.5)
             status_forcelist=[404],  # Retry on these status codes
         )
         self.session = requests.Session()
@@ -73,7 +81,10 @@ def client():
 def upload_dataset(filename, dataset):
     """
     If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the
-    real Cloud Function, so emulate the behaviour of the new_dataset function instead.
+    real Cloud Function, so emulate the behaviour of the new_dataset function instead. If we are
+    talking to the real Cloud Function but not the real API, we wait 3 seconds for the
+    cloud function to complete it's processing. For testing the real API we have a better way of
+    handling this delay using automated requests retries.
     """
     dataset_bucket = os.environ.get("DATASET_BUCKET")
     bucket = storage_client.bucket(dataset_bucket)
@@ -90,6 +101,8 @@ def upload_dataset(filename, dataset):
             "name": filename,
         }
         new_dataset(cloud_event=cloud_event)
+    elif not os.environ.get("API_URL"):
+        sleep(3)
 
 
 @pytest.fixture
