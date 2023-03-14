@@ -74,7 +74,7 @@ def get_datasets(survey_id):
     return {"survey_id": survey_id, "datasets": datasets}
 
 
-def get_dataset_details(survey_id, period_id):
+def get_dataset_metadata(survey_id, period_id):
     datasets = {}
     datasets_result = (
         datasets_collection.where("survey_id", "==", survey_id)

@@ -91,3 +91,24 @@ def test_get_datasets(client):
     survey_id = "Survey 1"
     response = client.get(f"/datasets?&survey_id={survey_id}")
     assert response.status_code == 200
+
+def test_get_dataset_metadata(client, database):
+    expected_metadata = {
+      "survey_id": "xyz",
+      "period_id": "abc",
+      "title": "Which side was better?",
+      "sds_schema_version": 4,
+      "sds_published_at": "2023-03-13T14:34:57Z",
+      "total_reporting_units": 2,
+      "schema_version": "v1.0.0",
+      "form_id": "yyy"
+    }
+    dataset_id = "wobble"
+    mock_stream_obj = MagicMock()
+    mock_stream_obj.to_dict.return_value = expected_metadata
+    mock_stream_obj.id = dataset_id
+    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
+    survey_id = "xyz"
+    period_id = "abc"
+    response = client.get(f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}")
+    assert response.status_code == 200

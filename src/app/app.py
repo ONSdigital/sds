@@ -61,10 +61,10 @@ async def query_datasets(survey_id: str):
     return data
 
 
-@app.get("/v1/dataset", response_model=Datasets)
+@app.get("/v1/dataset_metadata", response_model=Datasets)
 async def get_dataset(survey_id: str, period_id: str) -> dict:
     """Retrieve the matching datasets, given the survey_id and period_id."""
-    dataset = database.get_dataset_details(survey_id, period_id)
+    dataset = database.get_dataset_metadata(survey_id, period_id)
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")
     return dataset
