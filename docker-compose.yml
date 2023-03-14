@@ -18,7 +18,7 @@ services:
     environment:
       - PORT=3000
       - STORAGE_EMULATOR_HOST=http://storage:9023
-      - FIRESTORE_EMULATOR_HOST=emulatorsuite:8080
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
@@ -27,10 +27,10 @@ services:
       - ./devtools:/devtools
     restart: on-failure
     depends_on:
-      - emulatorsuite
+      - firestore
       - storage
     container_name: api-sds
-  emulatorsuite:
+  firestore:
     image: spine3/firebase-emulator
     ports:
       - 8080:8080
@@ -41,4 +41,4 @@ services:
     volumes:
       - ./devtools/firebase-emulator:/firebase
       - ./devtools/firebase-emulator:/firebase/baseline-data
-    container_name: emulatorsuite-sds
+    container_name: firestore-sds
