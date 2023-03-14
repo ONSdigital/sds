@@ -3,7 +3,25 @@
 More information on this service can be found on Confluence:
 
 * https://confluence.ons.gov.uk/display/SDC/SDS
+---
+## Dockerized
+This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. 
 
+- You will need to create a new file called `mock_firebase_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
+
+This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. Start the containers:
+
+```
+docker-compose up
+```
+Once loaded you can then utilise the following support tools.
+
+- **SDS docs** - The API service can be found here : [localhost:3000/docs](http://localhost:3000/docs).
+
+- **google cloud storage** - You will be able to see files within the `devtools/gcp-storage-emulator/data/default-bucket` folder.
+
+- **firestore emulator** - [localhost:4000/firestore](http://localhost:4000/firestore). (This data is held within the container and so is lost of rebuilbing.)
+---
 ## Running locally
 
 To run this service locally, you will need the following:
@@ -46,7 +64,7 @@ To run SDS locally, activate the virtual environment, then run the following com
 export PYTHONPATH=src/app
 export SCHEMA_BUCKET_NAME=my-schema-bucket
 export GOOGLE_APPLICATION_CREDENTIALS=key.json
-python -m uvicorn src.app.app:app --reload --port 8013
+python -m uvicorn src.app.app:app --reload --port 3000
 ```
 
 There are a set of integration tests that allow you to debug SDS but can talk to real Google services. The following
@@ -70,10 +88,10 @@ run the following commands:
 ```bash
 docker-compose up -d firestore
 docker-compose up -d storage
-export FIRESTORE_EMULATOR_HOST=localhost:8200
+export FIRESTORE_EMULATOR_HOST=localhost:8080
 export STORAGE_EMULATOR_HOST=http://localhost:9023
 export PYTHONPATH=src/app
-python -m uvicorn src.app.app:app --reload --port 8013
+python -m uvicorn src.app.app:app --reload --port 3000
 ```
 
 To run the debuggable integration tests with the emulator, run the following commands:
@@ -104,15 +122,6 @@ To correct any problems that `isort` or `black` complain about, run the followin
 ```
 black .
 isort . --profile black
-```
-
-## Building and running on Docker
-
-To build and run on docker, run the following commands:
-
-```bash
-docker-compose build
-docker-compose up
 ```
 
 ## OpenAPI Specification
