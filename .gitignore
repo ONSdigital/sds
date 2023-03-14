@@ -5,8 +5,7 @@
 venv
 local.env
 *__pycache__
-devtools/gcp-storage-emulator/data/bucket/*
-!devtools/gcp-storage-emulator/data/bucket/.placeholder
-devtools/gcp-storage-emulator/data/.meta
+devtools/gcp-storage-emulator/data/*
+!devtools/gcp-storage-emulator/data/.placeholder
 devtools/firebase-emulator/*.log
 .DS_Store
