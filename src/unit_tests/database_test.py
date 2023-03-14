@@ -54,3 +54,23 @@ def test_get_schemas(database):
 
 def test_get_datasets(database):
     database.get_datasets(survey_id="1")
+
+
+def test_get_dataset_metadata(database):
+    expected_metadata = {
+        "survey_id": "xyz",
+        "period_id": "abc",
+        "title": "Which side was better?",
+        "sds_schema_version": 4,
+        "sds_published_at": "2023-03-13T14:34:57Z",
+        "total_reporting_units": 2,
+        "schema_version": "v1.0.0",
+        "form_id": "yyy",
+    }
+    dataset_id = "wobble"
+    mock_stream_obj = MagicMock()
+    mock_stream_obj.to_dict.return_value = expected_metadata
+    mock_stream_obj.id = dataset_id
+    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]    
+    dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="ttt")
+    assert dataset_metadata["supplementary_dataset"][dataset_id] == expected_metadata

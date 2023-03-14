@@ -115,3 +115,4 @@ def test_get_dataset_metadata(client, database):
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
     assert response.status_code == 200
+    assert (response.json()["supplementary_dataset"][dataset_id] == expected_metadata)
