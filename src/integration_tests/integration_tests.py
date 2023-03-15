@@ -63,7 +63,7 @@ def test_dataset_metadata(client, bucket_loader):
     * Upload the dataset file to the dataset bucket with the dataset_id as the name
     * Sleep for 5 seconds to allow the cloud function to complete
     * We then use the /v1/dataset_metadata API to retrieve the dataset for a given survey_id and period_id
-    * Please note that the whole dataset metadata schema cannot be validated since it contains the 'sds_published_at' time stamp
+    * The whole dataset metadata cannot be validated since it contains the 'sds_published_at' time stamp
     * which is the time at which the cloud function stores the dataset in the collection.
     """
     with open("../test_data/dataset.json") as f:
