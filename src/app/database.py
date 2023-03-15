@@ -14,7 +14,20 @@ schemas_collection = db.collection("schemas")
 def set_dataset(dataset_id, dataset):
     data = dataset.pop("data")
     # Added published date/time stamp and number of reporting units as new fields in the dataset dictionary
+
+    datasets_result = (
+        datasets_collection.where("survey_id", "==", dataset["survey_id"])
+        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
+        .limit(1)
+        .stream()
+    )
+    try:
+        latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
+    except StopIteration:
+        latest_version = 1
+
     dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+    dataset["sds_dataset_version"] = latest_version
     dataset["total_reporting_units"] = len(data)
     datasets_collection.document(dataset_id).set(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
