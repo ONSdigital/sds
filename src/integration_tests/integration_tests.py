@@ -1,22 +1,8 @@
 import json
-import os
-import uuid
-from time import sleep
-
-import requests
-from google.cloud import storage
-
-storage_client = storage.Client()
-
-DATASET_BUCKET = os.environ.get("DATASET_BUCKET")
-bucket = storage_client.bucket(DATASET_BUCKET)
-
-CLOUD_RUN_ENDPOINT = os.environ.get("CLOUD_RUN_ENDPOINT")
-AUTH_TOKEN = os.environ.get("AUTH_TOKEN")
-headers = {"Authorization": f"Bearer {AUTH_TOKEN}"}
+from datetime import datetime
 
 
-def test_dataset():
+def test_dataset(client, bucket_loader):
     """
     Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
 
@@ -27,18 +13,12 @@ def test_dataset():
     """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    dataset_id = str(uuid.uuid4())
+    dataset_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
+    print(dataset_id)
     filename = f"{dataset_id}.json"
-    blob = bucket.blob(filename)
-    blob.upload_from_string(
-        json.dumps(dataset, indent=2), content_type="application/json"
-    )
+    bucket_loader(filename, dataset)
     unit_id = "43532"
-    sleep(2)
-    response = requests.get(
-        f"{CLOUD_RUN_ENDPOINT}/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
-        headers=headers,
-    )
+    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
     assert response.status_code == 200
     assert response.json() == {
         "ruref": "43532",
@@ -74,22 +54,18 @@ def test_dataset():
     }
 
 
-def test_publish_schema():
+def test_publish_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
-    can retrieved. Also check that schema can be retrieved.
+    can retrieved. Also check that schema can be retrieved directly from storage.
     """
     survey_id = "068"
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
-    response = requests.post(
-        f"{CLOUD_RUN_ENDPOINT}/v1/schema", json=test_schema, headers=headers
-    )
+    response = client.post("/v1/schema", json=test_schema)
+    print(response.text)
     assert response.status_code == 200
-    response = requests.get(
-        f"{CLOUD_RUN_ENDPOINT}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
-        headers=headers,
-    )
+    response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
     assert response.status_code == 200
     json_response = response.json()
     assert len(json_response["supplementary_dataset_schema"]) > 0
@@ -100,9 +76,8 @@ def test_publish_schema():
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
-        response = requests.get(
-            f"{CLOUD_RUN_ENDPOINT}/v1/schema?survey_id={survey_id}&version={schema['sds_schema_version']}",
-            headers=headers,
+        response = client.get(
+            f"/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}"
         )
         assert response.status_code == 200
         assert response.json() == test_schema
