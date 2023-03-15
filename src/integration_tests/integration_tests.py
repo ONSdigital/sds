@@ -1,4 +1,4 @@
-import json
+import json, time
 from datetime import datetime
 
 
@@ -52,6 +52,38 @@ def test_dataset(client, bucket_loader):
             },
         ],
     }
+
+
+def test_dataset_metadata(client, bucket_loader):
+    """
+    Test that the /v1/dataset_metadata API returns the dataset for a given survey_id and period_id
+    * We load the sample dataset json file
+    * Generate a dataset_id which is guaranteed to be unique
+    * Upload the dataset file to the dataset bucket with the dataset_id as the name
+    * Sleep for 5 seconds to allow the cloud function to complete
+    * We then use the /v1/dataset_metadata API to retrieve the dataset for a given survey_id and period_id
+    * Please note that the whole dataset metadata schema cannot be validated since it contains the 'sds_published_at' time stamp
+    * which is the time at which the cloud function stores the dataset in the collection.
+    """
+    with open("../test_data/dataset.json") as f:
+        dataset = json.load(f)
+    dataset_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
+    print(dataset_id)
+    filename = f"{dataset_id}.json"
+    bucket_loader(filename, dataset)
+    survey_id = "xyz"
+    period_id = "abc"
+    time.sleep(5)
+    dataset_metadata_response = client.get(
+        f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
+    )
+    assert dataset_metadata_response.status_code == 200
+    assert (
+        dataset_metadata_response.json()["supplementary_dataset"][dataset_id][
+            "survey_id"
+        ]
+        == "xyz"
+    )
 
 
 def test_publish_schema(client):
