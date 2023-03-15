@@ -18,7 +18,7 @@ def test_dataset(client, bucket_loader):
     filename = f"{dataset_id}.json"
     bucket_loader(filename, dataset)
     unit_id = "43532"
-    response = client.get(f"/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
     assert response.status_code == 200
     assert response.json() == {
         "ruref": "43532",
