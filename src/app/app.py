@@ -12,11 +12,13 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
-@app.get("/unit_data")
+@app.get("/v1/unit_data")
 async def unit_data(dataset_id: str, unit_id: str):
     """Retrieve supplementary data for a particular unit given the unit id
     and the dataset id."""
     data = database.get_data(dataset_id=dataset_id, unit_id=unit_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Item not found")
     return data
 
 
