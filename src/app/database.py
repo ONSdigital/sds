@@ -75,6 +75,10 @@ def get_datasets(survey_id):
 
 
 def get_dataset_metadata(survey_id, period_id):
+    """
+    This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
+    and returns the matching datasets which is a nested dictionary object with the dataset_id as the key.
+    """
     datasets = {}
     datasets_result = (
         datasets_collection.where("survey_id", "==", survey_id)

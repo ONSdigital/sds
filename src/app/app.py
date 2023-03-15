@@ -63,7 +63,10 @@ async def query_datasets(survey_id: str):
 
 @app.get("/v1/dataset_metadata", response_model=Datasets)
 async def get_dataset(survey_id: str, period_id: str) -> dict:
-    """Retrieve the matching datasets, given the survey_id and period_id."""
+    """
+    Retrieve the matching datasets, given the survey_id and period_id.
+    The matching datasets are returned as a nested dictionary object with the dataset_id as the key.
+    """
     dataset = database.get_dataset_metadata(survey_id, period_id)
     if not dataset:
         raise HTTPException(status_code=404, detail="Dataset not found")

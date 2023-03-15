@@ -57,6 +57,10 @@ def test_get_datasets(database):
 
 
 def test_get_dataset_metadata(database):
+    """
+    Mocks the database collection document, invokes the get_dataset_metadata with the survey_id and period_id arguments,
+    then checks that it returns the expected nested dictionary object which contains the dataset metadata.
+    """
     expected_metadata = {
         "survey_id": "xyz",
         "period_id": "abc",
