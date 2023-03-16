@@ -5,3 +5,5 @@
 venv
 local.env
 scratch.txt
+.DS_Store
+*.pyc
