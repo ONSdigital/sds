@@ -58,12 +58,9 @@ def test_dataset(client, bucket_loader):
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
     assert dataset_metadata_response.status_code == 200
-    assert (
-        dataset_metadata_response.json()["supplementary_dataset"][dataset_id][
-            "survey_id"
-        ]
-        == "xyz"
-    )
+    dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][dataset_id]
+    assert dataset_metadata["survey_id"] == "xyz"
+    assert "sds_dataset_version" in dataset_metadata
 
 
 def test_publish_schema(client):
