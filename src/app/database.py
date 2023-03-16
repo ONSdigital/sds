@@ -12,8 +12,11 @@ schemas_collection = db.collection("schemas")
 
 
 def set_dataset(dataset_id, dataset):
+    """
+    This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
+    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary
+    """
     data = dataset.pop("data")
-    # Added published date/time stamp and number of reporting units as new fields in the dataset dictionary
 
     datasets_result = (
         datasets_collection.where("survey_id", "==", dataset["survey_id"])

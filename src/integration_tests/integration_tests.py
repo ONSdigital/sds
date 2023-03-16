@@ -52,6 +52,18 @@ def test_dataset(client, bucket_loader):
             },
         ],
     }
+    survey_id = "xyz"
+    period_id = "abc"
+    dataset_metadata_response = client.get(
+        f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
+    )
+    assert dataset_metadata_response.status_code == 200
+    assert (
+        dataset_metadata_response.json()["supplementary_dataset"][dataset_id][
+            "survey_id"
+        ]
+        == "xyz"
+    )
 
 
 def test_publish_schema(client):
