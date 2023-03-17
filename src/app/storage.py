@@ -15,6 +15,7 @@ else:
 
 
 def store_schema(schema: Schema, schema_id):
+    """Store the schema JSON file in the bucket using the schema_id as the filename."""
     filename = f"{schema.survey_id}/{schema_id}.json"
     blob = bucket.blob(filename)
     blob.upload_from_string(
