@@ -7,7 +7,7 @@ More information on this service can be found on Confluence:
 ## Dockerized
 This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. 
 
-- You will need to create a new file called `mock_firebase_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
+- You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
 
 This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. Start the containers:
 
@@ -21,6 +21,12 @@ Once loaded you can then utilise the following support tools.
 - **google cloud storage** - You will be able to see files within the `devtools/gcp-storage-emulator/data/default-bucket` folder.
 
 - **firestore emulator** - [localhost:4000/firestore](http://localhost:4000/firestore). (This data is held within the container and so is lost of rebuilbing.)
+
+- **thundercloud local http request collection** - The filename within devtools folder called `thunder-collection_Local Development - SDS-v1` can be inported if you are using VS Code with the thunderclient collection. With this collection you will be able to simulate all the steps currently within the SDS.  
+
+  N.B. When using the 'SDX Simulate dataset publish' post request, you will need to get the GUID from the docker logs until the pub/sub service is implemented.
+
+
 ---
 ## Running locally
 

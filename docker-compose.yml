@@ -23,7 +23,7 @@ services:
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
       - DATASET_BUCKET_NAME=dataset_bucket
-      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
     volumes:
       - ./src/app:/src
@@ -57,7 +57,7 @@ services:
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
-      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -72,7 +72,7 @@ services:
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
-      - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_firebase_key.json
+      - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_google_app_key.json
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-dev_publish_dataset-sds
