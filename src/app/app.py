@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Schema, SchemaMetadata, Schemas
+from models import Datasets, Schema, SchemaMetadata, Schemas
 
 logging.basicConfig(level=logging.INFO)
 
@@ -12,11 +12,13 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 
-@app.get("/unit_data")
+@app.get("/v1/unit_data")
 async def unit_data(dataset_id: str, unit_id: str):
     """Retrieve supplementary data for a particular unit given the unit id
     and the dataset id."""
     data = database.get_data(dataset_id=dataset_id, unit_id=unit_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Item not found")
     return data
 
 
@@ -59,3 +61,15 @@ async def query_datasets(survey_id: str):
     """Retrieve the datasets, given the survey_id."""
     data = database.get_datasets(survey_id)
     return data
+
+
+@app.get("/v1/dataset_metadata", response_model=Datasets)
+async def get_dataset(survey_id: str, period_id: str) -> dict:
+    """
+    Retrieve the matching datasets, given the survey_id and period_id.
+    The matching datasets are returned as a nested dictionary object with the dataset_id as the key.
+    """
+    dataset = database.get_dataset_metadata(survey_id, period_id)
+    if not dataset:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    return dataset

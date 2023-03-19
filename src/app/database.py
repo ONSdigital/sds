@@ -12,7 +12,13 @@ schemas_collection = db.collection("schemas")
 
 
 def set_dataset(dataset_id, dataset):
+    """
+    This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
+    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary
+    """
     data = dataset.pop("data")
+    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+    dataset["total_reporting_units"] = len(data)
     datasets_collection.document(dataset_id).set(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
@@ -69,6 +75,27 @@ def get_datasets(survey_id):
         return_dataset["dataset_id"] = dataset.id
         datasets.append(return_dataset)
     return {"survey_id": survey_id, "datasets": datasets}
+
+
+def get_dataset_metadata(survey_id, period_id):
+    """
+    This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
+    and returns the matching datasets which is a nested dictionary object with the dataset_id as the key.
+    """
+    datasets = {}
+    datasets_result = (
+        datasets_collection.where("survey_id", "==", survey_id)
+        .where("period_id", "==", period_id)
+        .stream()
+    )
+    for dataset in datasets_result:
+        return_dataset = dataset.to_dict()
+        return_dataset.pop("form_id")
+        datasets[dataset.id] = return_dataset
+    if len(datasets) > 0:
+        return {"supplementary_dataset": datasets}
+    else:
+        return None
 
 
 def get_schema(survey_id, version) -> SchemaMetadata:
