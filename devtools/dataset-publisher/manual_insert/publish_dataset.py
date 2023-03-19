@@ -15,7 +15,26 @@ else:
     raise Exception("You need to set DATASET_BUCKET_NAME")
 
 
-def get_dataset(filename, bucket_name):
-    bucket = storage_client.bucket(bucket_name)
-    dataset = json.loads(bucket.blob(filename).download_as_string())
-    return dataset
+def store_schema(data):
+
+    filename = f"{data['survey_id']}.json"
+
+    blob = bucket.blob(filename)
+    blob.upload_from_string(
+        json.dumps(data, indent=2),
+        content_type="application/json",
+    )
+    return filename
+
+def load_json_file(filename):
+    f = open(filename)  
+    data = json.load(f)
+    f.close()
+    return data
+
+
+data = load_json_file('test_dataset.json')
+filename = store_schema(data)
+print(filename)
+
+

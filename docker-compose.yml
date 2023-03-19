@@ -13,6 +13,7 @@ services:
   api:
     build:
       context: .
+      dockerfile: ./devtools/local_dev.Dockerfile
     ports:
       - 3000:3000
     environment:
@@ -21,7 +22,9 @@ services:
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
+      - DATASET_BUCKET_NAME=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
+      - API_URL=http://cloudfunction-new_dataset:8080
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -42,3 +45,34 @@ services:
       - ./devtools/firebase-emulator:/firebase
       - ./devtools/firebase-emulator:/firebase/baseline-data
     container_name: firestore-sds
+  cloudfunction-new_dataset:
+    build:
+      context: .
+      dockerfile: ./devtools/cloudfunction_new_dataset.Dockerfile
+    ports:
+      - 3005:8080
+    restart: on-failure
+    environment:
+      - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - DATASET_BUCKET_NAME=dataset_bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_firebase_key.json
+    volumes:
+      - ./devtools:/devtools
+    container_name: cloudfunction-new_dataset-sds
+  cloudfunction-dev_publish_dataset:
+    build:
+      context: ./devtools/dataset-publisher
+    ports:
+      - 3006:8080
+    restart: on-failure
+    environment:
+      - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - DATASET_BUCKET_NAME=dataset_bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_firebase_key.json
+    volumes:
+      - ./devtools:/devtools
+    container_name: cloudfunction-dev_publish_dataset-sds
