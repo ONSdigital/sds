@@ -15,6 +15,7 @@ else:
 
 
 def store_schema(schema: Schema, schema_id):
+    """Store the schema JSON file in the bucket using the schema_id as the filename."""
     filename = f"{schema.survey_id}/{schema_id}.json"
     blob = bucket.blob(filename)
     blob.upload_from_string(
@@ -25,11 +26,6 @@ def store_schema(schema: Schema, schema_id):
 
 
 def get_schema(filename):
+    """Get the SDS schema from the schema bucket using the filename provided."""
     schema = json.loads(bucket.blob(filename).download_as_string())
     return schema
-
-
-def get_dataset(filename, bucket_name):
-    bucket = storage_client.bucket(bucket_name)
-    dataset = json.loads(bucket.blob(filename).download_as_string())
-    return dataset

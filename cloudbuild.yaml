@@ -59,7 +59,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud auth print-identity-token  --impersonate-service-account=ons-sds-cloudbuild-sa@ons-sds-sandbox.iam.gserviceaccount.com > /workspace/token
+        gcloud auth print-identity-token --impersonate-service-account=${_CLOUDBUILD_SA} > /workspace/token
         curl -H "Authorization: Bearer $(cat /workspace/token)" ${_API_URL}/docs
   - name: python
     id: "Run integration test"

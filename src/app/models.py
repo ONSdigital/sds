@@ -37,6 +37,7 @@ class DatasetMetadata:
     sds_published_at: str
     total_reporting_units: int
     schema_version: str
+    sds_dataset_version: int
 
 
 @dataclass
