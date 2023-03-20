@@ -10,7 +10,7 @@ if os.environ.get("DATASET_BUCKET_NAME"):
     bucket = storage_client.bucket(os.environ.get("DATASET_BUCKET_NAME"))
     if not bucket.exists():
         bucket = storage_client.create_bucket(os.environ.get("DATASET_BUCKET_NAME"))
-else os.environ.get("STORAGE_EMULATOR_HOST"):
+elif os.environ.get("STORAGE_EMULATOR_HOST"):
     bucket = storage_client.create_bucket("dataset_bucket")
 
 
