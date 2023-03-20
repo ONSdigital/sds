@@ -41,6 +41,7 @@ def set_dataset(dataset_id, dataset):
 
 
 def get_data(dataset_id, unit_id):
+    """Get the unit data from database that originally came from the dataset."""
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
 
