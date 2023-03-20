@@ -19,6 +19,21 @@ def set_dataset(dataset_id, dataset):
     data = dataset.pop("data")
     dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
     dataset["total_reporting_units"] = len(data)
+
+    datasets_result = (
+        datasets_collection.where("survey_id", "==", dataset["survey_id"])
+        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
+        .limit(1)
+        .stream()
+    )
+    try:
+        latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
+    except StopIteration:
+        latest_version = 1
+
+    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+    dataset["sds_dataset_version"] = latest_version
+    dataset["total_reporting_units"] = len(data)
     datasets_collection.document(dataset_id).set(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
@@ -26,6 +41,7 @@ def set_dataset(dataset_id, dataset):
 
 
 def get_data(dataset_id, unit_id):
+    """Get the unit data from dataset collection, that originally came from the dataset."""
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
 
@@ -58,6 +74,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
 
 
 def get_schemas(survey_id):
+    """Return all the schema meta-data that corresponds to a particular survey_id."""
     dataset_schemas = {}
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
     for schema in schemas_result:

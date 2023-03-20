@@ -3,7 +3,6 @@ import dataset_storage
 import functions_framework
 
 
-#
 @functions_framework.cloud_event
 def new_dataset(cloud_event):
     """

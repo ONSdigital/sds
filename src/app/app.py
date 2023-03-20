@@ -56,13 +56,6 @@ async def query_schemas(survey_id: str) -> dict:
     return data
 
 
-@app.get("/datasets")
-async def query_datasets(survey_id: str):
-    """Retrieve the datasets, given the survey_id."""
-    data = database.get_datasets(survey_id)
-    return data
-
-
 @app.get("/v1/dataset_metadata", response_model=Datasets)
 async def get_dataset(survey_id: str, period_id: str) -> dict:
     """
