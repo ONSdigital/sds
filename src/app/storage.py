@@ -26,6 +26,7 @@ def store_schema(schema: Schema, schema_id):
 
 
 def get_schema(filename):
+    """Get the SDS schema from the schema bucket using the filename provided."""
     schema = json.loads(bucket.blob(filename).download_as_string())
     return schema
 
