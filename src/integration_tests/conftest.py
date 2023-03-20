@@ -102,7 +102,7 @@ def upload_dataset(filename, dataset):
         }
         new_dataset(cloud_event=cloud_event)
     elif not os.environ.get("API_URL"):
-        sleep(3)
+        sleep(5)
 
 
 @pytest.fixture
