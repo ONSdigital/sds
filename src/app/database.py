@@ -74,6 +74,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
 
 
 def get_schemas(survey_id):
+    """Return all the schema meta-data that corresponds to a particular survey_id."""
     dataset_schemas = {}
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
     for schema in schemas_result:
