@@ -1,3 +1,5 @@
+import base64
+import json
 from dataclasses import asdict
 from datetime import datetime
 
@@ -37,7 +39,8 @@ def set_dataset(dataset_id, dataset):
     datasets_collection.document(dataset_id).set(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
-        units_collection.document(unit_data["ruref"]).set(unit_data)
+        base64_encoded = base64.b64encode(json.dumps(unit_data).encode("utf-8"))
+        units_collection.document(unit_data["ruref"]).set({"data": base64_encoded})
 
 
 def get_data(dataset_id, unit_id):
