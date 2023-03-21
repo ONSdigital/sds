@@ -5,7 +5,7 @@ More information on this service can be found on Confluence:
 * https://confluence.ons.gov.uk/display/SDC/SDS
 ---
 ## Dockerized
-This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. 
+The docker-compose will launch the SDS application, two storgae emulators(firebase and bucket) and two cloud functions. The SDS application will also support hot reloading within the `/src/app` directory.
 
 - You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
 
@@ -84,8 +84,9 @@ run the following commands:
 
 
 ```bash
-docker-compose up -d firestore
-docker-compose up -d storage
+docker-compose up 
+docker-compose stop api
+
 export FIRESTORE_EMULATOR_HOST=localhost:8080
 export STORAGE_EMULATOR_HOST=http://localhost:9023
 export PYTHONPATH=src/app
@@ -185,19 +186,18 @@ cd src/integration_tests
 pytest integration_tests.py
 ```
 
-### Everything is local
+### Running integration tests locally
 
 This configuration makes use of the firestore and storage services running in Docker. The cloud function behaviour
-is emulated by the test itself.
+is emulated by the test itself, or can be run manually by running the `SDX Simulate dataset publish` and `Cloud event trigger` http requests could in the thunderclient http collection in the devtools folder. 
 
 ```bash
-docker-compose up -d firestore
-docker-compose up -d storage
+docker-compose up
 
 export FIRESTORE_EMULATOR_HOST=localhost:8200
 export STORAGE_EMULATOR_HOST=http://localhost:9023
-export SCHEMA_BUCKET_NAME=schema-bucket
-export DATASET_BUCKET=dataset-bucket
+export SCHEMA_BUCKET_NAME=schema_bucket
+export DATASET_BUCKET=dataset_bucket
 
 export PYTHONPATH=../app
 cd src/integration_tests
