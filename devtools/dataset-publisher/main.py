@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+
 @functions_framework.cloud_event
 def dev_publish_dataset(cloud_event):
     """

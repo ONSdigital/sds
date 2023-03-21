@@ -16,7 +16,6 @@ else:
 
 
 def store_schema(data):
-
     filename = f"{data['survey_id']}.json"
 
     blob = bucket.blob(filename)
@@ -26,15 +25,14 @@ def store_schema(data):
     )
     return filename
 
+
 def load_json_file(filename):
-    f = open(filename)  
+    f = open(filename)
     data = json.load(f)
     f.close()
     return data
 
 
-data = load_json_file('test_dataset.json')
+data = load_json_file("test_dataset.json")
 filename = store_schema(data)
 print(filename)
-
-
