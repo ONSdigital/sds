@@ -1,9 +1,10 @@
 import json
+import logging
 import os
+import uuid
+
 import functions_framework
 from google.cloud import storage
-import uuid
-import logging
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
