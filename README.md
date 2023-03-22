@@ -5,11 +5,9 @@ More information on this service can be found on Confluence:
 * https://confluence.ons.gov.uk/display/SDC/SDS
 ---
 ## Dockerized
-The docker-compose will launch the SDS application, two storgae emulators(firebase and bucket) and two cloud functions. The SDS application will also support hot reloading within the `/src/app` directory.
+The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
 
 - You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
-
-This will launch the SDS application and two emulators, the SDS application will support hot reloading within the `/src/app` directory. Start the containers:
 
 ```
 docker-compose up
@@ -18,14 +16,41 @@ Once loaded you can then utilise the following support tools.
 
 - **SDS docs** - The API service can be found here : [localhost:3000/docs](http://localhost:3000/docs).
 
-- **google cloud storage** - You will be able to see files within the `devtools/gcp-storage-emulator/data/default-bucket` folder.
+- **Google cloud storage emulator** - You will be able to see files within the `devtools/gcp-storage-emulator/data/default-bucket` folder.
 
-- **firestore emulator** - [localhost:4000/firestore](http://localhost:4000/firestore). (This data is held within the container and so is lost of rebuilbing.)
+- **Firestore emulator** - [localhost:4000/firestore](http://localhost:4000/firestore). (This data is held within the container and is lost when rebuilding.)
 
-- **thundercloud local http request collection** - The filename within devtools folder called `thunder-collection_Local Development - SDS-v1` can be inported if you are using VS Code with the thunderclient collection. With this collection you will be able to simulate all the steps currently within the SDS.  
+- **thunderclient local http request collection** - The filename within devtools folder called `thunder-collection_Local Development - SDS-v1` can be imported if you are using VS Code with the thunderclient collection. With this collection you will be able to simulate all the steps currently within the SDS.  
 
-  N.B. When using the 'SDX Simulate dataset publish' post request, you will need to get the GUID from the docker logs until the pub/sub service is implemented.
+- **Simulate SDX publish process** - To best simulate a google cloud trigger with the docker containers, there is an endpoint that can be called. It will simulate the SDX publishe data process where it will imput a dataset into a cloud bucket and then call the `new_dataset` cloud function. This can be invoked with a dataset as follows:
 
+```
+curl -X POST localhost:3006 \
+-H "Content-Type: application/cloudevents+json" \
+-d '{ "survey_id": "NRX",
+  "period_id": "ttt",
+  "form_id": "yyy",
+  "title": "Which side was better?",
+  "sds_schema_version": 4,
+  "schema_version": "v1.0.0",
+  "data": [
+    {
+      "ruref": "43532",
+      "runame": "Pipes and Maps Ltd",
+      "local_unit": [
+        {
+          "luref": "2012763A",
+          "luname": "Maps Factory"
+        },
+        {
+          "luref": "20127364B",
+          "luname": "Pipes R Us Subsidiary"
+        }
+      ]
+    }
+ ]
+}'
+```
 
 ---
 ## Running locally

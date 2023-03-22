@@ -23,10 +23,11 @@ services:
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
       - DATASET_BUCKET_NAME=dataset_bucket
+      - DATASET_BUCKET=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
     volumes:
-      - ./src/app:/src
+      - ./src:/src
       - ./devtools:/devtools
     restart: on-failure
     depends_on:
@@ -61,7 +62,7 @@ services:
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
-  cloudfunction-dev_publish_dataset:
+  dev-publish-dataset:
     build:
       context: ./devtools/dataset-publisher
     ports:
@@ -75,4 +76,4 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_google_app_key.json
     volumes:
       - ./devtools:/devtools
-    container_name: cloudfunction-dev_publish_dataset-sds
+    container_name: dev-publish-dataset-sds
