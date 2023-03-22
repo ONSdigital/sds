@@ -13,3 +13,4 @@ coverage
 pytest-cov
 google-cloud-storage
 functions-framework
+sdc-cryptography

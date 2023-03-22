@@ -1,16 +1,28 @@
 import base64
 import json
+import os
+import zlib
 from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
 from models import SchemaMetadata
+from sdc.crypto.encrypter import encrypt
+from sdc.crypto.key_store import KeyStore
 
 firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
+
+DATASET_ENCRYPTION = os.environ.get("DATASET_ENCRYPTION", "true").lower() == "true"
+JSON_KEYFILE = os.environ.get("JSON_KEYFILE")
+
+if DATASET_ENCRYPTION:
+    with open(JSON_KEYFILE) as f:
+        keys = json.load(f)
+        key_store = KeyStore(keys)
 
 
 def set_dataset(dataset_id, dataset):
@@ -39,8 +51,12 @@ def set_dataset(dataset_id, dataset):
     datasets_collection.document(dataset_id).set(dataset)
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
-        base64_encoded = base64.b64encode(json.dumps(unit_data).encode("utf-8"))
-        units_collection.document(unit_data["ruref"]).set({"data": base64_encoded})
+        if DATASET_ENCRYPTION:
+            encrypted_data = encrypt(json.dumps(unit_data), key_store, "submission")
+            base64_encoded = base64.b64encode(zlib.compress(encrypted_data))
+            units_collection.document(unit_data["ruref"]).set({"data": base64_encoded})
+        else:
+            units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
 def get_data(dataset_id, unit_id):
