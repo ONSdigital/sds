@@ -84,6 +84,9 @@ def get_schemas(survey_id):
 
 
 def get_datasets(survey_id):
+    """
+    Get a list of matching dataset meta-data, given the survey_id.
+    """
     datasets = []
     datasets_result = datasets_collection.where("survey_id", "==", survey_id).stream()
     for dataset in datasets_result:
