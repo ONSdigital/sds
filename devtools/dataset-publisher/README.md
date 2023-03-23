@@ -2,7 +2,7 @@
 
 This folder is a supporting tool for developers. Its purpose is to emulate the SDX process where a dataset is written to a bucket and a trigger would then call the new_dataset cloud function.
 
-1. The `app.py` and `Dockerfile` are used to create a easy to use HTTP endpoint where a dataset can be published to with the dockerized version. It will post the dataset, write it to the bucket and then "simulate" the trigger by called a dockerized version of the cloud function that process datasets. The end result can be viewed within the firestore emulator or use the metadata or retrieve unit data endpoint.
+1. The `app.py` and `Dockerfile` are used to create a easy to use HTTP endpoint where a dataset can be published to with the dockerized version. It will post the dataset, write it to the bucket and then "simulate" the trigger by called a dockerized version of the cloud function that processes datasets. The end result can be viewed within the firestore emulator, checking the metadata endpoint or retrieve unit data endpoint.
 
 2. Curl the endpoint directory as follows:
 
