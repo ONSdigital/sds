@@ -13,7 +13,6 @@ services:
   api:
     build:
       context: .
-      dockerfile: ./devtools/local_dev.Dockerfile
     ports:
       - 3000:3000
     environment:
@@ -27,7 +26,7 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
     volumes:
-      - ./src:/src
+      - ./src/app:/src
       - ./devtools:/devtools
     restart: on-failure
     depends_on:

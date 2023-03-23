@@ -1,0 +1,153 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Local Development - SDS",
+    "dateExported": "2023-03-23T08:19:34.361Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "b5e64c68-18a8-4ce3-a3b4-b85bb1dd44be",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "Publish Schema ",
+            "url": "http://127.0.0.1:3000/v1/schema",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-02-22T12:41:10.898Z",
+            "modified": "2023-03-19T21:28:55.700Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json\",\n  \"survey_id\": \"068\",\n  \"title\": \"Roofing Tiles\",\n  \"description\": \"Roofing Tiles\",\n  \"schema_version\": \"v2.1.0\",\n  \"sample_unit_key_field\": \"ruref\",\n  \"properties\": [\n    {\n      \"type\": \"object\",\n      \"required\": [\n        \"ruref\"\n      ],\n      \"properties\": {\n        \"ruref\": {\n          \"type\": \"string\"\n        },\n        \"runame\": {\n          \"type\": \"string\",\n          \"Description\": \"The reporting unit name.\"\n        },\n        \"ruaddr\": {\n          \"type\": \"List\",\n          \"Description\": \"This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr\"\n        },\n        \"repeats\": {\n          \"type\": \"array\",\n          \"required\": [\n            \"luref\"\n          ],\n          \"properties\": {\n            \"key_field\": \"luref\",\n            \"luref\": {\n              \"type\": \"string\"\n            },\n            \"luname\": {\n              \"type\": \"string\"\n            },\n            \"luaddr\": {\n              \"type\": \"List\",\n              \"Description\": \"This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr\"\n            }\n          }\n        }\n      }\n    }\n  ],\n  \"examples\": [\n    {\n      \"ruref\": \"43532\",\n      \"runame\": \"Pipes and Maps Ltd\",\n      \"ruaddr\": [\n        \"111 Under Hill\",\n        \"Hobbitton\",\n        \"The Shire\",\n        \"HO1 1AA\"\n      ],\n      \"local_unit\": [\n        {\n          \"luref\": \"2012763A\",\n          \"luname\": \"Maps Factory\",\n          \"luaddr\": [\n            \"1 Bag End\",\n            \"Underhill\",\n            \"Hobbiton\",\n            \"HO1 1AA\"\n          ]\n        },\n        {\n          \"luref\": \"20127364B\",\n          \"luname\": \"Pipes R Us Subsidiary\",\n          \"luaddr\": [\n            \"12 The Farmstead\",\n            \"Maggotsville\",\n            \"Hobbiton\",\n            \"HO1 1AB\"\n          ]\n        },\n        {\n          \"luref\": \"20127365C\",\n          \"luname\": \"Rings N Things\",\n          \"luaddr\": [\n            \"5 Barrow Lane\",\n            \"Striderton\",\n            \"Bree\",\n            \"BR1 1AC\"\n          ]\n        },\n        {\n          \"luref\": \"20127366D\",\n          \"luname\": \"Tobacco Sales Inc\",\n          \"luaddr\": [\n            \"23 Rosie Avenue\",\n            \"Buckhampton\",\n            \"BU55 9ZZ\"\n          ]\n        }\n      ]\n    }\n  ]\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "46dd9df6-3379-46dc-b0a0-aec29bd8c6e1",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "Schema Metadata",
+            "url": "http://127.0.0.1:3000/v1/schema_metadata?survey_id=068",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-02-22T12:43:25.533Z",
+            "modified": "2023-03-15T13:57:13.173Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "survey_id",
+                    "value": "068",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "4290cd45-ae02-4297-bf26-db4c035ab654",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "Get Schema",
+            "url": "http://127.0.0.1:3000/v1/schema?survey_id=068&version=1",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-02-22T12:44:50.885Z",
+            "modified": "2023-03-19T21:29:10.793Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "survey_id",
+                    "value": "068",
+                    "isPath": false
+                },
+                {
+                    "name": "version",
+                    "value": "1",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "56d6772a-ec72-4d8d-9384-1a3eaaa55374",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "SDX Simulate dataset publish",
+            "url": "http://localhost:3006",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2023-03-19T11:49:10.543Z",
+            "modified": "2023-03-22T16:58:02.682Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "*/*",
+                    "isDisabled": true
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"survey_id\": \"NRX\",\n  \"period_id\": \"ttt\",\n  \"form_id\": \"yyy\",\n  \"title\": \"Which side was better?\",\n  \"sds_schema_version\": 4,\n  \"schema_version\": \"v1.0.0\",\n  \"data\": [\n    {\n      \"ruref\": \"43532\",\n      \"runame\": \"Pipes and Maps Ltd\",\n      \"local_unit\": [\n        {\n          \"luref\": \"2012763A\",\n          \"luname\": \"Maps Factory\"\n        },\n        {\n          \"luref\": \"20127364B\",\n          \"luname\": \"Pipes R Us Subsidiary\"\n        }\n      ]\n    },\n    {\n      \"ruref\": \"65871\",\n      \"runame\": \"Boats and Floats Ltd\",\n      \"local_unit\": [\n        {\n          \"luref\": \"2012763A\",\n          \"luname\": \"Arms Factory\"\n        },\n        {\n          \"luref\": \"20127364B\",\n          \"luname\": \"Swords Subsidiary\"\n        },\n        {\n          \"luref\": \"20127365C\",\n          \"luname\": \"Armor N Things\"\n        }\n      ]\n    }\n  ]\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "dcae44ea-a781-49fc-b84d-d3e5090b0ade",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "Dataset Metadata",
+            "url": "http://127.0.0.1:3000/v1/dataset_metadata?survey_id=NRX&period_id=ttt",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2023-03-19T21:47:14.585Z",
+            "modified": "2023-03-20T15:12:08.572Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "survey_id",
+                    "value": "NRX",
+                    "isPath": false
+                },
+                {
+                    "name": "period_id",
+                    "value": "ttt",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "e046af95-ace1-4804-970f-1e8ef84e646b",
+            "colId": "ec77779e-b685-475c-be73-c7c59b34e52a",
+            "containerId": "",
+            "name": "Get Dataset Data",
+            "url": "http://127.0.0.1:3000/v1/unit_data?dataset_id=9ab16192-1851-4ff7-8343-b8384a319400&unit_id=43532",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2023-03-19T21:47:34.124Z",
+            "modified": "2023-03-21T10:42:36.368Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "dataset_id",
+                    "value": "9ab16192-1851-4ff7-8343-b8384a319400",
+                    "isPath": false
+                },
+                {
+                    "name": "unit_id",
+                    "value": "43532",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ]
+}
