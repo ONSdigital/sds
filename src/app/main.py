@@ -1,7 +1,8 @@
+import uuid
+
 import database
 import dataset_storage
 import functions_framework
-import uuid
 
 
 @functions_framework.cloud_event
