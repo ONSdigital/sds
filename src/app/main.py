@@ -18,8 +18,6 @@ def new_dataset(cloud_event):
     filename = data["name"]
 
     dataset_id = str(uuid.uuid4())
-    
-    # dataset_id = filename.split(".json")[0]
 
     dataset = dataset_storage.get_dataset(filename=filename, bucket_name=bucket_name)
     database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
