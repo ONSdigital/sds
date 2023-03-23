@@ -1,19 +1,8 @@
 import json
-import os
 
 from google.cloud import storage
 
 storage_client = storage.Client()
-
-
-bucket_name = os.environ.get("DATASET_BUCKET_NAME")
-
-if bucket_name:
-    bucket = storage_client.bucket(bucket_name)
-    if not bucket.exists():
-        bucket = storage_client.create_bucket(bucket_name)
-elif os.environ.get("STORAGE_EMULATOR_HOST"):
-    bucket = storage_client.create_bucket("dataset_bucket")
 
 
 def get_dataset(filename, bucket_name):

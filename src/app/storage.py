@@ -8,10 +8,8 @@ storage_client = storage.Client()
 
 if os.environ.get("SCHEMA_BUCKET_NAME"):
     bucket = storage_client.bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
-    if not bucket.exists():
-        bucket = storage_client.create_bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
 elif os.environ.get("STORAGE_EMULATOR_HOST"):
-    bucket = storage_client.create_bucket("schema_bucket")
+    bucket = storage_client.create_bucket("bucket")
 else:
     raise Exception("You need to set SCHEMA_BUCKET_NAME")
 

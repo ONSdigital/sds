@@ -72,6 +72,7 @@ services:
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
+      - SCHEMA_BUCKET_NAME=schema_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_google_app_key.json
     volumes:
       - ./devtools:/devtools

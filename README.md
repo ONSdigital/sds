@@ -22,7 +22,7 @@ Once loaded you can then utilise the following support tools.
 
 - **thunderclient local http request collection** - The filename within devtools folder called `thunder-collection_Local Development - SDS-v1` can be imported if you are using VS Code with the thunderclient collection. With this collection you will be able to simulate all the steps currently within the SDS.  
 
-- **Simulate SDX publish process** - To best simulate a google cloud trigger with the docker containers, there is an endpoint that can be called. It will simulate the SDX publishe data process where it will imput a dataset into a cloud bucket and then call the `new_dataset` cloud function. This can be invoked with a dataset as follows:
+- **Simulate SDX publish process** - To best simulate a google cloud trigger with the docker containers, there is an endpoint that can be called. It will simulate the SDX published data process where it will input a dataset into a cloud bucket and then call the `new_dataset` cloud function. This can be invoked with a dataset as follows:
 
 ```
 curl -X POST localhost:3006 \

@@ -15,23 +15,19 @@ async def dev_simulate_publish_dataset(request: Request):
     Used to simulate SDX populating the bucket to manually fire the cloud event trigger
     """
     storage_client = storage.Client()
-    bucket_name = os.environ.get("DATASET_BUCKET_NAME")
-    storage_emulator_host = os.environ.get("STORAGE_EMULATOR_HOST")
+    dataset_bucket_name = os.environ.get("DATASET_BUCKET_NAME")
+    schema_bucket_name = os.environ.get("SCHEMA_BUCKET_NAME")
 
-    if bucket_name:
-        bucket = storage_client.bucket(bucket_name)
-        if not bucket.exists():
-            bucket = storage_client.create_bucket(bucket_name)
-    elif storage_emulator_host:
-        bucket = storage_client.create_bucket("dataset_bucket")
-    else:
-        raise Exception("You need to set DATASET_BUCKET_NAME")
+    # Check if the dataset bucket exists.
+    dataset_bucket = setup_local_storage(dataset_bucket_name, storage_client)
+    # Supporting to ensure schema bucket is created for docker enviroment.
+    setup_local_storage(schema_bucket_name, storage_client)
 
     # Create a guid as the filename before we publish it
     filename = f"{str(uuid.uuid4())}.json"
 
     # Save the dataset to the bucket
-    blob = bucket.blob(filename)
+    blob = dataset_bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(await request.json(), indent=2),
         content_type="application/json",
@@ -55,3 +51,18 @@ async def dev_simulate_publish_dataset(request: Request):
     requests.post(url, data=json.dumps(event_data), headers=headers)
 
     return {"filename": filename}
+
+
+def setup_local_storage(bucket_name, storage_client):
+    """
+    This is to check if the buckets exists and if it doe not, then it will create it. This is due to the fact that the
+    storage emulator requires a 'bucket' to be created on start.
+    """
+
+    if bucket_name:
+        bucket = storage_client.bucket(bucket_name)
+        if not bucket.exists():
+            return storage_client.create_bucket(bucket_name)
+        return bucket
+    else:
+        raise Exception("You need to set a name for the bucket")
