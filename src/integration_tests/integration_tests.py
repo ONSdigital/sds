@@ -39,7 +39,9 @@ def test_dataset(client, bucket_loader):
             assert response.status_code == 200
             assert response.json() == integration_dataset
 
-            dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][guid]
+            dataset_metadata = dataset_metadata_response.json()[
+                "supplementary_dataset"
+            ][guid]
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
 
