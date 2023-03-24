@@ -70,7 +70,7 @@ def test_get_dataset_metadata(database):
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
         "form_id": "yyy",
-        "filename": "file1.json"
+        "filename": "file1.json",
     }
     dataset_id = "abc-xyz"
     mock_stream_obj = MagicMock()

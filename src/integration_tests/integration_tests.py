@@ -23,16 +23,23 @@ def test_dataset(client, bucket_loader):
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
     assert dataset_metadata_response.status_code == 200
-    #dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][
+    # dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][
     #    dataset_id
-    #]
-    #assert dataset_metadata["survey_id"] == "xyz"
-    #assert "sds_dataset_version" in dataset_metadata
-    for guid, integration_dataset in dataset_metadata_response.json()["supplementary_dataset"].items():
-        if dataset_metadata_response.json()["supplementary_dataset"][guid]["filename"] == filename:
+    # ]
+    # assert dataset_metadata["survey_id"] == "xyz"
+    # assert "sds_dataset_version" in dataset_metadata
+    for guid, integration_dataset in dataset_metadata_response.json()[
+        "supplementary_dataset"
+    ].items():
+        if (
+            dataset_metadata_response.json()["supplementary_dataset"][guid]["filename"]
+            == filename
+        ):
             dataset_id = guid
             unit_id = "43532"
-            response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+            response = client.get(
+                f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
+            )
             assert response.status_code == 200
             assert response.json() == {
                 "ruref": "43532",
