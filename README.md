@@ -12,17 +12,15 @@ The docker-compose will launch the SDS application, two storage emulators(fireba
 ```
 docker-compose up
 ```
-Once loaded you can then utilise the following support tools.
+Once, loaded you can do the following:
 
-- **SDS docs** - The API service can be found here : [localhost:3000/docs](http://localhost:3000/docs).
+- View the API service docs [localhost:3000/docs](http://localhost:3000/docs).
 
-- **Google cloud storage emulator** - You will be able to see files within the `devtools/gcp-storage-emulator/data/default-bucket` folder.
+- See files put into cloud storage within `devtools/gcp-storage-emulator/data/default-bucket`.
 
-- **Firestore emulator** - [localhost:4000/firestore](http://localhost:4000/firestore). (This data is held within the container and is lost when rebuilding.)
+- Utilize the firestore emulator [localhost:4000/firestore](http://localhost:4000/firestore).
 
-- **thunderclient local http request collection** - The filename within devtools folder called `thunder-collection_Local Development - SDS-v1` can be imported if you are using VS Code with the thunderclient collection. With this collection you will be able to simulate all the steps currently within the SDS.  
-
-- **Simulate SDX publish process** - To best simulate a google cloud trigger with the docker containers, there is an endpoint that can be called. It will simulate the SDX published data process where it will input a dataset into a cloud bucket and then call the `new_dataset` cloud function. This can be invoked with a dataset as follows:
+- Simulate the SDX publish process, invoked with a dataset as follows.
 
 ```
 curl -X POST localhost:3006 \
