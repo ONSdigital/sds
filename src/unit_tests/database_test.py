@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 def test_set_dataset(database):
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    database.set_dataset(dataset_id="1", dataset=dataset)
+    database.set_dataset(dataset_id="1", filename="dataset.json", dataset=dataset)
 
 
 def test_get_data(database):
@@ -70,11 +70,12 @@ def test_get_dataset_metadata(database):
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
         "form_id": "yyy",
+        "filename": "file1.json"
     }
-    dataset_id = "wobble"
+    dataset_id = "abc-xyz"
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_metadata
     mock_stream_obj.id = dataset_id
     database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
-    dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="ttt")
+    dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="abc")
     assert dataset_metadata["supplementary_dataset"][dataset_id] == expected_metadata

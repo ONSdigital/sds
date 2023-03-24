@@ -103,7 +103,7 @@ def test_get_dataset_metadata(client, database):
         "schema_version": "v1.0.0",
         "form_id": "yyy",
     }
-    dataset_id = "wobble"
+    dataset_id = "abc-xyz"
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_metadata
     mock_stream_obj.id = dataset_id
