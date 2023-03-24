@@ -1,0 +1,23 @@
+---
+steps:
+  # Retrieve the short SHA-1 hash from the Git tag
+  - name: 'gcr.io/cloud-builders/git'
+    args: ['rev-parse', '--short', '$TAG_NAME']
+    id: 'get_commit_sha'
+
+  # Tag and push the Docker image with the corresponding tag
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Copy the image from Dev AR
+        docker pull europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$COMMIT_SHA
+        docker tag europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$COMMIT_SHA europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME
+        docker push europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME
+    # Set the COMMIT_SHA environment variable to the output of the 'get_commit_sha' step
+    env:
+      - 'COMMIT_SHA=$_COMMIT_SHA'
+
+images:
+  - 'europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME'
