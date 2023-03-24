@@ -21,3 +21,5 @@ steps:
 
 images:
   - 'europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME'
+options:
+  logging: CLOUD_LOGGING_ONLY
