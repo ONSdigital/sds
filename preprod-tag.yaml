@@ -1,10 +1,5 @@
 ---
 steps:
-  # Retrieve the short SHA-1 hash from the Git tag
-  - name: 'gcr.io/cloud-builders/git'
-    args: ['rev-parse', '--short', '$TAG_NAME']
-    id: 'get_commit_sha'
-
   # Tag and push the Docker image with the corresponding tag
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
