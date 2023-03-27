@@ -4,6 +4,9 @@
 .venv
 venv
 local.env
-scratch.txt
+*__pycache__
+devtools/gcp-storage-emulator/data/*
+!devtools/gcp-storage-emulator/data/.placeholder
+devtools/firebase-emulator/*.log
 .DS_Store
 *.pyc
