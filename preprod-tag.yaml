@@ -1,10 +1,8 @@
 ---
 steps:
 - name: 'gcr.io/cloud-builders/git'
-  args: ['rev-parse', '--short', 'HEAD']
+  args: ['rev-parse', '--short', 'HEAD', '>', '/workspace/short_sha']
   id: 'get_short_sha'
-  env:
-  - 'SHORT_SHA=/workspace/short_sha'
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args:
