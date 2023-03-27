@@ -4,17 +4,15 @@ steps:
   args: ['rev-parse', '--short', 'HEAD']
   id: 'get_short_sha'
   env:
-  - 'SHORT_SHA=$_SHORT_SHA'
+  - 'SHORT_SHA=/workspace/short_sha'
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args:
   - '-c'
   - |
-    docker pull europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$COMMIT_SHA
-    docker tag europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$COMMIT_SHA europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME
+    docker pull europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$(cat /workspace/short_sha)
+    docker tag europe-west2-docker.pkg.dev/ons-sds-dev/sds/sds:$(cat /workspace/short_sha) europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME
     docker push europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME
-  env:
-  - 'COMMIT_SHA=$_SHORT_SHA'
 images:
 - 'europe-west2-docker.pkg.dev/ons-sds-preprod/sds/sds:$TAG_NAME'
 options:
