@@ -24,6 +24,7 @@ def test_dataset(client, bucket_loader):
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
     assert dataset_metadata_response.status_code == 200
+
     # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
     # locate the specific dataset in the collection.
     # Iterate over all the items in the above API response, then locate the document with the "filename" field from above.
