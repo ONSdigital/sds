@@ -7,7 +7,8 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from google.cloud import kms
+
+from encryption import encrypt_data
 from models import SchemaMetadata
 
 firebase_admin.initialize_app()
@@ -15,20 +16,8 @@ db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
+
 DATASET_ENCRYPTION = os.environ.get("DATASET_ENCRYPTION", "true").lower() == "true"
-GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
-if not GOOGLE_CLOUD_PROJECT:
-    raise Exception("You need to set GOOGLE_CLOUD_PROJECT")
-
-
-def encrypt_data(plaintext_data):
-    client = kms.KeyManagementServiceClient()
-    key_name = client.crypto_key_path(
-        GOOGLE_CLOUD_PROJECT, "global", "sds_keyring", "unit_data_key"
-    )
-    request = {"name": key_name, "plaintext": plaintext_data}
-    encrypted_data = client.encrypt(request, timeout=2)
-    return encrypted_data.ciphertext
 
 
 def set_dataset(dataset_id, dataset):
