@@ -123,7 +123,49 @@ gcloud functions deploy new-dataset-function \
 --source=. \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
---trigger-event-filters="bucket=$DATASET_BUCKET"
+--trigger-event-filters="bucket=$DATASET_BUCKET" \
+--set-env-vars GOOGLE_CLOUD_PROJECT=$PROJECT_NAME
+```
+
+## Key rings and keys
+
+Explains how to create a KMS key on the command line for this project. 
+See the following pages for the inspirations for this section:
+
+* https://cloud.google.com/kms/docs/create-encryption-keys
+* https://cloud.google.com/kms/docs/samples/kms-encrypt-symmetric#kms_encrypt_symmetric-python
+
+```bash
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+
+gcloud kms keyrings create "sds_keyring" --location "global"
+
+gcloud kms keys create "unit_data_key" \
+    --location "global" \
+    --keyring "sds_keyring" \
+    --purpose "encryption"
+    
+gcloud kms keys list --location "global" --keyring "sds_keyring"
+```
+
+To test the key works, do the following:
+
+```bash
+echo -n "Some text to be encrypted" > mysecret.txt
+gcloud kms encrypt \
+    --location "global" \
+    --keyring "sds_keyring" \
+    --key "unit_data_key" \
+    --plaintext-file ./mysecret.txt \
+    --ciphertext-file ./mysecret.txt.encrypted
+gcloud kms decrypt \
+    --location "global" \
+    --keyring "sds_keyring" \
+    --key "unit_data_key" \
+    --ciphertext-file ./mysecret.txt.encrypted \
+    --plaintext-file ./mysecret.txt.decrypted
+
 ```
 
 ## Running the integration tests

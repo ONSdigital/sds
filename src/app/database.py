@@ -7,9 +7,9 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+from google.cloud import kms
+
 from models import SchemaMetadata
-from sdc.crypto.encrypter import encrypt
-from sdc.crypto.key_store import KeyStore
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -17,12 +17,19 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 DATASET_ENCRYPTION = os.environ.get("DATASET_ENCRYPTION", "true").lower() == "true"
-JSON_KEYFILE = os.environ.get("JSON_KEYFILE")
+GOOGLE_CLOUD_PROJECT = os.environ.get("GOOGLE_CLOUD_PROJECT")
+if not GOOGLE_CLOUD_PROJECT:
+    raise Exception("You need to set GOOGLE_CLOUD_PROJECT")
 
-if DATASET_ENCRYPTION:
-    with open(JSON_KEYFILE) as f:
-        keys = json.load(f)
-        key_store = KeyStore(keys)
+
+def encrypt_data(plaintext_data):
+    client = kms.KeyManagementServiceClient()
+    key_name = client.crypto_key_path(
+        GOOGLE_CLOUD_PROJECT, "global", "sds_keyring", "unit_data_key"
+    )
+    request = {"name": key_name, "plaintext": plaintext_data}
+    encrypted_data = client.encrypt(request, timeout=2)
+    return encrypted_data.ciphertext
 
 
 def set_dataset(dataset_id, dataset):
@@ -52,7 +59,7 @@ def set_dataset(dataset_id, dataset):
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
         if DATASET_ENCRYPTION:
-            encrypted_data = encrypt(json.dumps(unit_data), key_store, "submission")
+            encrypted_data = encrypt_data(json.dumps(unit_data))
             base64_encoded = base64.b64encode(zlib.compress(encrypted_data))
             units_collection.document(unit_data["ruref"]).set({"data": base64_encoded})
         else:
