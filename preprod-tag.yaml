@@ -1,7 +1,12 @@
 ---
 steps:
 - name: 'gcr.io/cloud-builders/git'
-  args: ['rev-parse', '--short', 'HEAD', '>', '/workspace/short_sha']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    rev=$(git rev-parse --short HEAD)
+    echo $rev > /workspace/short_sha
   id: 'get_short_sha'
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
