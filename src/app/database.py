@@ -8,7 +8,6 @@ from datetime import datetime
 import firebase_admin
 from firebase_admin import firestore
 from google.cloud import kms
-
 from models import SchemaMetadata
 
 firebase_admin.initialize_app()
