@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 
 def test_set_dataset(database):
+    # This test ensures that the 'set_dataset' database method is able to save the dataset metadata in the collection
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
     database.set_dataset(dataset_id="1", filename="dataset.json", dataset=dataset)
@@ -61,6 +62,7 @@ def test_get_dataset_metadata(database):
     Mocks the database collection document, invokes the get_dataset_metadata with the survey_id and period_id arguments,
     then checks that it returns the expected nested dictionary object which contains the dataset metadata.
     """
+    # Added "filename" field in the expected metadata
     expected_metadata = {
         "survey_id": "xyz",
         "period_id": "abc",

@@ -12,6 +12,7 @@ def new_dataset(cloud_event):
     dataset storage bucket. See the 'Cloud Functions' section
     in the README.md file for details as to how this function
     is set up.
+    * The dataset_id is an auto generated GUID and the filename is saved as a new field in the metadata.
     """
     data = cloud_event.data
 

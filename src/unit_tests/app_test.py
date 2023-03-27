@@ -92,6 +92,7 @@ def test_get_dataset_metadata(client, database):
     Checks that the API endpoint '/v1/dataset_metadata' returns the expected dataset dictionary object
     when invoked with the survey_id and period_id parameters.
     """
+    # Added "filename" field in the expected metadata
     expected_metadata = {
         "survey_id": "xyz",
         "period_id": "abc",
