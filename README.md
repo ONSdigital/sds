@@ -3,7 +3,54 @@
 More information on this service can be found on Confluence:
 
 * https://confluence.ons.gov.uk/display/SDC/SDS
+---
+## Dockerized
+The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
 
+- You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
+
+```
+docker-compose up
+```
+Once, loaded you can do the following:
+
+- View the API service docs [localhost:3000/docs](http://localhost:3000/docs).
+
+- See files put into cloud storage within `devtools/gcp-storage-emulator/data/default-bucket`.
+
+- Utilize the firestore emulator [localhost:4000/firestore](http://localhost:4000/firestore).
+
+- Simulate the SDX publish process, invoked with a dataset as follows.
+
+```
+curl -X POST localhost:3006 \
+-H "Content-Type: application/cloudevents+json" \
+-d '{ "survey_id": "NRX",
+  "period_id": "ttt",
+  "form_id": "yyy",
+  "title": "Which side was better?",
+  "sds_schema_version": 4,
+  "schema_version": "v1.0.0",
+  "data": [
+    {
+      "ruref": "43532",
+      "runame": "Pipes and Maps Ltd",
+      "local_unit": [
+        {
+          "luref": "2012763A",
+          "luname": "Maps Factory"
+        },
+        {
+          "luref": "20127364B",
+          "luname": "Pipes R Us Subsidiary"
+        }
+      ]
+    }
+ ]
+}'
+```
+
+---
 ## Running locally
 
 To run this service locally, you will need the following:
@@ -50,7 +97,7 @@ export PYTHONPATH=src/app
 export SCHEMA_BUCKET_NAME=my-schema-bucket
 export DATASET_BUCKET_NAME=my-dataset-bucket
 export GOOGLE_APPLICATION_CREDENTIALS=key.json
-python -m uvicorn src.app.app:app --reload --port 8013
+python -m uvicorn src.app.app:app --reload --port 3000
 ```
 
 ### Running the SDS with service emulators
@@ -60,12 +107,13 @@ run the following commands:
 
 
 ```bash
-docker-compose up -d firestore
-docker-compose up -d storage
-export FIRESTORE_EMULATOR_HOST=localhost:8200
+docker-compose up 
+docker-compose stop api
+
+export FIRESTORE_EMULATOR_HOST=localhost:8080
 export STORAGE_EMULATOR_HOST=http://localhost:9023
 export PYTHONPATH=src/app
-python -m uvicorn src.app.app:app --reload --port 8013
+python -m uvicorn src.app.app:app --reload --port 3000
 ```
 
 ## Running linting and unit tests
@@ -87,15 +135,6 @@ To correct any problems that `isort` or `black` complain about, run the followin
 ```
 black .
 isort . --profile black
-```
-
-## Building and running on Docker
-
-To build and run on docker, run the following commands:
-
-```bash
-docker-compose build
-docker-compose up
 ```
 
 ## OpenAPI Specification
@@ -212,19 +251,18 @@ cd src/integration_tests
 pytest integration_tests.py
 ```
 
-### Everything is local
+### Running integration tests locally
 
 This configuration makes use of the firestore and storage services running in Docker. The cloud function behaviour
-is emulated by the test itself.
+is emulated by the test itself, or can be run manually by running the `SDX Simulate dataset publish` and `Cloud event trigger` http requests could in the thunderclient http collection in the devtools folder. 
 
 ```bash
-docker-compose up -d firestore
-docker-compose up -d storage
+docker-compose up
 
 export FIRESTORE_EMULATOR_HOST=localhost:8200
 export STORAGE_EMULATOR_HOST=http://localhost:9023
-export SCHEMA_BUCKET_NAME=schema-bucket
-export DATASET_BUCKET=dataset-bucket
+export SCHEMA_BUCKET_NAME=schema_bucket
+export DATASET_BUCKET=dataset_bucket
 
 export PYTHONPATH=../app
 cd src/integration_tests

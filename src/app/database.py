@@ -14,15 +14,19 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
+
 DATASET_ENCRYPTION = os.environ.get("DATASET_ENCRYPTION", "true").lower() == "true"
 
 
-def set_dataset(dataset_id, dataset):
+def set_dataset(dataset_id, filename, dataset):
     """
     This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
-    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary
+    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
+    * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
+    * Set the "filename" as a field in the dataset metadata document
     """
     data = dataset.pop("data")
+    dataset["filename"] = filename
     dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
     dataset["total_reporting_units"] = len(data)
 
@@ -51,7 +55,7 @@ def set_dataset(dataset_id, dataset):
 
 
 def get_data(dataset_id, unit_id):
-    """Get the unit data from database that originally came from the dataset."""
+    """Get the unit data from dataset collection, that originally came from the dataset."""
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
 
@@ -94,6 +98,9 @@ def get_schemas(survey_id):
 
 
 def get_datasets(survey_id):
+    """
+    Get a list of matching dataset meta-data, given the survey_id.
+    """
     datasets = []
     datasets_result = datasets_collection.where("survey_id", "==", survey_id).stream()
     for dataset in datasets_result:

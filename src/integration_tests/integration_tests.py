@@ -34,28 +34,31 @@ def test_dataset(client, bucket_loader):
     for guid, integration_dataset in dataset_metadata_response.json()[
         "supplementary_dataset"
     ].items():
-        dataset_id = guid
-        unit_id = "43532"
-        response = client.get(
-            f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
-        )
-        assert response.status_code == 200
-        # Check that the API response is the same as the dataset just located in the loop
+        if (
+            dataset_metadata_response.json()["supplementary_dataset"][guid]["filename"]
+            == filename
+        ):
+            dataset_id = guid
+            unit_id = "43532"
+            response = client.get(
+                f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
+            )
+            assert response.status_code == 200
+            # Check that the API response is the same as the dataset just located in the loop
+            if "data" in response.json():
+                encrypted_data = base64.b64decode(response.json()["data"])
+                decrypted_data = decrypt_data(encrypted_data)
+                returned_data = json.loads(decrypted_data)
+            else:
+                returned_data = response.json()
+            assert returned_data == integration_dataset
 
-        if "data" in response.json():
-            encrypted_data = base64.b64decode(response.json()["data"])
-            decrypted_data = decrypt_data(encrypted_data)
-            returned_data = json.loads(decrypted_data)
-        else:
-            returned_data = response.json()
-        assert returned_data == integration_dataset
-
-        dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][
-            guid
-        ]
-        assert "sds_dataset_version" in dataset_metadata
-        # Check that the "filename" attribute exists
-        assert "filename" in dataset_metadata
+            dataset_metadata = dataset_metadata_response.json()[
+                "supplementary_dataset"
+            ][guid]
+            assert "sds_dataset_version" in dataset_metadata
+            # Check that the "filename" attribute exists
+            assert "filename" in dataset_metadata
 
 
 def test_publish_schema(client):

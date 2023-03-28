@@ -6,15 +6,15 @@ steps:
   - name: python
     id: "black"
     entrypoint: python
-    args: ["-m", "black", "src", "--check"]
+    args: ["-m", "black", "src", "devtools", "--check"]
   - name: python
     id: "isort"
     entrypoint: python
-    args: ["-m", "isort", "src", "--check-only",  "--profile", "black"]
+    args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
   - name: python
     id: "flake8"
     entrypoint: python
-    args: ["-m", "flake8", "src", "--max-line-length=127"]
+    args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python
     id: "pytest"
     entrypoint: python
@@ -32,8 +32,9 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" .
+        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
+        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest"
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',

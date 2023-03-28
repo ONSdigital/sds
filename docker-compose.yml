@@ -7,17 +7,9 @@ services:
       - PORT=9023
     ports:
       - 9023:9023
+    volumes:
+      - ./devtools/gcp-storage-emulator/data:/storage
     container_name: storage-sds
-
-  firestore:
-      image: mtlynch/firestore-emulator
-      environment:
-          - FIRESTORE_PROJECT_ID=localhost
-          - PORT=8200
-      ports:
-          - 8200:8200
-      container_name: firestore-sds
-
   api:
     build:
       context: .
@@ -25,5 +17,63 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
-      - FIRESTORE_EMULATOR_HOST=firestore:8200
       - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - SCHEMA_BUCKET_NAME=schema_bucket
+      - DATASET_BUCKET_NAME=dataset_bucket
+      - DATASET_BUCKET=dataset_bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
+      - API_URL=http://cloudfunction-new_dataset:8080
+    volumes:
+      - ./src/app:/src
+      - ./devtools:/devtools
+    restart: on-failure
+    depends_on:
+      - firestore
+      - storage
+    container_name: api-sds
+  firestore:
+    image: spine3/firebase-emulator
+    ports:
+      - 8080:8080
+      - 4000:4000
+    environment:
+      - GCP_PROJECT=mock-project-id
+      - ENABLE_UI=true
+    volumes:
+      - ./devtools/firebase-emulator:/firebase
+      - ./devtools/firebase-emulator:/firebase/baseline-data
+    container_name: firestore-sds
+  cloudfunction-new_dataset:
+    build:
+      context: .
+      dockerfile: ./devtools/cloudfunction_new_dataset.Dockerfile
+    ports:
+      - 3005:8080
+    restart: on-failure
+    environment:
+      - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - DATASET_BUCKET_NAME=dataset_bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
+    volumes:
+      - ./devtools:/devtools
+    container_name: cloudfunction-new_dataset-sds
+  dev-publish-dataset:
+    build:
+      context: ./devtools/dataset-publisher
+    ports:
+      - 3006:8080
+    restart: on-failure
+    environment:
+      - STORAGE_EMULATOR_HOST=http://storage:9023
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - FIRESTORE_PROJECT_ID=mock-project-id
+      - DATASET_BUCKET_NAME=dataset_bucket
+      - SCHEMA_BUCKET_NAME=schema_bucket
+      - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_google_app_key.json
+    volumes:
+      - ./devtools:/devtools
+    container_name: dev-publish-dataset-sds

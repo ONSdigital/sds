@@ -20,9 +20,9 @@ jobs:
           pip install -r requirements.txt
       - name: Lint
         run: |
-          black src --check
-          isort src --check-only --profile black
-          flake8 src  --max-line-length=127
+          black src devtools --check
+          isort src devtools --check-only --profile black
+          flake8 src devtools --max-line-length=127
       - name: Test with pytest
         run: |
           cd src/unit_tests
