@@ -5,11 +5,21 @@ import pytest
 from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
+from google.cloud import kms
 from google.cloud import storage as google_cloud_storage
 
 
 @pytest.fixture
-def database(monkeypatch):
+def encryption(monkeypatch):
+    monkeypatch.setattr(kms, "KeyManagementServiceClient", MagicMock())
+    os.environ["DATASET_ENCRYPTION"] = "false"
+    import encryption
+
+    yield encryption
+
+
+@pytest.fixture
+def database(monkeypatch, encryption):
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())

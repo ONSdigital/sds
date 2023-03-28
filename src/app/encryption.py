@@ -15,14 +15,12 @@ key_name = client.crypto_key_path(
 
 
 def encrypt_data(plaintext_data: bytes):
-    print(f"plaintext_data: {plaintext_data}")
     request = {"name": key_name, "plaintext": plaintext_data}
     encrypted_data = client.encrypt(request, timeout=2)
     return encrypted_data.ciphertext
 
 
 def decrypt_data(ciphertext: bytes):
-    print(f"ciphertext: {ciphertext}")
     request = {"name": key_name, "ciphertext": ciphertext}
     decrypt_response = client.decrypt(request, timeout=2)
     return decrypt_response.plaintext
