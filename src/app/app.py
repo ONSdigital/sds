@@ -1,10 +1,10 @@
+import base64
 import logging
 import uuid
 
-from fastapi import Body, FastAPI, HTTPException
-
 import database
 import storage
+from fastapi import Body, FastAPI, HTTPException
 from models import Datasets, Schema, SchemaMetadata, Schemas
 
 logging.basicConfig(level=logging.INFO)
@@ -20,6 +20,8 @@ async def unit_data(dataset_id: str, unit_id: str):
     data = database.get_data(dataset_id=dataset_id, unit_id=unit_id)
     if not data:
         raise HTTPException(status_code=404, detail="Item not found")
+    if "data" in data:
+        data = {"data": base64.b64encode(data["data"])}
     return data
 
 

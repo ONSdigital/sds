@@ -1,8 +1,9 @@
 import base64
 import json
-import zlib
 from datetime import datetime
+
 from encryption import decrypt_data
+
 
 def test_dataset(client, bucket_loader):
     """
@@ -42,15 +43,16 @@ def test_dataset(client, bucket_loader):
         # Check that the API response is the same as the dataset just located in the loop
 
         if "data" in response.json():
-            encrypted_data = zlib.decompress(base64.b64decode(response.json()["data"]))
-            returned_data = decrypt_data(encrypted_data)
+            encrypted_data = base64.b64decode(response.json()["data"])
+            decrypted_data = decrypt_data(encrypted_data)
+            returned_data = json.loads(decrypted_data)
         else:
             returned_data = response.json()
         assert returned_data == integration_dataset
 
-        dataset_metadata = dataset_metadata_response.json()[
-            "supplementary_dataset"
-        ][guid]
+        dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][
+            guid
+        ]
         assert "sds_dataset_version" in dataset_metadata
         # Check that the "filename" attribute exists
         assert "filename" in dataset_metadata

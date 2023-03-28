@@ -9,21 +9,20 @@ if DATASET_ENCRYPTION:
     if not GOOGLE_CLOUD_PROJECT:
         raise Exception("You need to set GOOGLE_CLOUD_PROJECT")
 client = kms.KeyManagementServiceClient()
+key_name = client.crypto_key_path(
+    GOOGLE_CLOUD_PROJECT, "global", "sds_keyring", "unit_data_key"
+)
 
 
-def encrypt_data(plaintext_data):
-    key_name = client.crypto_key_path(
-        GOOGLE_CLOUD_PROJECT, "global", "sds_keyring", "unit_data_key"
-    )
+def encrypt_data(plaintext_data: bytes):
+    print(f"plaintext_data: {plaintext_data}")
     request = {"name": key_name, "plaintext": plaintext_data}
     encrypted_data = client.encrypt(request, timeout=2)
     return encrypted_data.ciphertext
 
 
-def decrypt_data(ciphertext):
-    key_name = client.crypto_key_path(
-        GOOGLE_CLOUD_PROJECT, "global", "sds_keyring", "unit_data_key"
-    )
+def decrypt_data(ciphertext: bytes):
+    print(f"ciphertext: {ciphertext}")
     request = {"name": key_name, "ciphertext": ciphertext}
     decrypt_response = client.decrypt(request, timeout=2)
     return decrypt_response.plaintext
