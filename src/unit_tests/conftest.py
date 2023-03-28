@@ -23,7 +23,6 @@ def database(monkeypatch, encryption):
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
-    os.environ["JSON_KEYFILE"] = "../test_data/fake_key_file.json"
     import database
 
     yield database

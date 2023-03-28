@@ -72,6 +72,7 @@ steps:
         export ACCESS_TOKEN=$(cat /workspace/token)
         export API_URL=$_API_URL
         export DATASET_BUCKET=$_DATASET_BUCKET
+        export GOOGLE_CLOUD_PROJECT=${_PROJECT}
         cd src/integration_tests
         python -m pytest integration_tests.py
 options:
