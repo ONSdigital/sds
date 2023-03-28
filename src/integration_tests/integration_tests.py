@@ -2,6 +2,8 @@ import base64
 import json
 from datetime import datetime
 
+from zlib import decompress
+
 from encryption import decrypt_data
 
 
@@ -51,8 +53,8 @@ def test_dataset(client, bucket_loader):
             assert response.status_code == 200
             # Check that the API response is the same as the dataset just located in the loop
             if "data" in response.json():
-                encrypted_data = base64.b64decode(response.json()["data"])
-                decrypted_data = decrypt_data(encrypted_data)
+                compressed_encrypted_data = base64.b64decode(response.json()["data"])
+                decrypted_data = decrypt_data(decompress(compressed_encrypted_data))
                 returned_data = json.loads(decrypted_data)
             else:
                 returned_data = response.json()

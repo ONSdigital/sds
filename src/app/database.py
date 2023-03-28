@@ -4,6 +4,8 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
+from zlib import compress
+
 from encryption import encrypt_data
 from firebase_admin import firestore
 from models import SchemaMetadata
@@ -47,8 +49,8 @@ def set_dataset(dataset_id, filename, dataset):
     units_collection = datasets_collection.document(dataset_id).collection("units")
     for unit_data in data:
         if DATASET_ENCRYPTION:
-            encrypted_data = encrypt_data(json.dumps(unit_data).encode())
-            units_collection.document(unit_data["ruref"]).set({"data": encrypted_data})
+            compressed_encrypted_data = compress(encrypt_data(json.dumps(unit_data).encode()))
+            units_collection.document(unit_data["ruref"]).set({"data": compressed_encrypted_data})
         else:
             units_collection.document(unit_data["ruref"]).set(unit_data)
 

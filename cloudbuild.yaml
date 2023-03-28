@@ -53,7 +53,8 @@ steps:
         --source=. \
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
-        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+        --trigger-event-filters="bucket=${_DATASET_BUCKET}" \
+        --set-env-vars GOOGLE_CLOUD_PROJECT=${_PROJECT}
   - name: 'gcr.io/cloud-builders/gcloud'
     id: "Get token"
     entrypoint: sh
