@@ -13,56 +13,43 @@ def test_dataset(client, bucket_loader):
     """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    dataset_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
-    print(dataset_id)
-    filename = f"{dataset_id}.json"
+    # The dataset id an auto generated GUID and the filename is a field in the dataset metadata
+    filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
+    print(filename_id)
+    filename = f"{filename_id}.json"
     bucket_loader(filename, dataset)
-    unit_id = "43532"
-    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-    assert response.status_code == 200
-    assert response.json() == {
-        "ruref": "43532",
-        "runame": "Pipes and Maps Ltd",
-        "ruaddr1": "111 Under Hill",
-        "ruaddr2": "Hobbitton",
-        "ruaddr4": "The Shire",
-        "rupostcode": "HO1 1AA",
-        "payeref": "123AB456",
-        "busdesc": "Provision of equipment for hobbit adventures",
-        "local_unit": [
-            {
-                "luref": "2012763A",
-                "luname": "Maps Factory",
-                "luaddr1": "1 Bag End",
-                "luaddr2": "Underhill",
-                "luaddr3": "Hobbiton",
-                "lupostcode": "HO1 1AA",
-                "tradstyle": "Also Does Adventures Ltd",
-                "busdesc": "Creates old fashioned looking paper maps",
-            },
-            {
-                "luref": "20127364B",
-                "luname": "Pipes R Us Subsidiary",
-                "luaddr1": "12 The Farmstead",
-                "luaddr2": "Maggotsville",
-                "luaddr3": "Hobbiton",
-                "lupostcode": "HO1 1AB",
-                "busdesc": "Quality pipe manufacturer",
-                "buslref": "pipe123",
-            },
-        ],
-    }
     survey_id = "xyz"
     period_id = "abc"
     dataset_metadata_response = client.get(
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
     assert dataset_metadata_response.status_code == 200
-    dataset_metadata = dataset_metadata_response.json()["supplementary_dataset"][
-        dataset_id
-    ]
-    assert dataset_metadata["survey_id"] == "xyz"
-    assert "sds_dataset_version" in dataset_metadata
+
+    # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
+    # locate the specific dataset in the collection.
+    # Iterate over all the items in the above API response, then locate the document with the "filename" field from above.
+    for guid, integration_dataset in dataset_metadata_response.json()[
+        "supplementary_dataset"
+    ].items():
+        if (
+            dataset_metadata_response.json()["supplementary_dataset"][guid]["filename"]
+            == filename
+        ):
+            dataset_id = guid
+            unit_id = "43532"
+            response = client.get(
+                f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
+            )
+            assert response.status_code == 200
+            # Check that the API response is the same as the dataset just located in the loop
+            assert response.json() == integration_dataset
+
+            dataset_metadata = dataset_metadata_response.json()[
+                "supplementary_dataset"
+            ][guid]
+            assert "sds_dataset_version" in dataset_metadata
+            # Check that the "filename" attribute exists
+            assert "filename" in dataset_metadata
 
 
 def test_publish_schema(client):
