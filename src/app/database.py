@@ -4,16 +4,14 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
-from firebase_admin import firestore
-
 from encryption import encrypt_data
+from firebase_admin import firestore
 from models import SchemaMetadata
 
 firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
-
 
 
 DATASET_ENCRYPTION = os.environ.get("DATASET_ENCRYPTION", "true").lower() == "true"
