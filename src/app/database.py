@@ -4,8 +4,9 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
-from encryption import encrypt_data
 from firebase_admin import firestore
+
+from encryption import encrypt_data
 from models import SchemaMetadata
 
 firebase_admin.initialize_app()
