@@ -5,6 +5,7 @@ More information on this service can be found on Confluence:
 * https://confluence.ons.gov.uk/display/SDC/SDS
 ---
 ## Dockerized
+TODO : REMOVE ME
 The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
 
 - You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
