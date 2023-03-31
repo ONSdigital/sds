@@ -16,7 +16,7 @@ def set_dataset(dataset_id, filename, dataset):
     This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
     * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
     * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
-    * Set the "filename" as a field in the dataset metadata document
+    * Set the "filename" as a field in the dataset metadata document.
     """
     data = dataset.pop("data")
     dataset["filename"] = filename
