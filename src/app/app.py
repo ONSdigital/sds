@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Datasets, Schema, SchemaMetadata, Schemas
+from models import Datasets, Schema, SchemaMetadata, Schemas, PostSchemaMetadata
 
 logging.basicConfig(level=logging.INFO)
 
@@ -22,8 +22,8 @@ async def unit_data(dataset_id: str, unit_id: str):
     return data
 
 
-@app.post("/v1/schema", response_model=SchemaMetadata)
-async def publish_schema(schema: Schema = Body(...)):
+@app.post("/v1/schema", response_model=PostSchemaMetadata)
+async def post_schema_metadata(schema: Schema = Body(...)):
     """
     Grab the survey_id from the schema file and call set_schema_metadata
     with the survey_id and schema_location and returned the generated
@@ -31,9 +31,12 @@ async def publish_schema(schema: Schema = Body(...)):
     """
     schema_id = str(uuid.uuid4())
     location = storage.store_schema(schema=schema, schema_id=schema_id)
-    return database.set_schema_metadata(
+
+    returned_schema_metadata = database.set_schema_metadata(
         survey_id=schema.survey_id, schema_location=location, schema_id=schema_id
     )
+    returned_schema_metadata.guid = schema_id
+    return returned_schema_metadata
 
 
 @app.get("/v1/schema")

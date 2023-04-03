@@ -3,7 +3,7 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from models import SchemaMetadata
+from models import SchemaMetadata, PostSchemaMetadata
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -49,7 +49,7 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema_metadata(survey_id, schema_location, schema_id):
+def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMetadata:
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
     and creates the metadata and stores it in Firebase. The latest version
@@ -62,16 +62,20 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
         .limit(1)
         .stream()
     )
+
     try:
         latest_version = next(schemas_result).to_dict()["sds_schema_version"] + 1
     except StopIteration:
         latest_version = 1
-    schema_metadata = SchemaMetadata(
+
+    schema_metadata = PostSchemaMetadata(
+        guid=schema_id,
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
         sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
     )
+
     schemas_collection.document(schema_id).set(asdict(schema_metadata))
     return schema_metadata
 

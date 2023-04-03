@@ -22,9 +22,12 @@ def test_set_schema_metadata(database):
     database.schemas_collection.where().order_by().limit().stream().__next__().to_dict.return_value = {
         "sds_schema_version": 25
     }
+
     database.set_schema_metadata(survey_id="1", schema_location="/", schema_id="1")
     schema_meta_data = database.schemas_collection.document().set.call_args[0][0]
+
     assert schema_meta_data == {
+        "guid": "1",
         "survey_id": "1",
         "schema_location": "/",
         "sds_schema_version": 26,
