@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Datasets, Schema, SchemaMetadata, Schemas
+from models import Datasets, Schema, SchemaMetadata, Schemas, ReturnedSchemaMetadata
 
 logging.basicConfig(level=logging.INFO)
 
@@ -40,7 +40,7 @@ async def publish_schema(schema: Schema = Body(...)):
 async def get_schema(survey_id: str, version: str) -> dict:
     """
     Lookup the schema metadata, given the survey_id and version. Then use
-    that to lookup the location of the schema file in the bucket and
+    that to look up the location of the schema file in the bucket and
     return that file.
     """
     schema_metadata = database.get_schema(survey_id=survey_id, version=version)
@@ -49,10 +49,10 @@ async def get_schema(survey_id: str, version: str) -> dict:
     return storage.get_schema(schema_metadata.schema_location)
 
 
-@app.get("/v1/schema_metadata", response_model=Schemas)
-async def query_schemas(survey_id: str) -> dict:
+@app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
+async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
-    data = database.get_schemas(survey_id)
+    data = database.get_schema_metadata(survey_id)
     return data
 
 
