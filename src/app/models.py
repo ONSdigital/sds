@@ -30,6 +30,7 @@ class Schema(BaseModel):
 
 @dataclass
 class DatasetMetadata:
+    dataset_id: str
     survey_id: str
     period_id: str
     title: str
