@@ -64,6 +64,7 @@ def test_get_dataset_metadata(database):
     """
     # Added "filename" field in the expected metadata
     expected_metadata = {
+        "dataset_id": "abc-xyz",
         "survey_id": "xyz",
         "period_id": "abc",
         "title": "Which side was better?",
@@ -80,4 +81,4 @@ def test_get_dataset_metadata(database):
     mock_stream_obj.id = dataset_id
     database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
     dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="abc")
-    assert dataset_metadata["supplementary_dataset"][dataset_id] == expected_metadata
+    assert dataset_metadata[0] == expected_metadata

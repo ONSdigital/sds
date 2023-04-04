@@ -40,4 +40,3 @@ class DatasetMetadata:
     schema_version: str
     sds_dataset_version: int
     filename: str
-
