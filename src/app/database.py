@@ -116,10 +116,8 @@ def get_dataset_metadata(survey_id, period_id):
         return_dataset.pop("form_id")
         return_dataset["dataset_id"] = dataset.id
         datasets.append(return_dataset)
-    #if len(datasets) > 0:
+
     return datasets
-    #else:
-    #    return None
 
 
 def get_schema(survey_id, version) -> SchemaMetadata:
