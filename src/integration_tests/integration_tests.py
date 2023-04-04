@@ -29,25 +29,25 @@ def test_dataset(client, bucket_loader):
         "busdesc": "Provision of equipment for hobbit adventures",
         "local_unit": [
             {
-            "luaddr2": "Underhill",
-            "luref": "2012763A",
-            "busdesc": "Creates old fashioned looking paper maps",
-            "luname": "Maps Factory",
-            "luaddr1": "1 Bag End",
-            "tradstyle": "Also Does Adventures Ltd",
-            "luaddr3": "Hobbiton",
-            "lupostcode": "HO1 1AA"
+                "luaddr2": "Underhill",
+                "luref": "2012763A",
+                "busdesc": "Creates old fashioned looking paper maps",
+                "luname": "Maps Factory",
+                "luaddr1": "1 Bag End",
+                "tradstyle": "Also Does Adventures Ltd",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AA",
             },
             {
-            "luaddr2": "Maggotsville",
-            "luref": "20127364B",
-            "busdesc": "Quality pipe manufacturer",
-            "buslref": "pipe123",
-            "luname": "Pipes R Us Subsidiary",
-            "luaddr1": "12 The Farmstead",
-            "luaddr3": "Hobbiton",
-            "lupostcode": "HO1 1AB"
-            }
+                "luaddr2": "Maggotsville",
+                "luref": "20127364B",
+                "busdesc": "Quality pipe manufacturer",
+                "buslref": "pipe123",
+                "luname": "Pipes R Us Subsidiary",
+                "luaddr1": "12 The Farmstead",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AB",
+            },
         ],
         "payeref": "123AB456",
         "runame": "Pipes and Maps Ltd",
@@ -55,16 +55,13 @@ def test_dataset(client, bucket_loader):
         "ruaddr1": "111 Under Hill",
         "ruaddr4": "The Shire",
         "ruaddr2": "Hobbitton",
-        "ruref": "43532"
-        }
+        "ruref": "43532",
+    }
     # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
     # locate the specific dataset in the collection.
     # Iterate over all the items in the above API response, then locate the document with the "filename" field from above.
     for dataset_metadata in dataset_metadata_response.json():
-        if (
-            dataset_metadata["filename"]
-            == filename
-        ):
+        if dataset_metadata["filename"] == filename:
             dataset_id = dataset_metadata["dataset_id"]
             unit_id = "43532"
             response = client.get(
