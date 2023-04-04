@@ -8,7 +8,7 @@ def test_get_unit_data(client):
     client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
 
 
-@patch('app.uuid.uuid4')
+@patch("app.uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file

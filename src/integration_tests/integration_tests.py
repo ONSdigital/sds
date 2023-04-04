@@ -65,7 +65,9 @@ def test_post_schema(client):
     assert schema_post_response.status_code == 200
     assert "guid" in schema_post_response.text
 
-    test_schema_get_response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
+    test_schema_get_response = client.get(
+        f"/v1/schema_metadata?survey_id={test_schema['survey_id']}"
+    )
     assert test_schema_get_response.status_code == 200
 
     response_as_json = test_schema_get_response.json()
