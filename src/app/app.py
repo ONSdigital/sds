@@ -60,7 +60,7 @@ async def query_schemas(survey_id: str) -> dict:
 async def get_dataset(survey_id: str, period_id: str) -> dict:
     """
     Retrieve the matching datasets, given the survey_id and period_id.
-    The matching datasets are returned as a nested dictionary object with the dataset_id as the key.
+    The matching datasets are returned as an array of dictionaries.
     """
     datasets = database.get_dataset_metadata(survey_id, period_id)
     if not datasets:

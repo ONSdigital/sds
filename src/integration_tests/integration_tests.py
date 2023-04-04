@@ -68,7 +68,7 @@ def test_dataset(client, bucket_loader):
                 f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
             )
             assert response.status_code == 200
-            # Check that the API response is the same as the dataset just located in the loop
+            # Check that the API response is the same as the mock unit response
             assert response.json() == mock_unit_response
 
             assert "sds_dataset_version" in dataset_metadata
