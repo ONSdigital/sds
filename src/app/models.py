@@ -41,7 +41,3 @@ class DatasetMetadata:
     sds_dataset_version: int
     filename: str
 
-
-@dataclass
-class Datasets:
-    supplementary_dataset: dict[str, DatasetMetadata]
