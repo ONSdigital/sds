@@ -52,7 +52,7 @@ def test_dataset(client, bucket_loader):
             assert "filename" in dataset_metadata
 
 
-def test_publish_schema(client):
+def test_post_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
     can be retrieved. Also check that schema can be retrieved directly from storage.
