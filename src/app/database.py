@@ -105,7 +105,7 @@ def get_dataset_metadata(survey_id, period_id):
     This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
     and returns the matching datasets which is a nested dictionary object with the dataset_id as the key.
     """
-    datasets = {}
+    datasets = []
     datasets_result = (
         datasets_collection.where("survey_id", "==", survey_id)
         .where("period_id", "==", period_id)
@@ -114,11 +114,12 @@ def get_dataset_metadata(survey_id, period_id):
     for dataset in datasets_result:
         return_dataset = dataset.to_dict()
         return_dataset.pop("form_id")
-        datasets[dataset.id] = return_dataset
-    if len(datasets) > 0:
-        return {"supplementary_dataset": datasets}
-    else:
-        return None
+        return_dataset["dataset_id"] = dataset.id
+        datasets.append(return_dataset)
+    #if len(datasets) > 0:
+    return datasets
+    #else:
+    #    return None
 
 
 def get_schema(survey_id, version) -> SchemaMetadata:
