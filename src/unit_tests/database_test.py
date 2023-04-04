@@ -50,7 +50,7 @@ def test_get_schemas(database):
     mock_stream_obj.id = schema_guid
     database.schemas_collection.where().stream.return_value = [mock_stream_obj]
     schemas = database.get_schema_metadata(survey_id="1")
-    assert (expected_schema in schemas)
+    assert expected_schema in schemas
 
 
 def test_get_datasets(database):
