@@ -1,5 +1,5 @@
 import json
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 
 def test_get_unit_data(client):
@@ -8,25 +8,34 @@ def test_get_unit_data(client):
     client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
 
 
-def test_post_dataset_schema(client, database, storage):
+@patch("app.uuid.uuid4")
+def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
     and returns a valid schema metadata file.
     """
+    mock_uuid.return_value = "test-uuid"
     with open("../test_data/schema.json") as f:
         schema = json.load(f)
+
     response = client.post("/v1/schema", json=schema)
+
     assert response.status_code == 200
+
     schema_meta_data = response.json()
+
     assert schema_meta_data == {
+        "guid": mock_uuid.return_value,
         "survey_id": "068",
         "schema_location": schema_meta_data["schema_location"],
         "sds_schema_version": schema_meta_data["sds_schema_version"],
         "sds_published_at": schema_meta_data["sds_published_at"],
     }
+
     schema_string = (
         storage.storage_client.bucket().blob().upload_from_string.call_args[0][0]
     )
+
     assert json.loads(schema_string) == schema
 
 
