@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Datasets, PostSchemaMetadata, ReturnedSchemaMetadata, Schema, SchemaMetadata
+from models import Datasets, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 
 logging.basicConfig(level=logging.INFO)
 

@@ -3,7 +3,7 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from models import PostSchemaMetadata, SchemaMetadata, ReturnedSchemaMetadata
+from models import PostSchemaMetadata, ReturnedSchemaMetadata, SchemaMetadata
 
 firebase_admin.initialize_app()
 db = firestore.client()
