@@ -52,30 +52,36 @@ def test_dataset(client, bucket_loader):
             assert "filename" in dataset_metadata
 
 
-def test_publish_schema(client):
+def test_post_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
-    can retrieved. Also check that schema can be retrieved directly from storage.
+    can be retrieved. Also check that schema can be retrieved directly from storage.
     """
     survey_id = "068"
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
-    response = client.post("/v1/schema", json=test_schema)
-    print(response.text)
-    assert response.status_code == 200
-    response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
-    assert response.status_code == 200
-    json_response = response.json()
-    assert len(json_response["supplementary_dataset_schema"]) > 0
-    for guid, schema in json_response["supplementary_dataset_schema"].items():
+
+    schema_post_response = client.post("/v1/schema", json=test_schema)
+    assert schema_post_response.status_code == 200
+    assert "guid" in schema_post_response.text
+
+    test_schema_get_response = client.get(
+        f"/v1/schema_metadata?survey_id={test_schema['survey_id']}"
+    )
+    assert test_schema_get_response.status_code == 200
+
+    response_as_json = test_schema_get_response.json()
+    assert len(response_as_json["supplementary_dataset_schema"]) > 0
+
+    for guid, schema in response_as_json["supplementary_dataset_schema"].items():
         assert schema == {
             "survey_id": survey_id,
             "schema_location": f"{survey_id}/{guid}.json",
             "sds_schema_version": schema["sds_schema_version"],
             "sds_published_at": schema["sds_published_at"],
         }
-        response = client.get(
+        item_get_response = client.get(
             f"/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}"
         )
-        assert response.status_code == 200
-        assert response.json() == test_schema
+        assert item_get_response.status_code == 200
+        assert item_get_response.json() == test_schema
