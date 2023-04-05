@@ -57,7 +57,7 @@ def test_dataset(client, bucket_loader):
             assert "filename" in dataset_metadata
 
 
-def test_publish_schema(client):
+def test_post_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
     can be retrieved. Also check that schema can be retrieved directly from storage.
@@ -66,16 +66,19 @@ def test_publish_schema(client):
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
 
-    response = client.post("/v1/schema", json=test_schema)
-    assert response.status_code == 200
+    schema_post_response = client.post("/v1/schema", json=test_schema)
+    assert schema_post_response.status_code == 200
+    assert "guid" in schema_post_response.text
 
-    response = client.get(f"/v1/schema_metadata?survey_id={test_schema['survey_id']}")
-    assert response.status_code == 200
+    test_schema_get_response = client.get(
+        f"/v1/schema_metadata?survey_id={test_schema['survey_id']}"
+    )
+    assert test_schema_get_response.status_code == 200
 
-    json_response = response.json()
-    assert len(json_response) > 0
+    response_as_json = test_schema_get_response.json()
+    assert len(response_as_json) > 0
 
-    for schema in json_response:
+    for schema in response_as_json:
         assert schema == {
             "guid": schema["guid"],
             "survey_id": survey_id,

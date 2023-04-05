@@ -3,7 +3,7 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from models import ReturnedSchemaMetadata, SchemaMetadata
+from models import PostSchemaMetadata, SchemaMetadata, ReturnedSchemaMetadata
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -16,7 +16,7 @@ def set_dataset(dataset_id, filename, dataset):
     This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
     * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
     * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
-    * Set the "filename" as a field in the dataset metadata document
+    * Set the "filename" as a field in the dataset metadata document.
     """
     data = dataset.pop("data")
     dataset["filename"] = filename
@@ -49,7 +49,7 @@ def get_data(dataset_id, unit_id):
     return units_collection.document(unit_id).get().to_dict()
 
 
-def set_schema_metadata(survey_id, schema_location, schema_id):
+def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMetadata:
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
     and creates the metadata and stores it in Firebase. The latest version
@@ -62,16 +62,20 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
         .limit(1)
         .stream()
     )
+
     try:
         latest_version = next(schemas_result).to_dict()["sds_schema_version"] + 1
     except StopIteration:
         latest_version = 1
-    schema_metadata = SchemaMetadata(
+
+    schema_metadata = PostSchemaMetadata(
+        guid=schema_id,
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
         sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
     )
+
     schemas_collection.document(schema_id).set(asdict(schema_metadata))
     return schema_metadata
 
