@@ -57,7 +57,7 @@ async def query_schemas(survey_id: str) -> dict:
 
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
-async def get_dataset(survey_id: str, period_id: str) -> dict:
+async def get_dataset(survey_id: str, period_id: str) -> list[DatasetMetadata]:
     """
     Retrieve the matching datasets, given the survey_id and period_id.
     The matching datasets are returned as an array of dictionaries.
