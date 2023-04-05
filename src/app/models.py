@@ -39,6 +39,7 @@ class Schema(BaseModel):
 
 @dataclass
 class DatasetMetadata:
+    dataset_id: str
     survey_id: str
     period_id: str
     title: str
@@ -48,8 +49,3 @@ class DatasetMetadata:
     schema_version: str
     sds_dataset_version: int
     filename: str
-
-
-@dataclass
-class Datasets:
-    supplementary_dataset: dict[str, DatasetMetadata]

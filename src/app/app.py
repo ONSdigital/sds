@@ -4,7 +4,7 @@ import uuid
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
-from models import Datasets, PostSchemaMetadata, Schema, Schemas
+from models import DatasetMetadata, PostSchemaMetadata, Schema, Schemas
 
 logging.basicConfig(level=logging.INFO)
 
@@ -59,13 +59,13 @@ async def query_schemas(survey_id: str) -> dict:
     return data
 
 
-@app.get("/v1/dataset_metadata", response_model=Datasets)
-async def get_dataset(survey_id: str, period_id: str) -> dict:
+@app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
+async def get_dataset(survey_id: str, period_id: str) -> list[DatasetMetadata]:
     """
     Retrieve the matching datasets, given the survey_id and period_id.
-    The matching datasets are returned as a nested dictionary object with the dataset_id as the key.
+    The matching datasets are returned as an array of dictionaries.
     """
-    dataset = database.get_dataset_metadata(survey_id, period_id)
-    if not dataset:
+    datasets = database.get_dataset_metadata(survey_id, period_id)
+    if not datasets:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    return dataset
+    return datasets
