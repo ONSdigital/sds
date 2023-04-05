@@ -76,7 +76,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id):
     return schema_metadata
 
 
-def get_schema_metadata(survey_id) -> list[ReturnedSchemaMetadata]:
+def get_schemas_metadata(survey_id) -> list[ReturnedSchemaMetadata]:
     """
     Return all the schema meta-data that corresponds to a particular survey_id.
 
