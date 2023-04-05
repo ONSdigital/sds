@@ -7,13 +7,12 @@ def test_dataset(client, bucket_loader):
     Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
 
     * We load the sample dataset json file
-    * Generate a dataset_id which is guaranteed to be unique
     * Upload the dataset file to the dataset bucket with the dataset_id as the name
     * We then use the API to get some unit data back using the dataset_id and a known ru_ref
+    * The dataset id an auto generated GUID
     """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
-    # The dataset id an auto generated GUID and the filename is a field in the dataset metadata
     filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
     print(filename_id)
     filename = f"{filename_id}.json"
@@ -68,11 +67,9 @@ def test_dataset(client, bucket_loader):
                 f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
             )
             assert response.status_code == 200
-            # Check that the API response is the same as the mock unit response
             assert response.json() == mock_unit_response
 
             assert "sds_dataset_version" in dataset_metadata
-            # Check that the "filename" attribute exists
             assert "filename" in dataset_metadata
 
 
