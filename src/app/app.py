@@ -1,4 +1,4 @@
-import logging
+from logging_config import logging
 import uuid
 
 import database
@@ -6,19 +6,25 @@ import storage
 from fastapi import Body, FastAPI, HTTPException
 from models import DatasetMetadata, PostSchemaMetadata, Schema, Schemas
 
-logging.basicConfig(level=logging.INFO)
 
-
+logger = logging.getLogger(__name__)
 app = FastAPI()
 
 
 @app.get("/v1/unit_data")
-async def unit_data(dataset_id: str, unit_id: str):
-    """Retrieve supplementary data for a particular unit given the unit id
-    and the dataset id."""
-    data = database.get_data(dataset_id=dataset_id, unit_id=unit_id)
+async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
+    """
+    Retrieve supplementary data for a particular unit given the unit id
+    and the dataset id, return 404 if no data is returned.
+    """
+    logger.info("Getting unit supplementary data...")
+
+    data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
+
     if not data:
         raise HTTPException(status_code=404, detail="Item not found")
+
+    logger.info("Unit supplementary data successfully outputted")
     return data
 
 

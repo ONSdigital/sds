@@ -10,7 +10,7 @@ def test_set_dataset(database):
 
 
 def test_get_data(database):
-    database.get_data(dataset_id="1", unit_id="1")
+    database.get_unit_supplementary_data(dataset_id="1", unit_id="1")
 
 
 def test_set_schema_metadata(database):

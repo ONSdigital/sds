@@ -43,7 +43,7 @@ def set_dataset(dataset_id, filename, dataset):
         units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
-def get_data(dataset_id, unit_id):
+def get_unit_supplementary_data(dataset_id, unit_id):
     """Get the unit data from dataset collection, that originally came from the dataset."""
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
