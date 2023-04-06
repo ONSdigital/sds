@@ -1,2 +1,1 @@
-firebase_admin
-pydantic
+pydantic==1.10.7
