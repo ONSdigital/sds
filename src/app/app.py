@@ -22,6 +22,7 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
 
     if not data:
+        logger.error("Item not found")
         raise HTTPException(status_code=404, detail="Item not found")
 
     logger.info("Unit supplementary data successfully outputted")
