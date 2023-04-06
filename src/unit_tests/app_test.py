@@ -26,7 +26,7 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
 
     assert schema_meta_data == {
         "guid": mock_uuid.return_value,
-        "survey_id": "068",
+        "survey_id": "076",
         "schema_location": schema_meta_data["schema_location"],
         "sds_schema_version": schema_meta_data["sds_schema_version"],
         "sds_published_at": schema_meta_data["sds_published_at"],
