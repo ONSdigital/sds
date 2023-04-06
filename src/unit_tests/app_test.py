@@ -26,7 +26,7 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
 
     assert schema_meta_data == {
         "guid": mock_uuid.return_value,
-        "survey_id": "068",
+        "survey_id": "076",
         "schema_location": schema_meta_data["schema_location"],
         "sds_schema_version": schema_meta_data["sds_schema_version"],
         "sds_published_at": schema_meta_data["sds_published_at"],
@@ -48,7 +48,7 @@ def test_post_bad_schema(client, database, storage):
     assert response.status_code == 422
 
 
-def test_query_schemas(client, database):
+def test_get_schemas_metadata(client, database):
     """
     Checks that query_schemas calls the get_schemas function in
     the database module and returns the returned dictionary.
@@ -57,21 +57,24 @@ def test_query_schemas(client, database):
     structure (like the example below).
     """
     expected_schema = {
+        "guid": "abc",
         "survey_id": "xyz",
         "schema_location": "GC-BUCKET:/schema/111-222-xxx-fff.json",
         "sds_schema_version": 1,
         "sds_published_at": "2023-02-06T13:33:44Z",
     }
     schema_guid = "abc"
+
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_schema
     mock_stream_obj.id = schema_guid
+
     database.schemas_collection.where().stream.return_value = [mock_stream_obj]
+
     response = client.get("/v1/schema_metadata?survey_id=xzy")
+
     assert response.status_code == 200
-    assert (
-        response.json()["supplementary_dataset_schema"][schema_guid] == expected_schema
-    )
+    assert expected_schema in response.json()
 
 
 def test_get_schema(client, database):
