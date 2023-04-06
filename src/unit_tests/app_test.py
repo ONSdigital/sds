@@ -16,6 +16,7 @@ def test_get_unit_supplementary_data_logs_message_on_start(caplog, client):
     assert len(caplog.records) == 2
     assert caplog.records[0].message == "Getting unit supplementary data..."
 
+
 @patch("app.uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
