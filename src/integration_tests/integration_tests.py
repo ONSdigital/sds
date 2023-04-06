@@ -84,7 +84,7 @@ def test_post_schema(client):
     Post a schema using the /schema api endpoint and check the metadata
     can be retrieved. Also check that schema can be retrieved directly from storage.
     """
-    survey_id = "068"
+    survey_id = "076"
     with open("../test_data/schema.json") as f:
         test_schema = json.load(f)
 

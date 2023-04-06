@@ -144,4 +144,7 @@ def get_schema(survey_id, version) -> SchemaMetadata:
     )
 
     for schema in schemas_result:
-        return SchemaMetadata(**schema.to_dict())
+        return_metadata = schema.to_dict()
+        if "guid" in return_metadata:
+            return_metadata.pop("guid")
+        return SchemaMetadata(**return_metadata)
