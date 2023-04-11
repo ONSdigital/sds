@@ -3,7 +3,7 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from models import PostSchemaMetadata, SchemaMetadata
+from models import PostSchemaMetadata, ReturnedSchemaMetadata, SchemaMetadata
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -80,14 +80,26 @@ def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMeta
     return schema_metadata
 
 
-def get_schemas(survey_id):
-    """Return all the schema meta-data that corresponds to a particular survey_id."""
-    dataset_schemas = {}
+def get_schemas_metadata(survey_id) -> list[ReturnedSchemaMetadata]:
+    """
+    Return all the schema meta-data that corresponds to a particular survey_id.
+
+    Parameters:
+        survey_id (str): the corresponding ID of the survey for the desired schema
+
+    Returns:
+        list[SchemaMetadata]: a list of all the metadata corresponding to the given ID
+    """
+
+    dataset_schemas = list()
     schemas_result = schemas_collection.where("survey_id", "==", survey_id).stream()
+
     for schema in schemas_result:
         return_schema = schema.to_dict()
-        dataset_schemas[schema.id] = return_schema
-    return {"supplementary_dataset_schema": dataset_schemas}
+        return_schema["guid"] = schema.id
+        dataset_schemas.append(return_schema)
+
+    return dataset_schemas
 
 
 def get_datasets(survey_id):
@@ -130,5 +142,9 @@ def get_schema(survey_id, version) -> SchemaMetadata:
         .where("sds_schema_version", "==", int(version))
         .stream()
     )
+
     for schema in schemas_result:
-        return SchemaMetadata(**schema.to_dict())
+        return_metadata = schema.to_dict()
+        if "guid" in return_metadata:
+            return_metadata.pop("guid")
+        return SchemaMetadata(**return_metadata)

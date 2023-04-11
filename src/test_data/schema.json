@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json",
-  "survey_id": "068",
+  "survey_id": "076",
   "title": "Roofing Tiles",
   "description": "Roofing Tiles",
   "schema_version": "v1.0.0",
