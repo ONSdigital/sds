@@ -173,3 +173,22 @@ def test_get_unit_supplementary_data_404_error_is_logged(caplog, client, databas
     assert response.status_code == 404
     assert len(caplog.records) == 1
     assert caplog.records[0].message == "Item not found"
+
+
+def test_post_schema_metadata_200_is_logged(
+    caplog, client, storage, database
+):
+    """
+    When the schema metadata is posted successfully a message is logged.
+    """
+    caplog.set_level(logging.INFO)
+
+    with open("../test_data/schema.json") as f:
+        schema = json.load(f)
+
+    response = client.post("/v1/schema", json=schema)
+
+    assert response.status_code == 200
+    assert len(caplog.records) == 2
+    assert caplog.records[0].message == "Posting schema metadata..."
+    assert caplog.records[1].message == "Schema metadata successfully posted."

@@ -35,6 +35,8 @@ async def post_schema_metadata(schema: Schema = Body(...)):
     with the survey_id and schema_location and returned the generated
     schema metadata.
     """
+    logger.info("Posting schema metadata...")
+
     schema_id = str(uuid.uuid4())
     location = storage.store_schema(schema=schema, schema_id=schema_id)
 
@@ -42,6 +44,8 @@ async def post_schema_metadata(schema: Schema = Body(...)):
         survey_id=schema.survey_id, schema_location=location, schema_id=schema_id
     )
     returned_schema_metadata.guid = schema_id
+
+    logger.info("Schema metadata successfully posted.")
     return returned_schema_metadata
 
 
