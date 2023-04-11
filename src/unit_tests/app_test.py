@@ -178,9 +178,7 @@ def test_get_unit_supplementary_data_404_error_is_logged(caplog, client, databas
     assert caplog.records[0].message == "Item not found"
 
 
-def test_post_schema_metadata_200_is_logged(
-    caplog, client, storage, database
-):
+def test_post_schema_metadata_200_is_logged(caplog, client, storage, database):
     """
     When the schema metadata is posted successfully a message is logged.
     """
