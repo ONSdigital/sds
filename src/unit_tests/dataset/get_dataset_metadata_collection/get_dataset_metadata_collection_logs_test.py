@@ -23,6 +23,7 @@ def test_get_dataset_metadata_200_is_logged(
             "schema_version": "test_version",
             "sds_dataset_version": 1,
             "filename": "test_filename",
+            "form_type": "test_form_type"
         }
     ]
     response = client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
