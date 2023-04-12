@@ -50,4 +50,4 @@ def test_get_dataset_metadata_404_is_logged(
 
     assert response.status_code == 404
     assert len(caplog.records) == 1
-    assert caplog.records[0].message == "Dataset metadata collection not found..."
+    assert caplog.records[0].message == "Dataset metadata collection not found."
