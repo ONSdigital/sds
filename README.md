@@ -2,9 +2,12 @@
 
 More information on this service can be found on Confluence:
 
-* https://confluence.ons.gov.uk/display/SDC/SDS
+- https://confluence.ons.gov.uk/display/SDC/SDS
+
 ---
+
 ## Dockerized
+
 The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
 
 - You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
@@ -12,6 +15,7 @@ The docker-compose will launch the SDS application, two storage emulators(fireba
 ```
 docker-compose up
 ```
+
 Once, loaded you can do the following:
 
 - View the API service docs [localhost:3000/docs](http://localhost:3000/docs).
@@ -27,7 +31,7 @@ curl -X POST localhost:3006 \
 -H "Content-Type: application/cloudevents+json" \
 -d '{ "survey_id": "NRX",
   "period_id": "ttt",
-  "form_id": "yyy",
+  "form_type": "yyy",
   "title": "Which side was better?",
   "sds_schema_version": 4,
   "schema_version": "v1.0.0",
@@ -51,12 +55,13 @@ curl -X POST localhost:3006 \
 ```
 
 ---
+
 ## Running locally
 
 To run this service locally, you will need the following:
 
-* Python 3.11
-* Docker or credentials for GCloud
+- Python 3.11
+- Docker or credentials for GCloud
 
 It is also strongly recommended you install the Google SDK (`brew install --cask google-cloud-sdk`)
 
@@ -76,18 +81,18 @@ pip install -r requirements.txt
 ### Running SDS locally with services running in GCloud
 
 In order to connect to real services in GCloud, you will need a GCP test project or make
-use of the sandbox project. Instructions for setting this up  are included in the IaC repo. 
+use of the sandbox project. Instructions for setting this up are included in the IaC repo.
 You will need to take note of the schema and dataset bucket names for the project you are using.
 
 Once you have setup your project, you will need a key file to allow SDS to talk to bucket storage
 and the database. To create one:
 
-* Go the IAM page and select Service accounts
-* Create a new service account
-* Call it "test"
-* Add the roles that are needed for testing
-* Go into service account and create a key. This will download a JSON file to your machine 
-* Copy the downloaded JSON file to this directory and rename to `key.json`
+- Go the IAM page and select Service accounts
+- Create a new service account
+- Call it "test"
+- Add the roles that are needed for testing
+- Go into service account and create a key. This will download a JSON file to your machine
+- Copy the downloaded JSON file to this directory and rename to `key.json`
 
 To run SDS locally, activate the virtual environment, then run the following commands (replacing `my-schema-bucket`
 and `dataset-bucket` appropriately:
@@ -105,9 +110,8 @@ python -m uvicorn src.app.app:app --reload --port 3000
 The Firestore and Cloud Storage emulators run in Docker. To connect to the Firestore emulator running locally in Docker,
 run the following commands:
 
-
 ```bash
-docker-compose up 
+docker-compose up
 docker-compose stop api
 
 export FIRESTORE_EMULATOR_HOST=localhost:8080
@@ -142,8 +146,8 @@ isort . --profile black
 As this runs in FastAPI, the Open API Spec and interactive API docs are auto-generated from the Python code and
 can be reached by going to the following URLs (once running):
 
-* http://localhost:8000/openapi.json
-* http://localhost:8000/docs
+- http://localhost:8000/openapi.json
+- http://localhost:8000/docs
 
 ## new_dataset cloud Function
 
@@ -184,7 +188,7 @@ gcloud auth login
 gcloud config set project $PROJECT_NAME
 
 export API_URL=https://sds-blahblah.a.run.app
-export DATASET_BUCKET=a-place-for-datasets  
+export DATASET_BUCKET=a-place-for-datasets
 export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
 
 cd src/integration_tests
@@ -193,7 +197,7 @@ pytest integration_tests.py
 
 ### SDS API service is local
 
-This configuration allows you to debug the SDS API locally but talk to real Google services. Run them like this 
+This configuration allows you to debug the SDS API locally but talk to real Google services. Run them like this
 (replacing `my-schema-bucket` with the real schema bucket and `a-place-for-datasets` with the real dataset bucket):
 
 ```bash
@@ -212,7 +216,7 @@ pytest integration_tests.py
 ### Running integration tests locally
 
 This configuration makes use of the firestore and storage services running in Docker. The cloud function behaviour
-is emulated by the test itself, or can be run manually by running the `SDX Simulate dataset publish` and `Cloud event trigger` http requests could in the thunderclient http collection in the devtools folder. 
+is emulated by the test itself, or can be run manually by running the `SDX Simulate dataset publish` and `Cloud event trigger` http requests could in the thunderclient http collection in the devtools folder.
 
 ```bash
 docker-compose up
@@ -229,4 +233,4 @@ pytest integration_tests.py
 
 # Contact
 
-* mike.tidman@ons.gov.uk
+- mike.tidman@ons.gov.uk
