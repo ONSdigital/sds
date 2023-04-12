@@ -81,7 +81,8 @@ async def get_dataset_metadata_collection(
         survey_id, period_id
     )
     if not dataset_metadata_collection:
-        raise HTTPException(status_code=404, detail="Dataset not found")
+        logger.error("Dataset metadata collection not found...")
+        raise HTTPException(status_code=404, detail="Dataset metadata collection not found...")
 
     logger.info("Dataset metadata collection successfully retrieved.")
     return dataset_metadata_collection

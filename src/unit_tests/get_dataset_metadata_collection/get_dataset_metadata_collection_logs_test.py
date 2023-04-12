@@ -34,3 +34,20 @@ def test_get_dataset_metadata_200_is_logged(
         caplog.records[1].message
         == "Dataset metadata collection successfully retrieved."
     )
+
+
+@patch("database.get_dataset_metadata_collection")
+def test_get_dataset_metadata_404_is_logged(
+    get_dataset_metadata_collection_mock, caplog, client
+):
+    """
+    When the schema metadata is retrieved successfully there should be a log before and after.
+    """
+    caplog.set_level(logging.ERROR)
+
+    get_dataset_metadata_collection_mock.return_value = None
+    response = client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
+
+    assert response.status_code == 404
+    assert len(caplog.records) == 1
+    assert caplog.records[0].message == "Dataset metadata collection not found..."
