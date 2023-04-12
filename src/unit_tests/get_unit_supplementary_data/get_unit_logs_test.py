@@ -37,7 +37,7 @@ def test_get_unit_supplementary_data_200_is_logged(caplog, client, database):
 
 def test_get_unit_supplementary_data_404_error_is_logged(caplog, client, database):
     """
-    When the unit supplementary data is retrieved successfully a success message is logged.
+    When there is a 404 the error is logged.
     """
     caplog.set_level(logging.ERROR)
 
