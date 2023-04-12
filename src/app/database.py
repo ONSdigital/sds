@@ -136,7 +136,7 @@ def get_dataset_metadata(survey_id, period_id):
     return datasets
 
 
-def get_schema(survey_id, version) -> SchemaMetadata:
+def get_schema_metadata(survey_id, version) -> SchemaMetadata:
     schemas_result = (
         schemas_collection.where("survey_id", "==", survey_id)
         .where("sds_schema_version", "==", int(version))

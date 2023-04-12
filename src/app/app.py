@@ -37,7 +37,6 @@ async def post_schema_metadata(schema: Schema = Body(...)):
     logger.info("Posting schema metadata...")
 
     posted_schema_metadata = schema_metadata_service.process_schema_metadata(schema)
-    print("cheese", posted_schema_metadata)
 
     logger.info("Schema metadata successfully posted.")
     return posted_schema_metadata
@@ -50,9 +49,13 @@ async def get_schema(survey_id: str, version: str) -> dict:
     that to look up the location of the schema file in the bucket and
     return that file.
     """
-    schema_metadata = database.get_schema(survey_id=survey_id, version=version)
+    logger.info('Getting schema...')
+    schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
-        raise HTTPException(status_code=404, detail="Item not found")
+        logger.error("Schema metadata not found")
+        raise HTTPException(status_code=404, detail="Schema metadata not found")
+
+    logger.info('Schema successfully retrieved.')
     return storage.get_schema(schema_metadata.schema_location)
 
 
