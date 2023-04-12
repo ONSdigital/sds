@@ -62,8 +62,10 @@ async def get_schema(survey_id: str, version: str) -> dict:
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
 async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
-    data = database.get_schemas_metadata(survey_id)
-    return data
+    logger.info('Getting schemas metadata...')
+    schemas_metadata = database.get_schemas_metadata(survey_id)
+    logger.info('Schemas metadata successfully retrieved.')
+    return schemas_metadata
 
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
