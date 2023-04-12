@@ -1,15 +1,15 @@
-from unittest.mock import patch, MagicMock
 import logging
+from unittest.mock import MagicMock, patch
 
 
-@patch('dataset_storage.get_dataset')
-@patch('database.set_dataset')
+@patch("dataset_storage.get_dataset")
+@patch("database.set_dataset")
 def test_new_dataset(
-        dataset_storage_mock,
-        set_dataset_mock,
-        caplog,
-        cloud_functions,
-    ):
+    dataset_storage_mock,
+    set_dataset_mock,
+    caplog,
+    cloud_functions,
+):
     """
     There should be a log for when the cloud function is triggered and when the
     new dataset is successfully uploaded.

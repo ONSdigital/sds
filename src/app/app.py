@@ -82,7 +82,9 @@ async def get_dataset_metadata_collection(
     )
     if not dataset_metadata_collection:
         logger.error("Dataset metadata collection not found...")
-        raise HTTPException(status_code=404, detail="Dataset metadata collection not found...")
+        raise HTTPException(
+            status_code=404, detail="Dataset metadata collection not found..."
+        )
 
     logger.info("Dataset metadata collection successfully retrieved.")
     return dataset_metadata_collection
