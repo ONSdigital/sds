@@ -108,7 +108,7 @@ def test_get_dataset_metadata(client, database):
         "sds_published_at": "2023-03-13T14:34:57Z",
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
-        "form_id": "yyy",
+        "form_type": "yyy",
         "filename": "file1.json",
     }
     dataset_id = "abc-xyz"

@@ -136,7 +136,6 @@ def get_dataset_metadata_collection(
     )
     for dataset in datasets_result:
         return_dataset = dataset.to_dict()
-        return_dataset.pop("form_id")
         return_dataset["dataset_id"] = dataset.id
         datasets.append(return_dataset)
 
