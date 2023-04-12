@@ -28,7 +28,7 @@ def test_get_schema_200_is_logged(caplog, client, database):
     assert caplog.records[1].message == "Schema successfully retrieved."
 
 
-@patch('database.get_schema_metadata')
+@patch("database.get_schema_metadata")
 def test_get_schema_404_is_logged(get_schema_metadata_mock, caplog, client):
     """
     When the schema metadata retrieval fails there should be an error log.

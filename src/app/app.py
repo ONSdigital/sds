@@ -49,32 +49,39 @@ async def get_schema(survey_id: str, version: str) -> dict:
     that to look up the location of the schema file in the bucket and
     return that file.
     """
-    logger.info('Getting schema...')
+    logger.info("Getting schema...")
     schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
         logger.error("Schema metadata not found")
         raise HTTPException(status_code=404, detail="Schema metadata not found")
 
-    logger.info('Schema successfully retrieved.')
+    logger.info("Schema successfully retrieved.")
     return storage.get_schema(schema_metadata.schema_location)
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
 async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
-    logger.info('Getting schemas metadata...')
+    logger.info("Getting schemas metadata...")
     schemas_metadata = database.get_schemas_metadata(survey_id)
-    logger.info('Schemas metadata successfully retrieved.')
+    logger.info("Schemas metadata successfully retrieved.")
     return schemas_metadata
 
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
-async def get_dataset(survey_id: str, period_id: str) -> list[DatasetMetadata]:
+async def get_dataset_metadata_collection(
+    survey_id: str, period_id: str
+) -> list[DatasetMetadata]:
     """
-    Retrieve the matching datasets, given the survey_id and period_id.
-    The matching datasets are returned as an array of dictionaries.
+    Retrieve the matching dataset metadata, given the survey_id and period_id.
+    The matching metadata are returned as an array of dictionaries.
     """
-    datasets = database.get_dataset_metadata(survey_id, period_id)
-    if not datasets:
+    logger.info("Getting dataset metadata collection...")
+    dataset_metadata_collection = database.get_dataset_metadata_collection(
+        survey_id, period_id
+    )
+    if not dataset_metadata_collection:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    return datasets
+
+    logger.info("Dataset metadata collection successfully retrieved.")
+    return dataset_metadata_collection
