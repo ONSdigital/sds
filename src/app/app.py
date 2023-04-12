@@ -1,10 +1,9 @@
-import uuid
-
 import database
 import storage
 from fastapi import Body, FastAPI, HTTPException
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from services import schema_metadata_service
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
@@ -37,16 +36,11 @@ async def post_schema_metadata(schema: Schema = Body(...)):
     """
     logger.info("Posting schema metadata...")
 
-    schema_id = str(uuid.uuid4())
-    location = storage.store_schema(schema=schema, schema_id=schema_id)
-
-    returned_schema_metadata = database.set_schema_metadata(
-        survey_id=schema.survey_id, schema_location=location, schema_id=schema_id
-    )
-    returned_schema_metadata.guid = schema_id
+    posted_schema_metadata = schema_metadata_service.process_schema_metadata(schema)
+    print("cheese", posted_schema_metadata)
 
     logger.info("Schema metadata successfully posted.")
-    return returned_schema_metadata
+    return posted_schema_metadata
 
 
 @app.get("/v1/schema")

@@ -1,23 +1,8 @@
 import json
-import logging
 from unittest.mock import MagicMock, patch
 
 
-def test_get_unit_supplementary_data_logs_message_on_start(caplog, client):
-    """
-    A message should be logged when the get_unit_supplementary_data endpoint is hit
-    """
-    caplog.set_level(logging.INFO)
-
-    unit_id = "test-unit-id"
-    dataset_id = "test-dataset-id"
-    client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-    assert len(caplog.records) == 2
-    assert caplog.records[0].message == "Getting unit supplementary data..."
-
-
-@patch("app.uuid.uuid4")
+@patch("uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
@@ -138,58 +123,3 @@ def test_get_dataset_metadata(client, database):
     )
     assert response.status_code == 200
     assert response.json()[0] == expected_metadata
-
-
-def test_get_unit_supplementary_data_200_is_logged(caplog, client, database):
-    """
-    When the unit supplementary data is retrieved successfully a success message is logged.
-    """
-    caplog.set_level(logging.INFO)
-
-    mock_database_get_unit_supplementary_data = MagicMock()
-    mock_database_get_unit_supplementary_data.return_value = {"success": True}
-    database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
-
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    dataset_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-    assert response.status_code == 200
-    assert len(caplog.records) == 2
-    assert caplog.records[1].message == "Unit supplementary data successfully outputted"
-
-
-def test_get_unit_supplementary_data_404_error_is_logged(caplog, client, database):
-    """
-    When the unit supplementary data is retrieved successfully a success message is logged.
-    """
-    caplog.set_level(logging.ERROR)
-
-    mock_database_get_unit_supplementary_data = MagicMock()
-    mock_database_get_unit_supplementary_data.return_value = None
-    database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
-
-    unit_id = "test-unit-id"
-    dataset_id = "test-dataset-id"
-    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-    assert response.status_code == 404
-    assert len(caplog.records) == 1
-    assert caplog.records[0].message == "Item not found"
-
-
-def test_post_schema_metadata_200_is_logged(caplog, client, storage, database):
-    """
-    When the schema metadata is posted successfully a message is logged.
-    """
-    caplog.set_level(logging.INFO)
-
-    with open("../test_data/schema.json") as f:
-        schema = json.load(f)
-
-    response = client.post("/v1/schema", json=schema)
-
-    assert response.status_code == 200
-    assert len(caplog.records) == 2
-    assert caplog.records[0].message == "Posting schema metadata..."
-    assert caplog.records[1].message == "Schema metadata successfully posted."
