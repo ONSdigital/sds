@@ -1,8 +1,9 @@
 import uuid
 
+import functions_framework
+
 import database
 import dataset_storage
-import functions_framework
 from logging_config import logging
 
 logger = logging.getLogger(__name__)
@@ -18,14 +19,17 @@ def new_dataset(cloud_event):
     * The dataset_id is an auto generated GUID and the filename is saved as a new field in the metadata.
     """
     logger.info("Uploading new dataset...")
-
     logger.debug(f"Cloud event data: {cloud_event.data}")
 
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    dataset_id = str(uuid.uuid4())
-
     dataset = dataset_storage.get_dataset(filename=filename, bucket_name=bucket_name)
+
+    logger.info("Dataset obtained successfully.")
+    logger.debug(f"Dataset: {dataset}")
+
+    dataset_id = str(uuid.uuid4())
     database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
-    logger.info("Dataset successfully uploaded.")
+
+    logger.info("Dataset uploaded successfully.")
