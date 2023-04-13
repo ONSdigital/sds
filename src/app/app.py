@@ -78,6 +78,8 @@ async def get_dataset_metadata_collection(
     The matching metadata are returned as an array of dictionaries.
     """
     logger.info("Getting dataset metadata collection...")
+    logger.debug(f'Input data: survey_id={survey_id}, period_id={period_id}')
+
     dataset_metadata_collection = database.get_dataset_metadata_collection(
         survey_id, period_id
     )

@@ -9,7 +9,7 @@ def test_get_dataset_metadata_200_is_logged(
     """
     When the schema metadata is retrieved successfully there should be a log before and after.
     """
-    caplog.set_level(logging.INFO)
+    caplog.set_level(logging.DEBUG)
 
     get_dataset_metadata_collection_mock.return_value = [
         {
@@ -26,13 +26,14 @@ def test_get_dataset_metadata_200_is_logged(
             "form_type": "test_form_type",
         }
     ]
-    response = client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
+    response = client.get("/v1/dataset_metadata?survey_id=xyz&period_id=abc")
 
     assert response.status_code == 200
-    assert len(caplog.records) == 2
-    assert caplog.records[0].message == "Getting dataset metadata collection..."
+    assert len(caplog.records) == 5
+    assert caplog.records[1].message == "Getting dataset metadata collection..."
+    assert caplog.records[2].message == "Input data: survey_id=xyz, period_id=abc"
     assert (
-        caplog.records[1].message
+        caplog.records[3].message
         == "Dataset metadata collection successfully retrieved."
     )
 
