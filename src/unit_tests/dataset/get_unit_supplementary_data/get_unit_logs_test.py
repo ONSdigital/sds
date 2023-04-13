@@ -1,6 +1,8 @@
 import logging
 from unittest.mock import MagicMock
 
+test_dataset_id = "test_dataset_id"
+test_unit_id = "test_unit_id"
 
 def test_get_unit_supplementary_data_200_is_logged(caplog, client, database):
     """
@@ -13,9 +15,7 @@ def test_get_unit_supplementary_data_200_is_logged(caplog, client, database):
     mock_database_get_unit_supplementary_data.return_value = {"success": True}
     database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
 
-    dataset_id = "test_dataset_id"
-    unit_id = "test_unit_id"
-    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+    response = client.get(f"/v1/unit_data?dataset_id={test_dataset_id}&unit_id={test_unit_id}")
 
     assert response.status_code == 200
     assert len(caplog.records) == 2
@@ -30,16 +30,18 @@ def test_get_unit_supplementary_data_input_data_debug_logged(caplog, client, dat
     caplog.set_level(logging.DEBUG)
 
     mock_database_get_unit_supplementary_data = MagicMock()
-    mock_database_get_unit_supplementary_data.return_value = {"success": True}
+    mock_database_get_unit_supplementary_data.return_value = {"test": 'data'}
     database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
 
-    dataset_id = "test_dataset_id"
-    unit_id = "test_unit_id"
-    client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+    client.get(f"/v1/unit_data?dataset_id={test_dataset_id}&unit_id={test_unit_id}")
 
     assert (
         caplog.records[2].message
         == "Input data: dataset_id=test_dataset_id, unit_id=test_unit_id"
+    )
+    assert (
+            caplog.records[4].message
+            == "Unit supplementary data: {'test': 'data'}"
     )
 
 
@@ -53,9 +55,7 @@ def test_get_unit_supplementary_data_404_error_is_logged(caplog, client, databas
     mock_database_get_unit_supplementary_data.return_value = None
     database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
 
-    unit_id = "test-unit-id"
-    dataset_id = "test-dataset-id"
-    response = client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
+    response = client.get(f"/v1/unit_data?dataset_id={test_dataset_id}&unit_id={test_unit_id}")
 
     assert response.status_code == 404
     assert len(caplog.records) == 1

@@ -19,14 +19,16 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
 
-    data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
+    unit_supplementary_data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
 
-    if not data:
+    if not unit_supplementary_data:
         logger.error("Item not found")
         raise HTTPException(status_code=404, detail="Item not found")
 
     logger.info("Unit supplementary data successfully outputted")
-    return data
+    logger.debug(f"Unit supplementary data: {unit_supplementary_data}")
+
+    return unit_supplementary_data
 
 
 @app.post("/v1/schema", response_model=PostSchemaMetadata)
@@ -43,7 +45,7 @@ async def post_schema_metadata(schema: Schema = Body(...)):
 
     logger.info("Schema metadata successfully posted.")
     logger.debug(f"Schema metadata: {posted_schema_metadata}")
-    
+
     return posted_schema_metadata
 
 
