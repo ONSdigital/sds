@@ -3,7 +3,12 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-from models import PostSchemaMetadata, ReturnedSchemaMetadata, SchemaMetadata
+from models import (
+    DatasetMetadata,
+    PostSchemaMetadata,
+    ReturnedSchemaMetadata,
+    SchemaMetadata,
+)
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -43,7 +48,7 @@ def set_dataset(dataset_id, filename, dataset):
         units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
-def get_data(dataset_id, unit_id):
+def get_unit_supplementary_data(dataset_id, unit_id):
     """Get the unit data from dataset collection, that originally came from the dataset."""
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
@@ -116,10 +121,12 @@ def get_datasets(survey_id):
     return {"survey_id": survey_id, "datasets": datasets}
 
 
-def get_dataset_metadata(survey_id, period_id):
+def get_dataset_metadata_collection(
+    survey_id: str, period_id: str
+) -> list[DatasetMetadata]:
     """
     This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
-    and returns the matching datasets which is a nested dictionary object with the dataset_id as the key.
+    and returns the matching datasets metadata which is a nested dictionary object with the dataset_id as the key.
     """
     datasets = []
     datasets_result = (
@@ -135,7 +142,7 @@ def get_dataset_metadata(survey_id, period_id):
     return datasets
 
 
-def get_schema(survey_id, version) -> SchemaMetadata:
+def get_schema_metadata(survey_id, version) -> SchemaMetadata:
     schemas_result = (
         schemas_collection.where("survey_id", "==", survey_id)
         .where("sds_schema_version", "==", int(version))

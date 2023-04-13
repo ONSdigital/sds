@@ -2,13 +2,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 
-def test_get_unit_data(client):
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    dataset_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-
-@patch("app.uuid.uuid4")
+@patch("uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
