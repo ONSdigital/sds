@@ -61,7 +61,6 @@ def test_new_dataset_debug_log(
     }
 
     cloud_functions.new_dataset(cloud_event=cloud_event)
-
     assert (
         caplog.records[1].message
         == "Cloud event data: {'id': 'test_id', 'type': 'test_type', 'bucket': "

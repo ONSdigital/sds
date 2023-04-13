@@ -50,14 +50,24 @@ async def get_schema(survey_id: str, version: str) -> dict:
     that to look up the location of the schema file in the bucket and
     return that file.
     """
-    logger.info("Getting schema...")
+    logger.info("Getting schema metadata...")
+    logger.debug(f"Input data: survey_id={survey_id}, version={version}")
+
     schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
         logger.error("Schema metadata not found")
         raise HTTPException(status_code=404, detail="Schema metadata not found")
 
+    logger.info("Schema metadata successfully retrieved.")
+    logger.debug(f"Schema metadata: {schema_metadata}")
+
+    logger.info("Getting schema...")
+
+    schema = storage.get_schema(schema_metadata.schema_location)
+
     logger.info("Schema successfully retrieved.")
-    return storage.get_schema(schema_metadata.schema_location)
+    logger.debug(f"Schema: {schema}")
+    return schema
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
