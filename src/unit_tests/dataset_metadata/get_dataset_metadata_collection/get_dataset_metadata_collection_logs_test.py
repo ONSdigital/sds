@@ -38,6 +38,23 @@ def test_get_dataset_metadata_200_is_logged(
 
 
 @patch("database.get_dataset_metadata_collection")
+def test_get_dataset_metadata_404_is_logged(
+    get_dataset_metadata_collection_mock, caplog, client
+):
+    """
+    When the schema metadata is retrieved successfully there should be a log before and after.
+    """
+    caplog.set_level(logging.ERROR)
+
+    get_dataset_metadata_collection_mock.return_value = None
+    response = client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
+
+    assert response.status_code == 404
+    assert len(caplog.records) == 1
+    assert caplog.records[0].message == "Dataset metadata collection not found."
+
+
+@patch("database.get_dataset_metadata_collection")
 def test_get_dataset_metadata_input_debug_log(
     get_dataset_metadata_collection_mock, caplog, client
 ):
@@ -61,23 +78,6 @@ def test_get_dataset_metadata_input_debug_log(
             "form_type": "test_form_type",
         }
     ]
-    response = client.get("/v1/dataset_metadata?survey_id=xyz&period_id=abc")
+    client.get("/v1/dataset_metadata?survey_id=xyz&period_id=abc")
 
     assert caplog.records[2].message == "Input data: survey_id=xyz, period_id=abc"
-
-
-@patch("database.get_dataset_metadata_collection")
-def test_get_dataset_metadata_404_is_logged(
-    get_dataset_metadata_collection_mock, caplog, client
-):
-    """
-    When the schema metadata is retrieved successfully there should be a log before and after.
-    """
-    caplog.set_level(logging.ERROR)
-
-    get_dataset_metadata_collection_mock.return_value = None
-    response = client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
-
-    assert response.status_code == 404
-    assert len(caplog.records) == 1
-    assert caplog.records[0].message == "Dataset metadata collection not found."
