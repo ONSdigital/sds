@@ -93,6 +93,7 @@ To run SDS locally, activate the virtual environment, then run the following com
 and `dataset-bucket` appropriately:
 
 ```bash
+export env=partial
 export PYTHONPATH=src/app
 export SCHEMA_BUCKET_NAME=my-schema-bucket
 export DATASET_BUCKET_NAME=my-dataset-bucket
@@ -110,6 +111,7 @@ run the following commands:
 docker-compose up 
 docker-compose stop api
 
+export env=local
 export FIRESTORE_EMULATOR_HOST=localhost:8080
 export STORAGE_EMULATOR_HOST=http://localhost:9023
 export PYTHONPATH=src/app
@@ -183,6 +185,7 @@ Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual c
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
+export env=cloud
 export API_URL=https://sds-blahblah.a.run.app
 export DATASET_BUCKET=a-place-for-datasets  
 export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
@@ -200,6 +203,7 @@ This configuration allows you to debug the SDS API locally but talk to real Goog
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
+export env=partial
 export SCHEMA_BUCKET_NAME=my-schema-bucket
 export DATASET_BUCKET=a-place-for-datasets
 export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
@@ -217,6 +221,7 @@ is emulated by the test itself, or can be run manually by running the `SDX Simul
 ```bash
 docker-compose up
 
+export env=local
 export FIRESTORE_EMULATOR_HOST=localhost:8200
 export STORAGE_EMULATOR_HOST=http://localhost:9023
 export SCHEMA_BUCKET_NAME=schema_bucket

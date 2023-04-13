@@ -2,6 +2,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
+from config import config
 from firebase_admin import firestore
 from models import PostSchemaMetadata, ReturnedSchemaMetadata, SchemaMetadata
 
@@ -20,7 +21,7 @@ def set_dataset(dataset_id, filename, dataset):
     """
     data = dataset.pop("data")
     dataset["filename"] = filename
-    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+    dataset["sds_published_at"] = str(datetime.now().strftime(config.TIME_FORMAT))
     dataset["total_reporting_units"] = len(data)
 
     datasets_result = (
@@ -34,7 +35,7 @@ def set_dataset(dataset_id, filename, dataset):
     except StopIteration:
         latest_version = 1
 
-    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+    dataset["sds_published_at"] = str(datetime.now().strftime(config.TIME_FORMAT))
     dataset["sds_dataset_version"] = latest_version
     dataset["total_reporting_units"] = len(data)
     datasets_collection.document(dataset_id).set(dataset)
@@ -73,7 +74,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMeta
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
-        sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
+        sds_published_at=str(datetime.now().strftime(config.TIME_FORMAT)),
     )
 
     schemas_collection.document(schema_id).set(asdict(schema_metadata))

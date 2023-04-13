@@ -1,8 +1,8 @@
 import json
-import os
 from time import sleep
 from unittest.mock import MagicMock
 
+import config
 import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
@@ -18,13 +18,13 @@ storage_client = gcp_storage.Client()
 
 def pytest_sessionstart():
     """Create the buckets before running the test."""
-    if os.environ.get("STORAGE_EMULATOR_HOST"):
+    if config.ENV == "local":
         try:
-            storage_client.create_bucket(os.environ.get("DATASET_BUCKET"))
+            storage_client.create_bucket(config.DATASET_BUCKET_NAME)
         except exceptions.Conflict:
             pass
         try:
-            storage_client.create_bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
+            storage_client.create_bucket(config.SCHEMA_BUCKET_NAME)
         except exceptions.Conflict:
             pass
 
@@ -60,16 +60,16 @@ class RequestWrapper:
 
 @pytest.fixture
 def client():
-    api_url = os.environ.get("API_URL")
-    if api_url:
-        if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+    if config.ENV != "partial" | "local":
+        try:
+            config.GOOGLE_APPLICATION_CREDENTIALS
             auth_req = google.auth.transport.requests.Request()
             auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
-        else:
-            auth_token = os.environ.get("ACCESS_TOKEN")
+        except:
+            auth_token = config.ACCESS_TOKEN
 
         client = RequestWrapper(
-            api_url, headers={"Authorization": f"Bearer {auth_token}"}
+            config.API_URL, headers={"Authorization": f"Bearer {auth_token}"}
         )
     else:
         from app import app
@@ -86,22 +86,22 @@ def upload_dataset(filename, dataset):
     cloud function to complete it's processing. For testing the real API we have a better way of
     handling this delay using automated requests retries.
     """
-    dataset_bucket = os.environ.get("DATASET_BUCKET")
-    bucket = storage_client.bucket(dataset_bucket)
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-    if os.environ.get("STORAGE_EMULATOR_HOST"):
+
+    if config.ENV == "local":
         from main import new_dataset
 
         cloud_event = MagicMock()
         cloud_event.data = {
-            "bucket": dataset_bucket,
+            "bucket": config.DATASET_BUCKET_NAME,
             "name": filename,
         }
         new_dataset(cloud_event=cloud_event)
-    elif not os.environ.get("API_URL"):
+    elif config.ENV == "partial":
         sleep(5)
 
 

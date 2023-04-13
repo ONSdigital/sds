@@ -53,7 +53,7 @@ steps:
         --source=. \
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
-        --trigger-event-filters="bucket=${_DATASET_BUCKET}"
+        --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}"
   - name: 'gcr.io/cloud-builders/gcloud'
     id: "Get token"
     entrypoint: sh
@@ -70,7 +70,7 @@ steps:
       - |
         export ACCESS_TOKEN=$(cat /workspace/token)
         export API_URL=$_API_URL
-        export DATASET_BUCKET=$_DATASET_BUCKET
+        export DATASET_BUCKET_NAME=$_DATASET_BUCKET_NAME
         cd src/integration_tests
         python -m pytest integration_tests.py
 options:

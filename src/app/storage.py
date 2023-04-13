@@ -1,17 +1,15 @@
 import json
-import os
 
+from config import config
 from google.cloud import storage
 from models import Schema
 
 storage_client = storage.Client()
 
-if os.environ.get("SCHEMA_BUCKET_NAME"):
-    bucket = storage_client.bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
-elif os.environ.get("STORAGE_EMULATOR_HOST"):
+if config.CONF == "docker-dev" or config.CONF == "IntegrationTestingDocker":
     bucket = storage_client.create_bucket("bucket")
 else:
-    raise Exception("You need to set SCHEMA_BUCKET_NAME")
+    bucket = storage_client.bucket(config.SCHEMA_BUCKET_NAME)
 
 
 def store_schema(schema: Schema, schema_id):
