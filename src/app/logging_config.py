@@ -14,5 +14,3 @@ logging.basicConfig(
     level=get_log_level(),
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
-
-logging.propagate = True

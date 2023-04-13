@@ -15,7 +15,8 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     Retrieve supplementary data for a particular unit given the unit id
     and the dataset id, return 404 if no data is returned.
     """
-    logger.info("Getting unit supplementary data...")
+    logger.info('Getting unit supplementary data...')
+    logger.debug(f'Input data: dataset_id={dataset_id}, unit_id={unit_id}')
 
     data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
 

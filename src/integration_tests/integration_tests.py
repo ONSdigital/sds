@@ -20,7 +20,6 @@ def test_dataset(client, bucket_loader):
 
     survey_id = "xyz"
     period_id = "abc"
-    unit_id = "43532"
 
     dataset_metadata_response = client.get(
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
