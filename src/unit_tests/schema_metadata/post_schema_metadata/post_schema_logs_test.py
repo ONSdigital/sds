@@ -1,6 +1,26 @@
 import logging
 from unittest.mock import patch
 
+process_schema_mock_return = {
+        "guid": "test_guid",
+        "survey_id": "test_survey_id",
+        "schema_location": "test_schema_location",
+        "sds_schema_version": 1,
+        "sds_published_at": "test_published_at",
+    }
+
+test_schema_metadata = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": "100",
+    "title": "test title",
+    "description": "test description",
+    "schema_version": "v1.0.0",
+    "sample_unit_key_field": "test_ref",
+    "properties": [],
+    "examples": [],
+}
+
 
 @patch("services.schema_metadata_service.process_schema_metadata")
 def test_post_schema_metadata_200_is_logged(process_mock, caplog, client):
@@ -9,25 +29,7 @@ def test_post_schema_metadata_200_is_logged(process_mock, caplog, client):
     """
     caplog.set_level(logging.INFO)
 
-    process_mock.return_value = {
-        "guid": "test_guid",
-        "survey_id": "test_survey_id",
-        "schema_location": "test_schema_location",
-        "sds_schema_version": 1,
-        "sds_published_at": "test_published_at",
-    }
-
-    test_schema_metadata = {
-        "$schema": "test-schema",
-        "$id": "test-id",
-        "survey_id": "100",
-        "title": "test title",
-        "description": "test description",
-        "schema_version": "v1.0.0",
-        "sample_unit_key_field": "test_ref",
-        "properties": [],
-        "examples": [],
-    }
+    process_mock.return_value = process_schema_mock_return
 
     response = client.post("/v1/schema", json=test_schema_metadata)
 
@@ -44,25 +46,7 @@ def test_post_schema_metadata_200_is_logged(process_mock, caplog, client):
     """
     caplog.set_level(logging.DEBUG)
 
-    process_mock.return_value = {
-        "guid": "test_guid",
-        "survey_id": "test_survey_id",
-        "schema_location": "test_schema_location",
-        "sds_schema_version": 1,
-        "sds_published_at": "test_published_at",
-    }
-
-    test_schema_metadata = {
-        "$schema": "test-schema",
-        "$id": "test-id",
-        "survey_id": "100",
-        "title": "test title",
-        "description": "test description",
-        "schema_version": "v1.0.0",
-        "sample_unit_key_field": "test_ref",
-        "properties": [],
-        "examples": [],
-    }
+    process_mock.return_value = process_schema_mock_return
 
     client.post("/v1/schema", json=test_schema_metadata)
 
