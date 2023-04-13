@@ -1,7 +1,6 @@
-from fastapi import Body, FastAPI, HTTPException
-
 import database
 import storage
+from fastapi import Body, FastAPI, HTTPException
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from services import schema_metadata_service
@@ -19,13 +18,15 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
 
-    unit_supplementary_data = database.get_unit_supplementary_data(dataset_id=dataset_id, unit_id=unit_id)
+    unit_supplementary_data = database.get_unit_supplementary_data(
+        dataset_id=dataset_id, unit_id=unit_id
+    )
 
     if not unit_supplementary_data:
         logger.error("Item not found")
         raise HTTPException(status_code=404, detail="Item not found")
 
-    logger.info("Unit supplementary data successfully outputted")
+    logger.info("Unit supplementary data outputted successfully.")
     logger.debug(f"Unit supplementary data: {unit_supplementary_data}")
 
     return unit_supplementary_data
@@ -112,4 +113,6 @@ async def get_dataset_metadata_collection(
         )
 
     logger.info("Dataset metadata collection successfully retrieved.")
+    logger.debug(f"Dataset metadata collection: {dataset_metadata_collection}")
+
     return dataset_metadata_collection

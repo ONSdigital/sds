@@ -1,6 +1,13 @@
 import logging
 from unittest.mock import MagicMock, patch
 
+test_metadata = {
+    "survey_id": "xyz",
+    "schema_location": "/xyz/111-222-xxx-fff.json",
+    "sds_schema_version": 2,
+    "sds_published_at": "2023-02-06T13:33:44Z",
+}
+
 
 def test_get_schema_200_is_logged(caplog, client, database):
     """
@@ -8,12 +15,7 @@ def test_get_schema_200_is_logged(caplog, client, database):
     """
     caplog.set_level(logging.INFO)
 
-    expected_metadata = {
-        "survey_id": "xyz",
-        "schema_location": "/xyz/111-222-xxx-fff.json",
-        "sds_schema_version": 2,
-        "sds_published_at": "2023-02-06T13:33:44Z",
-    }
+    expected_metadata = test_metadata
     schema_guid = "abc"
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_metadata
@@ -45,18 +47,13 @@ def test_get_schema_404_is_logged(get_schema_metadata_mock, caplog, client):
     assert caplog.records[0].message == "Schema metadata not found"
 
 
-def test_get_schema_input_debug_logged(caplog, client, database):
+def test_get_schema_debug_logs(caplog, client, database):
     """
-    When the schema is retrieved successfully there should be a log before and after.
+    There should be debug logs for inputted and retrieved data.
     """
     caplog.set_level(logging.DEBUG)
 
-    expected_metadata = {
-        "survey_id": "xyz",
-        "schema_location": "/xyz/111-222-xxx-fff.json",
-        "sds_schema_version": 2,
-        "sds_published_at": "2023-02-06T13:33:44Z",
-    }
+    expected_metadata = test_metadata
     schema_guid = "abc"
     mock_stream_obj = MagicMock()
     mock_stream_obj.to_dict.return_value = expected_metadata

@@ -2,14 +2,14 @@ import logging
 from unittest.mock import MagicMock, patch
 
 cloud_event_test_data = {
-        "id": "test_id",
-        "type": "test_type",
-        "bucket": "test_bucket",
-        "metageneration": "1",
-        "timeCreated": "test_time_created",
-        "updated": "test_time_updated",
-        "name": "test_name.json",
-    }
+    "id": "test_id",
+    "type": "test_type",
+    "bucket": "test_bucket",
+    "metageneration": "1",
+    "timeCreated": "test_time_created",
+    "updated": "test_time_updated",
+    "name": "test_name.json",
+}
 
 
 @patch("dataset_storage.get_dataset")
@@ -49,13 +49,11 @@ def test_new_dataset_debug_log(
     cloud_functions,
 ):
     """
-    There should be a debug log containing the event data.
+    There should be debug logs for inputted and retrieved data.
     """
     caplog.set_level(logging.DEBUG)
 
-    dataset_storage_mock.return_value = {
-        "test": "value"
-    }
+    dataset_storage_mock.return_value = {"test": "value"}
     set_dataset_mock.return_value = {"hello": "world"}
 
     cloud_event = MagicMock()
@@ -69,6 +67,4 @@ def test_new_dataset_debug_log(
         "'test_bucket', 'metageneration': '1', 'timeCreated': 'test_time_created', "
         "'updated': 'test_time_updated', 'name': 'test_name.json'}"
     )
-    assert (
-            caplog.records[3].message == "Dataset: {'test': 'value'}"
-    )
+    assert caplog.records[3].message == "Dataset: {'test': 'value'}"
