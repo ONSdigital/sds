@@ -7,7 +7,7 @@ def test_get_dataset_metadata_200_is_logged(
     get_dataset_metadata_collection_mock, caplog, client
 ):
     """
-    When the schema metadata is retrieved successfully there should be a log before and after.
+    When the schema metadata is retrieved successfully there should be a log before and after, plus a debug log.
     """
     caplog.set_level(logging.DEBUG)
 

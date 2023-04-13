@@ -4,7 +4,8 @@ from unittest.mock import MagicMock
 
 def test_get_unit_supplementary_data_200_is_logged(caplog, client, database):
     """
-    When the unit supplementary data is retrieved successfully a success message is logged.
+    When the unit supplementary data is retrieved successfully a success message is logged, plus a log at the start of
+    function and a debug log.
     """
     caplog.set_level(logging.DEBUG)
 

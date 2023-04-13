@@ -19,10 +19,10 @@ def new_dataset(cloud_event):
     """
     logger.info("Uploading new dataset...")
 
-    data = cloud_event.data
+    logger.debug(f'Cloud event data: {cloud_event.data}')
 
-    bucket_name = data["bucket"]
-    filename = data["name"]
+    bucket_name = cloud_event.data["bucket"]
+    filename = cloud_event.data["name"]
 
     dataset_id = str(uuid.uuid4())
 
