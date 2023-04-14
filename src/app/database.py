@@ -3,13 +3,14 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-
 from models import (
     DatasetMetadata,
     PostSchemaMetadata,
     ReturnedSchemaMetadata,
-    SchemaMetadata, UnitData,
+    SchemaMetadata,
+    UnitData,
 )
+from services.datasets import dataset_service
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -18,6 +19,12 @@ schemas_collection = db.collection("schemas")
 
 
 def get_dataset_with_survey_id(survey_id):
+    """
+    Gets a single dataset from firestore with a specific survey_id.
+
+    Parameters:
+    survey_id (str): survey_id of the specified dataset.
+    """
     return (
         datasets_collection.where("survey_id", "==", survey_id)
         .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
@@ -27,10 +34,23 @@ def get_dataset_with_survey_id(survey_id):
 
 
 def create_new_dataset(dataset_id: str, dataset: UnitData) -> None:
+    """
+    Creates a new dataset in firestore with a specified ID and data.
+
+    Parameters:
+    dataset_id (str): uniquely generated GUID id of the dataset.
+    dataset (UnitData): unit dataset being created in firestore.
+    """
     datasets_collection.document(dataset_id).set(dataset)
 
 
 def get_dataset_unit_collection(dataset_id: str) -> object:
+    """
+    Gets the collection of units associated with a particular dataset.
+
+    Parameters:
+    dataset_id (str): uniquely generated GUID id of the dataset.
+    """
     return datasets_collection.document(dataset_id).collection("units")
 
 
@@ -45,26 +65,7 @@ def set_dataset(dataset_id, filename, dataset):
     * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
     * Set the "filename" as a field in the dataset metadata document.
     """
-    data = dataset.pop("data")
-    dataset["filename"] = filename
-    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
-    dataset["total_reporting_units"] = len(data)
-
-    datasets_result = get_dataset_with_survey_id(dataset["survey_id"])
-
-    try:
-        latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
-    except StopIteration:
-        latest_version = 1
-
-    dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
-    dataset["sds_dataset_version"] = latest_version
-    dataset["total_reporting_units"] = len(data)
-    create_new_dataset(dataset_id, dataset)
-    units_collection = get_dataset_unit_collection(dataset_id)
-
-    for unit_data in data:
-        append_unit_to_dataset_units_collection(units_collection, unit_data)
+    dataset_service.process_new_dataset(dataset_id, filename, dataset)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
