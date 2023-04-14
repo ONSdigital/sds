@@ -59,11 +59,12 @@ def test_dataset(client, bucket_loader):
         "ruref": "43532",
     }
 
-    dataset_metadata_file_to_test = next(
+    dataset_metadata_file_to_test = next((
         file
         for file in dataset_metadata_response.json()
         if file["filename"] == filename
-    )
+    ), None)
+    assert dataset_metadata_response is not None
 
     response = client.get(
         f"/v1/unit_data?dataset_id={dataset_metadata_file_to_test['dataset_id']}&unit_id={'43532'}"
