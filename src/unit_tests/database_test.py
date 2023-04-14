@@ -12,7 +12,7 @@ def test_set_dataset(database):
 
 
 def test_get_data(database):
-    database.get_data(dataset_id="1", unit_id="1")
+    database.get_unit_supplementary_data(dataset_id="1", unit_id="1")
 
 
 def test_set_schema_metadata(database):
@@ -76,7 +76,7 @@ def test_get_dataset_metadata(database):
         "sds_published_at": "2023-03-13T14:34:57Z",
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
-        "form_id": "yyy",
+        "form_type": "yyy",
         "filename": "file1.json",
     }
     dataset_id = "abc-xyz"
@@ -84,5 +84,7 @@ def test_get_dataset_metadata(database):
     mock_stream_obj.to_dict.return_value = expected_metadata
     mock_stream_obj.id = dataset_id
     database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
-    dataset_metadata = database.get_dataset_metadata(survey_id="xyz", period_id="abc")
+    dataset_metadata = database.get_dataset_metadata_collection(
+        survey_id="xyz", period_id="abc"
+    )
     assert dataset_metadata[0] == expected_metadata

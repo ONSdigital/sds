@@ -25,6 +25,7 @@ services:
       - DATASET_BUCKET_NAME=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
+      - LOG_LEVEL=INFO
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools

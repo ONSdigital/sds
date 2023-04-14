@@ -4,13 +4,7 @@ from unittest.mock import MagicMock, patch
 from config import config
 
 
-def test_get_unit_data(client):
-    unit_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    dataset_id = "55e64129-6acd-438b-a23a-3cf9524ab912"
-    client.get(f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}")
-
-
-@patch("app.uuid.uuid4")
+@patch("uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
@@ -116,7 +110,7 @@ def test_get_dataset_metadata(client, database):
         "sds_published_at": "2023-03-13T14:34:57Z",
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
-        "form_id": "yyy",
+        "form_type": "yyy",
         "filename": "file1.json",
     }
     dataset_id = "abc-xyz"

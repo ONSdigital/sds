@@ -22,7 +22,6 @@ def test_dataset(client, bucket_loader):
 
     survey_id = "xyz"
     period_id = "abc"
-    unit_id = "43532"
 
     dataset_metadata_response = client.get(
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
@@ -79,6 +78,7 @@ def test_dataset(client, bucket_loader):
 
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
+            assert "form_type" in dataset_metadata
 
 
 def test_post_schema(client):
