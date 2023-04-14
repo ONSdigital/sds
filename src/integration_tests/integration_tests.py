@@ -58,25 +58,23 @@ def test_dataset(client, bucket_loader):
         "ruaddr2": "Hobbitton",
         "ruref": "43532",
     }
-    # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
-    # locate the specific dataset in the collection.
-    # Iterate over all the items in the above API response, then locate the document with the "filename" field from above.
 
-    for dataset_metadata in dataset_metadata_response.json():
-        if dataset_metadata["filename"] == filename:
-            dataset_id = dataset_metadata["dataset_id"]
-            unit_id = "43532"
+    dataset_metadata_file_to_test = next(
+        file
+        for file in dataset_metadata_response.json()
+        if file["filename"] == filename
+    )
 
-            response = client.get(
-                f"/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}"
-            )
+    response = client.get(
+        f"/v1/unit_data?dataset_id={dataset_metadata_file_to_test['dataset_id']}&unit_id={'43532'}"
+    )
 
-            assert response.status_code == 200
-            assert response.json() == mock_unit_response
+    assert response.status_code == 200
+    assert response.json() == mock_unit_response
 
-            assert "sds_dataset_version" in dataset_metadata
-            assert "filename" in dataset_metadata
-            assert "form_type" in dataset_metadata
+    assert "sds_dataset_version" in dataset_metadata_file_to_test
+    assert "filename" in dataset_metadata_file_to_test
+    assert "form_type" in dataset_metadata_file_to_test
 
 
 def test_post_schema(client):
