@@ -15,12 +15,11 @@ steps:
     id: "flake8"
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: python 
-    id: unit_test
-    entrypoint: sh
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
     args:
-    - '-c'
-    - 'make unit-test'
+      - '-c'
+      - 'make unit-test'
   - name: python
     id: "coverage"
     dir: "src/unit_tests"
