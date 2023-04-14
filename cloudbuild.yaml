@@ -19,7 +19,9 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'make unit-test'
+      - |
+        'make setup'
+        'make unit-test'
   - name: python
     id: "coverage"
     dir: "src/unit_tests"
