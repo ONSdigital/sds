@@ -59,3 +59,14 @@ class DatasetMetadata:
     sds_dataset_version: int
     filename: str
     form_type: str
+
+
+@dataclass
+class UnitData:
+    dataset_id: str
+    schema_version: str
+    sds_schema_version: str
+    survey_id: str
+    period_id: str
+    form_type: str
+    data: object

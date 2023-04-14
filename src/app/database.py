@@ -3,17 +3,39 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+
 from models import (
     DatasetMetadata,
     PostSchemaMetadata,
     ReturnedSchemaMetadata,
-    SchemaMetadata,
+    SchemaMetadata, UnitData,
 )
 
 firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
+
+
+def get_dataset_with_survey_id(survey_id):
+    return (
+        datasets_collection.where("survey_id", "==", survey_id)
+        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
+        .limit(1)
+        .stream()
+    )
+
+
+def create_new_dataset(dataset_id: str, dataset: UnitData) -> None:
+    datasets_collection.document(dataset_id).set(dataset)
+
+
+def get_dataset_unit_collection(dataset_id: str) -> object:
+    return datasets_collection.document(dataset_id).collection("units")
+
+
+def append_unit_to_dataset_units_collection(units_collection, unit_data) -> None:
+    units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
 def set_dataset(dataset_id, filename, dataset):
@@ -28,12 +50,8 @@ def set_dataset(dataset_id, filename, dataset):
     dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
     dataset["total_reporting_units"] = len(data)
 
-    datasets_result = (
-        datasets_collection.where("survey_id", "==", dataset["survey_id"])
-        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
-        .limit(1)
-        .stream()
-    )
+    datasets_result = get_dataset_with_survey_id(dataset["survey_id"])
+
     try:
         latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
     except StopIteration:
@@ -42,14 +60,16 @@ def set_dataset(dataset_id, filename, dataset):
     dataset["sds_published_at"] = str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
     dataset["sds_dataset_version"] = latest_version
     dataset["total_reporting_units"] = len(data)
-    datasets_collection.document(dataset_id).set(dataset)
-    units_collection = datasets_collection.document(dataset_id).collection("units")
+    create_new_dataset(dataset_id, dataset)
+    units_collection = get_dataset_unit_collection(dataset_id)
+
     for unit_data in data:
-        units_collection.document(unit_data["ruref"]).set(unit_data)
+        append_unit_to_dataset_units_collection(units_collection, unit_data)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
     """Get the unit data from dataset collection, that originally came from the dataset."""
+
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
 
