@@ -25,7 +25,4 @@ jobs:
           flake8 src devtools --max-line-length=127
       - name: Test with pytest
         run: |
-          cd src/unit_tests
-          export PYTHONPATH=../app
-          pytest --cov=../app .
-          coverage report --fail-under=90
+          make unit-test

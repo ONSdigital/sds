@@ -78,12 +78,12 @@ class TestingConfig(Config):
 class IntegrationTestingCloudConfig(TestingConfig):
     def __init__(self):
         super().__init__()
-        # self.API_URL = get_value_from_env("API_URL")
+        self.API_URL = get_value_from_env("API_URL")
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
 
-    # API_URL: str
+    API_URL: str
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
