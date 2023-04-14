@@ -24,7 +24,10 @@ def get_value_from_env(env_value, default_value="") -> str:
         raise Exception(f"The environment variable {env_value} must be set to proceed")
 
 
-CONF = get_value_from_env("CONF")
+try:
+    CONF = get_value_from_env("CONF")
+except Exception:
+    CONF = "default"
 
 
 class Config(BaseSettings):
@@ -37,6 +40,18 @@ class Config(BaseSettings):
     CONF: str
     TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
     DATASET_BUCKET_NAME: str
+
+
+class CloudBuildConfig(BaseSettings):
+    def __init__(self):
+        super().__init__()
+        self.CONF = get_value_from_env("CONF")
+        self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+
+    CONF: str
+    TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
+    SCHEMA_BUCKET_NAME: str
 
 
 class ServiceEmulatorDevelopementConfig(Config):
@@ -68,14 +83,20 @@ class TestingConfig(Config):
         super().__init__()
         self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
-        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
-    SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
 
 
-class IntegrationTestingCloudConfig(TestingConfig):
+class IntegrationTestingRemoteCloudConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        self.API_URL = get_value_from_env("API_URL")
+
+    API_URL: str
+
+
+class IntegrationTestingLocalCloudConfig(TestingConfig):
     def __init__(self):
         super().__init__()
         self.API_URL = get_value_from_env("API_URL")
@@ -93,7 +114,9 @@ class IntegrationTestingLocalSDSConfig(TestingConfig):
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
+    SCHEMA_BUCKET_NAME: str
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
@@ -110,15 +133,9 @@ class IntegrationTestingLocalConfig(TestingConfig):
 class UnitTestingConfig(TestingConfig):
     def __init__(self):
         super().__init__()
-        self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
-        self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
-        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        )
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
-    GOOGLE_APPLICATION_CREDENTIALS: str
-    TEST_DATASET_PATH: str
-    TEST_SCHEMA_PATH: str
+    SCHEMA_BUCKET_NAME: str
 
 
 match CONF:
@@ -129,10 +146,14 @@ match CONF:
     case "IntegrationTestingLocalSDS":
         config = IntegrationTestingLocalSDSConfig()
     case "IntegrationTestingCloud":
-        config = IntegrationTestingCloudConfig()
+        config = IntegrationTestingLocalCloudConfig()
     case "IntegrationTestingDocker":
         config = IntegrationTestingLocalConfig()
     case "unit":
         config = UnitTestingConfig()
-    case _:
+    case "cloud-build":
+        config = CloudBuildConfig()
+    case "cloud-integration-test":
+        config = IntegrationTestingRemoteCloudConfig()
+    case "default":
         config = Config()
