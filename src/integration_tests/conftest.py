@@ -67,7 +67,7 @@ class RequestWrapper:
 
 @pytest.fixture
 def client():
-    if config.CONF == "cloud-test":
+    if config.CONF == "IntegrationTestingCloud":
         try:
             config.GOOGLE_APPLICATION_CREDENTIALS
             auth_req = google.auth.transport.requests.Request()

@@ -178,14 +178,8 @@ Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual c
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
-
-export env=cloud
-export API_URL=https://sds-blahblah.a.run.app
-export DATASET_BUCKET=a-place-for-datasets
-export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
-
-cd src/integration_tests
-pytest integration_tests.py
+ 
+make cloud-test
 ```
 
 ### SDS API service is local
@@ -197,14 +191,7 @@ This configuration allows you to debug the SDS API locally but talk to real Goog
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
-export env=partial
-export SCHEMA_BUCKET_NAME=my-schema-bucket
-export DATASET_BUCKET=a-place-for-datasets
-export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
-
-export PYTHONPATH=../app
-cd src/integration_tests
-pytest integration_tests.py
+make localSDS-test
 ```
 
 ### Running integration tests locally
@@ -215,15 +202,7 @@ is emulated by the test itself, or can be run manually by running the `SDX Simul
 ```bash
 docker-compose up
 
-export env=local
-export FIRESTORE_EMULATOR_HOST=localhost:8200
-export STORAGE_EMULATOR_HOST=http://localhost:9023
-export SCHEMA_BUCKET_NAME=schema_bucket
-export DATASET_BUCKET=dataset_bucket
-
-export PYTHONPATH=../app
-cd src/integration_tests
-pytest integration_tests.py
+make docker-test
 ```
 
 # Contact

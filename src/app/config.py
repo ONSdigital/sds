@@ -68,9 +68,7 @@ class TestingConfig(Config):
         super().__init__()
         self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
-        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
-    SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
 
@@ -93,7 +91,9 @@ class IntegrationTestingLocalSDSConfig(TestingConfig):
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
+    SCHEMA_BUCKET_NAME: str
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
@@ -110,15 +110,7 @@ class IntegrationTestingLocalConfig(TestingConfig):
 class UnitTestingConfig(TestingConfig):
     def __init__(self):
         super().__init__()
-        self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
-        self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
-        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        )
 
-    GOOGLE_APPLICATION_CREDENTIALS: str
-    TEST_DATASET_PATH: str
-    TEST_SCHEMA_PATH: str
 
 
 match CONF:

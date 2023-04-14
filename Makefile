@@ -31,10 +31,11 @@ cloud-test:
 	export CONF=IntegrationTestingCloud && \
 	export PYTHONPATH=src/app && \
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
-	export DATASET_BUCKET=ons-sds-sandbox-01-europe-west2-dataset-892a && \
+	export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json && \
+	export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
 	pytest src/integration_tests/integration_tests.py -vv
 
 docker-test:
@@ -54,7 +55,6 @@ unit-test:
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
-	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
 	pytest --cov=src/app ./src/unit_tests/
 	coverage report --fail-under=90 -m
 
