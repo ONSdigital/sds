@@ -15,7 +15,7 @@ steps:
     id: "flake8"
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: makefile 
+  - name: python 
     id: unit_test
     entrypoint: sh
     args:
