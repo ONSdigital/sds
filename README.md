@@ -89,16 +89,11 @@ and the database. To create one:
 * Go into service account and create a key. This will download a JSON file to your machine 
 * Copy the downloaded JSON file to this directory and rename to `key.json`
 
-To run SDS locally, activate the virtual environment, then run the following commands (replacing `my-schema-bucket`
-and `dataset-bucket` appropriately:
+To run SDS locally, activate the virtual environment, then run the following commands (ensuring that the values in the
+makefile represent the connections you wish to make):
 
 ```bash
-export env=partial
-export PYTHONPATH=src/app
-export SCHEMA_BUCKET_NAME=my-schema-bucket
-export DATASET_BUCKET_NAME=my-dataset-bucket
-export GOOGLE_APPLICATION_CREDENTIALS=key.json
-python -m uvicorn src.app.app:app --reload --port 3000
+make start-cloud-dev
 ```
 
 ### Running the SDS with service emulators
@@ -111,32 +106,27 @@ run the following commands:
 docker-compose up 
 docker-compose stop api
 
-export env=local
-export FIRESTORE_EMULATOR_HOST=localhost:8080
-export STORAGE_EMULATOR_HOST=http://localhost:9023
-export PYTHONPATH=src/app
-python -m uvicorn src.app.app:app --reload --port 3000
+make start-docker-dev
 ```
 
 ## Running linting and unit tests
 
-To run all the checks that run as part of the CI, run the following commands:
+As part of the CI pipeline we ensure the code is linted and tested. To run the linting run: 
 
-```
-black . --check
-isort . --check-only --profile black
-flake8 src --max-line-length=127
-cd src/unit_tests
-export PYTHONPATH=../app
-pytest --cov=../app .
-coverage report --fail-under=90
+```bash
+make lint
 ```
 
-To correct any problems that `isort` or `black` complain about, run the following:
+To automatically fix any linting issues run:
 
+```bash
+make lint-fix
 ```
-black .
-isort . --profile black
+
+To run the unit tests run:
+
+```bash
+make unit-test
 ```
 
 ## OpenAPI Specification

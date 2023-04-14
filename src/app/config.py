@@ -30,7 +30,7 @@ CONF = get_value_from_env("CONF")
 class Config(BaseSettings):
     def __init__(self):
         super().__init__()
-        self.CONF: str = get_value_from_env("CONF")
+        self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
         self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
 
@@ -44,7 +44,9 @@ class ServiceEmulatorDevelopementConfig(Config):
         super().__init__()
         self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
         self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
+    SCHEMA_BUCKET_NAME: str
     FIRESTORE_EMULATOR_HOST: str
     STORAGE_EMULATOR_HOST: str
 
@@ -61,37 +63,60 @@ class CloudDevelopmentConfig(Config):
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
-class IntegrationTestingCloudConfig(Config):
-    def __init__(self):
-        super().__init__()
-        self.API_URL = get_value_from_env("API_URL")
-        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        )
-
-    API_URL: str
-    GOOGLE_APPLICATION_CREDENTIALS: str
-
-
-class IntegrationTestingLocalSDSConfig(CloudDevelopmentConfig):
-    def __init__(self):
-        super().__init__()
-
-
-class IntegrationTestingLocalConfig(ServiceEmulatorDevelopementConfig):
-    def __init__(self):
-        super().__init__()
-        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
-
-    SCHEMA_BUCKET_NAME: str
-
-
-class UnitTestingConfig(CloudDevelopmentConfig):
+class TestingConfig(Config):
     def __init__(self):
         super().__init__()
         self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
+    SCHEMA_BUCKET_NAME: str
+    TEST_DATASET_PATH: str
+    TEST_SCHEMA_PATH: str
+
+
+class IntegrationTestingCloudConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        # self.API_URL = get_value_from_env("API_URL")
+        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
+            "GOOGLE_APPLICATION_CREDENTIALS"
+        )
+
+    # API_URL: str
+    GOOGLE_APPLICATION_CREDENTIALS: str
+
+
+class IntegrationTestingLocalSDSConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
+            "GOOGLE_APPLICATION_CREDENTIALS"
+        )
+
+    GOOGLE_APPLICATION_CREDENTIALS: str
+
+
+class IntegrationTestingLocalConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
+        self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
+
+    FIRESTORE_EMULATOR_HOST: str
+    STORAGE_EMULATOR_HOST: str
+
+
+class UnitTestingConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
+        self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
+        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
+            "GOOGLE_APPLICATION_CREDENTIALS"
+        )
+
+    GOOGLE_APPLICATION_CREDENTIALS: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
 

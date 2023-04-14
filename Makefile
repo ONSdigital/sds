@@ -16,29 +16,35 @@ start-docker-dev:
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 
-setup-localSDS-test:
+localSDS-test:
 	export CONF=IntegrationTestingLocalSDS && \
 	export PYTHONPATH=src/app && \
-	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
-	export DATASET_BUCKET_NAME=my-dataset-bucket && \
-	export GOOGLE_APPLICATION_CREDENTIALS=dev-key.json && \
+	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+	export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
+	export TEST_DATASET_PATH=src/test_data/dataset.json && \
+	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
+	export GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json && \
 	pytest src/integration_tests/integration_tests.py -vv
 
 
-setup-cloud-test:
+cloud-test:
 	export CONF=IntegrationTestingCloud && \
 	export PYTHONPATH=src/app && \
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
 	export DATASET_BUCKET=ons-sds-sandbox-01-europe-west2-dataset-892a && \
+	export TEST_DATASET_PATH=src/test_data/dataset.json && \
+	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json && \
 	pytest src/integration_tests/integration_tests.py -vv
 
-setup-docker-test:
+docker-test:
 	export CONF=IntegrationTestingDocker && \
 	export PYTHONPATH=src/app && \
 	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	export DATASET_BUCKET_NAME=my-dataset-bucket && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8200 && \
+	export TEST_DATASET_PATH=src/test_data/dataset.json && \
+	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
 	pytest src/integration_tests/integration_tests.py -vv
 

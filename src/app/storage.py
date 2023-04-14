@@ -6,10 +6,11 @@ from models import Schema
 
 storage_client = storage.Client()
 
-if config.CONF == "docker-dev" or config.CONF == "IntegrationTestingDocker":
-    bucket = storage_client.create_bucket("bucket")
-else:
+
+if storage.Bucket(storage_client, config.SCHEMA_BUCKET_NAME).exists():
     bucket = storage_client.bucket(config.SCHEMA_BUCKET_NAME)
+else:
+    bucket = storage_client.create_bucket(config.SCHEMA_BUCKET_NAME)
 
 
 def store_schema(schema: Schema, schema_id):

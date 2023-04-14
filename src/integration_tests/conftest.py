@@ -1,12 +1,13 @@
 import json
+import os
 from time import sleep
 from unittest.mock import MagicMock
 
-import config
 import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
 import requests
+from config import config
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
@@ -18,13 +19,19 @@ storage_client = gcp_storage.Client()
 
 def pytest_sessionstart():
     """Create the buckets before running the test."""
-    if config.ENV == "local":
+    if config.CONF == "docker-dev":
         try:
-            storage_client.create_bucket(config.DATASET_BUCKET_NAME)
+            if not gcp_storage.Bucket(
+                storage_client, config.DATASET_BUCKET_NAME
+            ).exists():
+                storage_client.create_bucket(config.DATASET_BUCKET_NAME)
         except exceptions.Conflict:
             pass
         try:
-            storage_client.create_bucket(config.SCHEMA_BUCKET_NAME)
+            if not gcp_storage.Bucket(
+                storage_client, config.SCHEMA_BUCKET_NAME
+            ).exists():
+                storage_client.create_bucket(config.SCHEMA_BUCKET_NAME)
         except exceptions.Conflict:
             pass
 
@@ -60,13 +67,13 @@ class RequestWrapper:
 
 @pytest.fixture
 def client():
-    if config.ENV != "partial" | "local":
+    if config.CONF == "cloud-test":
         try:
             config.GOOGLE_APPLICATION_CREDENTIALS
             auth_req = google.auth.transport.requests.Request()
-            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
+            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
         except:
-            auth_token = config.ACCESS_TOKEN
+            auth_token = os.environ.get("ACCESS_TOKEN")
 
         client = RequestWrapper(
             config.API_URL, headers={"Authorization": f"Bearer {auth_token}"}
@@ -82,7 +89,7 @@ def upload_dataset(filename, dataset):
     """
     If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the
     real Cloud Function, so emulate the behaviour of the new_dataset function instead. If we are
-    talking to the real Cloud Function but not the real API, we wait 3 seconds for the
+    talking to the real Cloud Function but not the real API, we wait 5 seconds for the
     cloud function to complete it's processing. For testing the real API we have a better way of
     handling this delay using automated requests retries.
     """
@@ -92,7 +99,7 @@ def upload_dataset(filename, dataset):
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
-    if config.ENV == "local":
+    if config.CONF == "docker-dev":
         from main import new_dataset
 
         cloud_event = MagicMock()
@@ -101,7 +108,7 @@ def upload_dataset(filename, dataset):
             "name": filename,
         }
         new_dataset(cloud_event=cloud_event)
-    elif config.ENV == "partial":
+    elif config.CONF == "cloud-dev" or "localSDS-test":
         sleep(5)
 
 
