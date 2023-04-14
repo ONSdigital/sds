@@ -53,6 +53,7 @@ unit-test:
 	export PYTHONPATH=src/app && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
+	export SCHEMA_BUCKET_NAME="the bucket name" && \
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	pytest --cov=src/app ./src/unit_tests/

@@ -110,6 +110,9 @@ class IntegrationTestingLocalConfig(TestingConfig):
 class UnitTestingConfig(TestingConfig):
     def __init__(self):
         super().__init__()
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+
+    SCHEMA_BUCKET_NAME: str
 
 
 
