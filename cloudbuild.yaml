@@ -17,10 +17,9 @@ steps:
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python
     id: "pytest"
-    entrypoint: python
-    env: ['PYTHONPATH=../app']
-    dir: "src/unit_tests"
-    args: ["-m", "pytest", "--cov=../app", "."]
+    entrypoint: make
+    dir: "."
+    args: ["unit-test"]
   - name: python
     id: "coverage"
     dir: "src/unit_tests"
