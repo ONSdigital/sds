@@ -115,7 +115,6 @@ class UnitTestingConfig(TestingConfig):
     SCHEMA_BUCKET_NAME: str
 
 
-
 match CONF:
     case "docker-dev":
         config = ServiceEmulatorDevelopementConfig()
