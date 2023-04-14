@@ -72,7 +72,7 @@ def client():
             config.GOOGLE_APPLICATION_CREDENTIALS
             auth_req = google.auth.transport.requests.Request()
             auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
-        except:
+        except Exception:
             auth_token = os.environ.get("ACCESS_TOKEN")
 
         client = RequestWrapper(

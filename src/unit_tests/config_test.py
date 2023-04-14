@@ -30,6 +30,6 @@ def test_get_value_from_env_exception():
     Test that when nothing has been set the function returns the expected exception.
     """
     try:
-        env_value = config.get_value_from_env("test")
+        config.get_value_from_env("test")
     except Exception as e:
         assert str(e).__contains__("test")
