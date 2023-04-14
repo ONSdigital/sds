@@ -16,7 +16,7 @@ steps:
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python
-    entrypoint: 'bash'
+    entrypoint: sh
     args:
       - '-c'
       - |
