@@ -16,12 +16,8 @@ steps:
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: bash
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        'make setup'
-        'make unit-test'
+    entrypoint: make
+    args: ['unit-test']
   - name: python
     id: "coverage"
     dir: "src/unit_tests"
