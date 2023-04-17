@@ -23,7 +23,7 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    if filename[-4:].lower() == ".json":
+    if filename[-5:].lower() == ".json":
         dataset = dataset_storage.get_dataset(
             filename=filename, bucket_name=bucket_name
         )
@@ -38,4 +38,4 @@ def new_dataset(cloud_event):
         else:
             logger.error("Invalid JSON file contents")
     else:
-        logger.error("Invalid filetype received - {filename}")
+        logger.error(f"Invalid filetype received - {filename}")
