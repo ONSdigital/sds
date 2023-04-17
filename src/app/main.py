@@ -29,7 +29,7 @@ def new_dataset(cloud_event):
     logger.debug(f"Dataset: {dataset}")
 
     dataset_id = str(uuid.uuid4())
-    if dataset:
+    if dataset is not None:
         database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
         logger.info("Dataset uploaded successfully.")
     else:
