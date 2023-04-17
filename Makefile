@@ -24,7 +24,7 @@ localSDS-test:
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json && \
-	pytest src/integration_tests/integration_tests.py -vv
+	python -m pytest src/integration_tests/integration_tests.py -vv
 
 
 cloud-test:
@@ -36,7 +36,7 @@ cloud-test:
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json && \
 	export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
-	pytest src/integration_tests/integration_tests.py -vv
+	python -m pytest src/integration_tests/integration_tests.py -vv
 
 docker-test:
 	export CONF=IntegrationTestingDocker && \
@@ -47,7 +47,7 @@ docker-test:
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
-	pytest src/integration_tests/integration_tests.py -vv
+	python -m pytest src/integration_tests/integration_tests.py -vv
 
 unit-test:
 	export PYTHONPATH=src/app && \
@@ -57,7 +57,7 @@ unit-test:
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	pytest --cov=src/app ./src/unit_tests/
-	coverage report --fail-under=90 -m
+	python -m coverage report --fail-under=90 -m
 
 lint:
 	black . --check
