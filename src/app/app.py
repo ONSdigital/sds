@@ -1,8 +1,9 @@
+from fastapi import Body, FastAPI, HTTPException
+
 import database
 import storage
-from fastapi import Body, FastAPI, HTTPException
 from logging_config import logging
-from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from models import DatasetMetadataDto, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from services import schema_metadata_service
 
 logger = logging.getLogger(__name__)
@@ -92,10 +93,10 @@ async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
     return schemas_metadata
 
 
-@app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
+@app.get("/v1/dataset_metadata", response_model=list[DatasetMetadataDto])
 async def get_dataset_metadata_collection(
     survey_id: str, period_id: str
-) -> list[DatasetMetadata]:
+) -> list[DatasetMetadataDto]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
     The matching metadata are returned as an array of dictionaries.

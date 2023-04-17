@@ -1,7 +1,6 @@
-import uuid
 from datetime import datetime
 
-from models import NewDatasetMetadata, NewDatasetWithMetadata
+from models import NewDatasetMetadata, NewDatasetWithMetadata, DatasetMetadataDto
 from services.datasets import dataset_reader_service, dataset_writer_service
 
 
@@ -12,11 +11,9 @@ def process_new_dataset(
     Processes the incoming dataset.
 
     Parameters:
-    dataset_id (str): the original dataset.
     filename (str): the filename of the json containing the dataset data
     dataset (NewDatasetWithMetadata): dataset to be processed
     """
-
     dataset_unit_data_collection = dataset.pop("data")
 
     transformed_dataset = transform_dataset_metadata(
@@ -24,7 +21,7 @@ def process_new_dataset(
     )
 
     dataset_writer_service.write_transformed_dataset_to_database(
-        str(uuid.uuid4()), transformed_dataset, dataset_unit_data_collection
+        transformed_dataset, dataset_unit_data_collection
     )
 
 
@@ -32,7 +29,7 @@ def transform_dataset_metadata(
     dataset: NewDatasetMetadata,
     filename: str,
     dataset_unit_data_collection: list[object],
-):
+) -> DatasetMetadataDto:
     """
     Returns a copy of the dataset with added metadata.
 

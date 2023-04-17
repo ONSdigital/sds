@@ -47,7 +47,7 @@ class Schema(BaseModel):
 
 
 @dataclass
-class DatasetMetadata:
+class DatasetMetadataDto:
     dataset_id: str
     survey_id: str
     period_id: str
@@ -64,10 +64,11 @@ class DatasetMetadata:
 @dataclass
 class NewDatasetMetadata:
     dataset_id: str
-    schema_version: str
-    sds_schema_version: str
     survey_id: str
     period_id: str
+    title: str
+    sds_schema_version: str
+    schema_version: str
     form_type: str
 
 

@@ -3,8 +3,9 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+
 from models import (
-    DatasetMetadata,
+    DatasetMetadataDto,
     NewDatasetWithMetadata,
     PostSchemaMetadata,
     ReturnedSchemaMetadata,
@@ -153,7 +154,7 @@ def get_datasets(survey_id):
 
 def get_dataset_metadata_collection(
     survey_id: str, period_id: str
-) -> list[DatasetMetadata]:
+) -> list[DatasetMetadataDto]:
     """
     This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
     and returns the matching datasets metadata which is a nested dictionary object with the dataset_id as the key.
