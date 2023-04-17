@@ -42,6 +42,14 @@ class Config(BaseSettings):
     DATASET_BUCKET_NAME: str
 
 
+class CloudBuildConfig(Config):
+    def __init__(self):
+        super().__init__()
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+
+    SCHEMA_BUCKET_NAME: str
+
+
 class ServiceEmulatorDevelopementConfig(Config):
     def __init__(self):
         super().__init__()
@@ -131,5 +139,7 @@ match CONF:
         config = IntegrationTestingLocalConfig()
     case "unit":
         config = UnitTestingConfig()
+    case "cloud-build":
+        config = CloudBuildConfig()
     case "default":
         config = Config()
