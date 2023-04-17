@@ -11,7 +11,6 @@ from models import (
     ReturnedSchemaMetadata,
     SchemaMetadata,
 )
-from services.datasets import dataset_processor_service
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -64,18 +63,6 @@ def append_unit_to_dataset_units_collection(units_collection, unit_data) -> None
     unit_data (any): The unit being appended
     """
     units_collection.document(unit_data["ruref"]).set(unit_data)
-
-
-def set_dataset(
-    dataset_id: str, filename: str, dataset: NewDatasetWithMetadata
-) -> None:
-    """
-    This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
-    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
-    * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
-    * Set the "filename" as a field in the dataset metadata document.
-    """
-    dataset_processor_service.process_new_dataset(dataset_id, filename, dataset)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
