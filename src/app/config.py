@@ -24,8 +24,10 @@ def get_value_from_env(env_value, default_value="") -> str:
         raise Exception(f"The environment variable {env_value} must be set to proceed")
 
 
-CONF = get_value_from_env("CONF")
-
+try:
+    CONF = get_value_from_env("CONF")
+except Exception:
+    CONF = "default"
 
 class Config(BaseSettings):
     def __init__(self):
@@ -128,5 +130,5 @@ match CONF:
         config = IntegrationTestingLocalConfig()
     case "unit":
         config = UnitTestingConfig()
-    case _:
+    case "default":
         config = Config()

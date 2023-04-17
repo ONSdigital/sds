@@ -33,6 +33,7 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest"
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2' ]
