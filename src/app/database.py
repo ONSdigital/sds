@@ -3,6 +3,7 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
+
 from models import (
     DatasetMetadata,
     PostSchemaMetadata,
@@ -18,7 +19,7 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
-def get_dataset_with_survey_id(survey_id):
+def get_dataset_with_survey_id(survey_id: str) -> UnitData:
     """
     Gets a single dataset from firestore with a specific survey_id.
 
@@ -55,10 +56,17 @@ def get_dataset_unit_collection(dataset_id: str) -> object:
 
 
 def append_unit_to_dataset_units_collection(units_collection, unit_data) -> None:
+    """
+        Appends a new unit to the collection of units associated with a particular dataset.
+
+        Parameters:
+        units_collection (any): The collection of units that data is being appended to.
+        unit_data (any): The unit being appended
+    """
     units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
-def set_dataset(dataset_id, filename, dataset):
+def set_dataset(dataset_id: str, filename: str, dataset: UnitData) -> None:
     """
     This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
     * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
