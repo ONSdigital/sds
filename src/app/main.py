@@ -29,6 +29,8 @@ def new_dataset(cloud_event):
     logger.debug(f"Dataset: {dataset}")
 
     dataset_id = str(uuid.uuid4())
-    database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
-
-    logger.info("Dataset uploaded successfully.")
+    if dataset:
+        database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
+        logger.info("Dataset uploaded successfully.")
+    else:
+        logger.error("Invalid JSON file contents")       
