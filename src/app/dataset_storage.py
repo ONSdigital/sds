@@ -8,7 +8,10 @@ storage_client = storage.Client()
 
 
 def get_dataset(filename, bucket_name):
-    """Used by the cloud function."""
+    """
+    Used by the cloud function.
+    * Process if the file content is proper JSON syntax or else log error.
+    """
     bucket = storage_client.bucket(bucket_name)
     try:
         dataset = json.loads(bucket.blob(filename).download_as_string())

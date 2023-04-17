@@ -23,6 +23,10 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
+    """
+    Check if the filename ends with '.json'.
+    Process the contents if it is a valid '.json' file or else log the error.
+    """
     if filename[-5:].lower() == ".json":
         dataset = dataset_storage.get_dataset(
             filename=filename, bucket_name=bucket_name
