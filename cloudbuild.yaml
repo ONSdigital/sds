@@ -16,8 +16,12 @@ steps:
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python
-    entrypoint: make
-    args: ['unit-test']
+    id: "unit tests"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make unit-test
   - name: python
     id: "coverage"
     dir: "src/unit_tests"
