@@ -15,7 +15,7 @@ steps:
     id: "flake8"
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: bash
+  - name: python
     entrypoint: make
     args: ['unit-test']
   - name: python
