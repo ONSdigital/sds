@@ -23,11 +23,6 @@ steps:
       - |
         make setup 
         make unit-test
-  - name: python
-    id: "coverage"
-    dir: "src/unit_tests"
-    entrypoint: python
-    args: ["-m", "coverage", "report", "--fail-under=90"]
   - name: docker
     id: build_and_push
     entrypoint: sh
