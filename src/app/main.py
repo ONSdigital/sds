@@ -23,14 +23,19 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    dataset = dataset_storage.get_dataset(filename=filename, bucket_name=bucket_name)
-
-    logger.info("Dataset obtained successfully.")
-    logger.debug(f"Dataset: {dataset}")
-
-    dataset_id = str(uuid.uuid4())
-    if dataset is not None:
-        database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
-        logger.info("Dataset uploaded successfully.")
+    if filename[-4:].lower() == ".json":
+        dataset = dataset_storage.get_dataset(
+            filename=filename, bucket_name=bucket_name
+        )
+        logger.info("Dataset obtained successfully.")
+        logger.debug(f"Dataset: {dataset}")
+        dataset_id = str(uuid.uuid4())
+        if dataset is not None:
+            database.set_dataset(
+                dataset_id=dataset_id, filename=filename, dataset=dataset
+            )
+            logger.info("Dataset uploaded successfully.")
+        else:
+            logger.error("Invalid JSON file contents")
     else:
-        logger.error("Invalid JSON file contents")
+        logger.error("Invalid filetype received - {filename}")
