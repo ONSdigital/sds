@@ -1,9 +1,8 @@
-import uuid
-
-import database
-import dataset_storage
 import functions_framework
+
+import dataset_storage
 from logging_config import logging
+from services.datasets import dataset_processor_service
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,6 @@ def new_dataset(cloud_event):
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {dataset}")
 
-    dataset_id = str(uuid.uuid4())
-    database.set_dataset(dataset_id=dataset_id, filename=filename, dataset=dataset)
+    dataset_processor_service.process_new_dataset(filename, dataset)
 
     logger.info("Dataset uploaded successfully.")

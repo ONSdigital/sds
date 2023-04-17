@@ -13,10 +13,10 @@ cloud_event_test_data = {
 
 
 @patch("dataset_storage.get_dataset")
-@patch("database.set_dataset")
+@patch("services.datasets.dataset_processor_service.process_new_dataset")
 def test_new_dataset_info_is_logged(
     dataset_storage_mock,
-    set_dataset_mock,
+    process_new_dataset_mock,
     caplog,
     cloud_functions,
 ):
@@ -27,7 +27,7 @@ def test_new_dataset_info_is_logged(
     caplog.set_level(logging.INFO)
 
     dataset_storage_mock.return_value = {}
-    set_dataset_mock.return_value = {}
+    process_new_dataset_mock.return_value = {}
 
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
@@ -41,10 +41,10 @@ def test_new_dataset_info_is_logged(
 
 
 @patch("dataset_storage.get_dataset")
-@patch("database.set_dataset")
+@patch("services.datasets.dataset_processor_service.process_new_dataset")
 def test_new_dataset_debug_log(
     set_dataset_mock,
-    dataset_storage_mock,
+    process_new_dataset_mock,
     caplog,
     cloud_functions,
 ):
@@ -53,7 +53,7 @@ def test_new_dataset_debug_log(
     """
     caplog.set_level(logging.DEBUG)
 
-    dataset_storage_mock.return_value = {"test": "value"}
+    process_new_dataset_mock.return_value = {"test": "value"}
     set_dataset_mock.return_value = {"hello": "world"}
 
     cloud_event = MagicMock()

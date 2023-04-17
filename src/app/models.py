@@ -62,11 +62,15 @@ class DatasetMetadata:
 
 
 @dataclass
-class UnitData:
+class NewDatasetMetadata:
     dataset_id: str
     schema_version: str
     sds_schema_version: str
     survey_id: str
     period_id: str
     form_type: str
-    data: object
+
+
+@dataclass
+class NewDatasetWithMetadata(NewDatasetMetadata):
+    data: list[object]

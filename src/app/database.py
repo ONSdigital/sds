@@ -3,15 +3,14 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-
 from models import (
     DatasetMetadata,
+    NewDatasetWithMetadata,
     PostSchemaMetadata,
     ReturnedSchemaMetadata,
     SchemaMetadata,
-    UnitData,
 )
-from services.datasets import dataset_service
+from services.datasets import dataset_processor_service
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -19,7 +18,7 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
-def get_dataset_with_survey_id(survey_id: str) -> UnitData:
+def get_dataset_with_survey_id(survey_id: str) -> NewDatasetWithMetadata:
     """
     Gets a single dataset from firestore with a specific survey_id.
 
@@ -34,7 +33,7 @@ def get_dataset_with_survey_id(survey_id: str) -> UnitData:
     )
 
 
-def create_new_dataset(dataset_id: str, dataset: UnitData) -> None:
+def create_new_dataset(dataset_id: str, dataset: NewDatasetWithMetadata) -> None:
     """
     Creates a new dataset in firestore with a specified ID and data.
 
@@ -57,23 +56,25 @@ def get_dataset_unit_collection(dataset_id: str) -> object:
 
 def append_unit_to_dataset_units_collection(units_collection, unit_data) -> None:
     """
-        Appends a new unit to the collection of units associated with a particular dataset.
+    Appends a new unit to the collection of units associated with a particular dataset.
 
-        Parameters:
-        units_collection (any): The collection of units that data is being appended to.
-        unit_data (any): The unit being appended
+    Parameters:
+    units_collection (any): The collection of units that data is being appended to.
+    unit_data (any): The unit being appended
     """
     units_collection.document(unit_data["ruref"]).set(unit_data)
 
 
-def set_dataset(dataset_id: str, filename: str, dataset: UnitData) -> None:
+def set_dataset(
+    dataset_id: str, filename: str, dataset: NewDatasetWithMetadata
+) -> None:
     """
     This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
     * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
     * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
     * Set the "filename" as a field in the dataset metadata document.
     """
-    dataset_service.process_new_dataset(dataset_id, filename, dataset)
+    dataset_processor_service.process_new_dataset(dataset_id, filename, dataset)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
