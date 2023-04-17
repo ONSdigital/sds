@@ -14,5 +14,5 @@ def get_dataset(filename, bucket_name):
         dataset = json.loads(bucket.blob(filename).download_as_string())
         return dataset
     except ValueError as e:
-        logger.error("Invalid JSON file contents - %s" % e)
+        logger.error("Invalid JSON in the file {filename} - %s" % e)
         return None
