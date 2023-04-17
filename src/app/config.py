@@ -29,6 +29,7 @@ try:
 except Exception:
     CONF = "default"
 
+
 class Config(BaseSettings):
     def __init__(self):
         super().__init__()
