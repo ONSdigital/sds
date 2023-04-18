@@ -166,6 +166,7 @@ def test_set_IntegrationTestingLocalCloudConfig():
         and testConfig.API_URL == testConfigVars.api_url
     )
 
+
 def test_set_IntegrationTestingRemoteCloudConfig():
     """
     Test that setting the integration testing for remote cloud config object works as intended.
