@@ -42,15 +42,11 @@ class Config(BaseSettings):
     DATASET_BUCKET_NAME: str
 
 
-class CloudBuildConfig(BaseSettings):
+class CloudBuildConfig(Config):
     def __init__(self):
         super().__init__()
-        self.CONF = get_value_from_env("CONF")
-        self.TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
-    CONF: str
-    TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
     SCHEMA_BUCKET_NAME: str
 
 
