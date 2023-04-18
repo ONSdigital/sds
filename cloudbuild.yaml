@@ -69,7 +69,7 @@ steps:
         export ACCESS_TOKEN=$(cat /workspace/token)
         export CONF=IntegrationTestingCloud
         export API_URL=$_API_URL
-        export DATASET_BUCKET_NAME=$_DATASET_BUCKET_NAME
+        export DATASET_BUCKET_NAME=$_DATASET_BUCKET
         make cloud-test
 options:
   logging: CLOUD_LOGGING_ONLY
