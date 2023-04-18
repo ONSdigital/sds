@@ -153,7 +153,7 @@ match CONF:
         config = UnitTestingConfig()
     case "cloud-build":
         config = CloudBuildConfig()
-    case "cloud-intergration-test":
+    case "cloud-integration-test":
         config = IntegrationTestingRemoteCloudConfig()
     case "default":
         config = Config()
