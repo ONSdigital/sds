@@ -41,11 +41,11 @@ def validate_keys_dataset(dataset):
     if "period_id" not in dataset.keys():
         missing_keys.append("period_id")
     if "sds_schema_version" not in dataset.keys():
-        missing_keys.append("sds_schema_ version")
+        missing_keys.append("sds_schema_version")
     if "schema_version" not in dataset.keys():
         missing_keys.append("schema_version")
     if "form_type" not in dataset.keys():
-        missing_keys.append("schema_version")
+        missing_keys.append("form_type")
 
     if len(missing_keys) > 0:
         isValid = False
