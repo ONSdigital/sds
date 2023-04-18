@@ -88,7 +88,15 @@ class TestingConfig(Config):
     TEST_SCHEMA_PATH: str
 
 
-class IntegrationTestingCloudConfig(TestingConfig):
+class IntegrationTestingRemoteCloudConfig(TestingConfig):
+    def __init__(self):
+        super().__init__()
+        self.API_URL = get_value_from_env("API_URL")
+
+    API_URL: str
+
+
+class IntegrationTestingLocalCloudConfig(TestingConfig):
     def __init__(self):
         super().__init__()
         self.API_URL = get_value_from_env("API_URL")
@@ -138,12 +146,14 @@ match CONF:
     case "IntegrationTestingLocalSDS":
         config = IntegrationTestingLocalSDSConfig()
     case "IntegrationTestingCloud":
-        config = IntegrationTestingCloudConfig()
+        config = IntegrationTestingLocalCloudConfig()
     case "IntegrationTestingDocker":
         config = IntegrationTestingLocalConfig()
     case "unit":
         config = UnitTestingConfig()
     case "cloud-build":
         config = CloudBuildConfig()
+    case "cloud-intergration-test":
+        config = IntegrationTestingRemoteCloudConfig
     case "default":
         config = Config()
