@@ -24,11 +24,12 @@ def test_new_dataset(cloud_functions, database, monkeypatch):
     with open("../test_data/dataset.json") as f:
         dataset_with_meta = json.load(f)
     mock_storage_client = MagicMock()
-    cloud_functions.dataset_storage.storage_client = mock_storage_client
+    cloud_functions.bucket_file_reader.storage_client = mock_storage_client
     mock_storage_client.bucket().blob().download_as_string.return_value = json.dumps(
         dataset_with_meta, indent=2
     )
     database.datasets_collection.where().order_by().limit().stream().__next__().to_dict.return_value = {
         "sds_dataset_version": 25
     }
+
     cloud_functions.new_dataset(cloud_event=cloud_event)
