@@ -64,10 +64,10 @@ cloud-int-test:
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
 	export TEST_DATASET_PATH=src/test_data/dataset.json && \
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
-	export ACCESS_TOKEN=ACCESS_TOKEN && \
-	export CONF=CONF && \
-	export API_URL=API_URL && \
-	export DATASET_BUCKET_NAME=DATASET_BUCKET && \
+	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
+	export CONF=cloud-integration-test && \
+	export API_URL=${API_URL} && \
+	export DATASET_BUCKET_NAME=${DATASET_BUCKET} && \
 	python -m pytest src/integration_tests/integration_tests.py -vv
 
 lint:
