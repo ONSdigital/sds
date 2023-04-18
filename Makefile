@@ -67,7 +67,7 @@ cloud-int-test:
 	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
 	export API_URL=${API_URL} && \
-	export DATASET_BUCKET_NAME=${DATASET_BUCKET} && \
+	export DATASET_BUCKET_NAME=${DATASET_BUCKET_NAME} && \
 	python -m pytest src/integration_tests/integration_tests.py -vv
 
 lint:
