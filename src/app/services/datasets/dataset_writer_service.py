@@ -19,7 +19,9 @@ def write_transformed_dataset_to_database(
     write_new_unit_data_to_database(dataset_id, dataset_unit_data_collection)
 
 
-def write_new_unit_data_to_database(dataset_id: str, dataset_unit_data_collection: list[object]) -> None:
+def write_new_unit_data_to_database(
+    dataset_id: str, dataset_unit_data_collection: list[object]
+) -> None:
     """
     Writes the new unit data to the database
 

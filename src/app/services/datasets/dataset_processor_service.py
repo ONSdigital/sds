@@ -1,12 +1,10 @@
 from datetime import datetime
 
-from models import NewDatasetMetadata, NewDatasetWithMetadata, DatasetMetadataDto
+from models import DatasetMetadataDto, NewDatasetMetadata, NewDatasetWithMetadata
 from services.datasets import dataset_reader_service, dataset_writer_service
 
 
-def process_new_dataset(
-    filename: str, dataset: NewDatasetWithMetadata
-) -> None:
+def process_new_dataset(filename: str, dataset: NewDatasetWithMetadata) -> None:
     """
     Processes the incoming dataset.
 

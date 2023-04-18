@@ -3,7 +3,6 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import firestore
-
 from models import (
     DatasetMetadataDto,
     NewDatasetWithMetadata,
@@ -18,7 +17,7 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
-def get_dataset_with_survey_id(survey_id: str) -> NewDatasetWithMetadata:
+def get_dataset_with_survey_id(survey_id: str) -> DatasetMetadataDto:
     """
     Gets a single dataset from firestore with a specific survey_id.
 
@@ -44,7 +43,7 @@ def create_new_dataset(dataset_id: str, dataset: NewDatasetWithMetadata) -> None
     datasets_collection.document(dataset_id).set(dataset)
 
 
-def get_dataset_unit_collection(dataset_id: str) -> object:
+def get_dataset_unit_collection(dataset_id: str) -> list[object]:
     """
     Gets the collection of units associated with a particular dataset.
 

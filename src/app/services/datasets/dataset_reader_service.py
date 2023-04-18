@@ -1,9 +1,8 @@
 import database
+from models import DatasetMetadataDto
 
-from models import NewDatasetWithMetadata
 
-
-def get_dataset_with_survey_id(survey_id: str) -> NewDatasetWithMetadata:
+def get_dataset_with_survey_id(survey_id: str) -> DatasetMetadataDto:
     """
     Returns a dataset associated with a specific survey id.
 
