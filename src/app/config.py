@@ -92,7 +92,9 @@ class IntegrationTestingRemoteCloudConfig(TestingConfig):
     def __init__(self):
         super().__init__()
         self.API_URL = get_value_from_env("API_URL")
+        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
 
+    SCHEMA_BUCKET_NAME: str
     API_URL: str
 
 
