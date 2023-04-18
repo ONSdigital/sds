@@ -154,6 +154,6 @@ match CONF:
     case "cloud-build":
         config = CloudBuildConfig()
     case "cloud-intergration-test":
-        config = IntegrationTestingRemoteCloudConfig
+        config = IntegrationTestingRemoteCloudConfig()
     case "default":
         config = Config()
