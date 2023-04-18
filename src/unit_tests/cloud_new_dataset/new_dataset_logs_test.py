@@ -80,7 +80,6 @@ def test_new_dataset_debug_log(
         "'test_bucket', 'metageneration': '1', 'timeCreated': 'test_time_created', "
         "'updated': 'test_time_updated', 'name': 'test_name.json'}"
     )
-    assert (
-        caplog.records[3].message
-        == "Dataset: " + str(dataset_storage_mock.return_value)
+    assert caplog.records[3].message == "Dataset: " + str(
+        dataset_storage_mock.return_value
     )
