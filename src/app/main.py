@@ -37,15 +37,15 @@ def new_dataset(cloud_event):
             if isValid is True:
                 logger.info("Dataset obtained successfully.")
                 logger.debug(f"Dataset: {dataset}")
-                dataset_id = str(uuid.uuid4())            
+                dataset_id = str(uuid.uuid4())
                 database.set_dataset(
                     dataset_id=dataset_id, filename=filename, dataset=dataset
                 )
                 logger.info("Dataset uploaded successfully.")
             else:
-                message = ''
+                message = ""
                 for key in missing_keys:
-                    message = message + key + ', '
+                    message = message + key + ", "
                 logger.error(f"The keys {message} are missing in the JSON object")
         else:
             logger.error("Invalid JSON file contents")
@@ -56,16 +56,16 @@ def new_dataset(cloud_event):
 def validate_keys_dataset(dataset):
     isValid = True
     missing_keys = []
-    if 'survey_id' not in dataset:
-        missing_keys.append('survey_id')
-    if 'period_id' not in dataset:
-        missing_keys.append('period_id')
-    if 'sds_schema_ version' not in dataset:
-        missing_keys.append('sds_schema_ version')
-    if 'schema_version' not in dataset:
-        missing_keys.append('schema_version')
-    if 'form_type' not in dataset:
-        missing_keys.append('schema_version')
+    if "survey_id" not in dataset:
+        missing_keys.append("survey_id")
+    if "period_id" not in dataset:
+        missing_keys.append("period_id")
+    if "sds_schema_ version" not in dataset:
+        missing_keys.append("sds_schema_ version")
+    if "schema_version" not in dataset:
+        missing_keys.append("schema_version")
+    if "form_type" not in dataset:
+        missing_keys.append("schema_version")
 
     if len(missing_keys) > 0:
         isValid = False
