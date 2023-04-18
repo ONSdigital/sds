@@ -70,7 +70,6 @@ def test_set_CloudBuildConfig():
     Test that setting the cloud build config object works as intended.
     """
     os.environ["CONF"] = testConfigVars.conf
-    os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
     os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
 
     testConfig = config.CloudBuildConfig()
@@ -78,7 +77,6 @@ def test_set_CloudBuildConfig():
     assert (
         testConfig.CONF == testConfigVars.conf
         and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-        and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
         and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
     )
 
