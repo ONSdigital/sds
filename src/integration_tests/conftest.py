@@ -7,12 +7,12 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
 import requests
+from config import config
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
-from config import config
 
 storage_client = gcp_storage.Client()
 
