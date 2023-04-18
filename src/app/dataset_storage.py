@@ -29,12 +29,10 @@ def get_dataset(filename, bucket_name):
         return None
 
 
-"""
-This method validates the JSON object to check if it contains all the mandatory keys.
-"""
-
-
 def validate_keys_dataset(dataset):
+    """
+    This method validates the JSON object to check if it contains all the mandatory keys.
+    """
     isValid = True
     missing_keys = []
 
