@@ -70,6 +70,6 @@ steps:
         export CONF=cloud-integration-test
         export API_URL=$_API_URL
         export DATASET_BUCKET_NAME=$_DATASET_BUCKET
-        make cloud-test
+        make cloud-int-test
 options:
   logging: CLOUD_LOGGING_ONLY

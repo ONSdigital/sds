@@ -59,6 +59,13 @@ unit-test:
 	python -m pytest --cov=src/app ./src/unit_tests/
 	python -m coverage report --fail-under=90 -m
 
+cloud-int-test:
+	export PYTHONPATH=src/app && \
+	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+	export TEST_DATASET_PATH=src/test_data/dataset.json && \
+	export TEST_SCHEMA_PATH=src/test_data/schema.json && \
+	python -m pytest src/integration_tests/integration_tests.py -vv
+
 lint:
 	black . --check
 	isort . --check-only --profile black
