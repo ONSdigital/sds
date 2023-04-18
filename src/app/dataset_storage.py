@@ -22,7 +22,7 @@ def get_dataset(filename, bucket_name):
             message = ""
             for key in missing_keys:
                 message = message + key + ", "
-            logger.error(f"The keys {message} are missing in the JSON object")        
+            logger.error(f"The keys {message} are missing in the JSON object")
             return None
     except ValueError as e:
         logger.error(f"Invalid JSON in the file {filename} - %s" % e)

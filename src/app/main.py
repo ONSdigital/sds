@@ -32,7 +32,7 @@ def new_dataset(cloud_event):
             filename=filename, bucket_name=bucket_name
         )
 
-        if dataset is not None:    
+        if dataset is not None:
             logger.info("Dataset obtained successfully.")
             logger.debug(f"Dataset: {dataset}")
             dataset_id = str(uuid.uuid4())
@@ -44,4 +44,3 @@ def new_dataset(cloud_event):
             logger.error("Invalid JSON file contents")
     else:
         logger.error(f"Invalid filetype received - {filename}")
-

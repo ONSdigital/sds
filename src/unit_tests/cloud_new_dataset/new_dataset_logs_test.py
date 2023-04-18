@@ -32,7 +32,7 @@ def test_new_dataset_info_is_logged(
         "form_type": "yyy",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-      }
+    }
     set_dataset_mock.return_value = {}
 
     cloud_event = MagicMock()
