@@ -143,9 +143,9 @@ def test_set_TestingConfig():
     )
 
 
-def test_set_IntegrationTestingCloudConfig():
+def test_set_IntegrationTestingLocalCloudConfig():
     """
-    Test that setting the integration testing for cloud config object works as intended.
+    Test that setting the integration testing for local cloud config object works as intended.
     """
     os.environ["CONF"] = testConfigVars.conf
     os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
@@ -154,7 +154,7 @@ def test_set_IntegrationTestingCloudConfig():
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
     os.environ["API_URL"] = testConfigVars.api_url
 
-    testConfig = config.IntegrationTestingCloudConfig()
+    testConfig = config.IntegrationTestingLocalCloudConfig()
 
     assert (
         testConfig.CONF == testConfigVars.conf
@@ -163,6 +163,27 @@ def test_set_IntegrationTestingCloudConfig():
         and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
         and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
         and testConfig.GOOGLE_APPLICATION_CREDENTIALS == testConfigVars.app_credentials
+        and testConfig.API_URL == testConfigVars.api_url
+    )
+
+def test_set_IntegrationTestingRemoteCloudConfig():
+    """
+    Test that setting the integration testing for remote cloud config object works as intended.
+    """
+    os.environ["CONF"] = testConfigVars.conf
+    os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
+    os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
+    os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
+    os.environ["API_URL"] = testConfigVars.api_url
+
+    testConfig = config.IntegrationTestingRemoteCloudConfig()
+
+    assert (
+        testConfig.CONF == testConfigVars.conf
+        and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
+        and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
+        and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
+        and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
         and testConfig.API_URL == testConfigVars.api_url
     )
 
