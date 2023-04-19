@@ -24,4 +24,4 @@ def test_upload_new_dataset(new_dataset, dataset_repository_mock):
 
     new_dataset(cloud_event=cloud_event)
 
-    DatasetRepository.get_dataset_with_survey_id.assert_called_once_with('xyz')
+    DatasetRepository.get_dataset_with_survey_id.assert_called_once_with("xyz")

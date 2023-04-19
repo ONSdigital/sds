@@ -1,7 +1,6 @@
 import functions_framework
-from logging_config import logging
-
 from bucket.bucket_file_reader import BucketFileReader
+from logging_config import logging
 from services.dataset.dataset_processor_service import DatasetProcessorService
 
 logger = logging.getLogger(__name__)

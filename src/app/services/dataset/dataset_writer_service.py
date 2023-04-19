@@ -23,7 +23,6 @@ class DatasetWriterService:
         dataset_id = str(uuid.uuid4())
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
         self.write_new_unit_data_to_database(dataset_id, dataset_unit_data_collection)
-        
 
     def write_new_unit_data_to_database(
         self, dataset_id: str, dataset_unit_data_collection: list[object]

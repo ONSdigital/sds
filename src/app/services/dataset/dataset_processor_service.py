@@ -6,7 +6,6 @@ from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
 
 
-
 class DatasetProcessorService:
     def __init__(self) -> None:
         self.dataset_repository = DatasetRepository()
@@ -66,7 +65,9 @@ class DatasetProcessorService:
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        datasets_result = self.dataset_reader_service.get_dataset_with_survey_id(survey_id)
+        datasets_result = self.dataset_reader_service.get_dataset_with_survey_id(
+            survey_id
+        )
 
         try:
             latest_version = next(iter(datasets_result))["sds_dataset_version"] + 1
@@ -74,5 +75,3 @@ class DatasetProcessorService:
             latest_version = 1
 
         return latest_version
-    
-

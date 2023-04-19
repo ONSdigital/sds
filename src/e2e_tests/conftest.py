@@ -1,11 +1,11 @@
 import json
 from unittest.mock import MagicMock
-import firebase_admin
-from firebase_admin import firestore
-from coverage.annotate import os
 
+import firebase_admin
 import pytest
 from bucket.bucket_file_reader import BucketFileReader
+from coverage.annotate import os
+from firebase_admin import firestore
 from google.cloud import storage
 from repositories.dataset_repository import DatasetRepository
 
@@ -32,19 +32,21 @@ def dataset_repository_mock(monkeypatch):
     monkeypatch.setattr(
         DatasetRepository,
         "get_dataset_with_survey_id",
-        lambda self, survey_id: [{
-            "dataset_id": "test_dataset_id",
-            "survey_id": "test_survey_id",
-            "period_id": "test_period_id",
-            "title": "test_title",
-            "sds_schema_version": "test_schema_version",
-            "sds_published_at": "2023-04-14T12:13:23Z",
-            "total_reporting_units": 1,
-            "schema_version": "test_schema_version",
-            "sds_dataset_version": 1,
-            "filename": "test_filename.json",
-            "form_type": "test_form_type",
-        }],
+        lambda self, survey_id: [
+            {
+                "dataset_id": "test_dataset_id",
+                "survey_id": "test_survey_id",
+                "period_id": "test_period_id",
+                "title": "test_title",
+                "sds_schema_version": "test_schema_version",
+                "sds_published_at": "2023-04-14T12:13:23Z",
+                "total_reporting_units": 1,
+                "schema_version": "test_schema_version",
+                "sds_dataset_version": 1,
+                "filename": "test_filename.json",
+                "form_type": "test_form_type",
+            }
+        ],
     )
     monkeypatch.setattr(
         DatasetRepository, "create_new_dataset", lambda self, dataset_id, dataset: None
@@ -65,9 +67,11 @@ def dataset_repository_mock(monkeypatch):
 
     yield DatasetRepository
 
+
 @pytest.fixture()
 def new_dataset(monkeypatch, bucket_file_reader_mock, dataset_repository_mock):
     os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
     monkeypatch.setattr(storage, "Client", MagicMock())
     from main import new_dataset
-    yield new_dataset    
+
+    yield new_dataset
