@@ -40,7 +40,7 @@ def client(database, storage):
 
 
 @pytest.fixture
-def cloud_functions(database, storage):
+def cloud_function(database, storage):
     os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
     import main
 

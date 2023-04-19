@@ -1,8 +1,8 @@
 import functions_framework
-
-import bucket_file_reader
 from logging_config import logging
-from services.datasets import dataset_processor_service
+
+from bucket.bucket_file_reader import BucketFileReader
+from services.dataset.dataset_processor_service import DatasetProcessorService
 
 logger = logging.getLogger(__name__)
 
@@ -22,13 +22,13 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    dataset = bucket_file_reader.get_file_from_bucket(
+    dataset = BucketFileReader().get_file_from_bucket(
         filename=filename, bucket_name=bucket_name
     )
 
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {dataset}")
 
-    dataset_processor_service.process_new_dataset(filename, dataset)
+    DatasetProcessorService().process_new_dataset(filename, dataset)
 
     logger.info("Dataset uploaded successfully.")

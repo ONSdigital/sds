@@ -10,3 +10,4 @@ devtools/gcp-storage-emulator/data/*
 devtools/firebase-emulator/*.log
 .DS_Store
 *.pyc
+.vscode/settings.json
