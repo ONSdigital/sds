@@ -3,6 +3,8 @@ from unittest.mock import MagicMock, patch
 
 
 def test_get_dataset_validate_keys(dataset_storage):
+    with open("../test_data/dataset.json") as f:
+        dataset = json.load(f)
     mandatory_keys = [
         "survey_id",
         "period_id",
@@ -11,10 +13,14 @@ def test_get_dataset_validate_keys(dataset_storage):
         "form_type",
         "data",
     ]
+    missing_keys = []
+    message = ""
     for key in mandatory_keys:
-        with open("../test_data/dataset.json") as f:
-            dataset = json.load(f)
         dataset.pop(key)
+        missing_keys.append(key)
+        expected_message = ", ".join(missing_keys)
+
         isValid, message = dataset_storage.validate_keys(dataset)
+
         assert isValid == False
-        assert message == key
+        assert message == expected_message
