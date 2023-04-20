@@ -1,6 +1,5 @@
-from pydantic import BaseSettings
-
 from config.config_helpers import get_value_from_env
+from pydantic import BaseSettings
 
 
 class Config(BaseSettings):
