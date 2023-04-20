@@ -1,4 +1,4 @@
-from src.app.config.config import (
+from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
