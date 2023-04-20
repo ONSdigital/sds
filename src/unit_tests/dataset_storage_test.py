@@ -21,4 +21,4 @@ def test_get_dataset_validate_keys(dataset_storage):
 
         isValid, message = dataset_storage.validate_keys(dataset)
 
-        assert isValid, message == [False, expected_message]
+        assert [isValid, message] == [False, expected_message]
