@@ -1,6 +1,11 @@
 import firebase_admin
 from firebase_admin import firestore
-from models import DatasetMetadataDto, DatasetMetadataWithoutIdDto, NewDatasetWithMetadata
+from models import (
+    DatasetMetadataDto,
+    DatasetMetadataWithoutIdDto,
+    NewDatasetWithMetadata,
+    UnitDataset,
+)
 
 
 class DatasetRepository:
@@ -45,7 +50,7 @@ class DatasetRepository:
         return self.datasets_collection.document(dataset_id).collection("units")
 
     def append_unit_to_dataset_units_collection(
-        self, units_collection, unit_data
+        self, units_collection: list[UnitDataset], unit_data: UnitDataset
     ) -> None:
         """
         Appends a new unit to the collection of units associated with a particular dataset.

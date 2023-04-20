@@ -1,5 +1,4 @@
-import database
-from models import DatasetMetadataDto
+from models import DatasetMetadataDto, UnitDataset
 from repositories.dataset_repository import DatasetRepository
 
 
@@ -16,3 +15,6 @@ class DatasetReaderService:
         survey_id (str): survey_id used for query match
         """
         return self.dataset_repository.get_dataset_with_survey_id(survey_id)
+
+    def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
+        return self.dataset_repository.get_dataset_unit_collection(dataset_id)
