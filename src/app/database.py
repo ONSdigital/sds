@@ -17,53 +17,6 @@ datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 
 
-def get_dataset_with_survey_id(survey_id: str) -> DatasetMetadataDto:
-    """
-    Gets a single dataset from firestore with a specific survey_id.
-
-    Parameters:
-    survey_id (str): survey_id of the specified dataset.
-    """
-    return (
-        datasets_collection.where("survey_id", "==", survey_id)
-        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
-        .limit(1)
-        .stream()
-    )
-
-
-def create_new_dataset(dataset_id: str, dataset: NewDatasetWithMetadata) -> None:
-    """
-    Creates a new dataset in firestore with a specified ID and data.
-
-    Parameters:
-    dataset_id (str): uniquely generated GUID id of the dataset.
-    dataset (UnitData): unit dataset being created in firestore.
-    """
-    datasets_collection.document(dataset_id).set(dataset)
-
-
-def get_dataset_unit_collection(dataset_id: str) -> list[object]:
-    """
-    Gets the collection of units associated with a particular dataset.
-
-    Parameters:
-    dataset_id (str): uniquely generated GUID id of the dataset.
-    """
-    return datasets_collection.document(dataset_id).collection("units")
-
-
-def append_unit_to_dataset_units_collection(units_collection, unit_data) -> None:
-    """
-    Appends a new unit to the collection of units associated with a particular dataset.
-
-    Parameters:
-    units_collection (any): The collection of units that data is being appended to.
-    unit_data (any): The unit being appended
-    """
-    units_collection.document(unit_data["ruref"]).set(unit_data)
-
-
 def get_unit_supplementary_data(dataset_id, unit_id):
     """Get the unit data from dataset collection, that originally came from the dataset."""
 
