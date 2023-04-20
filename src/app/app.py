@@ -8,7 +8,7 @@ from models import (
     ReturnedSchemaMetadata,
     Schema,
 )
-from services import schema_metadata_service
+from services.schema_metadata import schema_metadata_service
 
 logger = logging.getLogger(__name__)
 app = FastAPI()

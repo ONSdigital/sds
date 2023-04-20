@@ -22,7 +22,7 @@ test_schema_metadata = {
 }
 
 
-@patch("services.schema_metadata_service.process_schema_metadata")
+@patch("services.schema_metadata.schema_metadata_service.process_schema_metadata")
 def test_post_schema_metadata_200_is_logged(process_mock, caplog, client):
     """
     When the schema metadata is posted successfully a message is logged.
@@ -39,7 +39,7 @@ def test_post_schema_metadata_200_is_logged(process_mock, caplog, client):
     assert caplog.records[1].message == "Schema metadata successfully posted."
 
 
-@patch("services.schema_metadata_service.process_schema_metadata")
+@patch("services.schema_metadata.schema_metadata_service.process_schema_metadata")
 def test_post_schema_metadata_debug_logs(process_mock, caplog, client):
     """
     There should be debug logs for data that is inputted and retrieved.

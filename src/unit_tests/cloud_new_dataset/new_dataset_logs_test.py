@@ -1,6 +1,9 @@
 import logging
 from unittest.mock import MagicMock, patch
 
+from bucket.bucket_file_reader import BucketFileReader
+from services.dataset.dataset_processor_service import DatasetProcessorService
+
 cloud_event_test_data = {
     "id": "test_id",
     "type": "test_type",
@@ -12,13 +15,9 @@ cloud_event_test_data = {
 }
 
 
-@patch("bucket_file_reader.get_file_from_bucket")
-@patch("services.datasets.dataset_processor_service.process_new_dataset")
 def test_new_dataset_info_is_logged(
-    bucket_file_reader_mock,
-    process_new_dataset_mock,
     caplog,
-    cloud_functions,
+    cloud_function,
 ):
     """
     There should be a log for when the cloud function is triggered and when the
@@ -26,13 +25,16 @@ def test_new_dataset_info_is_logged(
     """
     caplog.set_level(logging.INFO)
 
-    bucket_file_reader_mock.return_value = {}
-    process_new_dataset_mock.return_value = {}
+    BucketFileReader.get_file_from_bucket = MagicMock()
+    DatasetProcessorService.process_new_dataset = MagicMock()
+
+    BucketFileReader.get_file_from_bucket.return_value = {}
+    DatasetProcessorService.process_new_dataset.return_value = {}
 
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
 
-    cloud_functions.new_dataset(cloud_event=cloud_event)
+    cloud_function.new_dataset(cloud_event=cloud_event)
 
     assert len(caplog.records) == 3
     assert caplog.records[0].message == "Uploading new dataset..."
@@ -40,26 +42,26 @@ def test_new_dataset_info_is_logged(
     assert caplog.records[2].message == "Dataset uploaded successfully."
 
 
-@patch("bucket_file_reader.get_file_from_bucket")
-@patch("services.datasets.dataset_processor_service.process_new_dataset")
 def test_new_dataset_debug_log(
-    bucket_file_reader_mock,
-    process_new_dataset_mock,
     caplog,
-    cloud_functions,
+    cloud_function,
 ):
     """
     There should be debug logs for inputted and retrieved data.
     """
     caplog.set_level(logging.DEBUG)
 
-    process_new_dataset_mock.return_value = {"test": "value"}
-    bucket_file_reader_mock.return_value = {"hello": "world"}
+
+    BucketFileReader.get_file_from_bucket = MagicMock()
+    DatasetProcessorService.process_new_dataset = MagicMock()
+
+    BucketFileReader.get_file_from_bucket.return_value = {"test": "value"}
+    DatasetProcessorService.process_new_dataset.return_value = {"hello": "world"}
 
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
 
-    cloud_functions.new_dataset(cloud_event=cloud_event)
+    cloud_function.new_dataset(cloud_event=cloud_event)
 
     assert (
         caplog.records[1].message
