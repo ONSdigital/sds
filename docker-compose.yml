@@ -17,12 +17,12 @@ services:
       - 3000:3000
     environment:
       - PORT=3000
+      - CONF=docker-dev
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
       - DATASET_BUCKET_NAME=dataset_bucket
-      - DATASET_BUCKET=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
       - LOG_LEVEL=INFO

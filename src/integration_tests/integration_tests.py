@@ -1,6 +1,10 @@
 import json
 from datetime import datetime
 
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
+
 
 def test_dataset(client, bucket_loader):
     """
@@ -11,7 +15,7 @@ def test_dataset(client, bucket_loader):
     * We then use the API to get some unit data back using the dataset_id and a known ru_ref
     * The dataset id an auto generated GUID
     """
-    with open("../test_data/dataset.json") as f:
+    with open(config.TEST_DATASET_PATH) as f:
         dataset = json.load(f)
 
     filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
@@ -84,7 +88,7 @@ def test_post_schema(client):
     can be retrieved. Also check that schema can be retrieved directly from storage.
     """
     survey_id = "076"
-    with open("../test_data/schema.json") as f:
+    with open(config.TEST_SCHEMA_PATH) as f:
         test_schema = json.load(f)
 
     schema_post_response = client.post("/v1/schema", json=test_schema)

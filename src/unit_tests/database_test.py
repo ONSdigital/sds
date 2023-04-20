@@ -1,5 +1,9 @@
 from unittest.mock import MagicMock
 
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
+
 
 def test_get_data(database):
     database.get_unit_supplementary_data(dataset_id="1", unit_id="1")

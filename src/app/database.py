@@ -2,6 +2,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
+from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from models import (
     DatasetMetadataDto,
@@ -15,6 +16,7 @@ firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
+config = ConfigFactory.get_config()
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
@@ -48,7 +50,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMeta
         schema_location=schema_location,
         sds_schema_version=latest_version,
         survey_id=survey_id,
-        sds_published_at=str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
+        sds_published_at=str(datetime.now().strftime(config.TIME_FORMAT)),
     )
 
     schemas_collection.document(schema_id).set(asdict(schema_metadata))
