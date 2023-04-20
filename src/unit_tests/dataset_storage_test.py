@@ -2,6 +2,9 @@ import json
 
 
 def test_get_dataset_validate_keys(dataset_storage):
+    """
+    This method checks if the 'validate_keys' method ensures that each mandatory key is present in the dataset JSON.
+    """
     with open("../test_data/dataset.json") as f:
         dataset = json.load(f)
     mandatory_keys = [
