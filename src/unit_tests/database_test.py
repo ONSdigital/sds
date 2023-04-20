@@ -1,7 +1,9 @@
 import json
 from unittest.mock import MagicMock
 
-from config import config
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
 
 
 def test_set_dataset(database):

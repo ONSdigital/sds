@@ -2,11 +2,12 @@ import json
 import uuid
 
 import requests
-from config import DATASET_BUCKET_NAME, SCHEMA_BUCKET_NAME
+from config.config_factory import ConfigFactory
 from fastapi import FastAPI, Request
 from google.cloud import storage
 
 app = FastAPI()
+config = ConfigFactory.get_config()
 
 
 @app.post("/")
@@ -17,9 +18,11 @@ async def dev_simulate_publish_dataset(request: Request):
     storage_client = storage.Client()
 
     # Check if the dataset bucket exists.
-    dataset_bucket = setup_local_storage(DATASET_BUCKET_NAME, SCHEMA_BUCKET_NAME)
+    dataset_bucket = setup_local_storage(
+        config.DATASET_BUCKET_NAME, config.SCHEMA_BUCKET_NAME
+    )
     # Supporting to ensure schema bucket is created for docker enviroment.
-    setup_local_storage(SCHEMA_BUCKET_NAME, storage_client)
+    setup_local_storage(config.SCHEMA_BUCKET_NAME, storage_client)
 
     # Create a guid as the filename before we publish it
     filename = f"{str(uuid.uuid4())}.json"

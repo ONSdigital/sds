@@ -1,10 +1,11 @@
 import json
 
-from config import config
+from config.config_factory import ConfigFactory
 from google.cloud import storage
 from models import Schema
 
 storage_client = storage.Client()
+config = ConfigFactory.get_config()
 
 try:
     bucket = storage_client.bucket(config.SCHEMA_BUCKET_NAME)

@@ -1,6 +1,6 @@
 import os
 
-import config
+from config import config
 
 
 def test_get_value_from_env():

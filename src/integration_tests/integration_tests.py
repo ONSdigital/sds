@@ -1,7 +1,9 @@
 import json
 from datetime import datetime
 
-from config import config
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
 
 
 def test_dataset(client, bucket_loader):

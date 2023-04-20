@@ -7,7 +7,6 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
 import requests
-from config import config
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
@@ -15,25 +14,33 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 storage_client = gcp_storage.Client()
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
 
 
 def pytest_sessionstart():
     """Create the buckets before running the test."""
     if config.CONF == "docker-dev":
-        try:
-            if not gcp_storage.Bucket(
-                storage_client, config.DATASET_BUCKET_NAME
-            ).exists():
-                storage_client.create_bucket(config.DATASET_BUCKET_NAME)
-        except exceptions.Conflict:
-            pass
-        try:
-            if not gcp_storage.Bucket(
-                storage_client, config.SCHEMA_BUCKET_NAME
-            ).exists():
-                storage_client.create_bucket(config.SCHEMA_BUCKET_NAME)
-        except exceptions.Conflict:
-            pass
+        check_and_create_bucket(config.DATASET_BUCKET_NAME)
+        check_and_create_bucket(config.SCHEMA_BUCKET_NAME)
+
+
+def check_and_create_bucket(bucket_name: str) -> None:
+    """
+    Method to check if a bucket of the provided name exists and create if it dosent exist
+
+    Parameters:
+        bucket_name: the name of the bucket to check and create
+
+    Returns:
+        None
+    """
+    try:
+        if not gcp_storage.Bucket(storage_client, bucket_name).exists():
+            storage_client.create_bucket(bucket_name)
+    except exceptions.Conflict:
+        pass
 
 
 class RequestWrapper:

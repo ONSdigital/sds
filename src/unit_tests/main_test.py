@@ -1,8 +1,10 @@
 import json
 from unittest.mock import MagicMock
 
-from config import config
+from config.config_factory import ConfigFactory
 from google.cloud import storage as google_cloud_storage
+
+config = ConfigFactory.get_config()
 
 
 def test_new_dataset(cloud_functions, database, monkeypatch):

@@ -2,7 +2,7 @@ from dataclasses import asdict
 from datetime import datetime
 
 import firebase_admin
-from config import config
+from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from models import (
     DatasetMetadata,
@@ -15,6 +15,7 @@ firebase_admin.initialize_app()
 db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
+config = ConfigFactory.get_config()
 
 
 def set_dataset(dataset_id, filename, dataset):
