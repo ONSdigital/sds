@@ -28,11 +28,15 @@ def get_dataset(filename, bucket_name):
         return None
 
 
+"""
+This method validates the JSON object to check if it contains all the mandatory keys.
+In the future, this can be enhanced further to validate nested JSON objects, for example, the 'data' element.
+"""
+
+
 def validate_keys(dataset: dict) -> tuple[bool, str]:
-    """
-    This method validates the JSON object to check if it contains all the mandatory keys.
-    """
     isValid = True
+    # Currently, it validates for the below mandatory keys. We can build upon this list if more validation is needed.
     mandatory_keys = [
         "survey_id",
         "period_id",

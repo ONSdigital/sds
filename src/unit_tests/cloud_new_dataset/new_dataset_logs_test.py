@@ -95,15 +95,13 @@ def test_new_dataset_debug_log(
     )
 
 
-"""
-This test ensures that there is an error log when the filetype is invalid.
-"""
-
-
 def test_new_dataset_invalid_file(
     caplog,
     cloud_functions,
 ):
+    """
+    This test ensures that there is an error log when the filetype is invalid.
+    """
     caplog.set_level(logging.ERROR)
 
     cloud_event = MagicMock()
@@ -115,17 +113,15 @@ def test_new_dataset_invalid_file(
     assert caplog.records[0].message == "Invalid filetype received - test_name.pdf"
 
 
-"""
-This test ensures that there are error logs when the mandatory keys are missing in the JSON file contents.
-"""
-
-
 @patch("dataset_storage.validate_keys")
-def test_new_dataset_invalid_json(
+def test_new_dataset_missing_keys(
     dataset_storage_mock,
     caplog,
     cloud_functions,
 ):
+    """
+    This test ensures that there are error logs when the mandatory keys are missing in the JSON file contents.
+    """
     caplog.set_level(logging.ERROR)
 
     dataset_storage_mock.return_value = [False, "survey_id, period_id"]

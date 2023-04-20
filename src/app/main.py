@@ -34,6 +34,11 @@ def new_dataset(cloud_event):
             filename=filename, bucket_name=bucket_name
         )
 
+        """
+        The dataset returned is 'None' in the below scenarios.
+        * If the JSON is invalid in the file contents.
+        * If the mandatory keys are missing in the JSON.
+        """
         if dataset is not None:
             logger.info("Dataset obtained successfully.")
             logger.debug(f"Dataset: {dataset}")
