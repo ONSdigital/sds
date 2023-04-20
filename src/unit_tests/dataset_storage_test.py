@@ -1,5 +1,4 @@
 import json
-from unittest.mock import MagicMock, patch
 
 
 def test_get_dataset_validate_keys(dataset_storage):
@@ -22,5 +21,4 @@ def test_get_dataset_validate_keys(dataset_storage):
 
         isValid, message = dataset_storage.validate_keys(dataset)
 
-        assert isValid == False
-        assert message == expected_message
+        assert isValid, message == [False, expected_message]
