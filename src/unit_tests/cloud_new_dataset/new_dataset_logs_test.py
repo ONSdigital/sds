@@ -22,7 +22,6 @@ cloud_event_test_invalid_file = {
 }
 
 
-
 @patch("dataset_storage.get_dataset")
 @patch("database.set_dataset")
 def test_new_dataset_info_is_logged(
@@ -99,6 +98,8 @@ def test_new_dataset_debug_log(
 """
 This test ensures that there is an error log when the filetype is invalid.
 """
+
+
 def test_new_dataset_invalid_file(
     caplog,
     cloud_functions,
@@ -117,6 +118,8 @@ def test_new_dataset_invalid_file(
 """
 This test ensures that there are error logs when the mandatory keys are missing in the JSON file contents.
 """
+
+
 @patch("dataset_storage.validate_keys")
 def test_new_dataset_invalid_json(
     dataset_storage_mock,
@@ -133,6 +136,8 @@ def test_new_dataset_invalid_json(
     cloud_functions.new_dataset(cloud_event=cloud_event)
 
     assert len(caplog.records) == 2
-    assert caplog.records[0].message == "The mandatory key(s) survey_id, period_id is/are missing in the JSON object."
+    assert (
+        caplog.records[0].message
+        == "The mandatory key(s) survey_id, period_id is/are missing in the JSON object."
+    )
     assert caplog.records[1].message == "Invalid JSON file contents."
-

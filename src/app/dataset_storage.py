@@ -19,7 +19,9 @@ def get_dataset(filename, bucket_name):
         if isValid is True:
             return dataset
         else:
-            logger.error(f"The mandatory key(s) {message} is/are missing in the JSON object.")
+            logger.error(
+                f"The mandatory key(s) {message} is/are missing in the JSON object."
+            )
             return None
     except ValueError as e:
         logger.error(f"Invalid JSON in the file {filename} - %s" % e)
@@ -31,16 +33,23 @@ def validate_keys(dataset: dict) -> tuple[bool, str]:
     This method validates the JSON object to check if it contains all the mandatory keys.
     """
     isValid = True
-    mandatory_keys = ['survey_id', 'period_id', 'sds_schema_version', 'schema_version', 'form_type', 'data']
+    mandatory_keys = [
+        "survey_id",
+        "period_id",
+        "sds_schema_version",
+        "schema_version",
+        "form_type",
+        "data",
+    ]
     missing_keys = []
     message = ""
 
     for key in mandatory_keys:
         if key not in dataset.keys():
             missing_keys.append(key)
-    
+
     if len(missing_keys) > 0:
-        message = ', '.join(missing_keys)
+        message = ", ".join(missing_keys)
         isValid = False
 
     return isValid, message
