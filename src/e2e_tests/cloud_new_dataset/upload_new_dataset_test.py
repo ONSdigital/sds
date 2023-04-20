@@ -49,6 +49,15 @@ def test_upload_new_dataset(new_dataset):
     DatetimeService.get_current_date_and_time = MagicMock()
     DatetimeService.get_current_date_and_time.return_value = test_date
 
+    DatasetRepository.get_dataset_unit_collection = MagicMock()
+    DatasetRepository.get_dataset_unit_collection.return_value = [
+        {"test": "data", "ruref": "12345"},
+        { "hello": "world", "ruref": "56789"}
+    ]
+
+    DatasetRepository.append_unit_to_dataset_units_collection = MagicMock()
+    DatasetRepository.append_unit_to_dataset_units_collection.return_value = None
+
     new_dataset(cloud_event=cloud_event)
 
     DatasetRepository.get_dataset_with_survey_id.assert_called_once_with("xyz")
@@ -67,3 +76,51 @@ def test_upload_new_dataset(new_dataset):
             "form_type": "yyy",
         }
     )
+
+    DatasetRepository.get_dataset_unit_collection.assert_called_once_with('test_dataset_id')
+    DatasetRepository.append_unit_to_dataset_units_collection.assert_called_with([
+        {"test": "data", "ruref": "12345"},
+        { "hello": "world", "ruref": "56789"}
+    ], 
+    {
+      "ruref": "65871",
+      "runame": "Boats and Floats Ltd",
+      "ruaddr1": "111 Upper Hill",
+      "ruaddr2": "Mordor",
+      "rupostcode": "HO10 1AA",
+      "payeref": "8888",
+      "busdesc": "Provision of equipment for the bad guys.",
+      "local_unit": [
+        {
+          "luref": "2012763A",
+          "luname": "Arms Factory",
+          "luaddr1": "1 Bag End",
+          "luaddr2": "Underhill",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AA",
+          "tradstyle": "Also Does Adventures Ltd",
+          "busdesc": "Creates old fashioned looking paper maps"
+        },
+        {
+          "luref": "20127364B",
+          "luname": "Swords Subsidiary",
+          "luaddr1": "12 The Farmstead",
+          "luaddr2": "Maggotsville",
+          "luaddr3": "Hobbiton",
+          "lupostcode": "HO1 1AB",
+          "busdesc": "Quality pipe manufacturer",
+          "buslref": "pipe123"
+        },
+        {
+          "luref": "20127365C",
+          "luname": "Armor N Things",
+          "luaddr1": "5 Barrow Lane",
+          "luaddr2": "Striderton",
+          "luaddr3": "Bree",
+          "lupostcode": "BR1 1AC",
+          "busdesc": "Magic ring foundry"
+        }
+      ]
+    }
+    )
+
