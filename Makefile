@@ -23,7 +23,7 @@ start-docker-dev:
 
 
 localSDS-test:
-	export CONF=IntegrationTestingLocalSDS && \
+	export CONF=int-test-localSDS && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
 	export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
@@ -34,7 +34,7 @@ localSDS-test:
 
 
 cloud-test:
-	export CONF=IntegrationTestingCloud && \
+	export CONF=cloud-int-test-local && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
 	export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
@@ -46,7 +46,7 @@ cloud-test:
 
 
 docker-test:
-	export CONF=IntegrationTestingDocker && \
+	export CONF=int-test-docker && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	export DATASET_BUCKET_NAME=my-dataset-bucket && \
@@ -69,7 +69,7 @@ unit-test:
 
 
 cloud-int-test:
-	export CONF=cloud-integration-test && \
+	export CONF=cloud-int-test-remote && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \

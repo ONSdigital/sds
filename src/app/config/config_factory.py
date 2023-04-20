@@ -21,17 +21,17 @@ class ConfigFactory:
                 return ServiceEmulatorDevelopementConfig()
             case "cloud-dev":
                 return CloudDevelopmentConfig()
-            case "IntegrationTestingLocalSDS":
+            case "int-test-localSDS":
                 return IntegrationTestingLocalSDSConfig()
-            case "IntegrationTestingCloud":
+            case "cloud-int-test-local":
                 return IntegrationTestingLocalCloudConfig()
-            case "IntegrationTestingDocker":
+            case "int-test-docker":
                 return IntegrationTestingLocalConfig()
             case "unit":
                 return UnitTestingConfig()
             case "cloud-build":
                 return CloudBuildConfig()
-            case "cloud-integration-test":
+            case "cloud-int-test-remote":
                 return IntegrationTestingRemoteCloudConfig()
             case "default":
                 return Config()
