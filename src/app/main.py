@@ -27,7 +27,9 @@ def new_dataset(cloud_event):
     Check if the filename ends with '.json'.
     Process the contents if it is a valid '.json' file or else log the error.
     """
-    if filename[-5:].lower() == ".json":
+    if filename[-5:].lower() != ".json":
+        logger.error(f"Invalid filetype received - {filename}")
+    else:
         dataset = dataset_storage.get_dataset(
             filename=filename, bucket_name=bucket_name
         )
@@ -41,6 +43,4 @@ def new_dataset(cloud_event):
             )
             logger.info("Dataset uploaded successfully.")
         else:
-            logger.error("Invalid JSON file contents")
-    else:
-        logger.error(f"Invalid filetype received - {filename}")
+            logger.error("Invalid JSON file contents.")

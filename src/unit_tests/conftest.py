@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock
 
+import json
 import firebase_admin
 import pytest
 from coverage.annotate import os
@@ -45,3 +46,10 @@ def cloud_functions(database, storage):
     import main
 
     yield main
+
+@pytest.fixture
+def dataset_storage(monkeypatch):
+    monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
+    os.environ["DATASET_BUCKET_NAME"] = "dataset bucket"
+    import dataset_storage
+    yield dataset_storage

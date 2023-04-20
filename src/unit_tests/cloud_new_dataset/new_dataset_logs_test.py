@@ -11,6 +11,17 @@ cloud_event_test_data = {
     "name": "test_name.json",
 }
 
+cloud_event_test_invalid_file = {
+    "id": "test_id",
+    "type": "test_type",
+    "bucket": "test_bucket",
+    "metageneration": "1",
+    "timeCreated": "test_time_created",
+    "updated": "test_time_updated",
+    "name": "test_name.pdf",
+}
+
+
 
 @patch("dataset_storage.get_dataset")
 @patch("database.set_dataset")
@@ -83,3 +94,45 @@ def test_new_dataset_debug_log(
     assert caplog.records[3].message == "Dataset: " + str(
         dataset_storage_mock.return_value
     )
+
+
+"""
+This test ensures that there is an error log when the filetype is invalid.
+"""
+def test_new_dataset_invalid_file(
+    caplog,
+    cloud_functions,
+):
+    caplog.set_level(logging.ERROR)
+
+    cloud_event = MagicMock()
+    cloud_event.data = cloud_event_test_invalid_file
+
+    cloud_functions.new_dataset(cloud_event=cloud_event)
+
+    assert len(caplog.records) == 1
+    assert caplog.records[0].message == "Invalid filetype received - test_name.pdf"
+
+
+"""
+This test ensures that there are error logs when the mandatory keys are missing in the JSON file contents.
+"""
+@patch("dataset_storage.validate_keys")
+def test_new_dataset_invalid_json(
+    dataset_storage_mock,
+    caplog,
+    cloud_functions,
+):
+    caplog.set_level(logging.ERROR)
+
+    dataset_storage_mock.return_value = [False, "survey_id, period_id"]
+
+    cloud_event = MagicMock()
+    cloud_event.data = cloud_event_test_data
+
+    cloud_functions.new_dataset(cloud_event=cloud_event)
+
+    assert len(caplog.records) == 2
+    assert caplog.records[0].message == "The mandatory key(s) survey_id, period_id is/are missing in the JSON object."
+    assert caplog.records[1].message == "Invalid JSON file contents."
+
