@@ -16,16 +16,13 @@ steps:
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python
-    id: "pytest"
-    entrypoint: python
-    env: ['PYTHONPATH=../app']
-    dir: "src/unit_tests"
-    args: ["-m", "pytest", "--cov=../app", "."]
-  - name: python
-    id: "coverage"
-    dir: "src/unit_tests"
-    entrypoint: python
-    args: ["-m", "coverage", "report", "--fail-under=90"]
+    id: "unit tests"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make setup 
+        make unit-test
   - name: docker
     id: build_and_push
     entrypoint: sh
@@ -36,6 +33,7 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest"
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2' ]
@@ -70,8 +68,7 @@ steps:
       - |
         export ACCESS_TOKEN=$(cat /workspace/token)
         export API_URL=$_API_URL
-        export DATASET_BUCKET=$_DATASET_BUCKET
-        cd src/integration_tests
-        python -m pytest integration_tests.py
+        export DATASET_BUCKET_NAME=$_DATASET_BUCKET
+        make cloud-int-test
 options:
   logging: CLOUD_LOGGING_ONLY

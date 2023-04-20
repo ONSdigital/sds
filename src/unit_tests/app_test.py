@@ -1,6 +1,10 @@
 import json
 from unittest.mock import MagicMock, patch
 
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
+
 
 @patch("uuid.uuid4")
 def test_post_schema_metadata(mock_uuid, client, database, storage):
@@ -9,7 +13,7 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
     and returns a valid schema metadata file.
     """
     mock_uuid.return_value = "test-uuid"
-    with open("../test_data/schema.json") as f:
+    with open(config.TEST_SCHEMA_PATH) as f:
         schema = json.load(f)
 
     response = client.post("/v1/schema", json=schema)
