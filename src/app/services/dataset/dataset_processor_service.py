@@ -1,9 +1,8 @@
-from datetime import datetime
-
 from models import DatasetMetadataDto, NewDatasetMetadata, NewDatasetWithMetadata
 from repositories.dataset_repository import DatasetRepository
 from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
+from services.datetime_service import DatetimeService
 
 
 class DatasetProcessorService:
@@ -51,7 +50,7 @@ class DatasetProcessorService:
         return {
             **dataset,
             "filename": filename,
-            "sds_published_at": str(datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")),
+            "sds_published_at": str(DatetimeService.get_current_date_and_time().strftime("%Y-%m-%dT%H:%M:%SZ")),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self.calculate_next_dataset_version(
                 dataset["survey_id"]

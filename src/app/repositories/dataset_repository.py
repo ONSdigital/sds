@@ -1,6 +1,6 @@
 import firebase_admin
 from firebase_admin import firestore
-from models import DatasetMetadataDto, NewDatasetWithMetadata
+from models import DatasetMetadataDto, DatasetMetadataWithoutIdDto, NewDatasetWithMetadata
 
 
 class DatasetRepository:
@@ -24,7 +24,7 @@ class DatasetRepository:
         )
 
     def create_new_dataset(
-        self, dataset_id: str, dataset: NewDatasetWithMetadata
+        self, dataset_id: str, dataset: DatasetMetadataWithoutIdDto
     ) -> None:
         """
         Creates a new dataset in firestore with a specified ID and data.
