@@ -7,6 +7,7 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
 import requests
+from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
@@ -14,7 +15,6 @@ from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 storage_client = gcp_storage.Client()
-from config.config_factory import ConfigFactory
 
 config = ConfigFactory.get_config()
 

@@ -1,5 +1,14 @@
-from config.config import *
-
+from src.app.config.config import (
+    CloudBuildConfig,
+    CloudDevelopmentConfig,
+    Config,
+    IntegrationTestingLocalCloudConfig,
+    IntegrationTestingLocalConfig,
+    IntegrationTestingLocalSDSConfig,
+    IntegrationTestingRemoteCloudConfig,
+    ServiceEmulatorDevelopementConfig,
+    UnitTestingConfig,
+)
 from src.app.config.config_helpers import get_value_from_env
 
 
