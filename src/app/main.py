@@ -28,7 +28,6 @@ def new_dataset(cloud_event):
             filename=filename, bucket_name=bucket_name
         )
         if dataset is not None:
-
             logger.info("Dataset obtained successfully.")
             logger.debug(f"Dataset: {dataset}")
 
