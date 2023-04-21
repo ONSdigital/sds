@@ -18,7 +18,8 @@ start-docker-dev:
 	export PYTHONPATH=${PYTHONPATH} && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
-	export DATASET_BUCKET_NAME=bucket && \
+	export DATASET_BUCKET_NAME=my-dataset-bucket && \
+	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 
