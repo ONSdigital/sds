@@ -3,7 +3,6 @@ from firebase_admin import firestore
 from models import (
     DatasetMetadataDto,
     DatasetMetadataWithoutIdDto,
-    NewDatasetWithMetadata,
     UnitDataset,
 )
 
@@ -29,7 +28,9 @@ class DatasetRepository:
         )
 
     def create_new_dataset(
-        self, dataset_id: str, dataset: DatasetMetadataWithoutIdDto
+        self,
+        dataset_id: str,
+        dataset_metadata_without_id_dto: DatasetMetadataWithoutIdDto,
     ) -> None:
         """
         Creates a new dataset in firestore with a specified ID and data.
@@ -38,9 +39,11 @@ class DatasetRepository:
         dataset_id (str): uniquely generated GUID id of the dataset.
         dataset (UnitData): unit dataset being created in firestore.
         """
-        self.datasets_collection.document(dataset_id).set(dataset)
+        self.datasets_collection.document(dataset_id).set(
+            dataset_metadata_without_id_dto
+        )
 
-    def get_dataset_unit_collection(self, dataset_id: str) -> list[object]:
+    def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
         """
         Gets the collection of units associated with a particular dataset.
 

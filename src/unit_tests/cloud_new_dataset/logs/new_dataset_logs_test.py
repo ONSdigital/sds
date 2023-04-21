@@ -17,7 +17,7 @@ cloud_event_test_data = {
 
 def test_new_dataset_info_is_logged(
     caplog,
-    cloud_function,
+    new_dataset_mock,
 ):
     """
     There should be a log for when the cloud function is triggered and when the
@@ -34,7 +34,7 @@ def test_new_dataset_info_is_logged(
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
 
-    cloud_function.new_dataset(cloud_event=cloud_event)
+    new_dataset_mock(cloud_event=cloud_event)
 
     assert len(caplog.records) == 3
     assert caplog.records[0].message == "Uploading new dataset..."
@@ -50,7 +50,6 @@ def test_new_dataset_debug_log(
     There should be debug logs for inputted and retrieved data.
     """
     caplog.set_level(logging.DEBUG)
-
 
     BucketFileReader.get_file_from_bucket = MagicMock()
     DatasetProcessorService.process_new_dataset = MagicMock()
