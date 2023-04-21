@@ -1,10 +1,6 @@
 import firebase_admin
 from firebase_admin import firestore
-from models import (
-    DatasetMetadataDto,
-    DatasetMetadataWithoutIdDto,
-    UnitDataset,
-)
+from models import DatasetMetadataDto, DatasetMetadataWithoutIdDto, UnitDataset
 
 
 class DatasetRepository:
