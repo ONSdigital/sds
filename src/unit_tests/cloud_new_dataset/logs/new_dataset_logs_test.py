@@ -17,7 +17,7 @@ cloud_event_test_data = {
 
 def test_new_dataset_info_is_logged(
     caplog,
-    new_dataset_mock,
+    cloud_function,
 ):
     """
     There should be a log for when the cloud function is triggered and when the
@@ -34,7 +34,7 @@ def test_new_dataset_info_is_logged(
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
 
-    new_dataset_mock(cloud_event=cloud_event)
+    cloud_function.new_dataset(cloud_event=cloud_event)
 
     assert len(caplog.records) == 3
     assert caplog.records[0].message == "Uploading new dataset..."
