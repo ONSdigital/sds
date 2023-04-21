@@ -1,12 +1,7 @@
 import uuid
 from config.config_factory import ConfigFactory
+from models.dataset_models import DatasetMetadataWithoutId, NewDatasetMetadata, NewDatasetWithMetadata, UnitDataset
 
-from models import (
-    DatasetMetadataWithoutIdDto,
-    NewDatasetMetadata,
-    NewDatasetWithMetadata,
-    UnitDataset,
-)
 from repositories.dataset_repository import DatasetRepository
 from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
@@ -58,7 +53,7 @@ class DatasetProcessorService:
         dataset: NewDatasetMetadata,
         filename: str,
         dataset_unit_data_collection: list[object],
-    ) -> DatasetMetadataWithoutIdDto:
+    ) -> DatasetMetadataWithoutId:
         """
         Returns a copy of the dataset with added metadata.
 
@@ -102,7 +97,7 @@ class DatasetProcessorService:
     def transform_dataset_unit_data_collection(
         self,
         dataset_id: str,
-        transformed_dataset_metadata: DatasetMetadataWithoutIdDto,
+        transformed_dataset_metadata: DatasetMetadataWithoutId,
         new_dataset_unit_data_collection: list[object],
     ) -> list[UnitDataset]:
         """
@@ -121,7 +116,7 @@ class DatasetProcessorService:
     def transform_unit_data_item(
         self,
         dataset_id: str,
-        transformed_dataset_metadata: DatasetMetadataWithoutIdDto,
+        transformed_dataset_metadata: DatasetMetadataWithoutId,
         unit_data_item: object,
     ) -> UnitDataset:
         """

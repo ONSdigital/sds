@@ -1,4 +1,4 @@
-from models import Schema
+from models.schema_models import Schema
 
 
 def test_store_schema(storage):

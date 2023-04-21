@@ -1,4 +1,4 @@
-from models import DatasetMetadataDto
+from models.dataset_models import DatasetMetadata
 from repositories.dataset_repository import DatasetRepository
 from services.dataset.dataset_reader_service import DatasetReaderService
 
@@ -15,7 +15,7 @@ class DatasetWriterService:
     def write_transformed_dataset_to_database(
         self,
         dataset_id,
-        transformed_dataset: DatasetMetadataDto,
+        transformed_dataset: DatasetMetadata,
     ) -> None:
         """
         Writes the transformed data to the database

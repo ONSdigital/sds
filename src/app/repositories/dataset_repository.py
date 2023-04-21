@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import firestore
-from models import DatasetMetadataDto, DatasetMetadataWithoutIdDto, UnitDataset
+
+from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 
 class DatasetRepository:
@@ -9,7 +10,7 @@ class DatasetRepository:
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
-    def get_dataset_with_survey_id(self, survey_id: str) -> list[DatasetMetadataDto]:
+    def get_dataset_with_survey_id(self, survey_id: str) -> list[DatasetMetadata]:
         """
         Gets a single dataset from firestore with a specific survey_id.
 
@@ -26,7 +27,7 @@ class DatasetRepository:
     def create_new_dataset(
         self,
         dataset_id: str,
-        dataset_metadata_without_id_dto: DatasetMetadataWithoutIdDto,
+        dataset_metadata_without_id_dto: DatasetMetadataWithoutId,
     ) -> None:
         """
         Creates a new dataset in firestore with a specified ID and data.

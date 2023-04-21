@@ -1,4 +1,4 @@
-from models import DatasetMetadataDto, UnitDataset
+from models.dataset_models import DatasetMetadata, UnitDataset
 from repositories.dataset_repository import DatasetRepository
 
 
@@ -7,7 +7,7 @@ class DatasetReaderService:
         self.dataset_repository = dataset_repository
         pass
 
-    def get_dataset_with_survey_id(self, survey_id: str) -> list[DatasetMetadataDto]:
+    def get_dataset_with_survey_id(self, survey_id: str) -> list[DatasetMetadata]:
         """
         Returns a dataset associated with a specific survey id.
 
