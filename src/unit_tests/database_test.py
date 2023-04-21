@@ -1,10 +1,14 @@
 import json
 from unittest.mock import MagicMock
 
+from config.config_factory import ConfigFactory
+
+config = ConfigFactory.get_config()
+
 
 def test_set_dataset(database):
     # This test ensures that the 'set_dataset' database method is able to save the dataset metadata in the collection
-    with open("../test_data/dataset.json") as f:
+    with open(config.TEST_DATASET_PATH) as f:
         dataset = json.load(f)
     database.set_dataset(dataset_id="1", filename="dataset.json", dataset=dataset)
 

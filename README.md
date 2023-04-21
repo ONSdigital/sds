@@ -94,15 +94,11 @@ and the database. To create one:
 - Go into service account and create a key. This will download a JSON file to your machine
 - Copy the downloaded JSON file to this directory and rename to `key.json`
 
-To run SDS locally, activate the virtual environment, then run the following commands (replacing `my-schema-bucket`
-and `dataset-bucket` appropriately:
+To run SDS locally, activate the virtual environment, then run the following commands (ensuring that the values in the
+makefile represent the connections you wish to make):
 
 ```bash
-export PYTHONPATH=src/app
-export SCHEMA_BUCKET_NAME=my-schema-bucket
-export DATASET_BUCKET_NAME=my-dataset-bucket
-export GOOGLE_APPLICATION_CREDENTIALS=key.json
-python -m uvicorn src.app.app:app --reload --port 3000
+make start-cloud-dev
 ```
 
 ### Running the SDS with service emulators
@@ -114,31 +110,27 @@ run the following commands:
 docker-compose up
 docker-compose stop api
 
-export FIRESTORE_EMULATOR_HOST=localhost:8080
-export STORAGE_EMULATOR_HOST=http://localhost:9023
-export PYTHONPATH=src/app
-python -m uvicorn src.app.app:app --reload --port 3000
+make start-docker-dev
 ```
 
 ## Running linting and unit tests
 
-To run all the checks that run as part of the CI, run the following commands:
+As part of the CI pipeline we ensure the code is linted and tested. To run the linting run: 
 
-```
-black . --check
-isort . --check-only --profile black
-flake8 src --max-line-length=127
-cd src/unit_tests
-export PYTHONPATH=../app
-pytest --cov=../app .
-coverage report --fail-under=90
+```bash
+make lint
 ```
 
-To correct any problems that `isort` or `black` complain about, run the following:
+To automatically fix any linting issues run:
 
+```bash
+make lint-fix
 ```
-black .
-isort . --profile black
+
+To run the unit tests run:
+
+```bash
+make unit-test
 ```
 
 ## OpenAPI Specification
@@ -186,13 +178,8 @@ Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual c
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
-
-export API_URL=https://sds-blahblah.a.run.app
-export DATASET_BUCKET=a-place-for-datasets
-export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
-
-cd src/integration_tests
-pytest integration_tests.py
+ 
+make cloud-test
 ```
 
 ### SDS API service is local
@@ -204,13 +191,7 @@ This configuration allows you to debug the SDS API locally but talk to real Goog
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
-export SCHEMA_BUCKET_NAME=my-schema-bucket
-export DATASET_BUCKET=a-place-for-datasets
-export GOOGLE_APPLICATION_CREDENTIALS=../../key.json
-
-export PYTHONPATH=../app
-cd src/integration_tests
-pytest integration_tests.py
+make localSDS-test
 ```
 
 ### Running integration tests locally
@@ -221,14 +202,7 @@ is emulated by the test itself, or can be run manually by running the `SDX Simul
 ```bash
 docker-compose up
 
-export FIRESTORE_EMULATOR_HOST=localhost:8200
-export STORAGE_EMULATOR_HOST=http://localhost:9023
-export SCHEMA_BUCKET_NAME=schema_bucket
-export DATASET_BUCKET=dataset_bucket
-
-export PYTHONPATH=../app
-cd src/integration_tests
-pytest integration_tests.py
+make docker-test
 ```
 
 # Contact

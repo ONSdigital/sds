@@ -1,7 +1,10 @@
 import json
 from unittest.mock import MagicMock
 
+from config.config_factory import ConfigFactory
 from google.cloud import storage as google_cloud_storage
+
+config = ConfigFactory.get_config()
 
 
 def test_new_dataset(cloud_functions, database, monkeypatch):
@@ -21,7 +24,7 @@ def test_new_dataset(cloud_functions, database, monkeypatch):
         "updated": "2023-03-01T14:40:37.896Z",
         "name": "123e4567-e89b-12d3-a456-426614174000.json",
     }
-    with open("../test_data/dataset.json") as f:
+    with open(config.TEST_DATASET_PATH) as f:
         dataset_with_meta = json.load(f)
     mock_storage_client = MagicMock()
     cloud_functions.dataset_storage.storage_client = mock_storage_client

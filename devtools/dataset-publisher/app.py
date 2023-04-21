@@ -1,12 +1,13 @@
 import json
-import os
 import uuid
 
 import requests
+from config.config_factory import ConfigFactory
 from fastapi import FastAPI, Request
 from google.cloud import storage
 
 app = FastAPI()
+config = ConfigFactory.get_config()
 
 
 @app.post("/")
@@ -15,13 +16,13 @@ async def dev_simulate_publish_dataset(request: Request):
     Used to simulate SDX populating the bucket to manually fire the cloud event trigger
     """
     storage_client = storage.Client()
-    dataset_bucket_name = os.environ.get("DATASET_BUCKET_NAME")
-    schema_bucket_name = os.environ.get("SCHEMA_BUCKET_NAME")
 
     # Check if the dataset bucket exists.
-    dataset_bucket = setup_local_storage(dataset_bucket_name, storage_client)
+    dataset_bucket = setup_local_storage(
+        config.DATASET_BUCKET_NAME, config.SCHEMA_BUCKET_NAME
+    )
     # Supporting to ensure schema bucket is created for docker enviroment.
-    setup_local_storage(schema_bucket_name, storage_client)
+    setup_local_storage(config.SCHEMA_BUCKET_NAME, storage_client)
 
     # Create a guid as the filename before we publish it
     filename = f"{str(uuid.uuid4())}.json"

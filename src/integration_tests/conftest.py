@@ -7,6 +7,7 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import pytest
 import requests
+from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
 from google.cloud import exceptions
 from google.cloud import storage as gcp_storage
@@ -15,18 +16,31 @@ from urllib3 import Retry
 
 storage_client = gcp_storage.Client()
 
+config = ConfigFactory.get_config()
+
 
 def pytest_sessionstart():
     """Create the buckets before running the test."""
-    if os.environ.get("STORAGE_EMULATOR_HOST"):
-        try:
-            storage_client.create_bucket(os.environ.get("DATASET_BUCKET"))
-        except exceptions.Conflict:
-            pass
-        try:
-            storage_client.create_bucket(os.environ.get("SCHEMA_BUCKET_NAME"))
-        except exceptions.Conflict:
-            pass
+    if config.CONF == "docker-dev":
+        check_and_create_bucket(config.DATASET_BUCKET_NAME)
+        check_and_create_bucket(config.SCHEMA_BUCKET_NAME)
+
+
+def check_and_create_bucket(bucket_name: str) -> None:
+    """
+    Method to check if a bucket of the provided name exists and create if it dosent exist
+
+    Parameters:
+        bucket_name: the name of the bucket to check and create
+
+    Returns:
+        None
+    """
+    try:
+        if not gcp_storage.Bucket(storage_client, bucket_name).exists():
+            storage_client.create_bucket(bucket_name)
+    except exceptions.Conflict:
+        pass
 
 
 class RequestWrapper:
@@ -60,16 +74,16 @@ class RequestWrapper:
 
 @pytest.fixture
 def client():
-    api_url = os.environ.get("API_URL")
-    if api_url:
-        if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
+    if config.CONF == "cloud-int-test-local" or config.CONF == "cloud-int-test-remote":
+        try:
+            config.GOOGLE_APPLICATION_CREDENTIALS
             auth_req = google.auth.transport.requests.Request()
-            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, api_url)
-        else:
+            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
+        except Exception:
             auth_token = os.environ.get("ACCESS_TOKEN")
 
         client = RequestWrapper(
-            api_url, headers={"Authorization": f"Bearer {auth_token}"}
+            config.API_URL, headers={"Authorization": f"Bearer {auth_token}"}
         )
     else:
         from app import app
@@ -82,26 +96,26 @@ def upload_dataset(filename, dataset):
     """
     If STORAGE_EMULATOR_HOST is set, we assume we can't talk to the
     real Cloud Function, so emulate the behaviour of the new_dataset function instead. If we are
-    talking to the real Cloud Function but not the real API, we wait 3 seconds for the
+    talking to the real Cloud Function but not the real API, we wait 5 seconds for the
     cloud function to complete it's processing. For testing the real API we have a better way of
     handling this delay using automated requests retries.
     """
-    dataset_bucket = os.environ.get("DATASET_BUCKET")
-    bucket = storage_client.bucket(dataset_bucket)
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-    if os.environ.get("STORAGE_EMULATOR_HOST"):
+
+    if config.CONF == "docker-dev":
         from main import new_dataset
 
         cloud_event = MagicMock()
         cloud_event.data = {
-            "bucket": dataset_bucket,
+            "bucket": config.DATASET_BUCKET_NAME,
             "name": filename,
         }
         new_dataset(cloud_event=cloud_event)
-    elif not os.environ.get("API_URL"):
+    elif config.CONF == "cloud-dev" or "localSDS-test":
         sleep(5)
 
 
