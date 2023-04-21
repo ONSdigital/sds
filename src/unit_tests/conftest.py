@@ -45,3 +45,16 @@ def cloud_functions(database, storage):
     import main
 
     yield main
+
+
+@pytest.fixture
+def dataset_storage(monkeypatch):
+    monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
+    os.environ["DATASET_BUCKET_NAME"] = "dataset bucket"
+    import dataset_storage
+
+    # This is to test the invalid JSON scenario because the survey_id is missing the quotes in the below value.
+    dataset_storage.storage.Client().bucket(
+        "hello"
+    ).blob().download_as_string.return_value = '{survey_id:xyz,"period_id": "abc"}'
+    yield dataset_storage
