@@ -11,6 +11,7 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
     """
     Checks that fastAPI accepts a valid schema file
     and returns a valid schema metadata file.
+    This is a test comment
     """
     mock_uuid.return_value = "test-uuid"
     with open(config.TEST_SCHEMA_PATH) as f:
