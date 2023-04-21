@@ -14,6 +14,16 @@ cloud_event_test_data = {
     "name": "test_name.json",
 }
 
+cloud_event_test_invalid_file = {
+    "id": "test_id",
+    "type": "test_type",
+    "bucket": "test_bucket",
+    "metageneration": "1",
+    "timeCreated": "test_time_created",
+    "updated": "test_time_updated",
+    "name": "test_name.pdf",
+}
+
 
 def test_new_dataset_info_is_logged(
     caplog,
@@ -28,7 +38,13 @@ def test_new_dataset_info_is_logged(
     BucketFileReader.get_file_from_bucket = MagicMock()
     DatasetProcessorService.process_new_dataset = MagicMock()
 
-    BucketFileReader.get_file_from_bucket.return_value = {}
+    BucketFileReader.get_file_from_bucket.return_value = {
+        "survey_id": "xyz",
+        "period_id": "abc",
+        "form_type": "yyy",
+        "sds_schema_version": 4,
+        "schema_version": "v1.0.0",
+    }
     DatasetProcessorService.process_new_dataset.return_value = {}
 
     cloud_event = MagicMock()
@@ -54,8 +70,14 @@ def test_new_dataset_debug_log(
     BucketFileReader.get_file_from_bucket = MagicMock()
     DatasetProcessorService.process_new_dataset = MagicMock()
 
-    BucketFileReader.get_file_from_bucket.return_value = {"test": "value"}
-    DatasetProcessorService.process_new_dataset.return_value = {"hello": "world"}
+    BucketFileReader.get_file_from_bucket.return_value = {
+        "survey_id": "xyz",
+        "period_id": "abc",
+        "form_type": "yyy",
+        "sds_schema_version": 4,
+        "schema_version": "v1.0.0",
+    }
+    DatasetProcessorService.process_new_dataset.return_value = None
 
     cloud_event = MagicMock()
     cloud_event.data = cloud_event_test_data
@@ -68,4 +90,24 @@ def test_new_dataset_debug_log(
         "'test_bucket', 'metageneration': '1', 'timeCreated': 'test_time_created', "
         "'updated': 'test_time_updated', 'name': 'test_name.json'}"
     )
-    assert caplog.records[3].message == "Dataset: {'test': 'value'}"
+    assert caplog.records[3].message == "Dataset: " + str(
+        BucketFileReader.get_file_from_bucket.return_value
+    )
+
+
+def test_new_dataset_invalid_file(
+    caplog,
+    cloud_function,
+):
+    """
+    This test ensures that there is an error log when the filetype is invalid.
+    """
+    caplog.set_level(logging.ERROR)
+
+    cloud_event = MagicMock()
+    cloud_event.data = cloud_event_test_invalid_file
+
+    cloud_function.new_dataset(cloud_event=cloud_event)
+
+    assert len(caplog.records) == 1
+    assert caplog.records[0].message == "Invalid filetype received - test_name.pdf"
