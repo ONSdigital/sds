@@ -1,5 +1,5 @@
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 from bucket.bucket_file_reader import BucketFileReader
 from services.dataset.dataset_processor_service import DatasetProcessorService
