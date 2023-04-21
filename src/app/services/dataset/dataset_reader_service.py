@@ -17,4 +17,10 @@ class DatasetReaderService:
         return self.dataset_repository.get_dataset_with_survey_id(survey_id)
 
     def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
+        """
+        Gets the unit data collection associated with a specific dataset_id
+
+        Parameters:
+        dataset_id (str): dataset_id for the new dataset.
+        """
         return self.dataset_repository.get_dataset_unit_collection(dataset_id)

@@ -1,4 +1,3 @@
-from datetime import datetime
 from unittest.mock import MagicMock, call
 
 from repositories.dataset_repository import DatasetRepository
@@ -11,8 +10,7 @@ def test_upload_new_dataset(
     new_dataset_mock, uuid_mock, datetime_mock, repository_boundaries_mock
 ):
     """
-    There should be a log for when the cloud function is triggered and when the
-    new dataset is successfully uploaded.
+    The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
     """
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data

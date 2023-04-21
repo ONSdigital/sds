@@ -1,7 +1,7 @@
 import uuid
+from config.config_factory import ConfigFactory
 
 from models import (
-    DatasetMetadataDto,
     DatasetMetadataWithoutIdDto,
     NewDatasetMetadata,
     NewDatasetWithMetadata,
@@ -12,6 +12,7 @@ from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.datetime_service import DatetimeService
 
+config = ConfigFactory.get_config()
 
 class DatasetProcessorService:
     def __init__(self) -> None:
@@ -71,7 +72,7 @@ class DatasetProcessorService:
             "filename": filename,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
+                    config.TIME_FORMAT
                 )
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
@@ -101,26 +102,42 @@ class DatasetProcessorService:
     def transform_dataset_unit_data_collection(
         self,
         dataset_id: str,
-        transformed_dataset: DatasetMetadataWithoutIdDto,
+        transformed_dataset_metadata: DatasetMetadataWithoutIdDto,
         new_dataset_unit_data_collection: list[object],
     ) -> list[UnitDataset]:
+        """
+        Transforms the new unit data to a new format for storing in firestore.
+
+        Parameters:
+        dataset_id (str): dataset_id for the new dataset.
+        transformed_dataset_metadata (DatasetMetadataWithoutIdDto): the dataset metadata without id
+        new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
+        """
         return [
-            self.transform_unit_data_item(dataset_id, transformed_dataset, item)
+            self.transform_unit_data_item(dataset_id, transformed_dataset_metadata, item)
             for item in new_dataset_unit_data_collection
         ]
 
     def transform_unit_data_item(
         self,
         dataset_id: str,
-        transformed_dataset: DatasetMetadataWithoutIdDto,
+        transformed_dataset_metadata: DatasetMetadataWithoutIdDto,
         unit_data_item: object,
-    ):
+    ) -> UnitDataset:
+        """
+        Transforms a unit data item to a new format for storing in firestore.
+
+        Parameters:
+        dataset_id (str): dataset_id for the new dataset.
+        transformed_dataset_metadata (DatasetMetadataWithoutIdDto): the dataset metadata without id
+        unit_data_item (object): unit data item to be transformed
+        """
         return {
             "dataset_id": dataset_id,
-            "survey_id": transformed_dataset["survey_id"],
-            "period_id": transformed_dataset["period_id"],
-            "sds_schema_version": transformed_dataset["sds_schema_version"],
-            "schema_version": transformed_dataset["schema_version"],
-            "form_type": transformed_dataset["form_type"],
+            "survey_id": transformed_dataset_metadata["survey_id"],
+            "period_id": transformed_dataset_metadata["period_id"],
+            "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
+            "schema_version": transformed_dataset_metadata["schema_version"],
+            "form_type": transformed_dataset_metadata["form_type"],
             "data": unit_data_item,
         }
