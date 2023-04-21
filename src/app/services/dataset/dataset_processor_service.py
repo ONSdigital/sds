@@ -1,13 +1,19 @@
 import uuid
-from config.config_factory import ConfigFactory
-from models.dataset_models import DatasetMetadataWithoutId, NewDatasetMetadata, NewDatasetWithMetadata, UnitDataset
 
+from config.config_factory import ConfigFactory
+from models.dataset_models import (
+    DatasetMetadataWithoutId,
+    NewDatasetMetadata,
+    NewDatasetWithMetadata,
+    UnitDataset,
+)
 from repositories.dataset_repository import DatasetRepository
 from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.datetime_service import DatetimeService
 
 config = ConfigFactory.get_config()
+
 
 class DatasetProcessorService:
     def __init__(self) -> None:
@@ -66,9 +72,7 @@ class DatasetProcessorService:
             **dataset,
             "filename": filename,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(
-                    config.TIME_FORMAT
-                )
+                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self.calculate_next_dataset_version(
@@ -109,7 +113,9 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         return [
-            self.transform_unit_data_item(dataset_id, transformed_dataset_metadata, item)
+            self.transform_unit_data_item(
+                dataset_id, transformed_dataset_metadata, item
+            )
             for item in new_dataset_unit_data_collection
         ]
 
