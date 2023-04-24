@@ -2,7 +2,7 @@ import json
 import uuid
 
 import requests
-from config.config_factory import ConfigFactory
+from config_factory import ConfigFactory
 from fastapi import FastAPI, Request
 from google.cloud import storage
 
