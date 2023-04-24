@@ -102,6 +102,7 @@ def test_post_schema(client):
     assert test_schema_get_response.status_code == 200
 
     response_as_json = test_schema_get_response.json()
+    assert len(response_as_json) > 0
 
     for schema in response_as_json:
         assert schema == {
