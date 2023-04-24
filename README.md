@@ -158,7 +158,6 @@ gcloud functions deploy new-dataset-function \
 --source=. \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
---trigger-event-filters="bucket=ons-sds-joe-sandbox-europe-west2-dataset-76eb" \
 --set-env-vars="SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build"
 ```
 
