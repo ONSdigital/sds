@@ -2,6 +2,7 @@ import os
 
 from pydantic import BaseSettings
 
+
 def get_value_from_env(env_value, default_value="") -> str:
     """
     Method to determine if a desired enviroment variable has been set and return it.
