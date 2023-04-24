@@ -37,7 +37,7 @@ class DatasetProcessorService:
         """
         new_dataset_unit_data_collection = dataset.pop("data")
 
-        transformed_dataset = self.transform_dataset_metadata(
+        transformed_dataset = self._transform_dataset_metadata(
             dataset, filename, new_dataset_unit_data_collection
         )
 
@@ -47,7 +47,7 @@ class DatasetProcessorService:
             transformed_dataset,
         )
 
-        transformed_unit_data_collection = self.transform_dataset_unit_data_collection(
+        transformed_unit_data_collection = self._transform_dataset_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
         self.dataset_writer_service.write_new_unit_data_to_repository(
@@ -75,7 +75,7 @@ class DatasetProcessorService:
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
-            "sds_dataset_version": self.calculate_next_dataset_version(
+            "sds_dataset_version": self._calculate_next_dataset_version(
                 dataset["survey_id"]
             ),
         }
@@ -113,7 +113,7 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         return [
-            self.transform_unit_data_item(
+            self._transform_unit_data_item(
                 dataset_id, transformed_dataset_metadata, item
             )
             for item in new_dataset_unit_data_collection
