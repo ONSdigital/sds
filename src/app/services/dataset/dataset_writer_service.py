@@ -12,7 +12,7 @@ class DatasetWriterService:
         self.dataset_repository = dataset_repository
         self.dataset_reader_service = dataset_reader_service
 
-    def write_transformed_dataset_to_database(
+    def write_transformed_dataset_to_repository(
         self,
         dataset_id,
         transformed_dataset: DatasetMetadata,
@@ -26,7 +26,7 @@ class DatasetWriterService:
         """
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
 
-    def write_new_unit_data_to_database(
+    def write_new_unit_data_to_repository(
         self, dataset_id: str, new_dataset_unit_data_collection: list[object]
     ) -> None:
         """

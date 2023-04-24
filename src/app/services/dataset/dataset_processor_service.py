@@ -42,7 +42,7 @@ class DatasetProcessorService:
         )
 
         dataset_id = str(uuid.uuid4())
-        self.dataset_writer_service.write_transformed_dataset_to_database(
+        self.dataset_writer_service.write_transformed_dataset_to_repository(
             dataset_id,
             transformed_dataset,
         )
@@ -50,11 +50,11 @@ class DatasetProcessorService:
         transformed_unit_data_collection = self.transform_dataset_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
-        self.dataset_writer_service.write_new_unit_data_to_database(
+        self.dataset_writer_service.write_new_unit_data_to_repository(
             dataset_id, transformed_unit_data_collection
         )
 
-    def transform_dataset_metadata(
+    def _transform_dataset_metadata(
         self,
         dataset: NewDatasetMetadata,
         filename: str,
@@ -80,7 +80,7 @@ class DatasetProcessorService:
             ),
         }
 
-    def calculate_next_dataset_version(self, survey_id: str) -> int:
+    def _calculate_next_dataset_version(self, survey_id: str) -> int:
         """
         Calculates the next sds_dataset_version from a single dataset from firestore with a specific survey_id.
 
@@ -98,7 +98,7 @@ class DatasetProcessorService:
 
         return latest_version
 
-    def transform_dataset_unit_data_collection(
+    def _transform_dataset_unit_data_collection(
         self,
         dataset_id: str,
         transformed_dataset_metadata: DatasetMetadataWithoutId,
@@ -119,7 +119,7 @@ class DatasetProcessorService:
             for item in new_dataset_unit_data_collection
         ]
 
-    def transform_unit_data_item(
+    def _transform_unit_data_item(
         self,
         dataset_id: str,
         transformed_dataset_metadata: DatasetMetadataWithoutId,
