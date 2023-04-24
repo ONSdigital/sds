@@ -153,6 +153,8 @@ def get_schema_metadata(survey_id, version) -> SchemaMetadata:
 
     for schema in schemas_result:
         return_metadata = schema.to_dict()
+        if len(return_metadata) == 0:
+            return None
         if "guid" in return_metadata:
             return_metadata.pop("guid")
         return SchemaMetadata(**return_metadata)

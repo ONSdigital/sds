@@ -1,12 +1,34 @@
 import database
 import storage
-from fastapi import Body, FastAPI, HTTPException
+import exception_throw
+from fastapi import Body, FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from services import schema_metadata_service
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+
+@app.exception_handler(500)
+async def internal_exception_handler(request: Request, exc: Exception):
+    """
+    Override the global exception handler (500 internal server error) in 
+    FastAPI and throw error in JSON format
+    """
+    return exception_throw.throw_500_global_exception()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    When a request contains invalid data, FastAPI internally raises a 
+    RequestValidationError. This function override the default
+    validation exception handler to return 400 instead of 422
+    """
+    return exception_throw.throw_400_validation_exception()
 
 
 @app.get("/v1/unit_data")
@@ -51,7 +73,7 @@ async def post_schema_metadata(schema: Schema = Body(...)):
 
 
 @app.get("/v1/schema")
-async def get_schema(survey_id: str, version: str) -> dict:
+async def get_schema(survey_id: str, version: int) -> dict:
     """
     Lookup the schema metadata, given the survey_id and version. Then use
     that to look up the location of the schema file in the bucket and
@@ -59,11 +81,11 @@ async def get_schema(survey_id: str, version: str) -> dict:
     """
     logger.info("Getting schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
-
+    int(survey_id)
     schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
         logger.error("Schema metadata not found")
-        raise HTTPException(status_code=404, detail="Schema metadata not found")
+        return exception_throw.throw_404_no_schema_exception()
 
     logger.info("Schema metadata successfully retrieved.")
     logger.debug(f"Schema metadata: {schema_metadata}")
@@ -72,6 +94,10 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
     schema = storage.get_schema(schema_metadata.schema_location)
 
+    if schema is None:
+        logger.error("Schema not found")
+        return exception_throw.throw_404_no_schema_exception()
+
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")
 
@@ -79,12 +105,18 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
-async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
+async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
+    if survey_id == '':
+        return exception_throw.throw_400_incorrect_schema_key_exception()
+
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
 
     schemas_metadata = database.get_schemas_metadata(survey_id)
+    if not schemas_metadata:
+        logger.error("Schemas metadata not found")
+        return exception_throw.throw_400_no_result_exception()
 
     logger.info("Schemas metadata successfully retrieved.")
     logger.debug(f"Schemas metadata: {schemas_metadata}")
