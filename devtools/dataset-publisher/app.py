@@ -18,9 +18,7 @@ async def dev_simulate_publish_dataset(request: Request):
     storage_client = storage.Client()
 
     # Check if the dataset bucket exists.
-    dataset_bucket = setup_local_storage(
-        config.DATASET_BUCKET_NAME, storage_client
-    )
+    dataset_bucket = setup_local_storage(config.DATASET_BUCKET_NAME, storage_client)
     # Supporting to ensure schema bucket is created for docker enviroment.
     setup_local_storage(config.SCHEMA_BUCKET_NAME, storage_client)
 
