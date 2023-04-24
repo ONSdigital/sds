@@ -18,22 +18,6 @@ class exception_response:
                                         "message": self.message
                                      })
 
-    
-"""def create_exception_response(status_code:int, status:str, message:str) -> exception_response:
-   ex_res = exception_response
-   ex_res.status_code = status_code
-   ex_res.status = status
-   ex_res.message = message
-   return ex_res
-
-
-def throw_exception_with_json(ex_res: exception_response) -> JSONResponse:
-    return JSONResponse(status_code=ex_res.status_code,
-                                     content={
-                                        "status": ex_res.status,
-                                        "message": ex_res.message
-                                     })"""
-
 
 def throw_500_global_exception() -> JSONResponse:
    '''

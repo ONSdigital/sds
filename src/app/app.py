@@ -73,7 +73,7 @@ async def post_schema_metadata(schema: Schema = Body(...)):
 
 
 @app.get("/v1/schema")
-async def get_schema(survey_id: str, version: int) -> dict:
+async def get_schema(survey_id: str, version: str) -> dict:
     """
     Lookup the schema metadata, given the survey_id and version. Then use
     that to look up the location of the schema file in the bucket and
@@ -81,7 +81,13 @@ async def get_schema(survey_id: str, version: int) -> dict:
     """
     logger.info("Getting schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
-    int(survey_id)
+
+    try:
+        version = int(version)
+    except:
+        logger.error("Invalid version")
+        return exception_throw.throw_400_validation_exception()
+
     schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
         logger.error("Schema metadata not found")
