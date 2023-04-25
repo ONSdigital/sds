@@ -1,11 +1,13 @@
 import firebase_admin
-from firebase_admin import firestore
+from firebase_admin import firestore, _apps
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 
 class DatasetRepository:
     def __init__(self):
-        firebase_admin.initialize_app()
+        if not _apps:
+            firebase_admin.initialize_app()
+
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
