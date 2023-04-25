@@ -158,7 +158,8 @@ gcloud functions deploy new-dataset-function \
 --source=. \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
---trigger-event-filters="bucket=$DATASET_BUCKET"
+--trigger-event-filters="bucket=$DATASET_BUCKET" \
+--set-env-vars="SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build"
 ```
 
 ## Running the integration tests
