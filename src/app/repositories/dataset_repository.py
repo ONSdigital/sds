@@ -1,5 +1,5 @@
 import firebase_admin
-from firebase_admin import firestore, _apps
+from firebase_admin import _apps, firestore
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 
