@@ -22,9 +22,7 @@ class DatasetProcessorService:
     def __init__(self) -> None:
         self.dataset_repository = DatasetRepository()
 
-        self.dataset_writer_service = DatasetWriterService(
-            self.dataset_repository
-        )
+        self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
         pass
 
     def process_new_dataset(
