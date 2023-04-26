@@ -1,6 +1,7 @@
 import uuid
 
 from config.config_factory import ConfigFactory
+from logging_config import logging
 from models.dataset_models import (
     DatasetMetadataWithoutId,
     NewDatasetMetadata,
@@ -14,7 +15,6 @@ from services.datetime_service import DatetimeService
 
 config = ConfigFactory.get_config()
 
-from logging_config import logging
 
 logger = logging.getLogger(__name__)
 

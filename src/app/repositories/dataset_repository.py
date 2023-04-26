@@ -1,9 +1,7 @@
-from typing import Generator
-
 import firebase_admin
 from firebase_admin import _apps, firestore
 from logging_config import logging
-from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
+from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,3 @@
-from typing import Generator
-
-from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.dataset_models import DatasetMetadata
-
 cloud_event_test_data = {
     "id": "test_id",
     "type": "test_type",
