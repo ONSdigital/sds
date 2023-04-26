@@ -9,7 +9,6 @@ from models.dataset_models import (
     UnitDataset,
 )
 from repositories.dataset_repository import DatasetRepository
-from services.dataset.dataset_reader_service import DatasetReaderService
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.datetime_service import DatetimeService
 
@@ -23,9 +22,8 @@ class DatasetProcessorService:
     def __init__(self) -> None:
         self.dataset_repository = DatasetRepository()
 
-        self.dataset_reader_service = DatasetReaderService(self.dataset_repository)
         self.dataset_writer_service = DatasetWriterService(
-            self.dataset_repository, self.dataset_reader_service
+            self.dataset_repository
         )
         pass
 

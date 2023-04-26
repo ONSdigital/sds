@@ -1,16 +1,13 @@
 from models.dataset_models import DatasetMetadata
 from repositories.dataset_repository import DatasetRepository
-from services.dataset.dataset_reader_service import DatasetReaderService
 
 
 class DatasetWriterService:
     def __init__(
         self,
         dataset_repository: DatasetRepository,
-        dataset_reader_service: DatasetReaderService,
     ):
         self.dataset_repository = dataset_repository
-        self.dataset_reader_service = dataset_reader_service
 
     def write_transformed_dataset_to_repository(
         self,
@@ -37,7 +34,7 @@ class DatasetWriterService:
         dataset_unit_data_collection (list[object]): the collection of unit data associated with the dataset
         """
         database_unit_data_collection = (
-            self.dataset_reader_service.get_dataset_unit_collection(dataset_id)
+            self.dataset_repository.get_dataset_unit_collection(dataset_id)
         )
 
         for unit_data in new_dataset_unit_data_collection:
