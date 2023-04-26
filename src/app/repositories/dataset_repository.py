@@ -36,7 +36,7 @@ class DatasetRepository:
     def create_new_dataset(
         self,
         dataset_id: str,
-        dataset_metadata_without_id_dto: DatasetMetadataWithoutId,
+        dataset_metadata_without_id: DatasetMetadataWithoutId,
     ) -> None:
         """
         Creates a new dataset in firestore with a specified ID and data.
@@ -45,9 +45,10 @@ class DatasetRepository:
         dataset_id (str): uniquely generated GUID id of the dataset.
         dataset (UnitData): unit dataset being created in firestore.
         """
-        self.datasets_collection.document(dataset_id).set(
-            dataset_metadata_without_id_dto
+        logger.debug(
+            f"Setting dataset with id {dataset_id} and data {dataset_metadata_without_id}"
         )
+        self.datasets_collection.document(dataset_id).set(dataset_metadata_without_id)
 
     def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
         """

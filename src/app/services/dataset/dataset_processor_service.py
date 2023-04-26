@@ -123,7 +123,7 @@ class DatasetProcessorService:
 
         Parameters:
         dataset_id (str): dataset_id for the new dataset.
-        transformed_dataset_metadata (DatasetMetadataWithoutIdDto): the dataset metadata without id
+        transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset metadata without id
         new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         return [
@@ -144,7 +144,7 @@ class DatasetProcessorService:
 
         Parameters:
         dataset_id (str): dataset_id for the new dataset.
-        transformed_dataset_metadata (DatasetMetadataWithoutIdDto): the dataset metadata without id
+        transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset metadata without id
         unit_data_item (object): unit data item to be transformed
         """
         return {

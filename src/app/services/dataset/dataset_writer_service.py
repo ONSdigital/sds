@@ -18,7 +18,7 @@ class DatasetWriterService:
         Writes the transformed data to the database
 
         Parameters:
-        transformed_dataset (DatasetMetadataDto): the transformed dataset being written
+        transformed_dataset (DatasetMetadata): the transformed dataset being written
         dataset_unit_data_collection (list[object]): the collection of unit data associated with the dataset
         """
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)

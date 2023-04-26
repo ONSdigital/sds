@@ -77,7 +77,7 @@ def uuid_mock():
 def mock_document_snapshot_generator() -> Generator[DocumentSnapshot, None, None]:
     dataset_with_survey_id_data = MagicMock(spec=DocumentSnapshot)
     dataset_with_survey_id_data.to_dict.return_value = (
-        dataset_test_data.dataset_metadata_dto
+        dataset_test_data.dataset_metadata
     )
 
     yield dataset_with_survey_id_data

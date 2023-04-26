@@ -12,7 +12,7 @@ test_dataset_id = "test_dataset_id"
 test_survey_id = "xyz"
 
 
-dataset_metadata_dto = {
+dataset_metadata = {
     "dataset_id": test_dataset_id,
     "survey_id": test_survey_id,
     "period_id": "abc",
@@ -47,7 +47,7 @@ existing_dataset_unit_data_collection = [
     },
 ]
 
-dataset_metadata_without_id_dto = {
+dataset_metadata_without_id = {
     "survey_id": "xyz",
     "period_id": "abc",
     "title": "Which side was better?",

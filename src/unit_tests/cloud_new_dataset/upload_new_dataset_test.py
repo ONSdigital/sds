@@ -21,7 +21,7 @@ def test_upload_new_dataset(
     )
     DatasetRepository.create_new_dataset.assert_called_once_with(
         dataset_test_data.test_dataset_id,
-        dataset_test_data.dataset_metadata_without_id_dto,
+        dataset_test_data.dataset_metadata_without_id,
     )
 
     DatasetRepository.get_dataset_unit_collection.assert_called_once_with(
