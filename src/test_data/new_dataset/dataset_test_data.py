@@ -11,7 +11,20 @@ cloud_event_test_data = {
 test_dataset_id = "test_dataset_id"
 test_survey_id = "xyz"
 
-test_survey_latest_version = 2
+
+dataset_metadata_dto = {
+    "dataset_id": test_dataset_id,
+    "survey_id": test_survey_id,
+    "period_id": "abc",
+    "title": "Which side was better?",
+    "sds_schema_version": 4,
+    "sds_published_at": "2023-04-20T12:00:00Z",
+    "total_reporting_units": 1,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": 1,
+    "filename": "test_filename.json",
+    "form_type": "yyy",
+}
 
 existing_dataset_unit_data_collection = [
     {

@@ -80,10 +80,26 @@ class DatasetProcessorService:
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
-            "sds_dataset_version": self.dataset_repository.get_latest_survey_version(
+            "sds_dataset_version": self._calculate_next_dataset_version(
                 dataset["survey_id"]
             ),
         }
+
+    def _calculate_next_dataset_version(self, survey_id: str) -> int:
+        """
+        Calculates the next sds_dataset_version from a single dataset from firestore with a specific survey_id.
+
+        Parameters:
+        survey_id (str): survey_id of the specified dataset.
+        """
+        datasets_result = self.dataset_repository.get_dataset_with_survey_id(survey_id)
+
+        try:
+            latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
+        except StopIteration:
+            latest_version = 1
+
+        return latest_version
 
     def _transform_dataset_unit_data_collection(
         self,

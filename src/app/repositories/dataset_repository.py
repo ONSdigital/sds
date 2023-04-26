@@ -14,26 +14,18 @@ class DatasetRepository:
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
-    def get_latest_survey_version(self, survey_id: str) -> int:
+    def get_dataset_with_survey_id(self, survey_id: str) -> int:
         """
         Gets the latest survey version of a single dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        survey_dataset_generator = next(
+        return (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
-        )
-
-        return next(
-            (
-                doc.to_dict()["sds_dataset_version"] + 1
-                for doc in survey_dataset_generator
-            ),
-            1,
         )
 
     def create_new_dataset(

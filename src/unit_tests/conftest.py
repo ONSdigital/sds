@@ -1,6 +1,7 @@
 import json
 import uuid
 from datetime import datetime
+from typing import Generator
 from unittest.mock import MagicMock
 
 import firebase_admin
@@ -11,6 +12,7 @@ from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
+from google.cloud.firestore_v1.document import DocumentSnapshot
 from repositories.dataset_repository import DatasetRepository
 from services.datetime_service import DatetimeService
 
@@ -72,11 +74,20 @@ def uuid_mock():
     uuid.uuid4.return_value = dataset_test_data.test_dataset_id
 
 
+def mock_document_snapshot_generator() -> Generator[DocumentSnapshot, None, None]:
+    dataset_with_survey_id_data = MagicMock(spec=DocumentSnapshot)
+    dataset_with_survey_id_data.to_dict.return_value = (
+        dataset_test_data.dataset_metadata_dto
+    )
+
+    yield dataset_with_survey_id_data
+
+
 @pytest.fixture()
 def repository_boundaries_mock():
-    DatasetRepository.get_latest_survey_version = MagicMock()
-    DatasetRepository.get_latest_survey_version.return_value = (
-        dataset_test_data.test_survey_latest_version
+    DatasetRepository.get_dataset_with_survey_id = MagicMock()
+    DatasetRepository.get_dataset_with_survey_id.return_value = (
+        mock_document_snapshot_generator()
     )
 
     DatasetRepository.create_new_dataset = MagicMock()
