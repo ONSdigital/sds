@@ -39,11 +39,11 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
 
 def test_post_bad_schema(client, database, storage):
     """
-    Checks that fastAPI returns a 422 error if the schema
+    Checks that fastAPI returns a 400 error if the schema
     is badly formatted.
     """
     response = client.post("/v1/schema", json={"schema": "is missing some fields"})
-    assert response.status_code == 422
+    assert response.status_code == 400
 
 
 def test_get_schemas_metadata(client, database):

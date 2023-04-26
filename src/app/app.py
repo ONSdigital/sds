@@ -1,9 +1,9 @@
 import database
-import storage
 import exception_throw
+import storage
 from fastapi import Body, FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from services import schema_metadata_service
@@ -15,7 +15,7 @@ app = FastAPI()
 @app.exception_handler(500)
 async def internal_exception_handler(request: Request, exc: Exception):
     """
-    Override the global exception handler (500 internal server error) in 
+    Override the global exception handler (500 internal server error) in
     FastAPI and throw error in JSON format
     """
     return exception_throw.throw_500_global_exception()
@@ -24,7 +24,7 @@ async def internal_exception_handler(request: Request, exc: Exception):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
-    When a request contains invalid data, FastAPI internally raises a 
+    When a request contains invalid data, FastAPI internally raises a
     RequestValidationError. This function override the default
     validation exception handler to return 400 instead of 422
     """
@@ -111,9 +111,9 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
-async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetadata]:
+async def get_schemas_metadata(survey_id: str = "") -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
-    if survey_id == '':
+    if survey_id == "":
         return exception_throw.throw_400_incorrect_schema_key_exception()
 
     logger.info("Getting schemas metadata...")
@@ -132,13 +132,13 @@ async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetada
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
 async def get_dataset_metadata_collection(
-    survey_id: str = '', period_id: str = ''
+    survey_id: str = "", period_id: str = ""
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
     The matching metadata are returned as an array of dictionaries.
     """
-    if survey_id == '' or period_id == '':
+    if survey_id == "" or period_id == "":
         return exception_throw.throw_400_incorrect_key_names_exception()
 
     logger.info("Getting dataset metadata collection...")
