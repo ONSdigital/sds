@@ -33,7 +33,7 @@ class DatasetProcessorService:
 
         Parameters:
         filename (str): the filename of the json containing the dataset data
-        dataset (NewDatasetWithMetadata): dataset to be processed
+        new_dataset (NewDatasetWithMetadata): new dataset to be processed
         """
         logger.info("Processing new dataset...")
         logger.debug(f"Dataset being processed: {new_dataset}")
@@ -82,7 +82,7 @@ class DatasetProcessorService:
         Parameters:
         new_dataset_metadata (NewDatasetMetadata): the original dataset.
         filename (str): the filename of the json containing the dataset data
-        dataset_unit_data_collection (list[object]): unit
+        dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
         return {
             **new_dataset_metadata,

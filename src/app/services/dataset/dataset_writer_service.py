@@ -19,7 +19,6 @@ class DatasetWriterService:
 
         Parameters:
         transformed_dataset (DatasetMetadata): the transformed dataset being written
-        dataset_unit_data_collection (list[object]): the collection of unit data associated with the dataset
         """
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
 
@@ -31,7 +30,7 @@ class DatasetWriterService:
 
         Parameters:
         dataset_id (str): the uniquely generated id of the dataset
-        dataset_unit_data_collection (list[object]): the collection of unit data associated with the dataset
+        new_dataset_unit_data_collection (list[object]): the collection of unit data associated with the new dataset
         """
         database_unit_data_collection = (
             self.dataset_repository.get_dataset_unit_collection(dataset_id)

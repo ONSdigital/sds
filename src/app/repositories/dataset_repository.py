@@ -43,7 +43,7 @@ class DatasetRepository:
 
         Parameters:
         dataset_id (str): uniquely generated GUID id of the dataset.
-        dataset (UnitData): unit dataset being created in firestore.
+        dataset_metadata_without_id (DatasetMetadataWithoutId): metadata of the new dataset without id.
         """
         logger.debug(
             f"Setting dataset with id {dataset_id} and data {dataset_metadata_without_id}"
