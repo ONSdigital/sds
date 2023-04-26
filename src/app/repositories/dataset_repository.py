@@ -1,6 +1,11 @@
+from typing import Generator
+
 import firebase_admin
 from firebase_admin import _apps, firestore
+from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetRepository:
@@ -11,18 +16,26 @@ class DatasetRepository:
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
-    def get_dataset_with_survey_id(self, survey_id: str) -> list[DatasetMetadata]:
+    def get_latest_survey_version(self, survey_id: str) -> int:
         """
-        Gets a single dataset from firestore with a specific survey_id.
+        Gets the latest survey version of a single dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        return (
+        survey_dataset_generator = next(
             self.datasets_collection.where("survey_id", "==", survey_id)
             .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
+        )
+
+        return next(
+            (
+                doc.to_dict()["sds_dataset_version"] + 1
+                for doc in survey_dataset_generator
+            ),
+            1,
         )
 
     def create_new_dataset(
@@ -60,4 +73,5 @@ class DatasetRepository:
         units_collection (any): The collection of units that data is being appended to.
         unit_data (any): The unit being appended
         """
-        units_collection.document(unit_data["ruref"]).set(unit_data)
+        logger.debug(f"Unit data being appended: {unit_data}")
+        units_collection.document(unit_data["data"]["ruref"]).set(unit_data)

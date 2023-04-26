@@ -14,7 +14,7 @@ class DatasetReaderService:
         Parameters:
         survey_id (str): survey_id used for query match
         """
-        return self.dataset_repository.get_dataset_with_survey_id(survey_id)
+        return self.dataset_repository.get_latest_survey_version(survey_id)
 
     def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
         """

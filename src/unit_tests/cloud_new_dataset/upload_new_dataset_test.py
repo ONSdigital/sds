@@ -16,7 +16,7 @@ def test_upload_new_dataset(
 
     new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetRepository.get_dataset_with_survey_id.assert_called_once_with(
+    DatasetRepository.get_latest_survey_version.assert_called_once_with(
         dataset_test_data.test_survey_id
     )
     DatasetRepository.create_new_dataset.assert_called_once_with(

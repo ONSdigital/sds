@@ -1,3 +1,8 @@
+from typing import Generator
+
+from google.cloud.firestore_v1.document import DocumentSnapshot
+from models.dataset_models import DatasetMetadata
+
 cloud_event_test_data = {
     "id": "test_id",
     "type": "test_type",
@@ -11,21 +16,7 @@ cloud_event_test_data = {
 test_dataset_id = "test_dataset_id"
 test_survey_id = "xyz"
 
-dataset_metadata_dto_list = [
-    {
-        "dataset_id": test_dataset_id,
-        "survey_id": test_survey_id,
-        "period_id": "abc",
-        "title": "Which side was better?",
-        "sds_schema_version": 4,
-        "sds_published_at": "2023-04-20T12:00:00Z",
-        "total_reporting_units": 1,
-        "schema_version": "v1.0.0",
-        "sds_dataset_version": 1,
-        "filename": "test_filename.json",
-        "form_type": "yyy",
-    }
-]
+test_survey_latest_version = 2
 
 existing_dataset_unit_data_collection = [
     {

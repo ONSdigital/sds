@@ -74,9 +74,9 @@ def uuid_mock():
 
 @pytest.fixture()
 def repository_boundaries_mock():
-    DatasetRepository.get_dataset_with_survey_id = MagicMock()
-    DatasetRepository.get_dataset_with_survey_id.return_value = (
-        dataset_test_data.dataset_metadata_dto_list
+    DatasetRepository.get_latest_survey_version = MagicMock()
+    DatasetRepository.get_latest_survey_version.return_value = (
+        dataset_test_data.test_survey_latest_version
     )
 
     DatasetRepository.create_new_dataset = MagicMock()

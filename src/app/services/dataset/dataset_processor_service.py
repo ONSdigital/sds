@@ -14,6 +14,10 @@ from services.datetime_service import DatetimeService
 
 config = ConfigFactory.get_config()
 
+from logging_config import logging
+
+logger = logging.getLogger(__name__)
+
 
 class DatasetProcessorService:
     def __init__(self) -> None:
@@ -40,6 +44,7 @@ class DatasetProcessorService:
         transformed_dataset = self._transform_dataset_metadata(
             dataset, filename, new_dataset_unit_data_collection
         )
+        logger.debug(f"Transformed dataset: {transformed_dataset}")
 
         dataset_id = str(uuid.uuid4())
         self.dataset_writer_service.write_transformed_dataset_to_repository(
@@ -50,6 +55,10 @@ class DatasetProcessorService:
         transformed_unit_data_collection = self._transform_dataset_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
+        logger.debug(
+            f"Transformed unit data collection: {transformed_unit_data_collection}"
+        )
+
         self.dataset_writer_service.write_new_unit_data_to_repository(
             dataset_id, transformed_unit_data_collection
         )
@@ -75,28 +84,10 @@ class DatasetProcessorService:
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
-            "sds_dataset_version": self._calculate_next_dataset_version(
+            "sds_dataset_version": self.dataset_repository.get_latest_survey_version(
                 dataset["survey_id"]
             ),
         }
-
-    def _calculate_next_dataset_version(self, survey_id: str) -> int:
-        """
-        Calculates the next sds_dataset_version from a single dataset from firestore with a specific survey_id.
-
-        Parameters:
-        survey_id (str): survey_id of the specified dataset.
-        """
-        datasets_result = self.dataset_reader_service.get_dataset_with_survey_id(
-            survey_id
-        )
-
-        try:
-            latest_version = next(iter(datasets_result))["sds_dataset_version"] + 1
-        except StopIteration:
-            latest_version = 1
-
-        return latest_version
 
     def _transform_dataset_unit_data_collection(
         self,
