@@ -23,7 +23,7 @@ class DatasetWriterService:
         """
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
 
-    def write_new_unit_data_to_repository(
+    def write_transformed_unit_data_to_repository(
         self, dataset_id: str, new_dataset_unit_data_collection: list[object]
     ) -> None:
         """

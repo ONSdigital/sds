@@ -26,7 +26,7 @@ class DatasetProcessorService:
         pass
 
     def process_new_dataset(
-        self, filename: str, dataset: NewDatasetWithMetadata
+        self, filename: str, new_dataset: NewDatasetWithMetadata
     ) -> None:
         """
         Processes the incoming dataset.
@@ -35,33 +35,45 @@ class DatasetProcessorService:
         filename (str): the filename of the json containing the dataset data
         dataset (NewDatasetWithMetadata): dataset to be processed
         """
-        new_dataset_unit_data_collection = dataset.pop("data")
+        logger.info('Processing new dataset...')
+        logger.debug(f'Dataset being processed: {new_dataset}')
 
-        transformed_dataset = self._transform_dataset_metadata(
-            dataset, filename, new_dataset_unit_data_collection
+        new_dataset_unit_data_collection = new_dataset.pop("data")
+
+        logger.info('Transforming new dataset metadata...')
+        transformed_dataset = self._transform_new_dataset_metadata(
+            new_dataset, filename, new_dataset_unit_data_collection
         )
+        logger.info('Dataset transformed successfully.')
         logger.debug(f"Transformed dataset: {transformed_dataset}")
 
+        logger.info('Writing transformed dataset to repository...')
         dataset_id = str(uuid.uuid4())
         self.dataset_writer_service.write_transformed_dataset_to_repository(
             dataset_id,
             transformed_dataset,
         )
+        logger.info('Transformed dataset written to repository successfully.')
 
+        logger.info('Transforming unit data collection...')
         transformed_unit_data_collection = self._transform_dataset_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
+        logger.info('Unit data collection transformed successfully.')
         logger.debug(
             f"Transformed unit data collection: {transformed_unit_data_collection}"
         )
 
-        self.dataset_writer_service.write_new_unit_data_to_repository(
+        logger.info('Writing transformed unit data to repository...')
+        self.dataset_writer_service.write_transformed_unit_data_to_repository(
             dataset_id, transformed_unit_data_collection
         )
+        logger.info('Transformed unit data written to repository successfully.')
 
-    def _transform_dataset_metadata(
+
+    def _transform_new_dataset_metadata(
         self,
-        dataset: NewDatasetMetadata,
+        new_dataset_metadata: NewDatasetMetadata,
         filename: str,
         dataset_unit_data_collection: list[object],
     ) -> DatasetMetadataWithoutId:
@@ -69,19 +81,19 @@ class DatasetProcessorService:
         Returns a copy of the dataset with added metadata.
 
         Parameters:
-        dataset (NewDatasetMetadata): the original dataset.
+        new_dataset_metadata (NewDatasetMetadata): the original dataset.
         filename (str): the filename of the json containing the dataset data
-        dataset_data (list[object]): unit
+        dataset_unit_data_collection (list[object]): unit
         """
         return {
-            **dataset,
+            **new_dataset_metadata,
             "filename": filename,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
-                dataset["survey_id"]
+                new_dataset_metadata["survey_id"]
             ),
         }
 

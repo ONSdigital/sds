@@ -1,7 +1,9 @@
 import firebase_admin
 from firebase_admin import _apps, firestore
+from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
+from typing import Generator
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +16,9 @@ class DatasetRepository:
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
-    def get_dataset_with_survey_id(self, survey_id: str) -> int:
+    def get_dataset_with_survey_id(self, survey_id: str) -> Generator[DocumentSnapshot, None, None]:
         """
-        Gets the latest survey version of a single dataset from firestore with a specific survey_id.
+        Gets the survey id of a single dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
