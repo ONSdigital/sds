@@ -46,7 +46,7 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
 
     if not unit_supplementary_data:
         logger.error("Item not found")
-        raise HTTPException(status_code=404, detail="Item not found")
+        return exception_throw.throw_404_unit_data_no_response_exception()
 
     logger.info("Unit supplementary data outputted successfully.")
     logger.debug(f"Unit supplementary data: {unit_supplementary_data}")
@@ -132,12 +132,15 @@ async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetada
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
 async def get_dataset_metadata_collection(
-    survey_id: str, period_id: str
+    survey_id: str = '', period_id: str = ''
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
     The matching metadata are returned as an array of dictionaries.
     """
+    if survey_id == '' or period_id == '':
+        return exception_throw.throw_400_incorrect_key_names_exception()
+
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 
@@ -146,9 +149,7 @@ async def get_dataset_metadata_collection(
     )
     if not dataset_metadata_collection:
         logger.error("Dataset metadata collection not found.")
-        raise HTTPException(
-            status_code=404, detail="Dataset metadata collection not found."
-        )
+        return exception_throw.throw_404_no_result_exception()
 
     logger.info("Dataset metadata collection successfully retrieved.")
     logger.debug(f"Dataset metadata collection: {dataset_metadata_collection}")
