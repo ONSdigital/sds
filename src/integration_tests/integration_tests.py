@@ -83,7 +83,7 @@ def test_dataset(client, bucket_loader):
             json_response = response.json()
 
             assert mock_unit_response.items() <= json_response.items()
-            assert json_response['dataset_id'] is not None
+            assert json_response["dataset_id"] is not None
 
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
