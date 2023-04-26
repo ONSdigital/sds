@@ -67,7 +67,7 @@ def test_dataset(client, bucket_loader):
             "ruaddr4": "The Shire",
             "ruaddr2": "Hobbitton",
             "ruref": "43532",
-        }
+        },
     }
     # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
     # locate the specific dataset in the collection.

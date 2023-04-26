@@ -35,41 +35,40 @@ class DatasetProcessorService:
         filename (str): the filename of the json containing the dataset data
         dataset (NewDatasetWithMetadata): dataset to be processed
         """
-        logger.info('Processing new dataset...')
-        logger.debug(f'Dataset being processed: {new_dataset}')
+        logger.info("Processing new dataset...")
+        logger.debug(f"Dataset being processed: {new_dataset}")
 
         new_dataset_unit_data_collection = new_dataset.pop("data")
 
-        logger.info('Transforming new dataset metadata...')
+        logger.info("Transforming new dataset metadata...")
         transformed_dataset = self._transform_new_dataset_metadata(
             new_dataset, filename, new_dataset_unit_data_collection
         )
-        logger.info('Dataset transformed successfully.')
+        logger.info("Dataset transformed successfully.")
         logger.debug(f"Transformed dataset: {transformed_dataset}")
 
-        logger.info('Writing transformed dataset to repository...')
+        logger.info("Writing transformed dataset to repository...")
         dataset_id = str(uuid.uuid4())
         self.dataset_writer_service.write_transformed_dataset_to_repository(
             dataset_id,
             transformed_dataset,
         )
-        logger.info('Transformed dataset written to repository successfully.')
+        logger.info("Transformed dataset written to repository successfully.")
 
-        logger.info('Transforming unit data collection...')
+        logger.info("Transforming unit data collection...")
         transformed_unit_data_collection = self._transform_dataset_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
-        logger.info('Unit data collection transformed successfully.')
+        logger.info("Unit data collection transformed successfully.")
         logger.debug(
             f"Transformed unit data collection: {transformed_unit_data_collection}"
         )
 
-        logger.info('Writing transformed unit data to repository...')
+        logger.info("Writing transformed unit data to repository...")
         self.dataset_writer_service.write_transformed_unit_data_to_repository(
             dataset_id, transformed_unit_data_collection
         )
-        logger.info('Transformed unit data written to repository successfully.')
-
+        logger.info("Transformed unit data written to repository successfully.")
 
     def _transform_new_dataset_metadata(
         self,
