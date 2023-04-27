@@ -5,10 +5,6 @@ from config.config_factory import ConfigFactory
 config = ConfigFactory.get_config()
 
 
-def test_get_data(database):
-    database.get_unit_supplementary_data(dataset_id="1", unit_id="1")
-
-
 def test_set_schema_metadata(database):
     """
     Checks that set_schema_metadata accepts the survey_id and schema_location and stores them in

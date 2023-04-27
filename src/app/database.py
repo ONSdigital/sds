@@ -18,13 +18,6 @@ schemas_collection = db.collection("schemas")
 config = ConfigFactory.get_config()
 
 
-def get_unit_supplementary_data(dataset_id, unit_id):
-    """Get the unit data from dataset collection, that originally came from the dataset."""
-
-    units_collection = datasets_collection.document(dataset_id).collection("units")
-    return units_collection.document(unit_id).get().to_dict()
-
-
 def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMetadata:
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
