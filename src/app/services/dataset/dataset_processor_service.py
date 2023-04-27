@@ -37,16 +37,16 @@ class DatasetProcessorService:
         logger.debug(f"Dataset being processed: {new_dataset}")
 
         new_dataset_unit_data_collection = new_dataset.pop("data")
+        dataset_id = str(uuid.uuid4())
 
         logger.info("Transforming new dataset metadata...")
-        transformed_dataset = self._transform_new_dataset_metadata(
+        transformed_dataset = self._add_metadata_to_new_dataset(
             new_dataset, filename, new_dataset_unit_data_collection
         )
         logger.info("Dataset transformed successfully.")
-        logger.debug(f"Transformed dataset: {transformed_dataset}")
 
         logger.info("Writing transformed dataset to repository...")
-        dataset_id = str(uuid.uuid4())
+        logger.debug(f"Writing dataset with id {dataset_id}")
         self.dataset_writer_service.write_transformed_dataset_to_repository(
             dataset_id,
             transformed_dataset,
@@ -54,12 +54,12 @@ class DatasetProcessorService:
         logger.info("Transformed dataset written to repository successfully.")
 
         logger.info("Transforming unit data collection...")
-        transformed_unit_data_collection = self._transform_dataset_unit_data_collection(
+        transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
         logger.info("Unit data collection transformed successfully.")
         logger.debug(
-            f"Transformed unit data collection: {transformed_unit_data_collection}"
+            f"Transformed unit data collection for dataset with id: {dataset_id}"
         )
 
         logger.info("Writing transformed unit data to repository...")
@@ -68,7 +68,7 @@ class DatasetProcessorService:
         )
         logger.info("Transformed unit data written to repository successfully.")
 
-    def _transform_new_dataset_metadata(
+    def _add_metadata_to_new_dataset(
         self,
         new_dataset_metadata: NewDatasetMetadata,
         filename: str,
@@ -110,7 +110,7 @@ class DatasetProcessorService:
 
         return latest_version
 
-    def _transform_dataset_unit_data_collection(
+    def _add_metadata_to_unit_data_collection(
         self,
         dataset_id: str,
         transformed_dataset_metadata: DatasetMetadataWithoutId,
@@ -125,13 +125,13 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         return [
-            self._transform_unit_data_item(
+            self._add_metatadata_to_unit_data_item(
                 dataset_id, transformed_dataset_metadata, item
             )
             for item in new_dataset_unit_data_collection
         ]
 
-    def _transform_unit_data_item(
+    def _add_metatadata_to_unit_data_item(
         self,
         dataset_id: str,
         transformed_dataset_metadata: DatasetMetadataWithoutId,
