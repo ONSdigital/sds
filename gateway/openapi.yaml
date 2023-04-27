@@ -1,0 +1,327 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Supplementary Data Service (SDS)
+  description: API gateway for SDS
+schemes:
+  - https
+securityDefinitions:
+  UserSecurity:
+    type: basic
+security:
+  - UserSecurity: []
+paths:
+  /v1/unit_data:
+    post:
+      description: retrieve data for a unit
+      parameters:
+        - name: dataset_id
+          in: query
+          required: true
+          type: string
+        - name: unit_id
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: Succesfully retrieved data
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+              data:
+                type: object
+                properties:
+                  local_unit:
+                    type: object
+                      properties:
+                        luname:
+                          type: string
+                        luref:
+                          type: string
+                  ruref:
+                    type: string
+                  runame:
+                    type: string
+        400:
+          description: Bad request
+          schema:
+            $ref: "#/definitions/error_response"
+        404:
+          description: Item not found
+          schema:
+            $ref: "#/definitions/error_response"
+        500:
+          description: Internal error
+          schema:
+            $ref: "#/definitions/error_response"
+  /v1/schema:
+    post:
+      description:
+      parameters:
+        - name: schema
+          in: body
+          required: true
+          type: object
+          schema: "#/definitions/sds_schema"
+      responses:
+        200:
+          description: Successfuly submitted schema
+          schema:
+            type: object
+            schema:
+              $ref: "#/definitions/sds_schema_metadata"
+        400:
+          description: Schema validation failed
+          schema:
+            $ref: "#/definitions/error_response"
+        500:
+          description: Internal error
+          schema:
+            $ref: "#/definitions/error_response"
+    get:
+      description: return schema
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+        - name: version
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Succesfully retrieved schema
+          schema:
+            type: object
+            schema: "#/definitions/sds_schema"
+        404:
+          description: No schema found
+          schema:
+            $ref: "#/definitions/error_response"
+        500:
+          description: Internal error
+          schema:
+            $ref: "#/definitions/error_response"
+
+  /v1/schema_metadata:
+    get:
+      description: retrieves the metadata for the all schemas with the specified survey id
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Sucessfully retrieved schema metadata
+          schema:
+            type: object
+            schema:
+              $ref: "#/definitions/sds_schema_metadata"
+        400:
+          description: Incorrect key 
+          schema:
+            $ref: "#/definitions/error_response"
+        404:
+          description: No results found 
+          schema:
+            $ref: "#/definitions/error_response"
+        500:
+          description: Internal error
+          schema:
+            $ref: "#/definitions/error_response"
+
+  /v1/dataset_metadata:
+    get:
+      description: retrieve dataset metadata for the given survey id
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+        - name: period_id
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successfully retrieved dataset metadata
+          schema:
+            $ref: "#/definitions/sds_dataset_metadata"
+        400:
+          description: Incorrect key names
+          schema:
+            $ref: "#/definitions/error_response"
+        404:
+          description: No dataset found
+          schema:
+            $ref: "#/definitions/error_response"
+        500:
+          description: Internal error
+          schema:
+            $ref: "#/definitions/error_response"
+
+definitions:
+  error_response:
+    type: object
+    properties:
+      status:
+        type: string
+      message:
+        type: string
+  sds_schema_metadata:
+    type: object
+    properties:
+      guid:
+        type: string
+      survey_id:
+        type: string
+      schema_location:
+        type: string
+      sds_schema_version:
+        type: string
+      sds_published_at:
+        type: string
+  sds_dataset_metadata:
+    type: object
+    properties:
+      0: 
+      type: object
+      properties: 
+        dataset_id: 
+          type: string
+        survey_id: 
+          type: string
+        period_id: 
+          type: string
+        title: 
+          type: string
+        sds_schema_version: 
+          type: integer
+          format: int32
+        sds_published_at: 
+          type: string
+          format: date-time
+        total_reporting_units: 
+          type: integer
+          format: int32
+        schema_version: 
+          type: string
+        sds_dataset_version: 
+          type: integer
+          format: int32
+        filename: 
+          type: string
+        form_type: 
+          type: string
+  sds_schema:
+    type: object
+    properties:
+      survey_id: 
+        type: string
+      title: 
+        type: string
+      description: 
+        type: string
+      schema_version: 
+        type: string
+      sample_unit_key_field: 
+        type: string
+      properties: 
+        type: array
+        items: 
+          type: object
+          properties: 
+            type: 
+              type: string
+            required: 
+              type: array
+              items: 
+                type: string
+            properties: 
+              type: object
+              properties: 
+                ruref: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                runame: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                    Description: 
+                      type: string
+                ruaddr: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                    Description: 
+                      type: string
+                repeats: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                    required: 
+                      type: array
+                      items: 
+                        type: string
+                    properties: 
+                      type: object
+                      properties: 
+                        key_field: 
+                          type: string
+                        luref: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                        luname: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                        luaddr: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                            Description: 
+                              type: string
+      examples: 
+        type: array
+        items: 
+          type: object
+          properties: 
+            ruref: 
+              type: string
+            runame: 
+              type: string
+            ruaddr: 
+              type: array
+              items: 
+                type: string
+            local_unit: 
+              type: array
+              items: 
+                type: object
+                properties: 
+                  luref: 
+                    type: string
+                  luname: 
+                    type: string
+                  luaddr: 
+                    type: array
+                    items: 
+                      type: string
+      $schema: 
+        type: string
+      $id: 
+        type: string
