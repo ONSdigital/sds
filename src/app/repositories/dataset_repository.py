@@ -21,7 +21,7 @@ class DatasetRepository:
         self, survey_id: str
     ) -> Generator[DocumentSnapshot, None, None]:
         """
-        Gets the survey id of a single dataset from firestore with a specific survey_id.
+        Gets a DocumentSnapshot generator of a single dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
