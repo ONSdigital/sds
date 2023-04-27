@@ -1,8 +1,7 @@
 import database
-import storage
 import exception_throw
+import storage
 from fastapi import Body, FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
@@ -15,7 +14,7 @@ app = FastAPI()
 @app.exception_handler(500)
 async def internal_exception_handler(request: Request, exc: Exception):
     """
-    Override the global exception handler (500 internal server error) in 
+    Override the global exception handler (500 internal server error) in
     FastAPI and throw error in JSON format
     """
     return exception_throw.throw_500_global_exception()
@@ -24,7 +23,7 @@ async def internal_exception_handler(request: Request, exc: Exception):
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
-    When a request contains invalid data, FastAPI internally raises a 
+    When a request contains invalid data, FastAPI internally raises a
     RequestValidationError. This function override the default
     validation exception handler to return 400 instead of 422
     """
@@ -84,7 +83,7 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
     try:
         version = int(version)
-    except:
+    except ValueError:
         logger.error("Invalid version")
         return exception_throw.throw_400_validation_exception()
 
@@ -111,9 +110,9 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
-async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetadata]:
+async def get_schemas_metadata(survey_id: str = "") -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
-    if survey_id == '':
+    if survey_id == "":
         return exception_throw.throw_400_incorrect_schema_key_exception()
 
     logger.info("Getting schemas metadata...")
@@ -122,7 +121,7 @@ async def get_schemas_metadata(survey_id: str = '') -> list[ReturnedSchemaMetada
     schemas_metadata = database.get_schemas_metadata(survey_id)
     if not schemas_metadata:
         logger.error("Schemas metadata not found")
-        return exception_throw.throw_400_no_result_exception()
+        return exception_throw.throw_404_no_schemas_metadata_exception()
 
     logger.info("Schemas metadata successfully retrieved.")
     logger.debug(f"Schemas metadata: {schemas_metadata}")
