@@ -54,7 +54,7 @@ services:
       - 3005:8080
     restart: on-failure
     environment:
-      - CONF=dataset-publisher
+      - CONF=docker-dev
       - SCHEMA_BUCKET_NAME=schema_bucket
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
