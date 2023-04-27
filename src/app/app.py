@@ -4,6 +4,7 @@ from fastapi import Body, FastAPI, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from repositories.dataset_repository import DatasetRepository
 from services.schema_metadata import schema_metadata_service
 
 logger = logging.getLogger(__name__)
@@ -18,8 +19,9 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     """
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
+    repository = DatasetRepository()
 
-    unit_supplementary_data = database.get_unit_supplementary_data(
+    unit_supplementary_data = repository.get_unit_supplementary_data(
         dataset_id=dataset_id, unit_id=unit_id
     )
 

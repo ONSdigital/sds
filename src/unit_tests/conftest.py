@@ -84,7 +84,7 @@ def mock_document_snapshot_generator() -> Generator[DocumentSnapshot, None, None
 
 
 @pytest.fixture()
-def repository_boundaries_mock():
+def dataset_repository_boundaries_mock():
     DatasetRepository.get_dataset_with_survey_id = MagicMock()
     DatasetRepository.get_dataset_with_survey_id.return_value = (
         mock_document_snapshot_generator()
@@ -100,6 +100,11 @@ def repository_boundaries_mock():
 
     DatasetRepository.append_unit_to_dataset_units_collection = MagicMock()
     DatasetRepository.append_unit_to_dataset_units_collection.return_value = None
+
+    DatasetRepository.get_unit_supplementary_data = MagicMock()
+    DatasetRepository.get_unit_supplementary_data.return_value = (
+        dataset_test_data.test_unit_supplementary_data
+    )
 
 
 @pytest.fixture()
@@ -119,8 +124,18 @@ def new_dataset_mock(monkeypatch, cloud_bucket_mock):
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
 
-    os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
-
     from main import new_dataset
 
     yield new_dataset
+
+
+@pytest.fixture
+def dataset_client(monkeypatch, dataset_repository_boundaries_mock):
+    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
+    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
+    monkeypatch.setattr(firestore, "client", MagicMock())
+
+    import app
+
+    dataset_client = TestClient(app.app)
+    yield dataset_client

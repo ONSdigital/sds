@@ -9,6 +9,7 @@ cloud_event_test_data = {
 }
 
 test_dataset_id = "test_dataset_id"
+test_unit_id = "test_unit_id"
 test_survey_id = "xyz"
 
 
@@ -58,6 +59,47 @@ dataset_metadata_without_id = {
     "sds_dataset_version": 2,
     "filename": "test_filename.json",
     "form_type": "yyy",
+}
+
+test_unit_supplementary_data = {
+    "dataset_id": test_dataset_id,
+    "survey_id": test_survey_id,
+    "period_id": "abc",
+    "sds_schema_version": 4,
+    "schema_version": "v1.0.0",
+    "form_type": "yyy",
+    "data": {
+        "ruref": test_unit_id,
+        "runame": "Pipes and Maps Ltd",
+        "ruaddr1": "111 Under Hill",
+        "ruaddr2": "Hobbitton",
+        "ruaddr4": "The Shire",
+        "rupostcode": "HO1 1AA",
+        "payeref": "123AB456",
+        "busdesc": "Provision of equipment for hobbit adventures",
+        "local_unit": [
+            {
+                "luref": "2012763A",
+                "luname": "Maps Factory",
+                "luaddr1": "1 Bag End",
+                "luaddr2": "Underhill",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AA",
+                "tradstyle": "Also Does Adventures Ltd",
+                "busdesc": "Creates old fashioned looking paper maps",
+            },
+            {
+                "luref": "20127364B",
+                "luname": "Pipes R Us Subsidiary",
+                "luaddr1": "12 The Farmstead",
+                "luaddr2": "Maggotsville",
+                "luaddr3": "Hobbiton",
+                "lupostcode": "HO1 1AB",
+                "busdesc": "Quality pipe manufacturer",
+                "buslref": "pipe123",
+            },
+        ],
+    },
 }
 
 new_dataset_unit_data_collection = [

@@ -17,6 +17,8 @@ class DatasetRepository:
         self.db = firestore.client()
         self.datasets_collection = self.db.collection("datasets")
 
+        self.document_units_key = "units"
+
     def get_dataset_with_survey_id(
         self, survey_id: str
     ) -> Generator[DocumentSnapshot, None, None]:
@@ -71,3 +73,15 @@ class DatasetRepository:
         """
         logger.debug(f"Unit data being appended: {unit_data}")
         units_collection.document(unit_data["data"]["ruref"]).set(unit_data)
+
+    def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
+        """
+        Get the unit supplementary  data of a specified unit from a dataset collection
+        """
+        return (
+            self.datasets_collection.document(dataset_id)
+            .collection(self.document_units_key)
+            .document(unit_id)
+            .get()
+            .to_dict()
+        )

@@ -6,7 +6,7 @@ from src.test_data.new_dataset import dataset_test_data
 
 
 def test_upload_new_dataset(
-    new_dataset_mock, uuid_mock, datetime_mock, repository_boundaries_mock
+    new_dataset_mock, uuid_mock, datetime_mock, dataset_repository_boundaries_mock
 ):
     """
     The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
