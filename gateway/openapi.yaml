@@ -12,7 +12,7 @@ security:
   - UserSecurity: []
 paths:
   /v1/unit_data:
-    post:
+    get:
       description: retrieve data for a unit
       parameters:
         - name: dataset_id
@@ -98,6 +98,10 @@ paths:
           schema:
             type: object
             schema: "#/definitions/sds_schema"
+        404:
+          description: Invalid version provided
+          schema:
+            $ref: "#/definitions/error_response"
         404:
           description: No schema found
           schema:
