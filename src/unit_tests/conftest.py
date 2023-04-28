@@ -17,6 +17,7 @@ from repositories.dataset_repository import DatasetRepository
 from services.datetime_service import DatetimeService
 
 from src.test_data.new_dataset import dataset_test_data
+from src.unit_tests.test_helper import TestHelper
 
 config = ConfigFactory.get_config()
 
@@ -74,20 +75,13 @@ def uuid_mock():
     uuid.uuid4.return_value = dataset_test_data.test_dataset_id
 
 
-def mock_document_snapshot_generator() -> Generator[DocumentSnapshot, None, None]:
-    dataset_with_survey_id_data = MagicMock(spec=DocumentSnapshot)
-    dataset_with_survey_id_data.to_dict.return_value = (
-        dataset_test_data.dataset_metadata
-    )
-
-    yield dataset_with_survey_id_data
-
-
 @pytest.fixture()
 def dataset_repository_boundaries_mock():
     DatasetRepository.get_dataset_with_survey_id = MagicMock()
     DatasetRepository.get_dataset_with_survey_id.return_value = (
-        mock_document_snapshot_generator()
+        TestHelper.create_document_snapshot_generator_mock(
+            [dataset_test_data.dataset_metadata_test_data]
+        )
     )
 
     DatasetRepository.create_new_dataset = MagicMock()

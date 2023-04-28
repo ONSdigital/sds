@@ -85,3 +85,16 @@ class DatasetRepository:
             .get()
             .to_dict()
         )
+
+    def get_dataset_metadata_collection(
+        self, survey_id: str, period_id: str
+    ) -> Generator[DocumentSnapshot, None, None]:
+        """
+        This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
+        and returns the matching datasets metadata which is a nested dictionary object with the dataset_id as the key.
+        """
+        return (
+            self.datasets_collection.where("survey_id", "==", survey_id)
+            .where("period_id", "==", period_id)
+            .stream()
+        )

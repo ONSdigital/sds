@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from repositories.dataset_repository import DatasetRepository
+from services.dataset.dataset_processor_service import DatasetProcessorService
 
 router = APIRouter()
 
@@ -38,7 +39,9 @@ async def get_unit_supplementary_data(
 
 @router.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
 async def get_dataset_metadata_collection(
-    survey_id: str, period_id: str
+    survey_id: str,
+    period_id: str,
+    dataset_processor_service: DatasetProcessorService = Depends(),
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
@@ -47,9 +50,10 @@ async def get_dataset_metadata_collection(
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 
-    dataset_metadata_collection = database.get_dataset_metadata_collection(
-        survey_id, period_id
+    dataset_metadata_collection = (
+        dataset_processor_service.get_dataset_metadata_collection(survey_id, period_id)
     )
+
     if not dataset_metadata_collection:
         logger.error("Dataset metadata collection not found.")
         raise HTTPException(

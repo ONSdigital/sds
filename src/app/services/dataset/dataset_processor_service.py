@@ -3,6 +3,7 @@ import uuid
 from config.config_factory import ConfigFactory
 from logging_config import logging
 from models.dataset_models import (
+    DatasetMetadata,
     DatasetMetadataWithoutId,
     NewDatasetMetadata,
     NewDatasetWithMetadata,
@@ -154,3 +155,23 @@ class DatasetProcessorService:
             "form_type": transformed_dataset_metadata["form_type"],
             "data": unit_data_item,
         }
+
+    def get_dataset_metadata_collection(
+        self, survey_id, period_id
+    ) -> list[DatasetMetadata]:
+        dataset_metadata_collection_generator = (
+            self.dataset_repository.get_dataset_metadata_collection(
+                survey_id, period_id
+            )
+        )
+
+        dataset_metadata_collection = []
+        for dataset in dataset_metadata_collection_generator:
+            metadata_collection_item = dataset.to_dict()
+            print("id?", dataset.id)
+            metadata_collection_item["dataset_id"] = dataset.id
+            dataset_metadata_collection.append(metadata_collection_item)
+
+        print("cheese", dataset_metadata_collection)
+
+        return dataset_metadata_collection

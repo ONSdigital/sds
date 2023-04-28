@@ -13,7 +13,7 @@ test_unit_id = "test_unit_id"
 test_survey_id = "xyz"
 
 
-dataset_metadata = {
+dataset_metadata_test_data = {
     "dataset_id": test_dataset_id,
     "survey_id": test_survey_id,
     "period_id": "abc",
@@ -26,6 +26,33 @@ dataset_metadata = {
     "filename": "test_filename.json",
     "form_type": "yyy",
 }
+
+dataset_metadata_collection_no_id = [
+    {
+        "survey_id": f"{test_survey_id}_1",
+        "period_id": "abc",
+        "title": "Which side was better?",
+        "sds_schema_version": 4,
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": 1,
+        "filename": "test_filename.json",
+        "form_type": "yyy",
+    },
+    {
+        "survey_id": f"{test_survey_id}_2",
+        "period_id": "abc2",
+        "title": "Which side was better 2?",
+        "sds_schema_version": 4,
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": 1,
+        "filename": "test_filename.json",
+        "form_type": "yyy",
+    },
+]
 
 existing_dataset_unit_data_collection = [
     {
