@@ -1,6 +1,6 @@
 import database
 import storage
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, Depends, FastAPI, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
@@ -12,14 +12,15 @@ app = FastAPI()
 
 
 @app.get("/v1/unit_data")
-async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
+async def get_unit_supplementary_data(
+    dataset_id: str, unit_id: str, dataset_repository: DatasetRepository = Depends()
+):
     """
     Retrieve supplementary data for a particular unit given the unit id
     and the dataset id, return 404 if no data is returned.
     """
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
-    dataset_repository = DatasetRepository()
 
     unit_supplementary_data = dataset_repository.get_unit_supplementary_data(
         dataset_id, unit_id
