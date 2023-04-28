@@ -32,3 +32,15 @@ def test_get_dataset_metadata_collection_200_response(dataset_client):
 
     assert response.status_code == 200
     assert response.json() == expected
+
+
+def test_get_dataset_metadata_collection_200_response(dataset_client):
+    """
+    When the schema metadata is retrieved successfully there should be a log before and after.
+    """
+    DatasetRepository.get_dataset_metadata_collection = MagicMock()
+    DatasetRepository.get_dataset_metadata_collection.return_value = []
+
+    response = dataset_client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
+
+    assert response.status_code == 404
