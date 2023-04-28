@@ -71,20 +71,6 @@ def get_schemas_metadata(survey_id) -> list[ReturnedSchemaMetadata]:
     return dataset_schemas
 
 
-def get_datasets(survey_id):
-    """
-    Get a list of matching dataset meta-data, given the survey_id.
-    """
-    datasets = []
-    datasets_result = datasets_collection.where("survey_id", "==", survey_id).stream()
-    for dataset in datasets_result:
-        return_dataset = dataset.to_dict()
-        return_dataset.pop("survey_id")
-        return_dataset["dataset_id"] = dataset.id
-        datasets.append(return_dataset)
-    return {"survey_id": survey_id, "datasets": datasets}
-
-
 def get_schema_metadata(survey_id, version) -> SchemaMetadata:
     schemas_result = (
         schemas_collection.where("survey_id", "==", survey_id)

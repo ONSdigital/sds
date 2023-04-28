@@ -46,7 +46,3 @@ def test_get_schemas(database):
     database.schemas_collection.where().stream.return_value = [mock_stream_obj]
     schemas = database.get_schemas_metadata(survey_id="1")
     assert expected_schema in schemas
-
-
-def test_get_datasets(database):
-    database.get_datasets(survey_id="1")
