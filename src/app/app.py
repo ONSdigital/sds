@@ -13,7 +13,9 @@ app = FastAPI()
 
 @app.get("/v1/unit_data")
 async def get_unit_supplementary_data(
-    dataset_id: str, unit_id: str, dataset_repository: DatasetRepository = Depends()
+    dataset_id: str,
+    unit_id: str,
+    dataset_repository: DatasetRepository = Depends(),
 ):
     """
     Retrieve supplementary data for a particular unit given the unit id

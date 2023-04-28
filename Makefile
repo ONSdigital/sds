@@ -59,6 +59,8 @@ docker-test:
 
 
 unit-test:
+	black .
+	isort . --profile black
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \

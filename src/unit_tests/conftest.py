@@ -101,11 +101,6 @@ def dataset_repository_boundaries_mock():
     DatasetRepository.append_unit_to_dataset_units_collection = MagicMock()
     DatasetRepository.append_unit_to_dataset_units_collection.return_value = None
 
-    DatasetRepository.get_unit_supplementary_data = MagicMock()
-    DatasetRepository.get_unit_supplementary_data.return_value = (
-        dataset_test_data.test_unit_supplementary_data
-    )
-
 
 @pytest.fixture()
 def cloud_bucket_mock(monkeypatch):
@@ -130,7 +125,7 @@ def new_dataset_mock(monkeypatch, cloud_bucket_mock):
 
 
 @pytest.fixture
-def dataset_client(monkeypatch, dataset_repository_boundaries_mock):
+def dataset_client(monkeypatch):
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
