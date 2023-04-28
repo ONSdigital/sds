@@ -19,10 +19,10 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
     """
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
-    repository = DatasetRepository()
+    dataset_repository = DatasetRepository()
 
-    unit_supplementary_data = repository.get_unit_supplementary_data(
-        dataset_id=dataset_id, unit_id=unit_id
+    unit_supplementary_data = dataset_repository.get_unit_supplementary_data(
+        dataset_id, unit_id
     )
 
     if not unit_supplementary_data:
