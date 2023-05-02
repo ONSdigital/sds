@@ -12,26 +12,8 @@ class SchemaMetadata:
 
 
 @dataclass
-class ReturnedSchemaMetadata:
+class SchemaMetadataWithGuid(SchemaMetadata):
     guid: str
-    survey_id: str
-    schema_location: str
-    sds_schema_version: int
-    sds_published_at: str
-
-
-@dataclass
-class PostSchemaMetadata:
-    guid: str
-    survey_id: str
-    schema_location: str
-    sds_schema_version: int
-    sds_published_at: str
-
-
-@dataclass
-class Schemas:
-    supplementary_dataset_schema: dict[str, SchemaMetadata]
 
 
 class Schema(BaseModel):

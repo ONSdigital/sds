@@ -2,10 +2,11 @@ import uuid
 
 import storage
 from config.config_factory import ConfigFactory
-from models.schema_models import PostSchemaMetadata
+from models.schema_models import SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.schema_repository import SchemaRepository
 from services.datetime_service import DatetimeService
+from services.document_version_service import DocumentVersionService
 
 config = ConfigFactory.get_config()
 
@@ -24,17 +25,12 @@ class SchemaProcessorService:
             self.schema_repository.get_current_version_survey_schema(schema.survey_id)
         )
 
-        try:
-            latest_version = (
-                next(current_version_metadata).to_dict()["sds_schema_version"] + 1
-            )
-        except StopIteration:
-            latest_version = 1
-
-        schema_metadata = PostSchemaMetadata(
+        schema_metadata = SchemaMetadataWithGuid(
             guid=schema_id,
             schema_location=stored_schema_filename,
-            sds_schema_version=latest_version,
+            sds_schema_version=DocumentVersionService.calculate_survey_version(
+                current_version_metadata, "sds_schema_version"
+            ),
             survey_id=schema.survey_id,
             sds_published_at=str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
@@ -42,8 +38,5 @@ class SchemaProcessorService:
         )
 
         self.schema_repository.create_schema(schema_id, schema_metadata)
-        schema_metadata
-
-        schema_metadata.guid = schema_id
 
         return schema_metadata

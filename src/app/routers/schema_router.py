@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
-from models.schema_models import PostSchemaMetadata, Schema
+from models.schema_models import Schema, SchemaMetadataWithGuid
 from services.schema.schema_processor_service import SchemaProcessorService
 
 router = APIRouter()
@@ -8,7 +8,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/v1/schema", response_model=PostSchemaMetadata)
+@router.post("/v1/schema", response_model=SchemaMetadataWithGuid)
 async def post_schema_metadata(
     schema: Schema = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),

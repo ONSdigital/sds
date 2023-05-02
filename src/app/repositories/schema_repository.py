@@ -4,7 +4,7 @@ from typing import Generator
 import firebase_admin
 from firebase_admin import _apps, firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.schema_models import PostSchemaMetadata
+from models.schema_models import SchemaMetadataWithGuid
 
 
 class SchemaRepository:
@@ -25,5 +25,5 @@ class SchemaRepository:
             .stream()
         )
 
-    def create_schema(self, schema_id: str, schema_metadata) -> PostSchemaMetadata:
+    def create_schema(self, schema_id: str, schema_metadata) -> SchemaMetadataWithGuid:
         self.schemas_collection.document(schema_id).set(asdict(schema_metadata))

@@ -5,11 +5,7 @@ import firebase_admin
 from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from models.dataset_models import DatasetMetadata
-from models.schema_models import (
-    PostSchemaMetadata,
-    ReturnedSchemaMetadata,
-    SchemaMetadata,
-)
+from models.schema_models import SchemaMetadata, SchemaMetadataWithGuid
 
 firebase_admin.initialize_app()
 db = firestore.client()
@@ -18,7 +14,9 @@ schemas_collection = db.collection("schemas")
 config = ConfigFactory.get_config()
 
 
-def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMetadata:
+def set_schema_metadata(
+    survey_id, schema_location, schema_id
+) -> SchemaMetadataWithGuid:
     """
     Takes the survey_id and schema_location (assumed to be in a bucket),
     and creates the metadata and stores it in Firebase. The latest version
@@ -37,7 +35,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMeta
     except StopIteration:
         latest_version = 1
 
-    schema_metadata = PostSchemaMetadata(
+    schema_metadata = SchemaMetadataWithGuid(
         guid=schema_id,
         schema_location=schema_location,
         sds_schema_version=latest_version,
@@ -49,7 +47,7 @@ def set_schema_metadata(survey_id, schema_location, schema_id) -> PostSchemaMeta
     return schema_metadata
 
 
-def get_schemas_metadata(survey_id) -> list[ReturnedSchemaMetadata]:
+def get_schemas_metadata(survey_id) -> list[SchemaMetadataWithGuid]:
     """
     Return all the schema meta-data that corresponds to a particular survey_id.
 

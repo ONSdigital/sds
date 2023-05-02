@@ -3,7 +3,7 @@ import storage
 from fastapi import Body, Depends, FastAPI, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
-from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from models.schema_models import Schema, SchemaMetadataWithGuid
 from repositories.dataset_repository import DatasetRepository
 from routers import dataset_router, schema_router
 
@@ -42,8 +42,8 @@ async def get_schema(survey_id: str, version: str) -> dict:
     return schema
 
 
-@app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
-async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
+@app.get("/v1/schema_metadata", response_model=list[SchemaMetadataWithGuid])
+async def get_schemas_metadata(survey_id: str) -> list[SchemaMetadataWithGuid]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
