@@ -120,7 +120,7 @@ def test_get_schema_metadata_with_incorrect_key(client):
 def test_get_schema_metadata_with_not_found_error(client):
     """
     Checks that fastAPI return 404 error with apppropriate msg
-    when schema metadata is not found at get_schemas_m etadata
+    when schema metadata is not found at get_schemas_metadata
     endpoint
     """
     response = client.get("/v1/schema_metadata?survey_id=123")
@@ -235,16 +235,17 @@ def test_get_metadata_metadata_with_invalid_version_error(client):
     assert response.json()["message"] == "Validation has failed"
 
 
-def test_get_dataset_metadata_with_not_found_error(client):
+def test_get_dataset_metadata_with_not_found_error(client, database):
     """
     Checks that fastAPI return 404 error with apppropriate msg
     when dataset metadata is not found at dataset metadata
     endpoint
     """
-    response = client.get("/v1/schema_metadata?survey_id=123")
+    database.datasets_collection.where().where().stream.return_value = []
+    response = client.get("/v1/dataset_metadata?survey_id=123&period_id=234")
 
     assert response.status_code == 404
-    assert response.json()["message"] == "No results found"
+    assert response.json()["message"] == "No datasets found"
 
 
 def test_get_unit_data_with_not_found_error(client):
@@ -252,7 +253,7 @@ def test_get_unit_data_with_not_found_error(client):
     Checks that fastAPI return 404 error with apppropriate msg
     when unit data is not found
     """
-    response = client.get("/v1/schema_metadata?survey_id=123")
+    response = client.get("/v1/unit_data?dataset_id=123&unit_id=123")
 
     assert response.status_code == 404
     assert response.json()["message"] == "No results found"
