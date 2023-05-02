@@ -1,6 +1,6 @@
 import database
 import storage
-from fastapi import Body, Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from logging_config import logging
 from models.schema_models import SchemaMetadataWithGuid
 from routers import dataset_router, schema_router

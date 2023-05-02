@@ -12,6 +12,7 @@ from models.dataset_models import (
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.datetime_service import DatetimeService
+from services.document_version_service import DocumentVersionService
 
 config = ConfigFactory.get_config()
 
@@ -104,12 +105,9 @@ class DatasetProcessorService:
         """
         datasets_result = self.dataset_repository.get_dataset_with_survey_id(survey_id)
 
-        try:
-            latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
-        except StopIteration:
-            latest_version = 1
-
-        return latest_version
+        return DocumentVersionService.calculate_survey_version(
+            datasets_result, "sds_dataset_version"
+        )
 
     def _add_metadata_to_unit_data_collection(
         self,
