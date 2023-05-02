@@ -11,8 +11,8 @@ from models.dataset_models import (
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_writer_service import DatasetWriterService
-from services.datetime_service import DatetimeService
-from services.document_version_service import DocumentVersionService
+from services.shared.datetime_service import DatetimeService
+from services.shared.document_version_service import DocumentVersionService
 
 config = ConfigFactory.get_config()
 

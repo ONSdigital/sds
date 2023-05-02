@@ -4,8 +4,8 @@ from config.config_factory import ConfigFactory
 from models.schema_models import SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
-from services.datetime_service import DatetimeService
-from services.document_version_service import DocumentVersionService
+from services.shared.datetime_service import DatetimeService
+from services.shared.document_version_service import DocumentVersionService
 
 config = ConfigFactory.get_config()
 

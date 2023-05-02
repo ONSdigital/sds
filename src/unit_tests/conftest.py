@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.datetime_service import DatetimeService
+from services.shared.datetime_service import DatetimeService
 
 from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper
