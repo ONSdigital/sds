@@ -1,9 +1,8 @@
 import database
 import exception_throw
 import storage
-from fastapi import Body, FastAPI, HTTPException, Request
+from fastapi import Body, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from logging_config import logging
 from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from services import schema_metadata_service
