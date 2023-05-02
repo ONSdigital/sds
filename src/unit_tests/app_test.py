@@ -137,7 +137,7 @@ def test_post_bad_schema(client):
     response = client.post("/v1/schema", json={"schema": "is missing some fields"})
     assert response.status_code == 400
     assert response.json()["message"] == "Validation has failed"
-    
+
 
 def test_get_schemas_metadata(client, database):
     """
