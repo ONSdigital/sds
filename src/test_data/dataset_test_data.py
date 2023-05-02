@@ -1,3 +1,5 @@
+from src.test_data import shared_test_data
+
 cloud_event_test_data = {
     "id": "test_id",
     "type": "test_type",
@@ -8,13 +10,12 @@ cloud_event_test_data = {
     "name": "test_filename.json",
 }
 
-test_dataset_id = "test_dataset_id"
 test_unit_id = "test_unit_id"
 test_survey_id = "xyz"
 
 
 dataset_metadata_test_data = {
-    "dataset_id": test_dataset_id,
+    "dataset_id": shared_test_data.test_guid,
     "survey_id": test_survey_id,
     "period_id": "abc",
     "title": "Which side was better?",
@@ -56,7 +57,7 @@ dataset_metadata_collection_no_id = [
 
 existing_dataset_unit_data_collection = [
     {
-        "dataset_id": test_dataset_id,
+        "dataset_id": shared_test_data.test_guid,
         "survey_id": test_survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
@@ -65,7 +66,7 @@ existing_dataset_unit_data_collection = [
         "data": {"test": "data", "ruref": "12345"},
     },
     {
-        "dataset_id": "test_dataset_id",
+        "dataset_id": shared_test_data.test_guid,
         "survey_id": "xyz",
         "period_id": "abc",
         "sds_schema_version": 4,
@@ -89,7 +90,7 @@ dataset_metadata_without_id = {
 }
 
 test_unit_supplementary_data = {
-    "dataset_id": test_dataset_id,
+    "dataset_id": shared_test_data.test_guid,
     "survey_id": test_survey_id,
     "period_id": "abc",
     "sds_schema_version": 4,
@@ -131,7 +132,7 @@ test_unit_supplementary_data = {
 
 new_dataset_unit_data_collection = [
     {
-        "dataset_id": "test_dataset_id",
+        "dataset_id": shared_test_data.test_guid,
         "survey_id": "xyz",
         "period_id": "abc",
         "sds_schema_version": 4,
@@ -171,7 +172,7 @@ new_dataset_unit_data_collection = [
         },
     },
     {
-        "dataset_id": "test_dataset_id",
+        "dataset_id": shared_test_data.test_guid,
         "survey_id": "xyz",
         "period_id": "abc",
         "sds_schema_version": 4,

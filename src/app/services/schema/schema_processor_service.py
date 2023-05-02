@@ -21,14 +21,17 @@ class SchemaProcessorService:
 
         self.schema_bucket_repository.store_schema_json(stored_schema_filename, schema)
 
-        next_version_schema_metadata = self.build_next_version_schema_metadata(schema_id, stored_schema_filename, schema)
+        next_version_schema_metadata = self.build_next_version_schema_metadata(
+            schema_id, stored_schema_filename, schema
+        )
 
         self.schema_repository.create_schema(schema_id, next_version_schema_metadata)
-        
+
         return next_version_schema_metadata
-    
-        
-    def build_next_version_schema_metadata(self, schema_id, stored_schema_filename, schema):
+
+    def build_next_version_schema_metadata(
+        self, schema_id, stored_schema_filename, schema
+    ):
         return SchemaMetadataWithGuid(
             guid=schema_id,
             schema_location=stored_schema_filename,
@@ -39,11 +42,11 @@ class SchemaProcessorService:
             ),
         )
 
-
     def calculate_next_schema_version(self, schema):
         current_version_metadata = (
             self.schema_repository.get_current_version_survey_schema(schema.survey_id)
         )
 
-        return DocumentVersionService.calculate_survey_version(current_version_metadata, "sds_schema_version")
-    
+        return DocumentVersionService.calculate_survey_version(
+            current_version_metadata, "sds_schema_version"
+        )

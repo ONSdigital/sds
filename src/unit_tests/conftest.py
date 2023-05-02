@@ -1,7 +1,6 @@
 import json
 import uuid
 from datetime import datetime
-from typing import Generator
 from unittest.mock import MagicMock
 
 import firebase_admin
@@ -12,11 +11,10 @@ from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
-from google.cloud.firestore_v1.document import DocumentSnapshot
 from repositories.dataset_repository import DatasetRepository
 from services.datetime_service import DatetimeService
 
-from src.test_data import dataset_test_data
+from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper
 
 config = ConfigFactory.get_config()
@@ -72,7 +70,7 @@ def datetime_mock():
 @pytest.fixture()
 def uuid_mock():
     uuid.uuid4 = MagicMock()
-    uuid.uuid4.return_value = dataset_test_data.test_dataset_id
+    uuid.uuid4.return_value = shared_test_data.test_guid
 
 
 @pytest.fixture()

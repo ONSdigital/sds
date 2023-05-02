@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, call
 
 from repositories.dataset_repository import DatasetRepository
 
-from src.test_data import dataset_test_data
+from src.test_data import dataset_test_data, shared_test_data
 
 
 def test_upload_new_dataset(
@@ -20,12 +20,12 @@ def test_upload_new_dataset(
         dataset_test_data.test_survey_id
     )
     DatasetRepository.create_new_dataset.assert_called_once_with(
-        dataset_test_data.test_dataset_id,
+        shared_test_data.test_guid,
         dataset_test_data.dataset_metadata_without_id,
     )
 
     DatasetRepository.get_dataset_unit_collection.assert_called_once_with(
-        dataset_test_data.test_dataset_id
+        shared_test_data.test_guid
     )
 
     append_calls = [
