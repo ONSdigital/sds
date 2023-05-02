@@ -4,7 +4,6 @@ from datetime import datetime
 import firebase_admin
 from config.config_factory import ConfigFactory
 from firebase_admin import firestore
-from models.dataset_models import DatasetMetadata
 from models.schema_models import SchemaMetadata, SchemaMetadataWithGuid
 
 firebase_admin.initialize_app()

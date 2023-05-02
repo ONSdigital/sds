@@ -2,7 +2,6 @@ import json
 
 from config.config_factory import ConfigFactory
 from google.cloud import storage
-from models.schema_models import Schema
 
 storage_client = storage.Client()
 config = ConfigFactory.get_config()

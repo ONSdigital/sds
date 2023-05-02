@@ -8,7 +8,7 @@ from src.unit_tests.test_helper import TestHelper
 
 def test_get_dataset_metadata_collection_200_response(test_client):
     """
-    When the schema metadata is retrieved successfully there should be a log before and after.
+    When the dataset metadata is retrieved successfully there should be a 200 status code and response data.
     """
     DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
     DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
@@ -34,9 +34,9 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     assert response.json() == expected
 
 
-def test_get_dataset_metadata_collection_200_response(test_client):
+def test_get_dataset_metadata_collection_404_response(test_client):
     """
-    When the schema metadata is retrieved successfully there should be a log before and after.
+    When no dataset metadata is retrieved there should be a 404 response.
     """
     DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
     DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = []
