@@ -114,6 +114,7 @@ async def get_schema(survey_id: str, version: str) -> dict:
 async def get_schemas_metadata(survey_id: str = "") -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
     if survey_id == "":
+        logger.error("SurveyID not set")
         return exception_throw.throw_400_incorrect_schema_key_exception()
 
     logger.info("Getting schemas metadata...")
@@ -139,6 +140,7 @@ async def get_dataset_metadata_collection(
     The matching metadata are returned as an array of dictionaries.
     """
     if survey_id == "" or period_id == "":
+        logger.error("Incorrect key names")
         return exception_throw.throw_400_incorrect_key_names_exception()
 
     logger.info("Getting dataset metadata collection...")
