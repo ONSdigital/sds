@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
 from models.schema_models import PostSchemaMetadata, Schema
-from services.schema import schema_metadata_service
 from services.schema.schema_processor_service import SchemaProcessorService
 
 router = APIRouter()
