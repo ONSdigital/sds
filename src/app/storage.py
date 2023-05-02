@@ -32,5 +32,5 @@ def get_schema(filename):
     try:
         schema = json.loads(bucket.blob(filename).download_as_string())
         return schema
-    except:
+    except Exception:
         return None

@@ -84,7 +84,7 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
     try:
         version = int(version)
-    except:
+    except ValueError:
         logger.error("Invalid version")
         return exception_throw.throw_400_validation_exception()
 
@@ -122,7 +122,7 @@ async def get_schemas_metadata(survey_id: str = "") -> list[ReturnedSchemaMetada
     schemas_metadata = database.get_schemas_metadata(survey_id)
     if not schemas_metadata:
         logger.error("Schemas metadata not found")
-        return exception_throw.throw_400_no_result_exception()
+        return exception_throw.throw_404_no_schemas_metadata_exception()
 
     logger.info("Schemas metadata successfully retrieved.")
     logger.debug(f"Schemas metadata: {schemas_metadata}")
