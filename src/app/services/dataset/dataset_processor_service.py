@@ -172,6 +172,4 @@ class DatasetProcessorService:
             metadata_collection_item["dataset_id"] = dataset.id
             dataset_metadata_collection.append(metadata_collection_item)
 
-        print("cheese", dataset_metadata_collection)
-
         return dataset_metadata_collection

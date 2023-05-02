@@ -1,4 +1,3 @@
-import database
 from fastapi import APIRouter, Depends, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata

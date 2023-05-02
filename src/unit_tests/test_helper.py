@@ -1,5 +1,5 @@
 from typing import Generator
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import MagicMock
 
 from google.cloud.firestore_v1.document import DocumentSnapshot
 

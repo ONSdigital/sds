@@ -67,7 +67,7 @@ unit-test:
 	export SCHEMA_BUCKET_NAME="the bucket name" && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
-	python -m pytest --cov=src/app ./src/unit_tests/
+	python -m pytest -vv --cov=src/app ./src/unit_tests/
 	python -m coverage report --fail-under=90 -m
 
 

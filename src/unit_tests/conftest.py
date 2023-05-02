@@ -16,7 +16,7 @@ from google.cloud.firestore_v1.document import DocumentSnapshot
 from repositories.dataset_repository import DatasetRepository
 from services.datetime_service import DatetimeService
 
-from src.test_data.new_dataset import dataset_test_data
+from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
 
 config = ConfigFactory.get_config()
@@ -119,7 +119,7 @@ def new_dataset_mock(monkeypatch, cloud_bucket_mock):
 
 
 @pytest.fixture
-def dataset_client(monkeypatch):
+def test_client(monkeypatch):
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())

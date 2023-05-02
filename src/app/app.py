@@ -5,31 +5,13 @@ from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
 from repositories.dataset_repository import DatasetRepository
-from routers import dataset_router
-from services.schema_metadata import schema_metadata_service
+from routers import dataset_router, schema_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
 app.include_router(dataset_router.router)
-
-
-@app.post("/v1/schema", response_model=PostSchemaMetadata)
-async def post_schema_metadata(schema: Schema = Body(...)):
-    """
-    Grab the survey_id from the schema file and call set_schema_metadata
-    with the survey_id and schema_location and returned the generated
-    schema metadata.
-    """
-    logger.info("Posting schema metadata...")
-    logger.debug(f"Input body: {{{schema}}}")
-
-    posted_schema_metadata = schema_metadata_service.process_schema_metadata(schema)
-
-    logger.info("Schema metadata successfully posted.")
-    logger.debug(f"Schema metadata: {posted_schema_metadata}")
-
-    return posted_schema_metadata
+app.include_router(schema_router.router)
 
 
 @app.get("/v1/schema")

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, call
 
 from repositories.dataset_repository import DatasetRepository
 
-from src.test_data.new_dataset import dataset_test_data
+from src.test_data import dataset_test_data
 
 
 def test_upload_new_dataset(
