@@ -127,3 +127,39 @@ def test_get_dataset_metadata(client, database):
     )
     assert response.status_code == 200
     assert response.json()[0] == expected_metadata
+
+
+def test_get_metadata_metadata_with_invalid_version_error(client):
+    """
+    Checks that fastAPI does not accept invalid porameters/
+    non-numeric version and returns a 400 error with appropriate message at
+    dataset_metadata endpoint
+    """
+    response = client.get("/v1/schema?survey_id=076&version=xyz")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Validation has failed"
+
+
+def test_get_dataset_metadata_with_not_found_error(client):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when dataset metadata is not found at dataset metadata
+    endpoint
+    """
+    response = client.get("/v1/schema_metadata?survey_id=123")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No results found"
+
+
+def test_get_unit_data_with_not_found_error(client):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when unit data is not found
+    """
+    response = client.get("/v1/schema_metadata?survey_id=123")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No results found"
+
