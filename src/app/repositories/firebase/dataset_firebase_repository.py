@@ -9,7 +9,7 @@ from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 logger = logging.getLogger(__name__)
 
 
-class DatasetRepository:
+class DatasetFirebaseRepository:
     def __init__(self):
         if not _apps:
             firebase_admin.initialize_app()

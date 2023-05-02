@@ -7,7 +7,7 @@ from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadataWithGuid
 
 
-class SchemaRepository:
+class SchemaFirebaseRepository:
     def __init__(self):
         if not _apps:
             firebase_admin.initialize_app()

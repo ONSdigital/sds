@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from repositories.dataset_repository import DatasetRepository
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -10,8 +10,8 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     """
     When the schema metadata is retrieved successfully there should be a log before and after.
     """
-    DatasetRepository.get_dataset_metadata_collection = MagicMock()
-    DatasetRepository.get_dataset_metadata_collection.return_value = (
+    DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
             dataset_test_data.dataset_metadata_collection_no_id
         )
@@ -38,8 +38,8 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     """
     When the schema metadata is retrieved successfully there should be a log before and after.
     """
-    DatasetRepository.get_dataset_metadata_collection = MagicMock()
-    DatasetRepository.get_dataset_metadata_collection.return_value = []
+    DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = []
 
     response = test_client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
 

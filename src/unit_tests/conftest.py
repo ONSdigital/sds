@@ -11,7 +11,7 @@ from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
-from repositories.dataset_repository import DatasetRepository
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.datetime_service import DatetimeService
 
 from src.test_data import dataset_test_data, shared_test_data
@@ -75,23 +75,25 @@ def uuid_mock():
 
 @pytest.fixture()
 def dataset_repository_boundaries_mock():
-    DatasetRepository.get_dataset_with_survey_id = MagicMock()
-    DatasetRepository.get_dataset_with_survey_id.return_value = (
+    DatasetFirebaseRepository.get_dataset_with_survey_id = MagicMock()
+    DatasetFirebaseRepository.get_dataset_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
             [dataset_test_data.dataset_metadata_test_data]
         )
     )
 
-    DatasetRepository.create_new_dataset = MagicMock()
-    DatasetRepository.create_new_dataset.return_value = None
+    DatasetFirebaseRepository.create_new_dataset = MagicMock()
+    DatasetFirebaseRepository.create_new_dataset.return_value = None
 
-    DatasetRepository.get_dataset_unit_collection = MagicMock()
-    DatasetRepository.get_dataset_unit_collection.return_value = (
+    DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
         dataset_test_data.existing_dataset_unit_data_collection
     )
 
-    DatasetRepository.append_unit_to_dataset_units_collection = MagicMock()
-    DatasetRepository.append_unit_to_dataset_units_collection.return_value = None
+    DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
+    DatasetFirebaseRepository.append_unit_to_dataset_units_collection.return_value = (
+        None
+    )
 
 
 @pytest.fixture()

@@ -1,11 +1,11 @@
 from models.dataset_models import DatasetMetadata
-from repositories.dataset_repository import DatasetRepository
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 
 class DatasetWriterService:
     def __init__(
         self,
-        dataset_repository: DatasetRepository,
+        dataset_repository: DatasetFirebaseRepository,
     ):
         self.dataset_repository = dataset_repository
 

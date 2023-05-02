@@ -9,7 +9,7 @@ from models.dataset_models import (
     NewDatasetWithMetadata,
     UnitDataset,
 )
-from repositories.dataset_repository import DatasetRepository
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.datetime_service import DatetimeService
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class DatasetProcessorService:
     def __init__(self) -> None:
-        self.dataset_repository = DatasetRepository()
+        self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
     def process_new_dataset(

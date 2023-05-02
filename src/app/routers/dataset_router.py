@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
-from repositories.dataset_repository import DatasetRepository
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
 
 router = APIRouter()
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 async def get_unit_supplementary_data(
     dataset_id: str,
     unit_id: str,
-    dataset_repository: DatasetRepository = Depends(),
+    dataset_repository: DatasetFirebaseRepository = Depends(),
 ):
     """
     Retrieve supplementary data for a particular unit given the unit id

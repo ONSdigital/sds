@@ -2,9 +2,7 @@ import database
 import storage
 from fastapi import Body, Depends, FastAPI, HTTPException
 from logging_config import logging
-from models.dataset_models import DatasetMetadata
-from models.schema_models import Schema, SchemaMetadataWithGuid
-from repositories.dataset_repository import DatasetRepository
+from models.schema_models import SchemaMetadataWithGuid
 from routers import dataset_router, schema_router
 
 logger = logging.getLogger(__name__)

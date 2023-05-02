@@ -3,7 +3,7 @@ import uuid
 from config.config_factory import ConfigFactory
 from models.schema_models import SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from repositories.schema_repository import SchemaRepository
+from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.datetime_service import DatetimeService
 from services.document_version_service import DocumentVersionService
 
@@ -12,7 +12,7 @@ config = ConfigFactory.get_config()
 
 class SchemaProcessorService:
     def __init__(self) -> None:
-        self.schema_repository = SchemaRepository()
+        self.schema_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
     def process_schema_metadata(self, schema):
