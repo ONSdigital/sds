@@ -162,4 +162,3 @@ def test_get_unit_data_with_not_found_error(client):
 
     assert response.status_code == 404
     assert response.json()["message"] == "No results found"
-
