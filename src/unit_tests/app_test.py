@@ -248,12 +248,15 @@ def test_get_dataset_metadata_with_not_found_error(client, database):
     assert response.json()["message"] == "No datasets found"
 
 
-def test_get_unit_data_with_not_found_error(client):
+def test_get_unit_data_with_not_found_error(client, database):
     """
     Checks that fastAPI return 404 error with apppropriate msg
     when unit data is not found
     """
+    mock_database_get_unit_supplementary_data = MagicMock()
+    mock_database_get_unit_supplementary_data.return_value = []
+    database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
     response = client.get("/v1/unit_data?dataset_id=123&unit_id=123")
 
     assert response.status_code == 404
-    assert response.json()["message"] == "No results found"
+    assert response.json()["message"] == "No unit data found"
