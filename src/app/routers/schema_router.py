@@ -32,7 +32,7 @@ async def post_schema_metadata(
 
 
 @router.get("/v1/schema")
-async def get_file_from_bucket(
+async def get_schema_metadata_from_bucket(
     survey_id: str,
     version: str,
     schema_firebase_repository: SchemaFirebaseRepository = Depends(),
@@ -60,11 +60,11 @@ async def get_file_from_bucket(
     logger.debug(f"Bucket schema metadata location: {bucket_schema_metadata_location}")
     logger.info("Getting schema metadata...")
 
-    schema = schema_bucket_repository.get_bucket_file_as_json(
+    schema_metadata = schema_bucket_repository.get_bucket_file_as_json(
         bucket_schema_metadata_location
     )
 
     logger.info("Schema successfully retrieved.")
-    logger.debug(f"Schema: {schema}")
+    logger.debug(f"Schema: {schema_metadata}")
 
-    return schema
+    return schema_metadata
