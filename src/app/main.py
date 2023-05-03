@@ -2,6 +2,7 @@ import functions_framework
 from bucket.bucket_file_reader import BucketFileReader
 from logging_config import logging
 from services.dataset.dataset_processor_service import DatasetProcessorService
+from services.dataset.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
 
@@ -21,15 +22,13 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    if filename[-5:].lower() != ".json":
-        raise RuntimeError(f"Invalid filetype received - {filename}")
+    DatasetValidatorService().validate_filename(filename)
 
     dataset = BucketFileReader().get_file_from_bucket(
         filename=filename, bucket_name=bucket_name
     )
 
-    if dataset is None:
-        raise RuntimeError("No corresponding dataset found in bucket")
+    DatasetValidatorService().validate_dataset_exists_in_bucket(dataset)
 
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {dataset}")
