@@ -223,13 +223,13 @@ def test_get_dataset_metadata(client, database):
     assert response.json()[0] == expected_metadata
 
 
-def test_get_dataset_metadata_with_invalid_version_error(client):
+def test_get_dataset_metadata_with_invalid_parameters(client):
     """
     Checks that fastAPI does not accept invalid porameters/
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
-    response = client.get("/v1/schema?survey_id=076&version=xyz")
+    response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
 
     assert response.status_code == 400
     assert response.json()["message"] == "Validation has failed"
