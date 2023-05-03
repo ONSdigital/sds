@@ -27,13 +27,13 @@ def new_dataset(cloud_event):
     dataset = BucketFileReader().get_file_from_bucket(
         filename=filename, bucket_name=bucket_name
     )
-    
-    if dataset is not None:
-        logger.info("Dataset obtained successfully.")
-        logger.debug(f"Dataset: {dataset}")
 
-        DatasetProcessorService().process_new_dataset(filename, dataset)
+    if dataset is None:
+        raise RuntimeError("No corresponding dataset found in bucket")
 
-        logger.info("Dataset uploaded successfully.")
-    else:
-        logger.error("Invalid JSON file contents.")
+    logger.info("Dataset obtained successfully.")
+    logger.debug(f"Dataset: {dataset}")
+
+    DatasetProcessorService().process_new_dataset(filename, dataset)
+
+    logger.info("Dataset uploaded successfully.")

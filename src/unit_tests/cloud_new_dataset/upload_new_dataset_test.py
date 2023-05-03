@@ -1,6 +1,7 @@
 import logging
 from unittest.mock import MagicMock, call
 
+from bucket.bucket_file_reader import BucketFileReader
 from pytest import raises
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -57,6 +58,26 @@ def test_upload_invalid_filename(
     with raises(
         RuntimeError,
         match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_test_data['name']}",
+    ):
+        new_dataset_mock(cloud_event=cloud_event)
+
+    DatasetProcessorService.process_new_dataset.assert_not_called()
+
+
+def test_no_dataset_in_bucket(
+    new_dataset_mock,
+):
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_test_data
+
+    DatasetProcessorService.process_new_dataset = MagicMock()
+
+    BucketFileReader.get_file_from_bucket = MagicMock()
+    BucketFileReader.get_file_from_bucket.return_value = None
+
+    with raises(
+        RuntimeError,
+        match=f"No corresponding dataset found in bucket",
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
