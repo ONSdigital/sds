@@ -223,7 +223,7 @@ def test_get_dataset_metadata(client, database):
     assert response.json()[0] == expected_metadata
 
 
-def test_get_metadata_metadata_with_invalid_version_error(client):
+def test_get_dataset_metadata_with_invalid_version_error(client):
     """
     Checks that fastAPI does not accept invalid porameters/
     non-numeric version and returns a 400 error with appropriate message at

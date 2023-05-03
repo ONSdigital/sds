@@ -49,14 +49,6 @@ def throw_400_incorrect_schema_key_exception() -> JSONResponse:
     return er.throw_er_with_json()
 
 
-def throw_400_no_result_exception() -> JSONResponse:
-    """
-    When there is no schema metadata and a 400 HTTP response is returned.
-    """
-    er = exception_response(status.HTTP_400_BAD_REQUEST, "error", "No results found")
-    return er.throw_er_with_json()
-
-
 def throw_404_no_schemas_metadata_exception() -> JSONResponse:
     """
     When there is no schema metadata and a 404 HTTP response is returned.
