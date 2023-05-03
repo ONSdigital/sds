@@ -1,8 +1,10 @@
 import logging
+import re
 from unittest.mock import MagicMock, call
 
-from bucket.bucket_file_reader import BucketFileReader
+from models.dataset_models import NewDatasetWithMetadata
 from pytest import raises
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
 
@@ -72,12 +74,36 @@ def test_no_dataset_in_bucket(
 
     DatasetProcessorService.process_new_dataset = MagicMock()
 
-    BucketFileReader.get_file_from_bucket = MagicMock()
-    BucketFileReader.get_file_from_bucket.return_value = None
+    DatasetBucketRepository.get_file_from_bucket = MagicMock()
+    DatasetBucketRepository.get_file_from_bucket.return_value = None
 
     with raises(
         RuntimeError,
         match=f"No corresponding dataset found in bucket",
+    ):
+        new_dataset_mock(cloud_event=cloud_event)
+
+    DatasetProcessorService.process_new_dataset.assert_not_called()
+
+
+def test_missing_dataset_keys(new_dataset_mock):
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_test_data
+
+    DatasetProcessorService.process_new_dataset = MagicMock()
+
+    DatasetBucketRepository.get_file_from_bucket = MagicMock()
+    DatasetBucketRepository.get_file_from_bucket.return_value = {
+        "period_id": "test_period_id",
+        "sds_schema_version": "test_sds_schema_version",
+        "schema_version": 1,
+        "form_type": "test_form_type",
+        "data": "test_data",
+    }
+
+    with raises(
+        RuntimeError,
+        match=re.escape(f"Mandatory key(s) missing from JSON: survey_id."),
     ):
         new_dataset_mock(cloud_event=cloud_event)
 

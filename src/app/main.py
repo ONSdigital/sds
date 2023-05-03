@@ -1,6 +1,6 @@
 import functions_framework
-from bucket.bucket_file_reader import BucketFileReader
 from logging_config import logging
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.dataset.dataset_validator_service import DatasetValidatorService
 
@@ -24,11 +24,12 @@ def new_dataset(cloud_event):
 
     DatasetValidatorService().validate_filename(filename)
 
-    dataset = BucketFileReader().get_file_from_bucket(
+    dataset = DatasetBucketRepository().get_file_from_bucket(
         filename=filename, bucket_name=bucket_name
     )
 
     DatasetValidatorService().validate_dataset_exists_in_bucket(dataset)
+    DatasetValidatorService().validate_dataset_keys(dataset)
 
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {dataset}")

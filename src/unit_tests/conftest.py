@@ -5,12 +5,12 @@ from unittest.mock import MagicMock
 
 import firebase_admin
 import pytest
-from bucket.bucket_file_reader import BucketFileReader
 from config.config_factory import ConfigFactory
 from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 
@@ -72,8 +72,8 @@ def cloud_bucket_mock(monkeypatch):
     with open(config.TEST_DATASET_PATH) as f:
         dataset_with_metadata = json.load(f)
 
-    BucketFileReader.get_file_from_bucket = MagicMock()
-    BucketFileReader.get_file_from_bucket.return_value = dataset_with_metadata
+    DatasetBucketRepository.get_file_from_bucket = MagicMock()
+    DatasetBucketRepository.get_file_from_bucket.return_value = dataset_with_metadata
 
 
 @pytest.fixture()
