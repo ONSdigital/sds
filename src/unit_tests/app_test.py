@@ -232,7 +232,7 @@ def test_get_dataset_metadata_with_invalid_parameters(client):
     response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
 
     assert response.status_code == 400
-    assert response.json()["message"] == "Validation has failed"
+    assert response.json()["message"] == "Invalid search parameters provided"
 
 
 def test_get_dataset_metadata_with_not_found_error(client, database):
