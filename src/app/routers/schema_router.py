@@ -68,3 +68,21 @@ async def get_schema_metadata_from_bucket(
     logger.debug(f"Schema: {schema_metadata}")
 
     return schema_metadata
+
+
+@router.get("/v1/schema_metadata", response_model=list[SchemaMetadataWithGuid])
+async def get_schema_metadata_collection(
+    survey_id: str, schema_processor_service: SchemaProcessorService = Depends()
+) -> list[SchemaMetadataWithGuid]:
+    """Retrieve the metadata for all the schemas that have a given survey_id."""
+    logger.info("Getting schemas metadata...")
+    logger.debug(f"Input data: survey_id={survey_id}")
+
+    schemas_metadata = (
+        schema_processor_service.get_schema_metadata_collection_with_guid(survey_id)
+    )
+
+    logger.info("Schemas metadata successfully retrieved.")
+    logger.debug(f"Schemas metadata: {schemas_metadata}")
+
+    return schemas_metadata

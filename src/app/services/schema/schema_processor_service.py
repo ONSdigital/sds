@@ -56,3 +56,18 @@ class SchemaProcessorService:
         return DocumentVersionService.calculate_survey_version(
             current_version_metadata, "sds_schema_version"
         )
+
+    def get_schema_metadata_collection_with_guid(
+        self, survey_id: str
+    ) -> list[SchemaMetadataWithGuid]:
+        schema_metadata_collection = (
+            self.schema_firebase_repository.get_schema_metadata_collection(survey_id)
+        )
+
+        schema_metadata_collection_with_guid = []
+        for schema in schema_metadata_collection:
+            return_schema = schema.to_dict()
+            return_schema["guid"] = schema.id
+            schema_metadata_collection_with_guid.append(return_schema)
+
+        return schema_metadata_collection_with_guid

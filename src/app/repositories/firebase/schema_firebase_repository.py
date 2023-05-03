@@ -37,3 +37,8 @@ class SchemaFirebaseRepository:
 
         for schema in schemas_result:
             return SchemaMetadata(**schema.to_dict()).schema_location
+
+    def get_schema_metadata_collection(
+        self, survey_id: str
+    ) -> Generator[DocumentSnapshot, None, None]:
+        return self.schemas_collection.where("survey_id", "==", survey_id).stream()
