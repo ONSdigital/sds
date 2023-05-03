@@ -17,9 +17,4 @@ class DatasetBucketRepository:
         """Used by the cloud function."""
         bucket = self.storage_client.bucket(bucket_name)
 
-        try:
-            return json.loads(bucket.blob(filename).download_as_string())
-
-        except ValueError as e:
-            logger.error(f"Invalid JSON in file {filename}: {e}")
-            return None
+        return json.loads(bucket.blob(filename).download_as_string()) or None

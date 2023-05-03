@@ -8,12 +8,17 @@ class DatasetValidatorService:
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
-    def validate_dataset_exists_in_bucket(dataset: NewDatasetWithMetadata):
+    def validate_new_dataset(dataset: NewDatasetWithMetadata) -> None:
+        DatasetValidatorService._validate_dataset_exists_in_bucket(dataset)
+        DatasetValidatorService._validate_dataset_keys(dataset)
+
+    @staticmethod
+    def _validate_dataset_exists_in_bucket(dataset: NewDatasetWithMetadata):
         if dataset is None:
             raise RuntimeError("No corresponding dataset found in bucket")
 
     @staticmethod
-    def validate_dataset_keys(dataset: NewDatasetWithMetadata) -> None:
+    def _validate_dataset_keys(dataset: NewDatasetWithMetadata) -> None:
         isValid, message = DatasetValidatorService._check_for_missing_keys(dataset)
 
         if isValid is False:

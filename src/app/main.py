@@ -22,14 +22,13 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    DatasetValidatorService().validate_filename(filename)
+    DatasetValidatorService.validate_filename(filename)
 
-    dataset = DatasetBucketRepository().get_file_from_bucket(
+    dataset = DatasetBucketRepository.get_file_from_bucket(
         filename=filename, bucket_name=bucket_name
     )
 
-    DatasetValidatorService().validate_dataset_exists_in_bucket(dataset)
-    DatasetValidatorService().validate_dataset_keys(dataset)
+    DatasetValidatorService.validate_new_dataset(dataset)
 
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {dataset}")
