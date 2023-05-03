@@ -98,7 +98,7 @@ paths:
           schema:
             type: object
             schema: "#/definitions/sds_schema"
-        404:
+        400:
           description: Invalid version provided
           schema:
             $ref: "#/definitions/error_response"
