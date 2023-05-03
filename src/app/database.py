@@ -4,8 +4,8 @@ from datetime import datetime
 import firebase_admin
 from config.config_factory import ConfigFactory
 from firebase_admin import firestore
-from models import (
-    DatasetMetadata,
+from models.dataset_models import DatasetMetadata
+from models.schema_models import (
     PostSchemaMetadata,
     ReturnedSchemaMetadata,
     SchemaMetadata,
@@ -18,40 +18,9 @@ schemas_collection = db.collection("schemas")
 config = ConfigFactory.get_config()
 
 
-def set_dataset(dataset_id, filename, dataset):
-    """
-    This method is invoked from the cloud function, it creates a dataset document in the firestore collection.
-    * Added "sds_published_at" and "total_reporting_units" as new fields in the dataset dictionary.
-    * Added "filename" as method argument passed from the cloud function which is the filename placed in the bucket.
-    * Set the "filename" as a field in the dataset metadata document.
-    """
-    data = dataset.pop("data")
-    dataset["filename"] = filename
-    dataset["sds_published_at"] = str(datetime.now().strftime(config.TIME_FORMAT))
-    dataset["total_reporting_units"] = len(data)
-
-    datasets_result = (
-        datasets_collection.where("survey_id", "==", dataset["survey_id"])
-        .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
-        .limit(1)
-        .stream()
-    )
-    try:
-        latest_version = next(datasets_result).to_dict()["sds_dataset_version"] + 1
-    except StopIteration:
-        latest_version = 1
-
-    dataset["sds_published_at"] = str(datetime.now().strftime(config.TIME_FORMAT))
-    dataset["sds_dataset_version"] = latest_version
-    dataset["total_reporting_units"] = len(data)
-    datasets_collection.document(dataset_id).set(dataset)
-    units_collection = datasets_collection.document(dataset_id).collection("units")
-    for unit_data in data:
-        units_collection.document(unit_data["ruref"]).set(unit_data)
-
-
 def get_unit_supplementary_data(dataset_id, unit_id):
     """Get the unit data from dataset collection, that originally came from the dataset."""
+
     units_collection = datasets_collection.document(dataset_id).collection("units")
     return units_collection.document(unit_id).get().to_dict()
 

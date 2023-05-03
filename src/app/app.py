@@ -4,8 +4,9 @@ import storage
 from fastapi import Body, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from logging_config import logging
-from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
-from services import schema_metadata_service
+from models.dataset_models import DatasetMetadata
+from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from services.schema_metadata import schema_metadata_service
 
 logger = logging.getLogger(__name__)
 app = FastAPI()

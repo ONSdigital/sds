@@ -44,18 +44,3 @@ class Schema(BaseModel):
     examples: list
     d_schema: str = Field(alias="$schema")
     d_id: str = Field(alias="$id")
-
-
-@dataclass
-class DatasetMetadata:
-    dataset_id: str
-    survey_id: str
-    period_id: str
-    title: str
-    sds_schema_version: int
-    sds_published_at: str
-    total_reporting_units: int
-    schema_version: str
-    sds_dataset_version: int
-    filename: str
-    form_type: str
