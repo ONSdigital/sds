@@ -3,6 +3,7 @@ import json
 from config.config_factory import ConfigFactory
 from google.cloud import storage
 from models.schema_models import Schema
+from services.shared.bucket_operations_service import BucketOperationsService
 
 
 class SchemaBucketRepository:
@@ -27,4 +28,4 @@ class SchemaBucketRepository:
 
     def get_bucket_file_as_json(self, filename):
         """Get the SDS schema from the schema bucket using the filename provided."""
-        return json.loads(self.bucket.blob(filename).download_as_string())
+        return BucketOperationsService.get_file_from_bucket(filename, self.bucket) or None
