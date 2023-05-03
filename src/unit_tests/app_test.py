@@ -120,7 +120,7 @@ def test_get_schema_metadata_with_incorrect_key(client):
 def test_get_schema_metadata_with_not_found_error(client):
     """
     Checks that fastAPI return 404 error with apppropriate msg
-    when schema metadata is not found at get_schemas_m etadata
+    when schema metadata is not found at get_schemas_metadata
     endpoint
     """
     response = client.get("/v1/schema_metadata?survey_id=123")
@@ -221,3 +221,42 @@ def test_get_dataset_metadata(client, database):
     )
     assert response.status_code == 200
     assert response.json()[0] == expected_metadata
+
+
+def test_get_dataset_metadata_with_invalid_parameters(client):
+    """
+    Checks that fastAPI does not accept invalid porameters/
+    non-numeric version and returns a 400 error with appropriate message at
+    dataset_metadata endpoint
+    """
+    response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search parameters provided"
+
+
+def test_get_dataset_metadata_with_not_found_error(client, database):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when dataset metadata is not found at dataset metadata
+    endpoint
+    """
+    database.datasets_collection.where().where().stream.return_value = []
+    response = client.get("/v1/dataset_metadata?survey_id=123&period_id=234")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No datasets found"
+
+
+def test_get_unit_data_with_not_found_error(client, database):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when unit data is not found
+    """
+    mock_database_get_unit_supplementary_data = MagicMock()
+    mock_database_get_unit_supplementary_data.return_value = []
+    database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
+    response = client.get("/v1/unit_data?dataset_id=123&unit_id=123")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No unit data found"

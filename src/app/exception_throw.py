@@ -64,3 +64,31 @@ def throw_404_no_schema_exception() -> JSONResponse:
     """
     er = exception_response(status.HTTP_404_NOT_FOUND, "error", "No schema found")
     return er.throw_er_with_json()
+
+
+def throw_400_incorrect_key_names_exception() -> JSONResponse:
+    """
+    When searching for the dataset metadata endpoint with the incorrect search
+    queries a 400 HTTP response is returned
+    """
+    er = exception_response(
+        status.HTTP_400_BAD_REQUEST, "error", "Invalid search parameters provided"
+    )
+    return er.throw_er_with_json()
+
+
+def throw_404_no_result_exception() -> JSONResponse:
+    """
+    When there is no dataset metadata endpoint and a 404 HTTP response is returned
+    """
+    er = exception_response(status.HTTP_404_NOT_FOUND, "error", "No datasets found")
+    return er.throw_er_with_json()
+
+
+def throw_404_unit_data_no_response_exception() -> JSONResponse:
+    """
+    Querying the dataset unit data with no result found triggers a 404
+    HTTP response
+    """
+    er = exception_response(status.HTTP_404_NOT_FOUND, "error", "No unit data found")
+    return er.throw_er_with_json()
