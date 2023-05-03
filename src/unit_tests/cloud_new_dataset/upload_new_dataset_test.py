@@ -1,6 +1,8 @@
+import logging
 from unittest.mock import MagicMock, call
 
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.dataset.dataset_processor_service import DatasetProcessorService
 
 from src.test_data import dataset_test_data, shared_test_data
 
@@ -41,3 +43,24 @@ def test_upload_new_dataset(
     DatasetFirebaseRepository.append_unit_to_dataset_units_collection.assert_has_calls(
         append_calls
     )
+
+
+def test_upload_invalid_filename(
+    new_dataset_mock,
+    caplog,
+):
+    caplog.set_level(logging.ERROR)
+
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_invalid_filename_test_data
+
+    DatasetProcessorService.process_new_dataset = MagicMock()
+
+    new_dataset_mock(cloud_event=cloud_event)
+
+    assert len(caplog.records) == 1
+    assert (
+        caplog.records[0].message
+        == f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_test_data['name']}"
+    )
+    DatasetProcessorService.process_new_dataset.assert_not_called()

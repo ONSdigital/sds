@@ -10,6 +10,16 @@ cloud_event_test_data = {
     "name": "test_filename.json",
 }
 
+cloud_event_invalid_filename_test_data = {
+    "id": "test_id",
+    "type": "test_type",
+    "bucket": "test_bucket",
+    "metageneration": "1",
+    "timeCreated": "test_time_created",
+    "updated": "test_time_updated",
+    "name": "bad_filename.test",
+}
+
 test_unit_id = "test_unit_id"
 test_survey_id = "xyz"
 
