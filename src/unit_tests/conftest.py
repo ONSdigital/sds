@@ -50,8 +50,8 @@ def client(database, storage):
 
     client = TestClient(app.app)
     yield client
-    
-    
+
+
 @pytest.fixture
 def client_no_server_exception(database, storage):
     """
@@ -118,7 +118,7 @@ def repository_boundaries_mock():
 @pytest.fixture()
 def cloud_bucket_mock(monkeypatch):
     monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
-    
+
     with open(config.TEST_DATASET_PATH) as f:
         dataset_with_metadata = json.load(f)
 
