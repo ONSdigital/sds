@@ -30,7 +30,7 @@ class SchemaFirebaseRepository:
     ) -> SchemaMetadataWithGuid:
         self.schemas_collection.document(schema_id).set(asdict(schema_metadata))
 
-    def get_schema_metadata_bucket_location(self, survey_id, version) -> str:
+    def get_schema_metadata_bucket_location(self, survey_id: str, version: str) -> str:
         schemas_result = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .where("sds_schema_version", "==", int(version))

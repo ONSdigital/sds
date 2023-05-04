@@ -1,6 +1,7 @@
 import uuid
 
 from config.config_factory import ConfigFactory
+from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import (
     DatasetMetadata,
@@ -164,10 +165,15 @@ class DatasetProcessorService:
             )
         )
 
-        dataset_metadata_collection = []
-        for dataset in dataset_metadata_collection_generator:
-            metadata_collection_item = dataset.to_dict()
-            metadata_collection_item["dataset_id"] = dataset.id
-            dataset_metadata_collection.append(metadata_collection_item)
+        return [
+            self._create_dataset_metadata_item_with_id(dataset_metadata_snapshot_item)
+            for dataset_metadata_snapshot_item in dataset_metadata_collection_generator
+        ]
 
-        return dataset_metadata_collection
+    def _create_dataset_metadata_item_with_id(
+        self, dataset_metadata_snapshot: DocumentSnapshot
+    ):
+        metadata_collection_item = dataset_metadata_snapshot.to_dict()
+        metadata_collection_item["dataset_id"] = dataset_metadata_snapshot.id
+
+        return metadata_collection_item
