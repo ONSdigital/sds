@@ -105,7 +105,9 @@ class DatasetProcessorService:
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        datasets_result = self.dataset_repository.get_latest_dataset_with_survey_id(survey_id)
+        datasets_result = self.dataset_repository.get_latest_dataset_with_survey_id(
+            survey_id
+        )
 
         return DocumentVersionService.calculate_survey_version(
             datasets_result, "sds_dataset_version"

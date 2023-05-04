@@ -72,5 +72,5 @@ class SchemaFirebaseRepository:
         Parameters:
         survey_id (str): The survey id of the schema metadata being collected.
         """
-        
+
         return self.schemas_collection.where("survey_id", "==", survey_id).stream()

@@ -25,7 +25,9 @@ async def post_schema_metadata(
     logger.info("Posting schema metadata...")
     logger.debug(f"Input body: {{{schema_metadata}}}")
 
-    posted_schema_metadata = schema_processor_service.process_schema_metadata(schema_metadata)
+    posted_schema_metadata = schema_processor_service.process_schema_metadata(
+        schema_metadata
+    )
 
     logger.info("Schema metadata successfully posted.")
     logger.debug(f"Schema metadata: {posted_schema_metadata}")
@@ -41,12 +43,14 @@ async def get_schema_metadata_from_bucket(
     schema_bucket_repository: SchemaBucketRepository = Depends(),
 ) -> dict:
     """
-    Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata with specific survey id and version from the bucket.
+    Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
+    with specific survey id and version from the bucket.
 
     Parameters:
     survey_id (str): survey id of the schema metadata.
     version (str): version of the survey.
-    schema_firebase_repository (SchemaFirebaseRepository): injected dependency for interacting with the schema collection in firestore.
+    schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
+        interacting with the schema collection in firestore.
     """
     logger.info("Getting bucket schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
@@ -84,7 +88,7 @@ async def get_schema_metadata_collection(
 
     Parameters:
     survey_id (str): survey id of the collection
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection. 
+    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
     """
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
