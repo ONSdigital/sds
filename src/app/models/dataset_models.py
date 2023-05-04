@@ -21,7 +21,7 @@ class DatasetMetadata(DatasetMetadataWithoutId):
 
 
 @dataclass
-class NewDatasetMetadata:
+class RawDatasetMetadata:
     dataset_id: str
     survey_id: str
     period_id: str
@@ -32,7 +32,7 @@ class NewDatasetMetadata:
 
 
 @dataclass
-class NewDatasetWithMetadata(NewDatasetMetadata):
+class RawDatasetWithMetadata(RawDatasetMetadata):
     data: list[object]
 
 
