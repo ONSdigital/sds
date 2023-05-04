@@ -1,9 +1,12 @@
 import json
+from logging.config import logging
 
+import exception.exceptions as exceptions
 from config.config_factory import ConfigFactory
 from google.cloud import storage
 from models.schema_models import Schema
 
+logger = logging.getLogger(__name__)
 storage_client = storage.Client()
 config = ConfigFactory.get_config()
 
@@ -33,4 +36,5 @@ def get_schema(filename):
         schema = json.loads(bucket.blob(filename).download_as_string())
         return schema
     except Exception:
-        return None
+        logger.error("Schema metadata not found")
+        raise exceptions.ExceptionNoSchemaFound

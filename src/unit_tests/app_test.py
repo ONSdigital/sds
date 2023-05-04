@@ -70,9 +70,7 @@ def test_get_schema_with_not_found_error(client, database):
     Checks that fastAPI returns 404 error with appropriate msg
     when schema metadata is not found at get_schema endpoint
     """
-    mock_stream_obj = MagicMock()
-    mock_stream_obj.to_dict.return_value = ""
-    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
+    database.get_schema_metadata.return_value = None
     response = client.get("/v1/schema?survey_id=111&version=999")
 
     assert response.status_code == 404
@@ -230,6 +228,11 @@ def test_get_dataset_metadata_with_invalid_parameters(client):
     dataset_metadata endpoint
     """
     response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search parameters provided"
+
+    response = client.get("/v1/dataset_metadata?invalid_key=076")
 
     assert response.status_code == 400
     assert response.json()["message"] == "Invalid search parameters provided"

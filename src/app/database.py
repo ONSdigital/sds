@@ -1,5 +1,6 @@
 from dataclasses import asdict
 from datetime import datetime
+from logging.config import logging
 
 import firebase_admin
 from config.config_factory import ConfigFactory
@@ -16,6 +17,8 @@ db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 config = ConfigFactory.get_config()
+
+logger = logging.getLogger(__name__)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):
@@ -122,8 +125,6 @@ def get_schema_metadata(survey_id, version) -> SchemaMetadata:
 
     for schema in schemas_result:
         return_metadata = schema.to_dict()
-        if len(return_metadata) == 0:
-            return None
         if "guid" in return_metadata:
             return_metadata.pop("guid")
         return SchemaMetadata(**return_metadata)
