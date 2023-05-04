@@ -33,7 +33,7 @@ class DatasetProcessorService:
 
         Parameters:
         filename (str): the filename of the json containing the dataset data
-        new_dataset (NewDatasetWithMetadata): new dataset to be processed
+        raw_dataset (RawDatasetWithMetadata): new dataset to be processed
         """
         logger.info("Processing new dataset...")
         logger.debug(f"Dataset being processed: {raw_dataset}")
@@ -80,7 +80,7 @@ class DatasetProcessorService:
         Returns a copy of the dataset with added metadata.
 
         Parameters:
-        new_dataset_metadata (NewDatasetMetadata): the original dataset.
+        raw_dataset_metadata (RawDatasetMetadata): the original dataset.
         filename (str): the filename of the json containing the dataset data
         dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
@@ -105,7 +105,7 @@ class DatasetProcessorService:
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        datasets_result = self.dataset_repository.get_dataset_with_survey_id(survey_id)
+        datasets_result = self.dataset_repository.get_latest_dataset_with_survey_id(survey_id)
 
         return DocumentVersionService.calculate_survey_version(
             datasets_result, "sds_dataset_version"
@@ -115,7 +115,7 @@ class DatasetProcessorService:
         self,
         dataset_id: str,
         transformed_dataset_metadata: DatasetMetadataWithoutId,
-        new_dataset_unit_data_collection: list[object],
+        raw_dataset_unit_data_collection: list[object],
     ) -> list[UnitDataset]:
         """
         Transforms the new unit data to a new format for storing in firestore.
@@ -123,13 +123,13 @@ class DatasetProcessorService:
         Parameters:
         dataset_id (str): dataset_id for the new dataset.
         transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset metadata without id
-        new_dataset_unit_data_collection (list[object]): list of unit data to be transformed
+        raw_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         return [
             self._add_metatadata_to_unit_data_item(
                 dataset_id, transformed_dataset_metadata, item
             )
-            for item in new_dataset_unit_data_collection
+            for item in raw_dataset_unit_data_collection
         ]
 
     def _add_metatadata_to_unit_data_item(
@@ -159,6 +159,14 @@ class DatasetProcessorService:
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str
     ) -> list[DatasetMetadata]:
+        """
+        Gets the collection of dataset metadata associated with a specific survey and period id.
+
+        Parameters:
+        survey_id (str): survey id of the collection.
+        period_id (str): period id of the collection.
+        """
+
         dataset_metadata_collection_generator = (
             self.dataset_repository.get_dataset_metadata_collection(
                 survey_id, period_id
@@ -173,6 +181,12 @@ class DatasetProcessorService:
     def _create_dataset_metadata_item_with_id(
         self, dataset_metadata_snapshot: DocumentSnapshot
     ):
+        """
+        Creates a dataset metadata dictionary item from a firestore document snapshot.
+
+        Parameters:
+        dataset_metadata_snapshot (DocumentSnapshot): firestore document snapshot of a dataset metadata item.
+        """
         metadata_collection_item = dataset_metadata_snapshot.to_dict()
         metadata_collection_item["dataset_id"] = dataset_metadata_snapshot.id
 

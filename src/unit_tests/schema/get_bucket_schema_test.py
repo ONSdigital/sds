@@ -10,8 +10,8 @@ def test_get_bucket_schema_200_response(test_client):
     """
     When the schema is retrieved successfully from the bucket there should be a 200 status code and expected response.
     """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_location = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_location.return_value = (
+    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = (
         "test_location"
     )
 
@@ -30,8 +30,8 @@ def test_get_bucket_schema_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
     """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_location = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_location.return_value = None
+    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = None
 
     SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
     SchemaBucketRepository.get_bucket_file_as_json.return_value = (

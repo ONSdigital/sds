@@ -12,5 +12,14 @@ class DatasetBucketRepository:
         self.bucket = self.storage_client.bucket(bucket_name)
 
     def get_bucket_file_as_json(self, filename: str) -> RawDatasetWithMetadata:
-        """Used by the cloud function."""
+        """
+        Queries google bucket for file with a specific name and returns it as json.
+
+        Parameters:
+        filename (str): name of file being queried.
+
+        Returns:
+        RawDatasetWithMetadata: raw dataset from the bucket file as json.
+        """
+
         return BucketOperationsService.get_bucket_file_as_json(filename, self.bucket)

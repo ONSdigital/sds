@@ -19,11 +19,11 @@ class DatasetFirebaseRepository:
 
         self.document_units_key = "units"
 
-    def get_dataset_with_survey_id(
+    def get_latest_dataset_with_survey_id(
         self, survey_id: str
     ) -> Generator[DocumentSnapshot, None, None]:
         """
-        Gets a DocumentSnapshot generator of a single dataset from firestore with a specific survey_id.
+        Gets a DocumentSnapshot generator of the latest dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
@@ -76,7 +76,11 @@ class DatasetFirebaseRepository:
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
-        Get the unit supplementary  data of a specified unit from a dataset collection
+        Get the unit supplementary data of a specified unit from a dataset collection
+
+        Parameters:
+        dataset_id (str): The unique id of the dataset
+        unit_id (str): The id of the unit on the dataset
         """
         return (
             self.datasets_collection.document(dataset_id)
@@ -90,8 +94,11 @@ class DatasetFirebaseRepository:
         self, survey_id: str, period_id: str
     ) -> Generator[DocumentSnapshot, None, None]:
         """
-        This method takes the survey_id and period_id as arguments, queries the firestore dataset document collection,
-        and returns the matching datasets metadata which is a nested dictionary object with the dataset_id as the key.
+        Get the collection of dataset metadata from firestore associated with a specific survey and period id.
+
+        Parameters:
+        survey_id (str): The survey id of the dataset.
+        period_id (str): The period id of the unit on the dataset.
         """
         return (
             self.datasets_collection.where("survey_id", "==", survey_id)

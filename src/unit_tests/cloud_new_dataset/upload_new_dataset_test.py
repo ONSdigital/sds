@@ -20,7 +20,7 @@ def test_upload_new_dataset(
 
     new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetFirebaseRepository.get_dataset_with_survey_id.assert_called_once_with(
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.assert_called_once_with(
         dataset_test_data.test_survey_id
     )
     DatasetFirebaseRepository.create_new_dataset.assert_called_once_with(

@@ -20,6 +20,13 @@ class SchemaBucketRepository:
                 raise Exception("SCHEMA_BUCKET_NAME must be set")
 
     def store_schema_json(self, filename: str, schema: Schema) -> None:
+        """
+        Stores schema in google bucket as json.
+
+        Parameters:
+        filename (str): filename of uploaded json schema.
+        schema (Schema): schema being stored.
+        """
         blob = self.bucket.blob(filename)
         blob.upload_from_string(
             json.dumps(schema.dict(by_alias=True), indent=2),

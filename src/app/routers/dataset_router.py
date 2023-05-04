@@ -16,8 +16,11 @@ async def get_unit_supplementary_data(
     dataset_repository: DatasetFirebaseRepository = Depends(),
 ):
     """
-    Retrieve supplementary data for a particular unit given the unit id
-    and the dataset id, return 404 if no data is returned.
+    Retrieve supplementary data for a particular unit given the dataset id and unit id, return 404 if no data is returned.
+
+    Parameters:
+    dataset_id (str): The unique id of the dataset being queried.
+    unit_id (str): The unit id of the particular unit on the data being queried.
     """
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
@@ -44,8 +47,12 @@ async def get_dataset_metadata_collection(
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
-    The matching metadata are returned as an array of dictionaries.
+
+    Parameters:
+    survey_id (str): The survey id of the dataset being queried.
+    period_id (str): The period id of the dataset being queried.
     """
+
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 

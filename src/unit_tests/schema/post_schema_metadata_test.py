@@ -11,8 +11,8 @@ def test_200_response_updated_schema_version(test_client, uuid_mock, datetime_mo
     SchemaBucketRepository.store_schema_json = MagicMock()
     SchemaBucketRepository.store_schema_json.return_value = None
 
-    SchemaFirebaseRepository.get_current_version_survey_schema = MagicMock()
-    SchemaFirebaseRepository.get_current_version_survey_schema.return_value = (
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
             [schema_test_data.test_schema_latest_version]
         )
@@ -38,8 +38,8 @@ def test_200_response_first_schema_version(test_client, uuid_mock, datetime_mock
     SchemaBucketRepository.store_schema_json = MagicMock()
     SchemaBucketRepository.store_schema_json.return_value = None
 
-    SchemaFirebaseRepository.get_current_version_survey_schema = MagicMock()
-    SchemaFirebaseRepository.get_current_version_survey_schema.return_value = (
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock([])
     )
 

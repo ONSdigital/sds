@@ -44,8 +44,8 @@ def uuid_mock():
 
 @pytest.fixture()
 def dataset_repository_boundaries_mock():
-    DatasetFirebaseRepository.get_dataset_with_survey_id = MagicMock()
-    DatasetFirebaseRepository.get_dataset_with_survey_id.return_value = (
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
             [dataset_test_data.dataset_metadata_test_data]
         )
