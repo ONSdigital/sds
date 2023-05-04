@@ -31,40 +31,44 @@ def test_dataset(client, bucket_loader):
     assert dataset_metadata_response.status_code == 200
 
     mock_unit_response = {
-        "busdesc": "Provision of equipment for hobbit adventures",
-        "local_unit": [
-            {
-                "luaddr2": "Underhill",
-                "luref": "2012763A",
-                "busdesc": "Creates old fashioned looking paper maps",
-                "luname": "Maps Factory",
-                "luaddr1": "1 Bag End",
-                "tradstyle": "Also Does Adventures Ltd",
-                "luaddr3": "Hobbiton",
-                "lupostcode": "HO1 1AA",
-            },
-            {
-                "luaddr2": "Maggotsville",
-                "luref": "20127364B",
-                "busdesc": "Quality pipe manufacturer",
-                "buslref": "pipe123",
-                "luname": "Pipes R Us Subsidiary",
-                "luaddr1": "12 The Farmstead",
-                "luaddr3": "Hobbiton",
-                "lupostcode": "HO1 1AB",
-            },
-        ],
-        "payeref": "123AB456",
-        "runame": "Pipes and Maps Ltd",
-        "rupostcode": "HO1 1AA",
-        "ruaddr1": "111 Under Hill",
-        "ruaddr4": "The Shire",
-        "ruaddr2": "Hobbitton",
-        "ruref": "43532",
+        "schema_version": "v1.0.0",
+        "sds_schema_version": 4,
+        "survey_id": "xyz",
+        "period_id": "abc",
+        "form_type": "yyy",
+        "data": {
+            "busdesc": "Provision of equipment for hobbit adventures",
+            "local_unit": [
+                {
+                    "luaddr2": "Underhill",
+                    "luref": "2012763A",
+                    "busdesc": "Creates old fashioned looking paper maps",
+                    "luname": "Maps Factory",
+                    "luaddr1": "1 Bag End",
+                    "tradstyle": "Also Does Adventures Ltd",
+                    "luaddr3": "Hobbiton",
+                    "lupostcode": "HO1 1AA",
+                },
+                {
+                    "luaddr2": "Maggotsville",
+                    "luref": "20127364B",
+                    "busdesc": "Quality pipe manufacturer",
+                    "buslref": "pipe123",
+                    "luname": "Pipes R Us Subsidiary",
+                    "luaddr1": "12 The Farmstead",
+                    "luaddr3": "Hobbiton",
+                    "lupostcode": "HO1 1AB",
+                },
+            ],
+            "payeref": "123AB456",
+            "runame": "Pipes and Maps Ltd",
+            "rupostcode": "HO1 1AA",
+            "ruaddr1": "111 Under Hill",
+            "ruaddr4": "The Shire",
+            "ruaddr2": "Hobbitton",
+            "ruref": "43532",
+        },
     }
-    # Since the cloud function generates the GUID which is set as the dataset id, the below looping is necessary to
-    # locate the specific dataset in the collection.
-    # Iterate over all the items in the above API response, then locate the document with the "filename" field from above.
 
     for dataset_metadata in dataset_metadata_response.json():
         if dataset_metadata["filename"] == filename:
@@ -76,7 +80,10 @@ def test_dataset(client, bucket_loader):
             )
 
             assert response.status_code == 200
-            assert response.json() == mock_unit_response
+            json_response = response.json()
+
+            assert mock_unit_response.items() <= json_response.items()
+            assert json_response["dataset_id"] is not None
 
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata

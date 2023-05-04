@@ -1,9 +1,12 @@
 import json
+from logging.config import logging
 
+import exception.exceptions as exceptions
 from config.config_factory import ConfigFactory
 from google.cloud import storage
-from models import Schema
+from models.schema_models import Schema
 
+logger = logging.getLogger(__name__)
 storage_client = storage.Client()
 config = ConfigFactory.get_config()
 
@@ -29,5 +32,9 @@ def store_schema(schema: Schema, schema_id):
 
 def get_schema(filename):
     """Get the SDS schema from the schema bucket using the filename provided."""
-    schema = json.loads(bucket.blob(filename).download_as_string())
-    return schema
+    try:
+        schema = json.loads(bucket.blob(filename).download_as_string())
+        return schema
+    except Exception:
+        logger.error("Schema metadata not found")
+        raise exceptions.ExceptionNoSchemaFound

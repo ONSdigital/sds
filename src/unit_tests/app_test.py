@@ -37,13 +37,104 @@ def test_post_schema_metadata(mock_uuid, client, database, storage):
     assert json.loads(schema_string) == schema
 
 
-def test_post_bad_schema(client, database, storage):
+@patch("database.get_schema_metadata")
+def test_global_error(mock_get_schema_metadata, client_no_server_exception):
     """
-    Checks that fastAPI returns a 422 error if the schema
-    is badly formatted.
+    Checks that if app encounter a global exception error
+    fastAPI will return a 500 exception with appropriate msg
+    Func get_schema_metadata is patched and raised with exception
+    Fixture client_no_server_exception is used to avoid exiting
+    the test at exception so that the response can be validated
+    """
+    mock_get_schema_metadata.side_effect = Exception
+
+    response = client_no_server_exception.get("/v1/schema?survey_id=076&version=123")
+    assert response.status_code == 500
+    assert response.json()["message"] == "Unable to process request"
+
+
+def test_get_schema_with_invalid_version_error(client):
+    """
+    Checks that fastAPI does not accept non-numeric version
+    and returns a 400 error with appropriate message at
+    get_schema endpoint
+    """
+    response = client.get("/v1/schema?survey_id=076&version=xyz")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Validation has failed"
+
+
+def test_get_schema_with_not_found_error(client, database):
+    """
+    Checks that fastAPI returns 404 error with appropriate msg
+    when schema metadata is not found at get_schema endpoint
+    """
+    database.get_schema_metadata.return_value = None
+    response = client.get("/v1/schema?survey_id=111&version=999")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+
+@patch("storage.bucket")
+def test_get_schema_with_file_not_found_error(mock_empty_bucket, client, database):
+    """
+    Checks that fastAPI returns 404 error with appropriate msg
+    when schema file at bucket is not found at get_schema endpoint
+    Storage bucket is patched to replace fixture storage to
+    ensure no file is returned and exception will be triggered
+    """
+    expected_metadata = {
+        "survey_id": "xyz",
+        "schema_location": "/xyz/111-222-xxx-fff.json",
+        "sds_schema_version": 2,
+        "sds_published_at": "2023-02-06T13:33:44Z",
+    }
+    schema_guid = "abc"
+    mock_stream_obj = MagicMock()
+    mock_stream_obj.to_dict.return_value = expected_metadata
+    mock_stream_obj.id = schema_guid
+    database.schemas_collection.where().where().stream.return_value = [mock_stream_obj]
+
+    response = client.get("/v1/schema?survey_id=xzy&version=2")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+
+def test_get_schema_metadata_with_incorrect_key(client):
+    """
+    Checks that fastAPI return 400 error with appropriate msg
+    when incorrect key is used to query schema metadata
+    at get_schemas_metadata endpoint
+    """
+    response = client.get("/v1/schema_metadata?abc=123")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search provided"
+
+
+def test_get_schema_metadata_with_not_found_error(client):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when schema metadata is not found at get_schemas_metadata
+    endpoint
+    """
+    response = client.get("/v1/schema_metadata?survey_id=123")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No results found"
+
+
+def test_post_bad_schema(client):
+    """
+    Checks that fastAPI returns a 400 error with appropriate
+    message if the schema is badly formatted.
     """
     response = client.post("/v1/schema", json={"schema": "is missing some fields"})
-    assert response.status_code == 422
+    assert response.status_code == 400
+    assert response.json()["message"] == "Validation has failed"
 
 
 def test_get_schemas_metadata(client, database):
@@ -86,6 +177,7 @@ def test_get_schema(client, database):
         "schema_location": "/xyz/111-222-xxx-fff.json",
         "sds_schema_version": 2,
         "sds_published_at": "2023-02-06T13:33:44Z",
+        "guid": "abc",
     }
     schema_guid = "abc"
     mock_stream_obj = MagicMock()
@@ -127,3 +219,47 @@ def test_get_dataset_metadata(client, database):
     )
     assert response.status_code == 200
     assert response.json()[0] == expected_metadata
+
+
+def test_get_dataset_metadata_with_invalid_parameters(client):
+    """
+    Checks that fastAPI does not accept invalid porameters/
+    non-numeric version and returns a 400 error with appropriate message at
+    dataset_metadata endpoint
+    """
+    response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search parameters provided"
+
+    response = client.get("/v1/dataset_metadata?invalid_key=076")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search parameters provided"
+
+
+def test_get_dataset_metadata_with_not_found_error(client, database):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when dataset metadata is not found at dataset metadata
+    endpoint
+    """
+    database.datasets_collection.where().where().stream.return_value = []
+    response = client.get("/v1/dataset_metadata?survey_id=123&period_id=234")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No datasets found"
+
+
+def test_get_unit_data_with_not_found_error(client, database):
+    """
+    Checks that fastAPI return 404 error with apppropriate msg
+    when unit data is not found
+    """
+    mock_database_get_unit_supplementary_data = MagicMock()
+    mock_database_get_unit_supplementary_data.return_value = []
+    database.get_unit_supplementary_data = mock_database_get_unit_supplementary_data
+    response = client.get("/v1/unit_data?dataset_id=123&unit_id=123")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No unit data found"

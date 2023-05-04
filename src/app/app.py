@@ -1,12 +1,61 @@
 import database
+import exception.exceptions as exceptions
 import storage
-from fastapi import Body, FastAPI, HTTPException
+from exception.exception_interceptor import ExceptionInterceptor
+from fastapi import Body, FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from logging_config import logging
-from models import DatasetMetadata, PostSchemaMetadata, ReturnedSchemaMetadata, Schema
-from services import schema_metadata_service
+from models.dataset_models import DatasetMetadata
+from models.schema_models import PostSchemaMetadata, ReturnedSchemaMetadata, Schema
+from services.schema_metadata import schema_metadata_service
+from validators.search_param_validator import SearchParamValidator
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.add_exception_handler(
+    exceptions.ExceptionIncorrectSchemaKey,
+    ExceptionInterceptor.throw_400_incorrect_schema_key_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionNoSchemasMetadata,
+    ExceptionInterceptor.throw_404_no_schemas_metadata_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionNoSchemaFound,
+    ExceptionInterceptor.throw_404_no_schema_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionIncorrectDatasetKey,
+    ExceptionInterceptor.throw_400_incorrect_key_names_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionNoDatasetMetadata,
+    ExceptionInterceptor.throw_404_no_result_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionNoUnitData,
+    ExceptionInterceptor.throw_404_unit_data_no_response_exception,
+)
+
+
+@app.exception_handler(500)
+async def internal_exception_handler(request: Request, exc: Exception):
+    """
+    Override the global exception handler (500 internal server error) in
+    FastAPI and throw error in JSON format
+    """
+    return ExceptionInterceptor.throw_500_global_exception()
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    When a request contains invalid data, FastAPI internally raises a
+    RequestValidationError. This function override the default
+    validation exception handler to return 400 instead of 422
+    """
+    return ExceptionInterceptor.throw_400_validation_exception()
 
 
 @app.get("/v1/unit_data")
@@ -24,7 +73,7 @@ async def get_unit_supplementary_data(dataset_id: str, unit_id: str):
 
     if not unit_supplementary_data:
         logger.error("Item not found")
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise exceptions.ExceptionNoUnitData
 
     logger.info("Unit supplementary data outputted successfully.")
     logger.debug(f"Unit supplementary data: {unit_supplementary_data}")
@@ -60,10 +109,12 @@ async def get_schema(survey_id: str, version: str) -> dict:
     logger.info("Getting schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
+    SearchParamValidator.validate_version_from_schema(version)
+
     schema_metadata = database.get_schema_metadata(survey_id=survey_id, version=version)
     if not schema_metadata:
         logger.error("Schema metadata not found")
-        raise HTTPException(status_code=404, detail="Schema metadata not found")
+        raise exceptions.ExceptionNoSchemaFound
 
     logger.info("Schema metadata successfully retrieved.")
     logger.debug(f"Schema metadata: {schema_metadata}")
@@ -79,12 +130,17 @@ async def get_schema(survey_id: str, version: str) -> dict:
 
 
 @app.get("/v1/schema_metadata", response_model=list[ReturnedSchemaMetadata])
-async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
+async def get_schemas_metadata(survey_id: str = None) -> list[ReturnedSchemaMetadata]:
     """Retrieve the metadata for all the schemas that have a given survey_id."""
+    SearchParamValidator.validate_survey_id_from_schema_metadata(survey_id)
+
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
 
     schemas_metadata = database.get_schemas_metadata(survey_id)
+    if not schemas_metadata:
+        logger.error("Schemas metadata not found")
+        raise exceptions.ExceptionNoSchemasMetadata
 
     logger.info("Schemas metadata successfully retrieved.")
     logger.debug(f"Schemas metadata: {schemas_metadata}")
@@ -94,12 +150,16 @@ async def get_schemas_metadata(survey_id: str) -> list[ReturnedSchemaMetadata]:
 
 @app.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
 async def get_dataset_metadata_collection(
-    survey_id: str, period_id: str
+    survey_id: str = None, period_id: str = None
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
     The matching metadata are returned as an array of dictionaries.
     """
+    SearchParamValidator.validate_survey_period_id_from_dataset_metadata(
+        survey_id, period_id
+    )
+
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 
@@ -108,9 +168,7 @@ async def get_dataset_metadata_collection(
     )
     if not dataset_metadata_collection:
         logger.error("Dataset metadata collection not found.")
-        raise HTTPException(
-            status_code=404, detail="Dataset metadata collection not found."
-        )
+        raise exceptions.ExceptionNoDatasetMetadata
 
     logger.info("Dataset metadata collection successfully retrieved.")
     logger.debug(f"Dataset metadata collection: {dataset_metadata_collection}")
