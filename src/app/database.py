@@ -1,5 +1,6 @@
 from dataclasses import asdict
 from datetime import datetime
+from logging.config import logging
 
 import firebase_admin
 from config.config_factory import ConfigFactory
@@ -16,6 +17,8 @@ db = firestore.client()
 datasets_collection = db.collection("datasets")
 schemas_collection = db.collection("schemas")
 config = ConfigFactory.get_config()
+
+logger = logging.getLogger(__name__)
 
 
 def get_unit_supplementary_data(dataset_id, unit_id):

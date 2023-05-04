@@ -53,6 +53,19 @@ def client(database, storage):
 
 
 @pytest.fixture
+def client_no_server_exception(database, storage):
+    """
+    This client is only used to test the 500 server error exception handler,
+    therefore server exception for this client is suppressed
+    """
+    os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
+    import app
+
+    client = TestClient(app.app, raise_server_exceptions=False)
+    yield client
+
+
+@pytest.fixture
 def cloud_function(database, storage):
     os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
     import main
