@@ -167,7 +167,6 @@ class DatasetProcessorService:
         dataset_metadata_collection = []
         for dataset in dataset_metadata_collection_generator:
             metadata_collection_item = dataset.to_dict()
-            print("id?", dataset.id)
             metadata_collection_item["dataset_id"] = dataset.id
             dataset_metadata_collection.append(metadata_collection_item)
 

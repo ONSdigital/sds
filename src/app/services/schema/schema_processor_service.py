@@ -1,7 +1,7 @@
 import uuid
 
 from config.config_factory import ConfigFactory
-from models.schema_models import SchemaMetadataWithGuid
+from models.schema_models import SchemaMetadata, SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
@@ -15,7 +15,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_schema_metadata(self, schema):
+    def process_schema_metadata(self, schema: SchemaMetadata):
         schema_id = str(uuid.uuid4())
         stored_schema_filename = f"{schema.survey_id}/{schema_id}.json"
 
@@ -32,8 +32,8 @@ class SchemaProcessorService:
         return next_version_schema_metadata
 
     def build_next_version_schema_metadata(
-        self, schema_id, stored_schema_filename, schema
-    ):
+        self, schema_id: str, stored_schema_filename: str, schema: SchemaMetadata
+    ) -> SchemaMetadataWithGuid:
         return SchemaMetadataWithGuid(
             guid=schema_id,
             schema_location=stored_schema_filename,
