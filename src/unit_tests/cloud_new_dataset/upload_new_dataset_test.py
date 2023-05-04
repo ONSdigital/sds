@@ -1,8 +1,6 @@
-import logging
 import re
 from unittest.mock import MagicMock, call
 
-from models.dataset_models import NewDatasetWithMetadata
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
@@ -79,7 +77,7 @@ def test_no_dataset_in_bucket(
 
     with raises(
         RuntimeError,
-        match=f"No corresponding dataset found in bucket",
+        match="No corresponding dataset found in bucket",
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
@@ -103,7 +101,7 @@ def test_missing_dataset_keys(new_dataset_mock):
 
     with raises(
         RuntimeError,
-        match=re.escape(f"Mandatory key(s) missing from JSON: survey_id."),
+        match=re.escape("Mandatory key(s) missing from JSON: survey_id."),
     ):
         new_dataset_mock(cloud_event=cloud_event)
 

@@ -2,7 +2,7 @@ import json
 
 from config.config_factory import ConfigFactory
 from google.cloud import storage
-from models.schema_models import Schema
+from models.schema_models import Schema, SchemaMetadata
 from services.shared.bucket_operations_service import BucketOperationsService
 
 
@@ -26,8 +26,6 @@ class SchemaBucketRepository:
             content_type="application/json",
         )
 
-    def get_bucket_file_as_json(self, filename):
+    def get_bucket_file_as_json(self, filename: str) -> SchemaMetadata:
         """Get the SDS schema from the schema bucket using the filename provided."""
-        return (
-            BucketOperationsService.get_file_from_bucket(filename, self.bucket) or None
-        )
+        return BucketOperationsService.get_file_from_bucket(filename, self.bucket)

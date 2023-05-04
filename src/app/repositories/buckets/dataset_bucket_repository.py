@@ -1,5 +1,3 @@
-import json
-
 from google.cloud import storage
 from logging_config import logging
 from models.dataset_models import NewDatasetWithMetadata
@@ -18,4 +16,4 @@ class DatasetBucketRepository:
         """Used by the cloud function."""
         bucket = self.storage_client.bucket(bucket_name)
 
-        return BucketOperationsService.get_file_from_bucket(filename, bucket) or None
+        return BucketOperationsService.get_file_from_bucket(filename, bucket)

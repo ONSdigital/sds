@@ -3,14 +3,7 @@ from unittest.mock import MagicMock
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 
-from src.unit_tests.test_helper import TestHelper
-
-test_schema_bucket_metadata_response = {
-    "survey_id": "test_survey_id",
-    "schema_location": "test_location_2",
-    "sds_schema_version": 2,
-    "sds_published_at": "test_published_at_2",
-}
+from src.test_data import schema_test_data
 
 
 def test_get_bucket_schema_200_response(test_client):
@@ -24,13 +17,13 @@ def test_get_bucket_schema_200_response(test_client):
 
     SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
     SchemaBucketRepository.get_bucket_file_as_json.return_value = (
-        test_schema_bucket_metadata_response
+        schema_test_data.test_schema_bucket_metadata_response
     )
 
     response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
 
     assert response.status_code == 200
-    assert response.json() == test_schema_bucket_metadata_response
+    assert response.json() == schema_test_data.test_schema_bucket_metadata_response
 
 
 def test_get_bucket_schema_404_response(test_client):
@@ -42,7 +35,7 @@ def test_get_bucket_schema_404_response(test_client):
 
     SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
     SchemaBucketRepository.get_bucket_file_as_json.return_value = (
-        test_schema_bucket_metadata_response
+        schema_test_data.test_schema_bucket_metadata_response
     )
 
     response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
