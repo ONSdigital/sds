@@ -10,13 +10,22 @@ test_schema_latest_version = {
     "survey_id": test_survey_id,
 }
 
-test_post_schema_metadata_response = {
+test_post_schema_metadata_updated_version_response = {
     "guid": test_guid,
     "schema_location": f"{test_survey_id}/{test_guid}.json",
     "sds_published_at": test_published_at,
     "sds_schema_version": 2,
     "survey_id": test_survey_id,
 }
+
+test_post_schema_metadata_first_version_response = {
+    "guid": test_guid,
+    "schema_location": f"{test_survey_id}/{test_guid}.json",
+    "sds_published_at": test_published_at,
+    "sds_schema_version": 1,
+    "survey_id": test_survey_id,
+}
+
 
 test_post_schema_metadata_body = {
     "$schema": "test-schema",
