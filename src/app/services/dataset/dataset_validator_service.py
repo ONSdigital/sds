@@ -51,6 +51,7 @@ class DatasetValidatorService:
             else DatasetValidatorService._valid_keys_response()
         )
 
+    @staticmethod
     def _collect_missing_keys_from_dataset(mandatory_keys, dataset):
         return [
             mandatory_key
@@ -58,8 +59,10 @@ class DatasetValidatorService:
             if mandatory_key not in dataset.keys()
         ]
 
+    @staticmethod
     def _valid_keys_response() -> tuple[bool, str]:
         return True, ""
 
+    @staticmethod
     def _missing_keys_response(missing_keys: list[str]) -> tuple[bool, str]:
         return False, ", ".join(missing_keys)
