@@ -25,7 +25,7 @@ class DatasetProcessorService:
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
     def process_new_dataset(
-        self, filename: str, new_dataset: RawDatasetWithMetadata
+        self, filename: str, raw_dataset: RawDatasetWithMetadata
     ) -> None:
         """
         Processes the incoming dataset.
@@ -35,14 +35,14 @@ class DatasetProcessorService:
         new_dataset (NewDatasetWithMetadata): new dataset to be processed
         """
         logger.info("Processing new dataset...")
-        logger.debug(f"Dataset being processed: {new_dataset}")
+        logger.debug(f"Dataset being processed: {raw_dataset}")
 
-        new_dataset_unit_data_collection = new_dataset.pop("data")
+        new_dataset_unit_data_collection = raw_dataset.pop("data")
         dataset_id = str(uuid.uuid4())
 
         logger.info("Transforming new dataset metadata...")
         transformed_dataset = self._add_metadata_to_new_dataset(
-            new_dataset, filename, new_dataset_unit_data_collection
+            raw_dataset, filename, new_dataset_unit_data_collection
         )
         logger.info("Dataset transformed successfully.")
 
@@ -71,7 +71,7 @@ class DatasetProcessorService:
 
     def _add_metadata_to_new_dataset(
         self,
-        new_dataset_metadata: RawDatasetMetadata,
+        raw_dataset_metadata: RawDatasetMetadata,
         filename: str,
         dataset_unit_data_collection: list[object],
     ) -> DatasetMetadataWithoutId:
@@ -84,7 +84,7 @@ class DatasetProcessorService:
         dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
         return {
-            **new_dataset_metadata,
+            **raw_dataset_metadata,
             "filename": filename,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(
@@ -93,7 +93,7 @@ class DatasetProcessorService:
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
-                new_dataset_metadata["survey_id"]
+                raw_dataset_metadata["survey_id"]
             ),
         }
 
@@ -156,7 +156,7 @@ class DatasetProcessorService:
         }
 
     def get_dataset_metadata_collection(
-        self, survey_id, period_id
+        self, survey_id: str, period_id: str
     ) -> list[DatasetMetadata]:
         dataset_metadata_collection_generator = (
             self.dataset_repository.get_dataset_metadata_collection(
