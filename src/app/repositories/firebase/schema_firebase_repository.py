@@ -25,7 +25,9 @@ class SchemaFirebaseRepository:
             .stream()
         )
 
-    def create_schema(self, schema_id: str, schema_metadata: SchemaMetadata) -> SchemaMetadataWithGuid:
+    def create_schema(
+        self, schema_id: str, schema_metadata: SchemaMetadata
+    ) -> SchemaMetadataWithGuid:
         self.schemas_collection.document(schema_id).set(asdict(schema_metadata))
 
     def get_schema_metadata_bucket_location(self, survey_id, version) -> str:

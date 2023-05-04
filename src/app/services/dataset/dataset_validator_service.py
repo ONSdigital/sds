@@ -32,7 +32,6 @@ class DatasetValidatorService:
         This method validates the JSON object to check if it contains all the mandatory keys.
         In the future, this can be enhanced further to validate nested JSON objects, for example, the 'data' element.
         """
-        isValid = True
         mandatory_keys = [
             "survey_id",
             "period_id",
@@ -41,15 +40,26 @@ class DatasetValidatorService:
             "form_type",
             "data",
         ]
-        missing_keys = []
-        message = ""
 
-        for key in mandatory_keys:
-            if key not in dataset.keys():
-                missing_keys.append(key)
+        missing_keys = DatasetValidatorService._collect_missing_keys_from_dataset(
+            mandatory_keys, dataset
+        )
 
-        if len(missing_keys) > 0:
-            message = ", ".join(missing_keys)
-            isValid = False
+        return (
+            DatasetValidatorService._missing_keys_response(missing_keys)
+            if len(missing_keys) > 0
+            else DatasetValidatorService._valid_keys_response()
+        )
 
-        return isValid, message
+    def _collect_missing_keys_from_dataset(mandatory_keys, dataset):
+        return [
+            mandatory_key
+            for mandatory_key in mandatory_keys
+            if mandatory_key not in dataset.keys()
+        ]
+
+    def _valid_keys_response() -> tuple[bool, str]:
+        return True, ""
+
+    def _missing_keys_response(missing_keys: list[str]) -> tuple[bool, str]:
+        return False, ", ".join(missing_keys)
