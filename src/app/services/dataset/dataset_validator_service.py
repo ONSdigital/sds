@@ -17,7 +17,7 @@ class DatasetValidatorService:
     @staticmethod
     def _validate_dataset_exists_in_bucket(
         raw_dataset_with_metadata: RawDatasetWithMetadata,
-    ):
+    ) -> None:
         if raw_dataset_with_metadata is None:
             raise RuntimeError("No corresponding dataset found in bucket")
 
@@ -62,7 +62,7 @@ class DatasetValidatorService:
     @staticmethod
     def _collect_missing_keys_from_dataset(
         mandatory_keys: list[str], dataset: RawDatasetWithMetadata
-    ):
+    ) -> list[str]:
         return [
             mandatory_key
             for mandatory_key in mandatory_keys
