@@ -20,14 +20,6 @@ from src.unit_tests.test_helper import TestHelper
 config = ConfigFactory.get_config()
 
 
-@pytest.fixture
-def cloud_function(database, storage):
-    os.environ["SCHEMA_BUCKET_NAME"] = "the bucket name"
-    import main
-
-    yield main
-
-
 @pytest.fixture()
 def datetime_mock():
     DatetimeService.get_current_date_and_time = MagicMock()
@@ -97,3 +89,19 @@ def test_client(monkeypatch):
 
     dataset_client = TestClient(app.app)
     yield dataset_client
+
+
+@pytest.fixture
+def test_client_no_server_exception(monkeypatch):
+    """
+    This client is only used to test the 500 server error exception handler,
+    therefore server exception for this client is suppressed
+    """
+    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
+    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
+    monkeypatch.setattr(firestore, "client", MagicMock())
+
+    import app
+
+    client = TestClient(app.app, raise_server_exceptions=False)
+    yield client

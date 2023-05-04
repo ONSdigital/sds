@@ -3,6 +3,8 @@ from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
+import exception.exceptions as exceptions
+from validators.search_param_validator import SearchParamValidator
 
 router = APIRouter()
 
@@ -31,7 +33,7 @@ async def get_unit_supplementary_data(
 
     if not unit_supplementary_data:
         logger.error("Item not found")
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise exceptions.ExceptionNoUnitData
 
     logger.info("Unit supplementary data outputted successfully.")
     logger.debug(f"Unit supplementary data: {unit_supplementary_data}")
@@ -41,8 +43,8 @@ async def get_unit_supplementary_data(
 
 @router.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
 async def get_dataset_metadata_collection(
-    survey_id: str,
-    period_id: str,
+    survey_id: str = None,
+    period_id: str = None,
     dataset_processor_service: DatasetProcessorService = Depends(),
 ) -> list[DatasetMetadata]:
     """
@@ -53,6 +55,10 @@ async def get_dataset_metadata_collection(
     period_id (str): The period id of the dataset being queried.
     """
 
+    SearchParamValidator.validate_survey_period_id_from_dataset_metadata(
+        survey_id, period_id
+    )
+
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 
@@ -62,9 +68,7 @@ async def get_dataset_metadata_collection(
 
     if not dataset_metadata_collection:
         logger.error("Dataset metadata collection not found.")
-        raise HTTPException(
-            status_code=404, detail="Dataset metadata collection not found."
-        )
+        raise exceptions.ExceptionNoDatasetMetadata
 
     logger.info("Dataset metadata collection successfully retrieved.")
     logger.debug(f"Dataset metadata collection: {dataset_metadata_collection}")

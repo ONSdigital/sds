@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends
 from logging_config import logging
 from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
+from validators.search_param_validator import SearchParamValidator
+import exception.exceptions as exceptions
 
 router = APIRouter()
 
@@ -55,6 +57,8 @@ async def get_schema_metadata_from_bucket(
     logger.info("Getting bucket schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
+    SearchParamValidator.validate_version_from_schema(version)
+
     bucket_schema_metadata_filename = (
         schema_firebase_repository.get_schema_metadata_bucket_filename(
             survey_id, version
@@ -63,7 +67,7 @@ async def get_schema_metadata_from_bucket(
 
     if not bucket_schema_metadata_filename:
         logger.error("Schema metadata not found")
-        raise HTTPException(status_code=404, detail="Schema metadata not found")
+        raise exceptions.ExceptionNoSchemaMetadataFound
 
     logger.info("Bucket schema metadata location successfully retrieved.")
     logger.debug(f"Bucket schema metadata location: {bucket_schema_metadata_filename}")
@@ -93,11 +97,14 @@ async def get_schema_metadata_collection(
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
 
-    schemas_metadata = (
+    schema_metadata_collection = (
         schema_processor_service.get_schema_metadata_collection_with_guid(survey_id)
     )
+    if not schema_metadata_collection:
+        logger.error("Schemas metadata not found")
+        raise exceptions.ExceptionNoSchemaMetadataCollection
 
     logger.info("Schemas metadata successfully retrieved.")
-    logger.debug(f"Schemas metadata: {schemas_metadata}")
+    logger.debug(f"Schemas metadata: {schema_metadata_collection}")
 
-    return schemas_metadata
+    return schema_metadata_collection
