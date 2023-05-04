@@ -24,9 +24,9 @@ def new_dataset(cloud_event):
 
     DatasetValidatorService.validate_filename(filename)
 
-    raw_dataset_with_metadata = DatasetBucketRepository.get_file_from_bucket(
-        filename=filename, bucket_name=bucket_name
-    )
+    raw_dataset_with_metadata = DatasetBucketRepository(
+        bucket_name
+    ).get_bucket_file_as_json(filename=filename, bucket_name=bucket_name)
 
     DatasetValidatorService.validate_new_dataset(raw_dataset_with_metadata)
 

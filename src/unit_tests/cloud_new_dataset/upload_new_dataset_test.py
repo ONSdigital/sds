@@ -72,8 +72,8 @@ def test_no_dataset_in_bucket(
 
     DatasetProcessorService.process_new_dataset = MagicMock()
 
-    DatasetBucketRepository.get_file_from_bucket = MagicMock()
-    DatasetBucketRepository.get_file_from_bucket.return_value = None
+    DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
+    DatasetBucketRepository.get_bucket_file_as_json.return_value = None
 
     with raises(
         RuntimeError,
@@ -90,8 +90,8 @@ def test_missing_dataset_keys(new_dataset_mock):
 
     DatasetProcessorService.process_new_dataset = MagicMock()
 
-    DatasetBucketRepository.get_file_from_bucket = MagicMock()
-    DatasetBucketRepository.get_file_from_bucket.return_value = {
+    DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
+    DatasetBucketRepository.get_bucket_file_as_json.return_value = {
         "period_id": "test_period_id",
         "sds_schema_version": "test_sds_schema_version",
         "schema_version": 1,

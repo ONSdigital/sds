@@ -72,8 +72,8 @@ def cloud_bucket_mock(monkeypatch):
     with open(config.TEST_DATASET_PATH) as f:
         dataset_with_metadata = json.load(f)
 
-    DatasetBucketRepository.get_file_from_bucket = MagicMock()
-    DatasetBucketRepository.get_file_from_bucket.return_value = dataset_with_metadata
+    DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
+    DatasetBucketRepository.get_bucket_file_as_json.return_value = dataset_with_metadata
 
 
 @pytest.fixture()

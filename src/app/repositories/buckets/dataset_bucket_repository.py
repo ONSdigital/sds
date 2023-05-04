@@ -7,13 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetBucketRepository:
-    def __init__(self):
+    def __init__(self, bucket_name: str):
         self.storage_client = storage.Client()
+        self.bucket = self.storage_client.bucket(bucket_name)
 
-    def get_file_from_bucket(
-        self, filename: str, bucket_name: str
-    ) -> RawDatasetWithMetadata:
+    def get_bucket_file_as_json(self, filename: str) -> RawDatasetWithMetadata:
         """Used by the cloud function."""
-        bucket = self.storage_client.bucket(bucket_name)
-
-        return BucketOperationsService.get_file_from_bucket(filename, bucket)
+        return BucketOperationsService.get_bucket_file_as_json(filename, self.bucket)
