@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Depends, HTTPException
 from logging_config import logging
-from models.schema_models import Schema, SchemaMetadataWithGuid
+from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 async def post_schema_metadata(
     schema_metadata: Schema = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),
-):
+) -> SchemaMetadataWithGuid:
     """
     Posts the schema metadata to be processed.
 
@@ -41,7 +41,7 @@ async def get_schema_metadata_from_bucket(
     version: str,
     schema_firebase_repository: SchemaFirebaseRepository = Depends(),
     schema_bucket_repository: SchemaBucketRepository = Depends(),
-) -> dict:
+) -> SchemaMetadata:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
     with specific survey id and version from the bucket.
