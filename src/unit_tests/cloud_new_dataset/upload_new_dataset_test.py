@@ -57,7 +57,7 @@ def test_upload_invalid_file_type(
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_invalid_filename_test_data
 
-    DatasetProcessorService.process_new_dataset = MagicMock()
+    DatasetProcessorService.process_raw_dataset = MagicMock()
 
     with raises(
         RuntimeError,
@@ -65,7 +65,7 @@ def test_upload_invalid_file_type(
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetProcessorService.process_new_dataset.assert_not_called()
+    DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
 def test_no_dataset_in_bucket(
@@ -78,7 +78,7 @@ def test_no_dataset_in_bucket(
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data
 
-    DatasetProcessorService.process_new_dataset = MagicMock()
+    DatasetProcessorService.process_raw_dataset = MagicMock()
 
     DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
     DatasetBucketRepository.get_bucket_file_as_json.return_value = None
@@ -89,7 +89,7 @@ def test_no_dataset_in_bucket(
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetProcessorService.process_new_dataset.assert_not_called()
+    DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
 def test_missing_dataset_keys(new_dataset_mock):
@@ -100,7 +100,7 @@ def test_missing_dataset_keys(new_dataset_mock):
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data
 
-    DatasetProcessorService.process_new_dataset = MagicMock()
+    DatasetProcessorService.process_raw_dataset = MagicMock()
 
     DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
     DatasetBucketRepository.get_bucket_file_as_json.return_value = {
@@ -117,4 +117,4 @@ def test_missing_dataset_keys(new_dataset_mock):
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetProcessorService.process_new_dataset.assert_not_called()
+    DatasetProcessorService.process_raw_dataset.assert_not_called()

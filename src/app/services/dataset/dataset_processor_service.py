@@ -25,7 +25,7 @@ class DatasetProcessorService:
         self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
-    def process_new_dataset(
+    def process_raw_dataset(
         self, filename: str, raw_dataset: RawDatasetWithMetadata
     ) -> None:
         """

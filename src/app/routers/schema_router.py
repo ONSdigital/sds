@@ -29,7 +29,7 @@ async def post_schema_metadata(
     logger.info("Posting schema metadata...")
     logger.debug(f"Input body: {{{schema_metadata}}}")
 
-    posted_schema_metadata = schema_processor_service.process_schema_metadata(
+    posted_schema_metadata = schema_processor_service.process_raw_schema_metadata(
         schema_metadata
     )
 

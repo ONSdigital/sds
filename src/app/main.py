@@ -33,6 +33,6 @@ def new_dataset(cloud_event):
     logger.info("Dataset obtained successfully.")
     logger.debug(f"Dataset: {raw_dataset_with_metadata}")
 
-    DatasetProcessorService().process_new_dataset(filename, raw_dataset_with_metadata)
+    DatasetProcessorService().process_raw_dataset(filename, raw_dataset_with_metadata)
 
     logger.info("Dataset uploaded successfully.")
