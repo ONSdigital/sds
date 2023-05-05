@@ -4,7 +4,7 @@ from typing import Generator
 import firebase_admin
 from firebase_admin import _apps, firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.schema_models import SchemaMetadataWithoutGuid, SchemaMetadata
+from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 
 
 class SchemaFirebaseRepository:

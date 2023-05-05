@@ -1,6 +1,5 @@
 from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithoutGuid
 
-
 test_guid = "test_guid"
 test_survey_id = "test_survey_id"
 test_published_at = "2023-04-20T12:00:00Z"

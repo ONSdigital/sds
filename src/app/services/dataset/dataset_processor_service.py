@@ -6,9 +6,8 @@ from logging_config import logging
 from models.dataset_models import (
     DatasetMetadata,
     DatasetMetadataWithoutId,
+    UnitDataset,
     UnitDatasetWithoutData,
-    UnitDataset,
-    UnitDataset,
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_writer_service import DatasetWriterService
@@ -25,9 +24,7 @@ class DatasetProcessorService:
         self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
-    def process_raw_dataset(
-        self, filename: str, raw_dataset: UnitDataset
-    ) -> None:
+    def process_raw_dataset(self, filename: str, raw_dataset: UnitDataset) -> None:
         """
         Processes the incoming dataset.
 

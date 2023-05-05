@@ -1,7 +1,7 @@
 import uuid
 
 from config.config_factory import ConfigFactory
-from models.schema_models import SchemaMetadataWithoutGuid, SchemaMetadata
+from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
