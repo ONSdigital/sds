@@ -21,6 +21,10 @@ config = ConfigFactory.get_config()
 
 @pytest.fixture()
 def datetime_mock():
+    """
+    Mocks datetime.now() wrapper to always return the same date and time in tests.
+    """
+
     DatetimeService.get_current_date_and_time = MagicMock()
     DatetimeService.get_current_date_and_time.return_value = datetime(
         2023, 4, 20, 12, 0, 0
@@ -29,12 +33,20 @@ def datetime_mock():
 
 @pytest.fixture()
 def uuid_mock():
+    """
+    Mocks guid generation to always return the same guid.
+    """
+
     uuid.uuid4 = MagicMock()
     uuid.uuid4.return_value = shared_test_data.test_guid
 
 
 @pytest.fixture()
 def dataset_repository_boundaries_mock():
+    """
+    Mocks the application's firebase boundaries to avoid making database calls.
+    """
+
     DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
     DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
@@ -58,6 +70,10 @@ def dataset_repository_boundaries_mock():
 
 @pytest.fixture()
 def cloud_bucket_mock(monkeypatch):
+    """
+    Mocks the application's google bucket boundaries.
+    """
+
     monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
 
     with open(config.TEST_DATASET_PATH) as f:
@@ -68,10 +84,21 @@ def cloud_bucket_mock(monkeypatch):
 
 
 @pytest.fixture()
-def new_dataset_mock(monkeypatch, cloud_bucket_mock):
+def firebase_credentials_mock(monkeypatch):
+    """
+    Mocks firebase credentials
+    """
+
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
+
+
+@pytest.fixture()
+def new_dataset_mock(firebase_credentials_mock, cloud_bucket_mock):
+    """
+    Mocks the cloud function call.
+    """
 
     from main import new_dataset
 
@@ -79,11 +106,10 @@ def new_dataset_mock(monkeypatch, cloud_bucket_mock):
 
 
 @pytest.fixture
-def test_client(monkeypatch):
-    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
-    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
-    monkeypatch.setattr(firestore, "client", MagicMock())
-
+def test_client(firebase_credentials_mock):
+    """
+    General client for hitting endpoints in tests, also mocking firebase credentials.
+    """
     import app
 
     dataset_client = TestClient(app.app)
@@ -91,15 +117,11 @@ def test_client(monkeypatch):
 
 
 @pytest.fixture
-def test_client_no_server_exception(monkeypatch):
+def test_client_no_server_exception(firebase_credentials_mock):
     """
     This client is only used to test the 500 server error exception handler,
     therefore server exception for this client is suppressed
     """
-    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
-    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
-    monkeypatch.setattr(firestore, "client", MagicMock())
-
     import app
 
     client = TestClient(app.app, raise_server_exceptions=False)

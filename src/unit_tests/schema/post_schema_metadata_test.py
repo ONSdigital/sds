@@ -35,6 +35,10 @@ def test_200_response_updated_schema_version(test_client, uuid_mock, datetime_mo
 
 
 def test_200_response_first_schema_version(test_client, uuid_mock, datetime_mock):
+    """
+    Tests when there the first version of a schema is posted it should give it version 1 and return 200.
+    """
+
     SchemaBucketRepository.store_schema_json = MagicMock()
     SchemaBucketRepository.store_schema_json.return_value = None
 

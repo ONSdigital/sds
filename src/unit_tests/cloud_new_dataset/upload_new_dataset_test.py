@@ -47,9 +47,13 @@ def test_upload_new_dataset(
     )
 
 
-def test_upload_invalid_filename(
+def test_upload_invalid_file_type(
     new_dataset_mock,
 ):
+    """
+    Tests the validation for when the file extension is not a json
+    """
+
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_invalid_filename_test_data
 
@@ -67,6 +71,10 @@ def test_upload_invalid_filename(
 def test_no_dataset_in_bucket(
     new_dataset_mock,
 ):
+    """
+    Validates when an empty object is returned from the bucket.
+    """
+
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data
 
@@ -85,6 +93,10 @@ def test_no_dataset_in_bucket(
 
 
 def test_missing_dataset_keys(new_dataset_mock):
+    """
+    Validates when there are missing mandatory keys from the dataset.
+    """
+
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data
 

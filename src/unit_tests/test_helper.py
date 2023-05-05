@@ -9,6 +9,11 @@ class TestHelper:
     def create_document_snapshot_generator_mock(
         yield_data_collection,
     ) -> Generator[DocumentSnapshot, None, None]:
+        """
+        When firestore data is streamed via their SDK, it returns a generator of a DocumentSnapshot. This helper function
+        simulates the functionality of the generator to be used in tests.
+        """
+
         id_count = 0
         for data in yield_data_collection:
             generator_wrapper = MagicMock(spec=DocumentSnapshot)
