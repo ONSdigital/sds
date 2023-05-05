@@ -9,7 +9,7 @@ class ExceptionIncorrectSchemaKey(Exception):
     pass
 
 
-class ExceptionNoSchemasMetadata(Exception):
+class ExceptionNoSchemaMetadataCollection(Exception):
     pass
 
 
