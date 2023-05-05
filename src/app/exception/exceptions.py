@@ -13,7 +13,7 @@ class ExceptionNoSchemaMetadataCollection(Exception):
     pass
 
 
-class ExceptionNoSchemaMetadataFound(Exception):
+class ExceptionNoSchemaFound(Exception):
     pass
 
 

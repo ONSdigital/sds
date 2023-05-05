@@ -69,7 +69,7 @@ async def get_schema_from_bucket(
 
     if not bucket_schema_filename:
         logger.error("Schema metadata not found")
-        raise exceptions.ExceptionNoSchemaMetadataFound
+        raise exceptions.ExceptionNoSchemaFound
 
     logger.info("Bucket schema metadata location successfully retrieved.")
     logger.debug(f"Bucket schema metadata location: {bucket_schema_filename}")
