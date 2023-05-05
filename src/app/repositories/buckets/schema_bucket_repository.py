@@ -2,7 +2,7 @@ import json
 
 from config.config_factory import ConfigFactory
 from google.cloud import storage
-from models.schema_models import Schema, SchemaMetadata
+from models.schema_models import Schema
 from services.shared.bucket_operations_service import BucketOperationsService
 
 

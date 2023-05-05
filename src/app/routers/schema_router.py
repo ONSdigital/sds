@@ -1,7 +1,7 @@
 import exception.exceptions as exceptions
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
-from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithGuid
+from models.schema_models import Schema, SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
