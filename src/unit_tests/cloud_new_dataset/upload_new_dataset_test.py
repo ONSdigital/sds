@@ -70,10 +70,7 @@ def test_upload_invalid_file_type(new_dataset_mock, cloud_bucket_mock):
     DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
-def test_no_dataset_in_bucket(
-    new_dataset_mock,
-    dataset_repository_boundaries_mock,
-):
+def test_no_dataset_in_bucket(new_dataset_mock, cloud_bucket_credentials_mock):
     """
     Validates when an empty object is returned from the bucket.
     """
@@ -94,7 +91,7 @@ def test_no_dataset_in_bucket(
     DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
-def test_missing_dataset_keys(new_dataset_mock, dataset_repository_boundaries_mock):
+def test_missing_dataset_keys(new_dataset_mock, cloud_bucket_credentials_mock):
     """
     Validates when there are missing mandatory keys from the dataset.
     """

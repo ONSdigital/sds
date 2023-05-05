@@ -70,13 +70,18 @@ def dataset_repository_boundaries_mock():
 
 
 @pytest.fixture()
-def cloud_bucket_mock(monkeypatch):
+def cloud_bucket_credentials_mock(monkeypatch):
+    """
+    Mocks the google bucket credentials.
+    """
+    monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
+
+
+@pytest.fixture()
+def cloud_bucket_mock(cloud_bucket_credentials_mock):
     """
     Mocks the application's google bucket boundaries.
     """
-
-    monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
-
     with open(config.TEST_DATASET_PATH) as f:
         dataset_with_metadata: UnitDataset = json.load(f)
 
@@ -89,9 +94,8 @@ def cloud_bucket_mock(monkeypatch):
 @pytest.fixture()
 def firebase_credentials_mock(monkeypatch):
     """
-    Mocks firebase credentials
+    Mocks firebase credentials.
     """
-
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
