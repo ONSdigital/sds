@@ -6,7 +6,6 @@ from unittest.mock import MagicMock
 import firebase_admin
 import pytest
 from config.config_factory import ConfigFactory
-from coverage.annotate import os
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage

@@ -2,7 +2,7 @@ import functions_framework
 from logging_config import logging
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
-from services.dataset.dataset_validator_service import DatasetValidatorService
+from services.validators.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
 

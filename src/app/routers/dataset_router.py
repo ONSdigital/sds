@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+import exception.exceptions as exceptions
+from fastapi import APIRouter, Depends
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
-import exception.exceptions as exceptions
-from validators.search_param_validator import SearchParamValidator
+from services.validators.query_parameter_validator_service import (
+    QueryParameterValidatorService,
+)
 
 router = APIRouter()
 
@@ -55,7 +57,7 @@ async def get_dataset_metadata_collection(
     period_id (str): The period id of the dataset being queried.
     """
 
-    SearchParamValidator.validate_survey_period_id_from_dataset_metadata(
+    QueryParameterValidatorService.validate_survey_and_period_id_from_dataset_metadata(
         survey_id, period_id
     )
 

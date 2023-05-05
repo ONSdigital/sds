@@ -1,11 +1,13 @@
+import exception.exceptions as exceptions
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
 from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
-from validators.search_param_validator import SearchParamValidator
-import exception.exceptions as exceptions
+from services.validators.query_parameter_validator_service import (
+    QueryParameterValidatorService,
+)
 
 router = APIRouter()
 
@@ -57,7 +59,7 @@ async def get_schema_metadata_from_bucket(
     logger.info("Getting bucket schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
-    SearchParamValidator.validate_version_from_schema(version)
+    QueryParameterValidatorService.validate_schema_version_parses(version)
 
     bucket_schema_metadata_filename = (
         schema_firebase_repository.get_schema_metadata_bucket_filename(
@@ -85,7 +87,7 @@ async def get_schema_metadata_from_bucket(
 
 @router.get("/v1/schema_metadata", response_model=list[SchemaMetadataWithGuid])
 async def get_schema_metadata_collection(
-    survey_id: str, schema_processor_service: SchemaProcessorService = Depends()
+    survey_id: str = None, schema_processor_service: SchemaProcessorService = Depends()
 ) -> list[SchemaMetadataWithGuid]:
     """
     Get all schema metadata associated with a specific survey id.
@@ -94,6 +96,8 @@ async def get_schema_metadata_collection(
     survey_id (str): survey id of the collection
     schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
     """
+    QueryParameterValidatorService.validate_survey_id_from_schema_metadata(survey_id)
+
     logger.info("Getting schemas metadata...")
     logger.debug(f"Input data: survey_id={survey_id}")
 

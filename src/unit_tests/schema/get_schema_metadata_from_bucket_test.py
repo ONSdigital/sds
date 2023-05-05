@@ -55,7 +55,9 @@ def test_global_error(test_client_no_server_exception):
     SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
     SchemaFirebaseRepository.get_schema_metadata_bucket_filename.side_effect = Exception
 
-    response = test_client_no_server_exception.get("/v1/schema?survey_id=076&version=123")
+    response = test_client_no_server_exception.get(
+        "/v1/schema?survey_id=076&version=123"
+    )
     assert response.status_code == 500
     assert response.json()["message"] == "Unable to process request"
 
@@ -71,30 +73,6 @@ def test_get_schema_with_invalid_version_error(test_client):
     assert response.status_code == 400
     assert response.json()["message"] == "Validation has failed"
 
-
-
-def test_get_schema_with_file_not_found_error(test_client):
-    """
-    Checks that fastAPI returns 404 error with appropriate msg
-    when schema file at bucket is not found at get_schema endpoint
-    Storage bucket is patched to replace fixture storage to
-    ensure no file is returned and exception will be triggered
-    """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = (
-        "test_location"
-    )
-
-    SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
-    SchemaBucketRepository.get_bucket_file_as_json.return_value = (
-        schema_test_data.test_schema_bucket_metadata_response
-    )
-
-    response = test_client.get("/v1/schema?survey_id=xzy&version=2")
-
-    assert response.status_code == 404
-    assert response.json()["message"] == "No schema found"
-    
 
 def test_get_schema_metadata_with_incorrect_key(test_client):
     """

@@ -58,12 +58,12 @@ def test_200_response_first_schema_version(test_client, uuid_mock, datetime_mock
         == schema_test_data.test_post_schema_metadata_first_version_response
     )
 
+
 def test_post_bad_schema_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema is badly formatted.
     """
-    response = client.post("/v1/schema", json={"schema": "is missing some fields"})
+    response = test_client.post("/v1/schema", json={"schema": "is missing some fields"})
     assert response.status_code == 400
     assert response.json()["message"] == "Validation has failed"
-

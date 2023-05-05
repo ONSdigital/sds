@@ -1,16 +1,12 @@
-from routers import dataset_router, schema_router
 import exception.exceptions as exceptions
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from logging_config import logging
+from routers import dataset_router, schema_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
-
-
-app.include_router(dataset_router.router)
-app.include_router(schema_router.router)
 
 app.add_exception_handler(
     exceptions.ExceptionIncorrectSchemaKey,
@@ -56,3 +52,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """
     return ExceptionInterceptor.throw_400_validation_exception()
 
+
+app.include_router(dataset_router.router)
+app.include_router(schema_router.router)

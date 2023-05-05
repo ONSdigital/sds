@@ -46,25 +46,26 @@ def test_get_dataset_metadata_collection_404_response(test_client):
     assert response.status_code == 404
     assert response.json()["message"] == "No datasets found"
 
-def test_get_dataset_metadata_with_invalid_parameters(client):
+
+def test_get_dataset_metadata_with_invalid_parameters(test_client):
     """
     Checks that fastAPI does not accept invalid porameters/
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
-    response = client.get("/v1/dataset_metadata?invalid_key=076")
+    response = test_client.get("/v1/dataset_metadata?invalid_key=076")
 
     assert response.status_code == 400
     assert response.json()["message"] == "Invalid search parameters provided"
 
-def test_get_dataset_metadata_with_invalid_extra_parameters(client):
+
+def test_get_dataset_metadata_with_invalid_extra_parameters(test_client):
     """
     Checks that fastAPI does not accept invalid porameters/
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
-    response = client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
+    response = test_client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
 
     assert response.status_code == 400
     assert response.json()["message"] == "Invalid search parameters provided"
-
