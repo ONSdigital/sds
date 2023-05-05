@@ -40,10 +40,22 @@ test_post_schema_metadata_body = {
 }
 
 test_schema_bucket_metadata_response = {
-    "survey_id": "test_survey_id",
+    "survey_id": test_survey_id,
     "schema_location": "test_location_2",
     "sds_schema_version": 2,
     "sds_published_at": "test_published_at_2",
+}
+
+test_schema_response = {
+    "survey_id": test_survey_id,
+    "title": "Roofing Tiles",
+    "description": "Roofing Tiles",
+    "schema_version": "v2.1.0",
+    "sample_unit_key_field": "ruref",
+    "properties": [],
+    "examples": [],
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json",
 }
 
 test_schema_metadata_collection_with_guid = [

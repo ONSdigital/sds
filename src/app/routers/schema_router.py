@@ -40,12 +40,12 @@ async def post_schema_metadata(
 
 
 @router.get("/v1/schema")
-async def get_schema_metadata_from_bucket(
+async def get_schema_from_bucket(
     survey_id: str,
     version: str,
     schema_firebase_repository: SchemaFirebaseRepository = Depends(),
     schema_bucket_repository: SchemaBucketRepository = Depends(),
-) -> SchemaMetadata:
+) -> Schema:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
     with specific survey id and version from the bucket.
@@ -61,28 +61,26 @@ async def get_schema_metadata_from_bucket(
 
     QueryParameterValidatorService.validate_schema_version_parses(version)
 
-    bucket_schema_metadata_filename = (
+    bucket_schema_filename = (
         schema_firebase_repository.get_schema_metadata_bucket_filename(
             survey_id, version
         )
     )
 
-    if not bucket_schema_metadata_filename:
+    if not bucket_schema_filename:
         logger.error("Schema metadata not found")
         raise exceptions.ExceptionNoSchemaMetadataFound
 
     logger.info("Bucket schema metadata location successfully retrieved.")
-    logger.debug(f"Bucket schema metadata location: {bucket_schema_metadata_filename}")
+    logger.debug(f"Bucket schema metadata location: {bucket_schema_filename}")
     logger.info("Getting schema metadata...")
 
-    schema_metadata = schema_bucket_repository.get_bucket_file_as_json(
-        bucket_schema_metadata_filename
-    )
+    schema = schema_bucket_repository.get_bucket_file_as_json(bucket_schema_filename)
 
     logger.info("Schema successfully retrieved.")
-    logger.debug(f"Schema: {schema_metadata}")
+    logger.debug(f"Schema: {schema}")
 
-    return schema_metadata
+    return schema
 
 
 @router.get("/v1/schema_metadata", response_model=list[SchemaMetadataWithGuid])

@@ -21,5 +21,4 @@ class DatasetBucketRepository:
         Returns:
         RawDatasetWithMetadata: raw dataset from the bucket file as json.
         """
-
         return BucketOperationsService.get_bucket_file_as_json(filename, self.bucket)

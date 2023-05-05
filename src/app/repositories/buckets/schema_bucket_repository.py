@@ -33,6 +33,6 @@ class SchemaBucketRepository:
             content_type="application/json",
         )
 
-    def get_bucket_file_as_json(self, filename: str) -> SchemaMetadata:
+    def get_bucket_file_as_json(self, filename: str) -> Schema:
         """Get the SDS schema from the schema bucket using the filename provided."""
         return BucketOperationsService.get_bucket_file_as_json(filename, self.bucket)

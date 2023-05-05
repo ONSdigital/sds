@@ -56,7 +56,6 @@ async def get_dataset_metadata_collection(
     survey_id (str): The survey id of the dataset being queried.
     period_id (str): The period id of the dataset being queried.
     """
-
     QueryParameterValidatorService.validate_survey_and_period_id_from_dataset_metadata(
         survey_id, period_id
     )
