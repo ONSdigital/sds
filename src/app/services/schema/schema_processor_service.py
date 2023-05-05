@@ -1,7 +1,7 @@
 import uuid
 
 from config.config_factory import ConfigFactory
-from models.schema_models import SchemaMetadata, SchemaMetadataWithGuid
+from models.schema_models import SchemaMetadataWithoutGuid, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
@@ -15,7 +15,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema_metadata(self, schema_metadata: SchemaMetadata):
+    def process_raw_schema_metadata(self, schema_metadata: SchemaMetadataWithoutGuid):
         """
         Processes incoming schema metadata.
 
@@ -44,8 +44,8 @@ class SchemaProcessorService:
         self,
         schema_id: str,
         stored_schema_filename: str,
-        schema_metadata: SchemaMetadata,
-    ) -> SchemaMetadataWithGuid:
+        schema_metadata: SchemaMetadataWithoutGuid,
+    ) -> SchemaMetadata:
         """
         Builds the next version of schema metadata being processed.
 
@@ -54,7 +54,7 @@ class SchemaProcessorService:
         stored_schema_filename (str): the filename of schema when it is stored.
         schema_metadata (SchemaMetadata): schema metadata being processed.
         """
-        return SchemaMetadataWithGuid(
+        return SchemaMetadata(
             guid=schema_id,
             schema_location=stored_schema_filename,
             sds_schema_version=self.calculate_next_schema_version(schema_metadata),
@@ -66,7 +66,7 @@ class SchemaProcessorService:
             ),
         )
 
-    def calculate_next_schema_version(self, schema_metadata: SchemaMetadata):
+    def calculate_next_schema_version(self, schema_metadata: SchemaMetadataWithoutGuid):
         """
         Calculates the next schema version for the metadata being built.
 
@@ -86,7 +86,7 @@ class SchemaProcessorService:
 
     def get_schema_metadata_collection_with_guid(
         self, survey_id: str
-    ) -> list[SchemaMetadataWithGuid]:
+    ) -> list[SchemaMetadata]:
         """
         Gets the collection of schema metadata associated with a specific survey id from firestore.
 

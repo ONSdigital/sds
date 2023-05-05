@@ -9,7 +9,7 @@ from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
-from models.dataset_models import RawDatasetWithMetadata
+from models.dataset_models import UnitDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.datetime_service import DatetimeService
@@ -78,7 +78,7 @@ def cloud_bucket_mock(monkeypatch):
     monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
 
     with open(config.TEST_DATASET_PATH) as f:
-        dataset_with_metadata: RawDatasetWithMetadata = json.load(f)
+        dataset_with_metadata: UnitDataset = json.load(f)
 
     DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
     DatasetBucketRepository.get_dataset_file_as_json.return_value = (

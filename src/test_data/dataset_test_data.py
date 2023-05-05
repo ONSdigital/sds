@@ -1,3 +1,4 @@
+from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from src.test_data import shared_test_data
 
 cloud_event_test_data = {
@@ -24,7 +25,7 @@ test_unit_id = "test_unit_id"
 test_survey_id = "xyz"
 
 
-dataset_metadata_test_data = {
+dataset_metadata_test_data: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": test_survey_id,
     "period_id": "abc",
@@ -38,7 +39,7 @@ dataset_metadata_test_data = {
     "form_type": "yyy",
 }
 
-dataset_metadata_collection_no_id = [
+dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
     {
         "survey_id": f"{test_survey_id}_1",
         "period_id": "abc",
@@ -65,7 +66,7 @@ dataset_metadata_collection_no_id = [
     },
 ]
 
-existing_dataset_unit_data_collection = [
+existing_dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": test_survey_id,
@@ -86,7 +87,7 @@ existing_dataset_unit_data_collection = [
     },
 ]
 
-dataset_metadata_without_id = {
+dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": "xyz",
     "period_id": "abc",
     "title": "Which side was better?",
@@ -99,7 +100,7 @@ dataset_metadata_without_id = {
     "form_type": "yyy",
 }
 
-test_unit_supplementary_data = {
+test_unit_supplementary_data: UnitDataset = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": test_survey_id,
     "period_id": "abc",
@@ -140,7 +141,7 @@ test_unit_supplementary_data = {
     },
 }
 
-new_dataset_unit_data_collection = [
+new_dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": "xyz",

@@ -14,7 +14,7 @@ def test_200_response_updated_schema_version(test_client, uuid_mock, datetime_mo
     SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
     SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
         TestHelper.create_document_snapshot_generator_mock(
-            [schema_test_data.test_schema_latest_version]
+            [schema_test_data.test_post_schema_metadata_first_version_response]
         )
     )
 

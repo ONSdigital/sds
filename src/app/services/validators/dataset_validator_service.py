@@ -1,4 +1,4 @@
-from models.dataset_models import RawDatasetWithMetadata
+from models.dataset_models import UnitDataset
 
 
 class DatasetValidatorService:
@@ -15,7 +15,7 @@ class DatasetValidatorService:
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
-    def validate_raw_dataset(raw_dataset_with_metadata: RawDatasetWithMetadata) -> None:
+    def validate_raw_dataset(raw_dataset_with_metadata: UnitDataset) -> None:
         """
         Validates the raw dataset.
 
@@ -30,7 +30,7 @@ class DatasetValidatorService:
 
     @staticmethod
     def _validate_dataset_exists_in_bucket(
-        raw_dataset_with_metadata: RawDatasetWithMetadata,
+        raw_dataset_with_metadata: UnitDataset,
     ) -> None:
         """
         Validates the dataset returned from the bucket is not empty, raising a runtime error if not.
@@ -43,7 +43,7 @@ class DatasetValidatorService:
 
     @staticmethod
     def _validate_dataset_keys(
-        raw_dataset_with_metadata: RawDatasetWithMetadata,
+        raw_dataset_with_metadata: UnitDataset,
     ) -> None:
         """
         Validates the dataset has no mandatory keys missing from it, raising a runtime error if there are.
@@ -63,7 +63,7 @@ class DatasetValidatorService:
 
     @staticmethod
     def _check_for_missing_keys(
-        raw_dataset_with_metadata: RawDatasetWithMetadata,
+        raw_dataset_with_metadata: UnitDataset,
     ) -> tuple[bool, str]:
         """
         Returns a boolean and message depending on if there are keys missing from the data.
@@ -90,7 +90,7 @@ class DatasetValidatorService:
 
     @staticmethod
     def _collect_missing_keys_from_dataset(
-        mandatory_keys: list[str], dataset: RawDatasetWithMetadata
+        mandatory_keys: list[str], dataset: UnitDataset
     ) -> list[str]:
         """
         Gets a list of any mandatory keys missing from the raw dataset.

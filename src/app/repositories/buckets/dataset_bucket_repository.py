@@ -1,6 +1,6 @@
 from google.cloud import storage
 from logging_config import logging
-from models.dataset_models import RawDatasetWithMetadata
+from models.dataset_models import UnitDataset
 from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ class DatasetBucketRepository(BucketRepository):
         self.storage_client = storage.Client()
         self.bucket = self.storage_client.bucket(bucket_name)
 
-    def get_dataset_file_as_json(self, filename: str) -> RawDatasetWithMetadata:
+    def get_dataset_file_as_json(self, filename: str) -> UnitDataset:
         """
         Queries google bucket for file with a specific name and returns it as json.
 

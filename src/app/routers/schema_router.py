@@ -1,7 +1,7 @@
 import exception.exceptions as exceptions
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
-from models.schema_models import Schema, SchemaMetadataWithGuid
+from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
@@ -14,11 +14,11 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/v1/schema", response_model=SchemaMetadataWithGuid)
+@router.post("/v1/schema", response_model=SchemaMetadata)
 async def post_schema_metadata(
     schema_metadata: Schema = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),
-) -> SchemaMetadataWithGuid:
+) -> SchemaMetadata:
     """
     Posts the schema metadata to be processed.
 
@@ -83,10 +83,10 @@ async def get_schema_from_bucket(
     return schema
 
 
-@router.get("/v1/schema_metadata", response_model=list[SchemaMetadataWithGuid])
+@router.get("/v1/schema_metadata", response_model=list[SchemaMetadata])
 async def get_schema_metadata_collection(
     survey_id: str = None, schema_processor_service: SchemaProcessorService = Depends()
-) -> list[SchemaMetadataWithGuid]:
+) -> list[SchemaMetadata]:
     """
     Get all schema metadata associated with a specific survey id.
 

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 @dataclass
-class SchemaMetadata:
+class SchemaMetadataWithoutGuid:
     survey_id: str
     schema_location: str
     sds_schema_version: int
@@ -12,7 +12,7 @@ class SchemaMetadata:
 
 
 @dataclass
-class SchemaMetadataWithGuid(SchemaMetadata):
+class SchemaMetadata(SchemaMetadataWithoutGuid):
     guid: str
 
 

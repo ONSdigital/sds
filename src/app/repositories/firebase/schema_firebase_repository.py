@@ -4,7 +4,7 @@ from typing import Generator
 import firebase_admin
 from firebase_admin import _apps, firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.schema_models import SchemaMetadata, SchemaMetadataWithGuid
+from models.schema_models import SchemaMetadataWithoutGuid, SchemaMetadata
 
 
 class SchemaFirebaseRepository:
@@ -33,8 +33,8 @@ class SchemaFirebaseRepository:
         )
 
     def create_schema(
-        self, schema_id: str, schema_metadata: SchemaMetadata
-    ) -> SchemaMetadataWithGuid:
+        self, schema_id: str, schema_metadata: SchemaMetadataWithoutGuid
+    ) -> SchemaMetadata:
         """
         Creates a new schema metadata entry in firestore.
 
@@ -61,7 +61,7 @@ class SchemaFirebaseRepository:
         )
 
         for schema in schemas_result:
-            return SchemaMetadataWithGuid(**schema.to_dict()).schema_location
+            return SchemaMetadata(**schema.to_dict()).schema_location
 
     def get_schema_metadata_collection(
         self, survey_id: str

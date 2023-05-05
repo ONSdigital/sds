@@ -21,7 +21,7 @@ class DatasetMetadata(DatasetMetadataWithoutId):
 
 
 @dataclass
-class RawDatasetMetadata:
+class UnitDatasetWithoutData:
     dataset_id: str
     survey_id: str
     period_id: str
@@ -29,11 +29,6 @@ class RawDatasetMetadata:
     sds_schema_version: str
     schema_version: str
     form_type: str
-
-
-@dataclass
-class RawDatasetWithMetadata(RawDatasetMetadata):
-    data: list[object]
 
 
 @dataclass
