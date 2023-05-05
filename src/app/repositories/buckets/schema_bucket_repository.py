@@ -1,9 +1,13 @@
 import json
 
+import exception.exceptions as exceptions
 from config.config_factory import ConfigFactory
 from google.cloud import storage
+from logging_config import logging
 from models.schema_models import Schema
 from services.shared.bucket_operations_service import BucketOperationsService
+
+logger = logging.getLogger(__name__)
 
 
 class SchemaBucketRepository:
@@ -35,4 +39,10 @@ class SchemaBucketRepository:
 
     def get_bucket_file_as_json(self, filename: str) -> Schema:
         """Get the SDS schema from the schema bucket using the filename provided."""
-        return BucketOperationsService.get_bucket_file_as_json(filename, self.bucket)
+        try:
+            return BucketOperationsService.get_bucket_file_as_json(
+                filename, self.bucket
+            )
+        except Exception:
+            logger.error("Schema not found")
+            raise exceptions.ExceptionNoSchemaFound
