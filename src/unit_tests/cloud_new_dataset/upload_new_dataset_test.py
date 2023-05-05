@@ -10,7 +10,11 @@ from src.test_data import dataset_test_data, shared_test_data
 
 
 def test_upload_new_dataset(
-    new_dataset_mock, uuid_mock, datetime_mock, dataset_repository_boundaries_mock
+    new_dataset_mock,
+    uuid_mock,
+    datetime_mock,
+    dataset_repository_boundaries_mock,
+    cloud_bucket_mock,
 ):
     """
     The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
@@ -47,9 +51,7 @@ def test_upload_new_dataset(
     )
 
 
-def test_upload_invalid_file_type(
-    new_dataset_mock,
-):
+def test_upload_invalid_file_type(new_dataset_mock, cloud_bucket_mock):
     """
     Tests the validation for when the file extension is not a json
     """
@@ -74,14 +76,13 @@ def test_no_dataset_in_bucket(
     """
     Validates when an empty object is returned from the bucket.
     """
-
     cloud_event = MagicMock()
     cloud_event.data = dataset_test_data.cloud_event_test_data
 
     DatasetProcessorService.process_raw_dataset = MagicMock()
 
-    DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
-    DatasetBucketRepository.get_bucket_file_as_json.return_value = None
+    DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
+    DatasetBucketRepository.get_dataset_file_as_json.return_value = None
 
     with raises(
         RuntimeError,
@@ -102,8 +103,8 @@ def test_missing_dataset_keys(new_dataset_mock):
 
     DatasetProcessorService.process_raw_dataset = MagicMock()
 
-    DatasetBucketRepository.get_bucket_file_as_json = MagicMock()
-    DatasetBucketRepository.get_bucket_file_as_json.return_value = {
+    DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
+    DatasetBucketRepository.get_dataset_file_as_json.return_value = {
         "period_id": "test_period_id",
         "sds_schema_version": "test_sds_schema_version",
         "schema_version": 1,

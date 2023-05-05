@@ -15,8 +15,8 @@ def test_get_schema_from_bucket_200_response(test_client):
         "test_location"
     )
 
-    SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
-    SchemaBucketRepository.get_bucket_file_as_json.return_value = (
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = (
         schema_test_data.test_schema_response
     )
 
@@ -33,8 +33,8 @@ def test_get_schema_from_bucket_404_response(test_client):
     SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
     SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = None
 
-    SchemaBucketRepository.get_bucket_file_as_json = MagicMock()
-    SchemaBucketRepository.get_bucket_file_as_json.return_value = (
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = (
         schema_test_data.test_schema_bucket_metadata_response
     )
 

@@ -75,7 +75,7 @@ async def get_schema_from_bucket(
     logger.debug(f"Bucket schema metadata location: {bucket_schema_filename}")
     logger.info("Getting schema metadata...")
 
-    schema = schema_bucket_repository.get_bucket_file_as_json(bucket_schema_filename)
+    schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")

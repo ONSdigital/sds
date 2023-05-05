@@ -5,12 +5,12 @@ from config.config_factory import ConfigFactory
 from google.cloud import storage
 from logging_config import logging
 from models.schema_models import Schema
-from services.shared.bucket_operations_service import BucketOperationsService
+from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
 
 
-class SchemaBucketRepository:
+class SchemaBucketRepository(BucketRepository):
     def __init__(self):
         self.storage_client = storage.Client()
         self.config = ConfigFactory.get_config()
@@ -37,12 +37,10 @@ class SchemaBucketRepository:
             content_type="application/json",
         )
 
-    def get_bucket_file_as_json(self, filename: str) -> Schema:
+    def get_schema_file_as_json(self, filename: str) -> Schema:
         """Get the SDS schema from the schema bucket using the filename provided."""
         try:
-            return BucketOperationsService.get_bucket_file_as_json(
-                filename, self.bucket
-            )
+            return self.get_bucket_file_as_json(filename)
         except Exception:
             logger.error("Schema not found")
             raise exceptions.ExceptionNoSchemaFound
