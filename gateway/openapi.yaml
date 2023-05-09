@@ -13,7 +13,7 @@ security:
 paths:
   /v1/unit_data:
     get:
-      description: GET method that returns the unit suplementary data corresponding to the given dataset_id and unit_id.
+      description: GET method that returns the unit supplementary data corresponding to the given dataset_id and unit_id.
       parameters:
         - name: dataset_id
           in: query
@@ -27,7 +27,7 @@ paths:
           x-example: 43552 
       responses:
         200:
-          description: Succesfully retrieved unit suplementary data
+          description: Succesfully retrieved unit supplementary data
           schema:
             type: object
             properties:
@@ -268,7 +268,7 @@ paths:
 
   /v1/dataset_metadata:
     get:
-      description: GET method that returns the dataset metadata corresponding to the given survey_id adn period_id.
+      description: GET method that returns the dataset metadata corresponding to the given survey_id and period_id.
       parameters:
         - name: survey_id
           in: query
