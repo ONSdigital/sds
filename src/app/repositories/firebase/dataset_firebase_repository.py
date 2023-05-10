@@ -117,7 +117,7 @@ class DatasetFirebaseRepository:
 
         delete_count = 0
         for dataset_version in previous_dataset_versions:
-            dataset_version.reference.delete()
+            self.datasets_collection.document(dataset_version.id).delete()
             delete_count += 1
 
         logger.info(f"{delete_count} previous version(s) deleted")
