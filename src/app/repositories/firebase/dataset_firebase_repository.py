@@ -109,11 +109,9 @@ class DatasetFirebaseRepository:
     def delete_previous_dataset_versions(
         self, survey_id: str, latest_version: int
     ) -> None:
-        previous_dataset_versions = (
-            self.datasets_collection.where("survey_id", "==", survey_id)
-            .where("sds_dataset_version", "!=", latest_version)
-            .stream()
-        )
+        previous_dataset_versions = self.datasets_collection.where(
+            "survey_id", "==", survey_id
+        ).where("sds_dataset_version", "!=", latest_version)
 
         self._recursively_delete_collection(previous_dataset_versions)
 
