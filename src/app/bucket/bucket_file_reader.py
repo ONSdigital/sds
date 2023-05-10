@@ -40,7 +40,6 @@ class BucketFileReader:
             "period_id",
             "sds_schema_version",
             "schema_version",
-            "form_type",
             "data",
         ]
         missing_keys = []

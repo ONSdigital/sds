@@ -41,7 +41,6 @@ def test_new_dataset_info_is_logged(
     BucketFileReader.get_file_from_bucket.return_value = {
         "survey_id": "xyz",
         "period_id": "abc",
-        "form_type": "yyy",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
     }
@@ -73,7 +72,6 @@ def test_new_dataset_debug_log(
     BucketFileReader.get_file_from_bucket.return_value = {
         "survey_id": "xyz",
         "period_id": "abc",
-        "form_type": "yyy",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
     }

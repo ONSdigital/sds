@@ -151,6 +151,5 @@ class DatasetProcessorService:
             "period_id": transformed_dataset_metadata["period_id"],
             "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
             "schema_version": transformed_dataset_metadata["schema_version"],
-            "form_type": transformed_dataset_metadata["form_type"],
             "data": unit_data_item,
         }

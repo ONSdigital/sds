@@ -23,7 +23,6 @@ dataset_metadata = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": 1,
     "filename": "test_filename.json",
-    "form_type": "yyy",
 }
 
 existing_dataset_unit_data_collection = [
@@ -33,7 +32,6 @@ existing_dataset_unit_data_collection = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {"test": "data", "ruref": "12345"},
     },
     {
@@ -42,7 +40,6 @@ existing_dataset_unit_data_collection = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {"hello": "world", "ruref": "56789"},
     },
 ]
@@ -57,7 +54,6 @@ dataset_metadata_without_id = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": 2,
     "filename": "test_filename.json",
-    "form_type": "yyy",
 }
 
 new_dataset_unit_data_collection = [
@@ -67,7 +63,6 @@ new_dataset_unit_data_collection = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {
             "ruref": "43532",
             "runame": "Pipes and Maps Ltd",
@@ -107,7 +102,6 @@ new_dataset_unit_data_collection = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {
             "ruref": "65871",
             "runame": "Boats and Floats Ltd",

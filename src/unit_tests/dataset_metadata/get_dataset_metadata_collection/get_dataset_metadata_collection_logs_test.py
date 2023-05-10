@@ -13,7 +13,6 @@ dataset_metadata_collection_test_data = [
         "schema_version": "test_version",
         "sds_dataset_version": 1,
         "filename": "test_filename",
-        "form_type": "test_form_type",
     }
 ]
 
@@ -79,6 +78,5 @@ def test_get_dataset_metadata_collection_debug_logs(
         "'test_survey_id', 'period_id': 'test_period_id', 'title': 'test_title', "
         "'sds_schema_version': 1, 'sds_published_at': 'test_published_at', "
         "'total_reporting_units': 1, 'schema_version': 'test_version', "
-        "'sds_dataset_version': 1, 'filename': 'test_filename', 'form_type': "
-        "'test_form_type'}]"
+        "'sds_dataset_version': 1, 'filename': 'test_filename'}]"
     )
