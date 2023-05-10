@@ -51,7 +51,7 @@ class DatasetWriterService:
             self.dataset_repository.delete_previous_dataset_versions(
                 survey_id, latest_version
             )
-        except:
+        except Exception:
             logger.debug(
                 f"Failed to delete previous versions of dataset with survey id {survey_id} and latest version {latest_version}"
             )

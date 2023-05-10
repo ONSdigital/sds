@@ -131,7 +131,7 @@ def test_delete_previous_dataset_versions_failure(
 
     with raises(
         RuntimeError,
-        match=f"Failed to delete previous dataset versions from firestore.",
+        match="Failed to delete previous dataset versions from firestore.",
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
