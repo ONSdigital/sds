@@ -61,9 +61,15 @@ class DatasetProcessorService:
             f"Transformed unit data collection for dataset with id: {dataset_id}"
         )
 
+        logger.info("Uplifting unit data to its parent node....")
+        ruref, uplifted_unit_data_collection = self._uplift_unit_data(
+            transformed_unit_data_collection
+        )
+        logger.info("Unit data uplifted successfully.")
+
         logger.info("Writing transformed unit data to repository...")
         self.dataset_writer_service.write_transformed_unit_data_to_repository(
-            dataset_id, transformed_unit_data_collection
+            dataset_id, uplifted_unit_data_collection, ruref
         )
         logger.info("Transformed unit data written to repository successfully.")
 
@@ -190,3 +196,20 @@ class DatasetProcessorService:
         metadata_collection_item["dataset_id"] = dataset_metadata_snapshot.id
 
         return metadata_collection_item
+
+    def _uplift_unit_data(
+        self, transformed_unit_data_collection: list[object]
+    ) -> tuple[list, list[object]]:
+        """
+        Move ruref to a separate list for indexing purpose and then uplift the content
+        in node "unit_data" to its parent node
+
+        Parameters:
+        transformed_unit_data_collection (list[object]): the unit data collection with added metadata.
+        """
+        ruref = []
+        for unit_data in transformed_unit_data_collection:
+            ruref.append(unit_data["data"]["ruref"])
+            unit_data["data"] = unit_data["data"]["unit_data"]
+
+        return ruref, transformed_unit_data_collection

@@ -23,7 +23,10 @@ class DatasetWriterService:
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
 
     def write_transformed_unit_data_to_repository(
-        self, dataset_id: str, new_dataset_unit_data_collection: list[object]
+        self,
+        dataset_id: str,
+        new_dataset_unit_data_collection: list[object],
+        ruref: list,
     ) -> None:
         """
         Writes the new unit data to the database
@@ -36,7 +39,9 @@ class DatasetWriterService:
             self.dataset_repository.get_dataset_unit_collection(dataset_id)
         )
 
+        ruref_iter = iter(ruref)
+
         for unit_data in new_dataset_unit_data_collection:
             self.dataset_repository.append_unit_to_dataset_units_collection(
-                database_unit_data_collection, unit_data
+                database_unit_data_collection, unit_data, next(ruref_iter)
             )

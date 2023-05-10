@@ -150,38 +150,7 @@ new_dataset_unit_data_collection: list[UnitDataset] = [
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
         "form_type": "yyy",
-        "data": {
-            "ruref": "43532",
-            "runame": "Pipes and Maps Ltd",
-            "ruaddr1": "111 Under Hill",
-            "ruaddr2": "Hobbitton",
-            "ruaddr4": "The Shire",
-            "rupostcode": "HO1 1AA",
-            "payeref": "123AB456",
-            "busdesc": "Provision of equipment for hobbit adventures",
-            "local_unit": [
-                {
-                    "luref": "2012763A",
-                    "luname": "Maps Factory",
-                    "luaddr1": "1 Bag End",
-                    "luaddr2": "Underhill",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AA",
-                    "tradstyle": "Also Does Adventures Ltd",
-                    "busdesc": "Creates old fashioned looking paper maps",
-                },
-                {
-                    "luref": "20127364B",
-                    "luname": "Pipes R Us Subsidiary",
-                    "luaddr1": "12 The Farmstead",
-                    "luaddr2": "Maggotsville",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AB",
-                    "busdesc": "Quality pipe manufacturer",
-                    "buslref": "pipe123",
-                },
-            ],
-        },
+        "data": "<encrypted data>",
     },
     {
         "dataset_id": shared_test_data.test_guid,
@@ -232,3 +201,5 @@ new_dataset_unit_data_collection: list[UnitDataset] = [
         },
     },
 ]
+
+new_dataset_unit_data_ruref: list = ["43532", "65871"]
