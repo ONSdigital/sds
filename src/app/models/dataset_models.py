@@ -12,7 +12,6 @@ class DatasetMetadataWithoutId:
     schema_version: str
     sds_dataset_version: int
     filename: str
-    form_type: str
 
 
 @dataclass
@@ -28,7 +27,6 @@ class NewDatasetMetadata:
     title: str
     sds_schema_version: str
     schema_version: str
-    form_type: str
 
 
 @dataclass
@@ -43,5 +41,4 @@ class UnitDataset:
     period_id: str
     sds_schema_version: int
     schema_version: str
-    form_type: str
     data: object

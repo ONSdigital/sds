@@ -35,7 +35,6 @@ def test_dataset(client, bucket_loader):
         "sds_schema_version": 4,
         "survey_id": "xyz",
         "period_id": "abc",
-        "form_type": "yyy",
         "data": {
             "busdesc": "Provision of equipment for hobbit adventures",
             "local_unit": [
@@ -87,7 +86,6 @@ def test_dataset(client, bucket_loader):
 
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
-            assert "form_type" in dataset_metadata
 
 
 def test_post_schema(client):

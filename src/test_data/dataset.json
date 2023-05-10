@@ -1,7 +1,6 @@
 {
   "survey_id": "xyz",
   "period_id": "abc",
-  "form_type": "yyy",
   "title": "Which side was better?",
   "sds_schema_version": 4,
   "schema_version": "v1.0.0",
