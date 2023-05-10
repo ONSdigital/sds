@@ -52,6 +52,17 @@ class DatasetProcessorService:
         )
         logger.info("Transformed dataset written to repository successfully.")
 
+        logger.info("Deleting previous dataset versions...")
+        logger.debug(
+            f"Deleting all datasets with survey id {transformed_dataset['survey_id']} \
+            before version {transformed_dataset['sds_dataset_version']}."
+        )
+
+        self.dataset_writer_service.delete_previous_dataset_versions(
+            transformed_dataset["survey_id"], transformed_dataset["sds_dataset_version"]
+        )
+        logger.info("Previous versions deleted succesfully.")
+
         logger.info("Transforming unit data collection...")
         transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection

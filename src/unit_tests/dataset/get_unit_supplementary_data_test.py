@@ -12,20 +12,20 @@ def test_get_unit_supplementary_data_200_response(test_client):
 
     DatasetFirebaseRepository.get_unit_supplementary_data = MagicMock()
     DatasetFirebaseRepository.get_unit_supplementary_data.return_value = (
-        dataset_test_data.test_unit_supplementary_data
+        dataset_test_data.unit_supplementary_data
     )
 
     response = test_client.get(
-        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&unit_id={dataset_test_data.test_unit_id}",
+        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&unit_id={dataset_test_data.unit_id}",
     )
 
     DatasetFirebaseRepository.get_unit_supplementary_data.assert_called_once_with(
         shared_test_data.test_guid,
-        dataset_test_data.test_unit_id,
+        dataset_test_data.unit_id,
     )
 
     assert response.status_code == 200
-    assert response.json() == dataset_test_data.test_unit_supplementary_data
+    assert response.json() == dataset_test_data.unit_supplementary_data
 
 
 def test_get_unit_supplementary_data_404_response(test_client):
@@ -36,12 +36,12 @@ def test_get_unit_supplementary_data_404_response(test_client):
     DatasetFirebaseRepository.get_unit_supplementary_data.return_value = None
 
     response = test_client.get(
-        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&unit_id={dataset_test_data.test_unit_id}"
+        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&unit_id={dataset_test_data.unit_id}"
     )
 
     DatasetFirebaseRepository.get_unit_supplementary_data.assert_called_once_with(
         shared_test_data.test_guid,
-        dataset_test_data.test_unit_id,
+        dataset_test_data.unit_id,
     )
 
     assert response.status_code == 404

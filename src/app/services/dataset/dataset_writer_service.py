@@ -40,3 +40,10 @@ class DatasetWriterService:
             self.dataset_repository.append_unit_to_dataset_units_collection(
                 database_unit_data_collection, unit_data
             )
+
+    def delete_previous_dataset_versions(
+        self, survey_id: str, latest_version: int
+    ) -> None:
+        self.dataset_repository.delete_previous_dataset_versions(
+            survey_id, latest_version
+        )

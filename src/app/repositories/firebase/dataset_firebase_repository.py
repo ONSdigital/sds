@@ -105,3 +105,10 @@ class DatasetFirebaseRepository:
             .where("period_id", "==", period_id)
             .stream()
         )
+
+    def delete_previous_dataset_versions(
+        self, survey_id: str, latest_version: int
+    ) -> None:
+        self.datasets_collection.where("survey_id", "==", survey_id).where(
+            "sds_dataset_version", "!=", latest_version
+        ).delete()
