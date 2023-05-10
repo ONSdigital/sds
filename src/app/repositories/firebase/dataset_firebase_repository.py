@@ -115,9 +115,11 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        delete_count = 0
-        for dataset_version in previous_dataset_versions:
-            self.datasets_collection.document(dataset_version.id).delete()
-            delete_count += 1
+        self._recursively_delete_collection(previous_dataset_versions)
 
-        logger.info(f"{delete_count} previous version(s) deleted")
+    def _recursively_delete_collection(self, collection_ref):
+        for doc_ref in collection_ref.stream():
+            for subcollection_ref in doc_ref.stream():
+                self._recursively_delete_collection(subcollection_ref)
+        
+        collection_ref.delete()
