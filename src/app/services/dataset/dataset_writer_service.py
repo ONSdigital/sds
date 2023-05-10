@@ -1,5 +1,8 @@
+from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetWriterService:
@@ -41,9 +44,17 @@ class DatasetWriterService:
                 database_unit_data_collection, unit_data
             )
 
-    def delete_previous_dataset_versions(
+    def try_delete_previous_dataset_versions(
         self, survey_id: str, latest_version: int
     ) -> None:
-        self.dataset_repository.delete_previous_dataset_versions(
-            survey_id, latest_version
-        )
+        try:
+            self.dataset_repository.delete_previous_dataset_versions(
+                survey_id, latest_version
+            )
+        except:
+            logger.debug(
+                f"Failed to delete previous versions of dataset with survey id {survey_id} and latest version {latest_version}"
+            )
+            raise RuntimeError(
+                "Failed to delete previous dataset versions from firestore."
+            )
