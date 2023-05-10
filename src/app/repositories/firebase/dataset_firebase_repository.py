@@ -121,5 +121,5 @@ class DatasetFirebaseRepository:
         for doc_ref in collection_ref.stream():
             for subcollection_ref in doc_ref.stream():
                 self._recursively_delete_collection(subcollection_ref)
-        
+
         collection_ref.delete()
