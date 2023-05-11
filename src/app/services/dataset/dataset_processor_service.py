@@ -52,6 +52,11 @@ class DatasetProcessorService:
         )
         logger.info("Transformed dataset written to repository successfully.")
 
+        logger.info("Extracting rurefs from unit data...")
+        rurefs = self._extract_ruref_from_unit_data(new_dataset_unit_data_collection)
+        logger.info("Rurefs are extracted and stored successfully.")
+        logger.debug(f"Extracted rurefs: {rurefs}")
+
         logger.info("Transforming unit data collection...")
         transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
@@ -61,15 +66,9 @@ class DatasetProcessorService:
             f"Transformed unit data collection for dataset with id: {dataset_id}"
         )
 
-        logger.info("Uplifting unit data to its parent node....")
-        ruref, uplifted_unit_data_collection = self._uplift_unit_data(
-            transformed_unit_data_collection
-        )
-        logger.info("Unit data uplifted successfully.")
-
         logger.info("Writing transformed unit data to repository...")
         self.dataset_writer_service.write_transformed_unit_data_to_repository(
-            dataset_id, uplifted_unit_data_collection, ruref
+            dataset_id, transformed_unit_data_collection, rurefs
         )
         logger.info("Transformed unit data written to repository successfully.")
 
@@ -158,7 +157,7 @@ class DatasetProcessorService:
             "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
             "schema_version": transformed_dataset_metadata["schema_version"],
             "form_type": transformed_dataset_metadata["form_type"],
-            "data": unit_data_item,
+            "data": unit_data_item["unit_data"],
         }
 
     def get_dataset_metadata_collection(
@@ -197,19 +196,14 @@ class DatasetProcessorService:
 
         return metadata_collection_item
 
-    def _uplift_unit_data(
-        self, transformed_unit_data_collection: list[object]
-    ) -> tuple[list, list[object]]:
+    def _extract_ruref_from_unit_data(
+        self, raw_dataset_unit_data_collection: list[object]
+    ) -> list:
         """
-        Move ruref to a separate list for indexing purpose and then uplift the content
-        in node "unit_data" to its parent node
+        Extracts ruref from unit data to store in a separate list for indexing need
+        prior erasing ruref from unit data at unit data transformation stage
 
         Parameters:
-        transformed_unit_data_collection (list[object]): the unit data collection with added metadata.
+        raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
         """
-        ruref = []
-        for unit_data in transformed_unit_data_collection:
-            ruref.append(unit_data["data"]["ruref"])
-            unit_data["data"] = unit_data["data"]["unit_data"]
-
-        return ruref, transformed_unit_data_collection
+        return [item["ruref"] for item in raw_dataset_unit_data_collection]
