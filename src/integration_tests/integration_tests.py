@@ -22,7 +22,7 @@ def test_dataset(client, bucket_loader):
     filename = f"{filename_id}.json"
     bucket_loader(filename, dataset)
 
-    survey_id = "xyz"
+    survey_id = "test_survey_id"
     period_id = "abc"
 
     dataset_metadata_response = client.get(
@@ -33,7 +33,7 @@ def test_dataset(client, bucket_loader):
     mock_unit_response = {
         "schema_version": "v1.0.0",
         "sds_schema_version": 4,
-        "survey_id": "xyz",
+        "survey_id": "test_survey_id",
         "period_id": "abc",
         "form_type": "yyy",
         "data": {
@@ -95,7 +95,7 @@ def test_post_schema(client):
     Post a schema using the /schema api endpoint and check the metadata
     can be retrieved. Also check that schema can be retrieved directly from storage.
     """
-    survey_id = "076"
+    survey_id = "test_survey_id"
     with open(config.TEST_SCHEMA_PATH) as f:
         test_schema = json.load(f)
 

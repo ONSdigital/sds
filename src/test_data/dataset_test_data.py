@@ -23,7 +23,7 @@ cloud_event_invalid_filename_data = {
 }
 
 unit_id = "test_unit_id"
-survey_id = "xyz"
+survey_id = "test_survey_id"
 early_dataset_version = 1
 new_dataset_version = 2
 
@@ -81,7 +81,7 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
     },
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -91,7 +91,7 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
 ]
 
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
-    "survey_id": "xyz",
+    "survey_id": survey_id,
     "period_id": "abc",
     "title": "Which side was better?",
     "sds_schema_version": 4,
@@ -147,7 +147,7 @@ unit_supplementary_data: UnitDataset = {
 dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -187,7 +187,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
