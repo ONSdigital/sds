@@ -109,6 +109,17 @@ class DatasetFirebaseRepository:
     def delete_previous_dataset_versions(
         self, survey_id: str, latest_version: int
     ) -> None:
+        """
+        Queries firestore for older versions of a dataset associated with a survey id, 
+        iterates through them and deletes them and their subcollections recursively. The 
+        recursion is needed because you cannot delete subcollections of a document in firestore 
+        just by deleting the document, it does not cascade.
+
+        Parameters:
+        survey_id (str): survey id of the dataset.
+        latest_version (int): latest version of the dataset.
+        """
+
         previous_dataset_versions = self.datasets_collection.where(
             "survey_id", "==", survey_id
         ).where("sds_dataset_version", "!=", latest_version)
@@ -116,13 +127,25 @@ class DatasetFirebaseRepository:
         for version in previous_dataset_versions.stream():
             self._recursively_delete_document_and_sub_collections(version.reference)
 
-    def _recursively_delete_document_and_sub_collections(self, doc_ref):
+    def _recursively_delete_document_and_sub_collections(self, doc_ref: firestore.DocumentReference) -> None:
+        """
+        Loops through each collection in a document and deletes the collection.
+
+        Parameters:
+        doc_ref (firestore.DocumentReference): the reference of the document being deleted.
+        """
         for collection_ref in doc_ref.collections():
             self._delete_collection(collection_ref)
 
         doc_ref.delete()
 
-    def _delete_collection(self, collection_ref):
+    def _delete_collection(self, collection_ref: firestore.CollectionReference) -> None:
+        """
+        Recursively deletes the collection and its subcollections.
+
+        Parameters:
+        collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
+        """
         doc_collection = collection_ref.stream()
 
         for doc in doc_collection:

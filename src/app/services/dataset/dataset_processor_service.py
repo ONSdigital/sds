@@ -38,21 +38,17 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection = raw_dataset.pop("data")
         dataset_id = str(uuid.uuid4())
 
-        logger.info("Transforming new dataset metadata...")
+        
         transformed_dataset = self._add_metadata_to_new_dataset(
             raw_dataset, filename, new_dataset_unit_data_collection
         )
         logger.info("Dataset transformed successfully.")
 
-        logger.info("Writing transformed dataset to repository...")
-        logger.debug(f"Writing dataset with id {dataset_id}")
         self.dataset_writer_service.write_transformed_dataset_to_repository(
             dataset_id,
             transformed_dataset,
         )
-        logger.info("Transformed dataset written to repository successfully.")
 
-        logger.info("Transforming unit data collection...")
         transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
@@ -61,11 +57,9 @@ class DatasetProcessorService:
             f"Transformed unit data collection for dataset with id: {dataset_id}"
         )
 
-        logger.info("Writing transformed unit data to repository...")
         self.dataset_writer_service.write_transformed_unit_data_to_repository(
             dataset_id, transformed_unit_data_collection
         )
-        logger.info("Transformed unit data written to repository successfully.")
 
         self.dataset_writer_service.try_delete_previous_dataset_versions(
             transformed_dataset["survey_id"], transformed_dataset["sds_dataset_version"]
@@ -85,6 +79,7 @@ class DatasetProcessorService:
         filename (str): the filename of the json containing the dataset data
         dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
+        logger.info("Transforming new dataset metadata...")
         return {
             **raw_dataset_metadata,
             "filename": filename,
@@ -128,6 +123,7 @@ class DatasetProcessorService:
         transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset metadata without id
         raw_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
+        logger.info("Transforming unit data collection...")
         return [
             self._add_metatadata_to_unit_data_item(
                 dataset_id, transformed_dataset_metadata, item

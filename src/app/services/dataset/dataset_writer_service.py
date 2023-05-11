@@ -23,7 +23,12 @@ class DatasetWriterService:
         Parameters:
         transformed_dataset (DatasetMetadata): the transformed dataset being written
         """
+        logger.info("Writing transformed dataset to repository...")
+        logger.debug(f"Writing dataset with id {dataset_id}")
+
         self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
+
+        logger.info("Transformed dataset written to repository successfully.")
 
     def write_transformed_unit_data_to_repository(
         self, dataset_id: str, new_dataset_unit_data_collection: list[object]
@@ -35,6 +40,7 @@ class DatasetWriterService:
         dataset_id (str): the uniquely generated id of the dataset
         new_dataset_unit_data_collection (list[object]): the collection of unit data associated with the new dataset
         """
+        logger.info("Writing transformed unit data to repository...")
         database_unit_data_collection = (
             self.dataset_repository.get_dataset_unit_collection(dataset_id)
         )
@@ -44,14 +50,20 @@ class DatasetWriterService:
                 database_unit_data_collection, unit_data
             )
 
+        logger.info("Transformed unit data written to repository successfully.")
+
     def try_delete_previous_dataset_versions(
         self, survey_id: str, latest_version: int
     ) -> None:
+        """
+        Tries to delete all versions of a dataset except the latest version, if this fails an error is raised.
+
+        Parameters:
+        survey_id (str): survey id of the dataset.
+        latest_version (int): latest version of the dataset.
+        """
+
         logger.info("Deleting previous dataset versions...")
-        logger.debug(
-            f"Deleting all datasets with survey id {survey_id} \
-            before version {latest_version}."
-        )
         try:
             self.dataset_repository.delete_previous_dataset_versions(
                 survey_id, latest_version
