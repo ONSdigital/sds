@@ -103,13 +103,13 @@ dataset_metadata_without_id: DatasetMetadataWithoutId = {
 
 test_unit_supplementary_data: UnitDataset = {
     "dataset_id": shared_test_data.test_guid,
-    "survey_id": test_survey_id,
+    "survey_id": survey_id,
     "period_id": "abc",
     "sds_schema_version": 4,
     "schema_version": "v1.0.0",
     "form_type": "yyy",
     "data": {
-        "ruref": test_unit_id,
+        "ruref": unit_id,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",
