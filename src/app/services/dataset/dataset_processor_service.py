@@ -38,7 +38,6 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection = raw_dataset.pop("data")
         dataset_id = str(uuid.uuid4())
 
-        
         transformed_dataset = self._add_metadata_to_new_dataset(
             raw_dataset, filename, new_dataset_unit_data_collection
         )
