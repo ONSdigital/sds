@@ -36,7 +36,7 @@ def test_get_value_from_env_exception():
 
 
 class testConfigVars:
-    conf = "testConf"
+    conf = "unit"
     datset_bucket_name = "testDatasetBucket"
     schema_bucket_name = "testSchemaBucketName"
     firestore_host = "testFirestoreEmulatorHost"
@@ -56,7 +56,8 @@ def test_set_Config():
 
     testConfig = config.Config()
 
-    del os.environ["CONF"], os.environ["DATASET_BUCKET_NAME"]
+    del os.environ["DATASET_BUCKET_NAME"]
+    os.environ["CONF"] = "unit"
 
     assert (
         testConfig.CONF == testConfigVars.conf

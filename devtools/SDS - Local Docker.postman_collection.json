@@ -51,7 +51,7 @@
       "response": []
     },
     {
-      "name": "Retrive Schema",
+      "name": "Schema",
       "request": {
         "method": "GET",
         "header": [],
@@ -124,7 +124,7 @@
       "response": []
     },
     {
-      "name": "Get Dataset Unit Data",
+      "name": "Dataset Unit Data",
       "request": {
         "method": "GET",
         "header": [],

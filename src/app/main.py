@@ -1,7 +1,8 @@
 import functions_framework
-from bucket.bucket_file_reader import BucketFileReader
 from logging_config import logging
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
+from services.validators.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
 
@@ -21,18 +22,17 @@ def new_dataset(cloud_event):
     bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
-    if filename[-5:].lower() != ".json":
-        logger.error(f"Invalid filetype received - {filename}")
-    else:
-        dataset = BucketFileReader().get_file_from_bucket(
-            filename=filename, bucket_name=bucket_name
-        )
-        if dataset is not None:
-            logger.info("Dataset obtained successfully.")
-            logger.debug(f"Dataset: {dataset}")
+    DatasetValidatorService.validate_file_is_json(filename)
 
-            DatasetProcessorService().process_new_dataset(filename, dataset)
+    raw_dataset_with_metadata = DatasetBucketRepository(
+        bucket_name
+    ).get_dataset_file_as_json(filename)
 
-            logger.info("Dataset uploaded successfully.")
-        else:
-            logger.error("Invalid JSON file contents.")
+    DatasetValidatorService.validate_raw_dataset(raw_dataset_with_metadata)
+
+    logger.info("Dataset obtained successfully.")
+    logger.debug(f"Dataset: {raw_dataset_with_metadata}")
+
+    DatasetProcessorService().process_raw_dataset(filename, raw_dataset_with_metadata)
+
+    logger.info("Dataset uploaded successfully.")
