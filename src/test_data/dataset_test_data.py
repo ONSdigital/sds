@@ -89,8 +89,8 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
 ]
 
 dataset_metadata_without_id: DatasetMetadataWithoutId = {
-    "survey_id": "xyz",
-    "period_id": test_survey_id,
+    "survey_id": test_survey_id,
+    "period_id": "abc",
     "title": "Which side was better?",
     "sds_schema_version": 4,
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -145,8 +145,8 @@ test_unit_supplementary_data: UnitDataset = {
 new_dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
-        "period_id": test_survey_id,
+        "survey_id": test_survey_id,
+        "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
         "form_type": "yyy",
