@@ -20,7 +20,7 @@ def test_dataset(client, bucket_loader):
 
     filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
     filename = f"{filename_id}.json"
-    
+
     bucket_loader(filename, dataset)
     bucket_loader(filename, dataset)
 
