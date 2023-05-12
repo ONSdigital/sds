@@ -15,7 +15,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema_metadata(self, schema_metadata: SchemaMetadataWithoutGuid):
+    def process_raw_schema(self, schema_metadata: SchemaMetadataWithoutGuid):
         """
         Processes incoming schema metadata.
 

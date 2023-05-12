@@ -1,0 +1,521 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Supplementary Data Service (SDS)
+  description: API gateway for SDS
+schemes:
+  - https
+securityDefinitions:
+  UserSecurity:
+    type: basic
+security:
+  - UserSecurity: []
+paths:
+  /v1/unit_data:
+    get:
+      description: GET method that returns the unit supplementary data corresponding to the given dataset_id and unit_id.
+      parameters:
+        - name: dataset_id
+          in: query
+          required: true
+          type: string
+          x-example: 5eb3a2a9-9d07-47a9-9df7-0425ed289060
+        - name: unit_id
+          in: query
+          required: true
+          type: string
+          x-example: 43552 
+      responses:
+        200:
+          description: Succesfully retrieved unit supplementary data
+          schema:
+            type: object
+            properties:
+              form_type:
+                type: string
+                example: yyy
+              survey_id:
+                type: string
+                example: NRX
+              data:
+                type: object
+                properties:
+                  local_unit:
+                    type: object
+                    properties:
+                      luname:
+                        type: string
+                        example: Maps Factory
+                      luref:
+                        type: string
+                        example: 20127364B
+                  ruref:
+                    type: string
+                    example: 43532
+                  runame:
+                    type: string
+                    example: Pipes and Maps Ltd
+              period_id:
+                type: string
+                example: ttt
+              sds_schema_version:
+                type: integer
+                example: 4
+              dataset_id:
+                type: string
+                example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
+              schema_version:
+                type: string
+                example: v1.0.0
+        400:
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Validation has failed
+            required:
+              - status
+              - message
+        404:
+          description: Item not found
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 404
+              message:
+                type: string
+                example: No unit data found
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message
+  /v1/schema:
+    post:
+      description: POST endpoint to create a schema
+      parameters:
+        - name: schema
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/sds_schema"
+      responses:
+        200:
+          description: Successfuly submitted schema
+          schema:
+            $ref: "#/definitions/sds_schema_metadata"
+        400:
+          description: Schema validation failed
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Validation has failed
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message
+    get:
+      description: GET method that returns the schema corresponding to the given survey_id and version.
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+        - name: version
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Succesfully retrieved schema
+          schema:
+            $ref: "#/definitions/sds_schema_metadata"
+        400:
+          description: Invalid version provided
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Validation has failed
+            required:
+              - status
+              - message
+        404:
+          description: No schema found
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 404
+              message:
+                type: string
+                example: No schema found
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message
+
+  /v1/schema_metadata:
+    get:
+      description: GET method that returns the schema metadata corresponding to the given survey_id.
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Sucessfully retrieved schema metadata
+          schema:
+            $ref: "#/definitions/sds_schema_metadata"
+        400:
+          description: Incorrect key 
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Validation has failed
+            required:
+              - status
+              - message
+        404:
+          description: No results found 
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 404
+              message:
+                type: string
+                example: No results found
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message
+
+  /v1/dataset_metadata:
+    get:
+      description: GET method that returns the dataset metadata corresponding to the given survey_id and period_id.
+      parameters:
+        - name: survey_id
+          in: query
+          type: string
+          required: true
+        - name: period_id
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Successfully retrieved dataset metadata
+          schema:
+            $ref: "#/definitions/sds_dataset_metadata"
+        400:
+          description: Incorrect key names
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Validation has failed
+            required:
+              - status
+              - message
+        404:
+          description: No dataset found
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 404
+              message:
+                type: string
+                example: No dataset found
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message"
+
+definitions:
+  sds_schema_metadata:
+    type: object
+    properties:
+      guid:
+        type: string
+        example: 9e1222b0-63a1-4bdf-bdf5-922327ff3198
+      survey_id:
+        type: string
+        example: 068
+      schema_location:
+        type: string
+        example: 068/9e1222b0-63a1-4bdf-bdf5-922327ff3198.json
+      sds_schema_version:
+        type: string
+        example: 1
+      sds_published_at:
+        type: string
+        example: 2023-05-05T08:18:07Z
+  sds_dataset_metadata:
+    type: object
+    properties: 
+      survey_id: 
+        type: string
+        example: NRX
+      period_id: 
+        type: string
+        example: ttt
+      title: 
+        type: string
+        example: Which side was better?
+      sds_schema_version: 
+        type: integer
+        format: int32
+        example: 4
+      sds_published_at: 
+        type: string
+        format: date-time
+        example: 2023-05-04T14:35:05Z
+      total_reporting_units: 
+        type: integer
+        format: int32
+        example: 2
+      schema_version: 
+        type: string
+        example: v1.0.0
+      sds_dataset_version: 
+        type: integer
+        format: int32
+        example: 1
+      filename: 
+        type: string
+        example: 0d5adee0-c91b-4aeb-9e1c-bfa3b1cdf0a6.json
+      form_type: 
+        type: string
+        example: yyy
+      dataset_id: 
+        type: string
+        example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
+  sds_schema:
+    type: object
+    properties:
+      $schema:
+        type: string
+        example: https://json-schema.org/draft/2020-12/schema
+      $id: 
+        type: string
+        example: https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json
+      survey_id: 
+        type: string
+        example: 068
+      title: 
+        type: string
+        example: Roofing Tiles
+      description: 
+        type: string
+        example: Roofing Tiles
+      schema_version: 
+        type: string
+        example: v2.0.1
+      sample_unit_key_field: 
+        type: string
+        example: ruref
+      properties: 
+        type: array
+        items: 
+          type: object
+          properties: 
+            type: 
+              type: string
+              example: object
+            required: 
+              type: array
+              items: 
+                type: string
+                example: ruref
+            properties: 
+              type: object
+              properties: 
+                ruref: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                      example: string
+                runame: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                      example: string
+                    Description: 
+                      type: string
+                      example: The reporting unit name.
+                ruaddr: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                      example: List
+                    Description: 
+                      type: string
+                      example: This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr
+                repeats: 
+                  type: object
+                  properties: 
+                    type: 
+                      type: string
+                      example: array
+                    required: 
+                      type: array
+                      items: 
+                        type: string
+                        example: luref
+                    properties: 
+                      type: object
+                      properties: 
+                        key_field: 
+                          type: string
+                          example: luref
+                        luref: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                              example: string
+                        luname: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                              example: string
+                        luaddr: 
+                          type: object
+                          properties: 
+                            type: 
+                              type: string
+                              example: List
+                            Description: 
+                              type: string
+                              example: This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr
+      examples: 
+        type: array
+        items: 
+          type: object
+          properties: 
+            ruref: 
+              type: string
+              example: 43532
+            runame: 
+              type: string
+              example: Pipes and Maps Ltd
+            ruaddr: 
+              type: array
+              items:
+                type: string
+                example: "111 Under Hill"
+            local_unit: 
+              type: array
+              items: 
+                type: object
+                properties: 
+                  luref: 
+                    type: string
+                    example: 2012763A
+                  luname: 
+                    type: string
+                    example: Maps Factory
+                  luaddr: 
+                    type: array
+                    items: 
+                      type: string
+                      example: 1 Bag End

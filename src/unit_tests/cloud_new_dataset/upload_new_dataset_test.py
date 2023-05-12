@@ -7,29 +7,43 @@ from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRep
 from services.dataset.dataset_processor_service import DatasetProcessorService
 
 from src.test_data import dataset_test_data, shared_test_data
+from src.unit_tests.test_helper import TestHelper
 
 
 def test_upload_new_dataset(
     new_dataset_mock,
-    uuid_mock,
-    datetime_mock,
-    dataset_repository_boundaries_mock,
-    cloud_bucket_mock,
+    dataset_bucket_repository_mock,
 ):
     """
     The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
     """
     cloud_event = MagicMock()
-    cloud_event.data = dataset_test_data.cloud_event_test_data
+    cloud_event.data = dataset_test_data.cloud_event_data
+
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        TestHelper.create_document_snapshot_generator_mock(
+            [dataset_test_data.dataset_metadata]
+        )
+    )
+
+    DatasetFirebaseRepository.create_new_dataset = MagicMock()
+
+    DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
+        dataset_test_data.existing_dataset_unit_data_collection
+    )
+
+    DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
 
     new_dataset_mock(cloud_event=cloud_event)
 
     DatasetFirebaseRepository.get_latest_dataset_with_survey_id.assert_called_once_with(
-        dataset_test_data.test_survey_id
+        dataset_test_data.survey_id
     )
     DatasetFirebaseRepository.create_new_dataset.assert_called_once_with(
         shared_test_data.test_guid,
-        dataset_test_data.dataset_metadata_without_id,
+        dataset_test_data.updated_dataset_metadata_without_id,
     )
 
     DatasetFirebaseRepository.get_dataset_unit_collection.assert_called_once_with(
@@ -39,13 +53,13 @@ def test_upload_new_dataset(
     append_calls = [
         call(
             dataset_test_data.existing_dataset_unit_data_collection,
-            dataset_test_data.new_dataset_unit_data_collection[0],
-            dataset_test_data.new_dataset_unit_data_ruref[0],
+            dataset_test_data.dataset_unit_data_collection[0],
+            dataset_test_data.dataset_unit_data_ruref[0],
         ),
         call(
             dataset_test_data.existing_dataset_unit_data_collection,
-            dataset_test_data.new_dataset_unit_data_collection[1],
-            dataset_test_data.new_dataset_unit_data_ruref[1],
+            dataset_test_data.dataset_unit_data_collection[1],
+            dataset_test_data.dataset_unit_data_ruref[1],
         ),
     ]
     DatasetFirebaseRepository.append_unit_to_dataset_units_collection.assert_has_calls(
@@ -53,31 +67,102 @@ def test_upload_new_dataset(
     )
 
 
-def test_upload_invalid_file_type(new_dataset_mock, cloud_bucket_mock):
+def test_delete_previous_versions_datasets_success(
+    new_dataset_mock, dataset_bucket_repository_mock
+):
+    """
+    The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+    """
+
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_data
+
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        TestHelper.create_document_snapshot_generator_mock(
+            [dataset_test_data.dataset_metadata]
+        )
+    )
+
+    DatasetFirebaseRepository.create_new_dataset = MagicMock()
+
+    DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
+        dataset_test_data.existing_dataset_unit_data_collection
+    )
+
+    DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
+
+    DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
+
+    new_dataset_mock(cloud_event=cloud_event)
+
+    DatasetFirebaseRepository.delete_previous_versions_datasets.assert_called_once_with(
+        dataset_test_data.survey_id, dataset_test_data.new_dataset_version
+    )
+
+
+def test_delete_previous_versions_datasets_failure(
+    new_dataset_mock, dataset_bucket_repository_mock
+):
+    """
+    The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+    """
+
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_data
+
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
+    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        TestHelper.create_document_snapshot_generator_mock(
+            [dataset_test_data.dataset_metadata]
+        )
+    )
+
+    DatasetFirebaseRepository.create_new_dataset = MagicMock()
+
+    DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
+    DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
+        dataset_test_data.existing_dataset_unit_data_collection
+    )
+
+    DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
+
+    DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
+    DatasetFirebaseRepository.delete_previous_versions_datasets.side_effect = Exception
+
+    with raises(
+        RuntimeError,
+        match="Failed to delete previous dataset versions from firestore.",
+    ):
+        new_dataset_mock(cloud_event=cloud_event)
+
+
+def test_upload_invalid_file_type(new_dataset_mock, dataset_bucket_repository_mock):
     """
     Tests the validation for when the file extension is not a json
     """
 
     cloud_event = MagicMock()
-    cloud_event.data = dataset_test_data.cloud_event_invalid_filename_test_data
+    cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
 
     DatasetProcessorService.process_raw_dataset = MagicMock()
 
     with raises(
         RuntimeError,
-        match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_test_data['name']}",
+        match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_data['name']}",
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
     DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
-def test_no_dataset_in_bucket(new_dataset_mock, cloud_bucket_credentials_mock):
+def test_no_dataset_in_bucket(new_dataset_mock):
     """
     Validates when an empty object is returned from the bucket.
     """
     cloud_event = MagicMock()
-    cloud_event.data = dataset_test_data.cloud_event_test_data
+    cloud_event.data = dataset_test_data.cloud_event_data
 
     DatasetProcessorService.process_raw_dataset = MagicMock()
 
@@ -93,13 +178,13 @@ def test_no_dataset_in_bucket(new_dataset_mock, cloud_bucket_credentials_mock):
     DatasetProcessorService.process_raw_dataset.assert_not_called()
 
 
-def test_missing_dataset_keys(new_dataset_mock, cloud_bucket_credentials_mock):
+def test_missing_dataset_keys(new_dataset_mock):
     """
     Validates when there are missing mandatory keys from the dataset.
     """
 
     cloud_event = MagicMock()
-    cloud_event.data = dataset_test_data.cloud_event_test_data
+    cloud_event.data = dataset_test_data.cloud_event_data
 
     DatasetProcessorService.process_raw_dataset = MagicMock()
 
