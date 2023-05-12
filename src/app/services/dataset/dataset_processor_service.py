@@ -53,7 +53,7 @@ class DatasetProcessorService:
         logger.info("Transformed dataset written to repository successfully.")
 
         logger.info("Extracting rurefs from unit data...")
-        rurefs = self._extract_ruref_from_unit_data(new_dataset_unit_data_collection)
+        rurefs = self._extract_rurefs_from_unit_data(new_dataset_unit_data_collection)
         logger.info("Rurefs are extracted and stored successfully.")
         logger.debug(f"Extracted rurefs: {rurefs}")
 
@@ -196,12 +196,12 @@ class DatasetProcessorService:
 
         return metadata_collection_item
 
-    def _extract_ruref_from_unit_data(
+    def _extract_rurefs_from_unit_data(
         self, raw_dataset_unit_data_collection: list[object]
     ) -> list:
         """
-        Extracts ruref from unit data to store in a separate list for indexing need
-        prior erasing ruref from unit data at unit data transformation stage
+        Extracts all rurefs from unit data to store in a separate list for indexing need
+        prior erasing the rurefs at unit data transformation stage
 
         Parameters:
         raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
