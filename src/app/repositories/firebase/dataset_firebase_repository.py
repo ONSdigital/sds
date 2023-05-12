@@ -106,7 +106,7 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def delete_previous_dataset_versions(
+    def delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int
     ) -> None:
         """
@@ -120,11 +120,11 @@ class DatasetFirebaseRepository:
         latest_version (int): latest version of the dataset.
         """
 
-        previous_dataset_versions = self.datasets_collection.where(
+        previous_versions_datasets = self.datasets_collection.where(
             "survey_id", "==", survey_id
         ).where("sds_dataset_version", "!=", latest_version)
 
-        self._delete_collection(previous_dataset_versions)
+        self._delete_collection(previous_versions_datasets)
 
     def _delete_collection(self, collection_ref: firestore.CollectionReference) -> None:
         """

@@ -60,7 +60,7 @@ class DatasetProcessorService:
             dataset_id, transformed_unit_data_collection
         )
 
-        self.dataset_writer_service.try_delete_previous_dataset_versions(
+        self.dataset_writer_service.try_delete_previous_versions_datasets(
             transformed_dataset["survey_id"], transformed_dataset["sds_dataset_version"]
         )
 

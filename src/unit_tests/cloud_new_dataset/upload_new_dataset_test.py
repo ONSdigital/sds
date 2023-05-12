@@ -65,7 +65,7 @@ def test_upload_new_dataset(
     )
 
 
-def test_delete_previous_dataset_versions_success(
+def test_delete_previous_versions_datasets_success(
     new_dataset_mock, dataset_bucket_repository_mock
 ):
     """
@@ -91,16 +91,16 @@ def test_delete_previous_dataset_versions_success(
 
     DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
 
-    DatasetFirebaseRepository.delete_previous_dataset_versions = MagicMock()
+    DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
 
     new_dataset_mock(cloud_event=cloud_event)
 
-    DatasetFirebaseRepository.delete_previous_dataset_versions.assert_called_once_with(
+    DatasetFirebaseRepository.delete_previous_versions_datasets.assert_called_once_with(
         dataset_test_data.survey_id, dataset_test_data.new_dataset_version
     )
 
 
-def test_delete_previous_dataset_versions_failure(
+def test_delete_previous_versions_datasets_failure(
     new_dataset_mock, dataset_bucket_repository_mock
 ):
     """
@@ -126,15 +126,14 @@ def test_delete_previous_dataset_versions_failure(
 
     DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
 
-    DatasetFirebaseRepository.delete_previous_dataset_versions = MagicMock()
-    DatasetFirebaseRepository.delete_previous_dataset_versions.side_effect = Exception
+    DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
+    DatasetFirebaseRepository.delete_previous_versions_datasets.side_effect = Exception
 
     with raises(
         RuntimeError,
         match="Failed to delete previous dataset versions from firestore.",
     ):
         new_dataset_mock(cloud_event=cloud_event)
-
 
 def test_upload_invalid_file_type(new_dataset_mock, dataset_bucket_repository_mock):
     """

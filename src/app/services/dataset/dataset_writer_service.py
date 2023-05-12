@@ -52,7 +52,7 @@ class DatasetWriterService:
 
         logger.info("Transformed unit data written to repository successfully.")
 
-    def try_delete_previous_dataset_versions(
+    def try_delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int
     ) -> None:
         """
@@ -65,7 +65,7 @@ class DatasetWriterService:
 
         logger.info("Deleting previous dataset versions...")
         try:
-            self.dataset_repository.delete_previous_dataset_versions(
+            self.dataset_repository.delete_previous_versions_datasets(
                 survey_id, latest_version
             )
             logger.info("Previous versions deleted succesfully.")
