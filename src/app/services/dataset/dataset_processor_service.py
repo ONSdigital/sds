@@ -200,8 +200,7 @@ class DatasetProcessorService:
         self, raw_dataset_unit_data_collection: list[object]
     ) -> list:
         """
-        Extracts all rurefs from unit data to store in a separate list for indexing need
-        prior erasing the rurefs at unit data transformation stage
+        Extracts all rurefs from unit data to store in a separate list
 
         Parameters:
         raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
