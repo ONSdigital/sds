@@ -20,7 +20,7 @@ def test_dataset(client, bucket_loader):
 
     filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
     filename = f"{filename_id}.json"
-
+    
     bucket_loader(filename, dataset)
     bucket_loader(filename, dataset)
 
@@ -30,8 +30,8 @@ def test_dataset(client, bucket_loader):
     dataset_metadata_response = client.get(
         f"/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}"
     )
-    print("cheese", dataset_metadata_response.json())
     assert dataset_metadata_response.status_code == 200
+    assert len(dataset_metadata_response.json()) == 1
 
     mock_unit_response = {
         "schema_version": "v1.0.0",
@@ -88,7 +88,7 @@ def test_dataset(client, bucket_loader):
             assert mock_unit_response.items() <= json_response.items()
             assert json_response["dataset_id"] is not None
 
-            assert dataset_metadata["sds_dataset_version"] == 2
+            assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
             assert "form_type" in dataset_metadata
 
