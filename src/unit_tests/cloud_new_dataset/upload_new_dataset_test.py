@@ -12,7 +12,7 @@ from src.unit_tests.test_helper import TestHelper
 
 def test_upload_new_dataset(
     new_dataset_mock,
-    dataset_bucket_repository_mock,
+    get_dataset_from_bucket_mock,
 ):
     """
     The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
@@ -66,10 +66,10 @@ def test_upload_new_dataset(
 
 
 def test_delete_previous_versions_datasets_success(
-    new_dataset_mock, dataset_bucket_repository_mock
+    new_dataset_mock, get_dataset_from_bucket_mock
 ):
     """
-    The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+    Tests all previous versions of a dataset are deleted when a new dataset version is uploaded to firestore
     """
 
     cloud_event = MagicMock()
@@ -101,10 +101,10 @@ def test_delete_previous_versions_datasets_success(
 
 
 def test_delete_previous_versions_datasets_failure(
-    new_dataset_mock, dataset_bucket_repository_mock
+    new_dataset_mock, get_dataset_from_bucket_mock
 ):
     """
-    The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+    Tests an exception is raised if there is an issue deleting previous dataset versions from firestore.
     """
 
     cloud_event = MagicMock()
@@ -136,7 +136,24 @@ def test_delete_previous_versions_datasets_failure(
         new_dataset_mock(cloud_event=cloud_event)
 
 
-def test_upload_invalid_file_type(new_dataset_mock, dataset_bucket_repository_mock):
+def test_empty_datasets_bucket_after_retrieval(
+    new_dataset_mock, get_dataset_from_bucket_mock
+):
+    """
+    Tests datasets are deleted from the bucket after they have been retrieved.
+    """
+    cloud_event = MagicMock()
+    cloud_event.data = dataset_test_data.cloud_event_data
+
+    DatasetBucketRepository.empty_bucket = MagicMock()
+    DatasetProcessorService.process_raw_dataset = MagicMock()
+
+    new_dataset_mock(cloud_event=cloud_event)
+
+    DatasetBucketRepository.empty_bucket.assert_called_once()
+
+
+def test_upload_invalid_file_type(new_dataset_mock, get_dataset_from_bucket_mock):
     """
     Tests the validation for when the file extension is not a json
     """

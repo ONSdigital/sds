@@ -59,7 +59,7 @@ def firebase_credentials_mock(monkeypatch):
 
 
 @pytest.fixture()
-def dataset_bucket_repository_mock():
+def get_dataset_from_bucket_mock():
     """
     Mocks the application's google bucket boundaries.
     """

@@ -14,3 +14,11 @@ class BucketRepository:
         """
 
         return json.loads(self.bucket.blob(filename).download_as_string())
+
+    def empty_bucket(self) -> None:
+        """
+        Empties the bucket.
+        """
+        blobs = self.bucket.list_blobs()
+        for blob in blobs:
+            blob.delete()
