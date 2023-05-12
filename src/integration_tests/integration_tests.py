@@ -11,9 +11,9 @@ def test_dataset(client, bucket_loader):
     Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
 
     * We load the sample dataset json file
-    * Upload the dataset file to the dataset bucket twice with the dataset_id as the name
+    * Upload the dataset file to the dataset bucket twice
     * We then use the API to get some unit data back using the dataset_id and a known ru_ref
-    * The dataset id an auto generated GUID
+    * The dataset id is an auto generated GUID
     """
     with open(config.TEST_DATASET_PATH) as f:
         dataset = json.load(f)
