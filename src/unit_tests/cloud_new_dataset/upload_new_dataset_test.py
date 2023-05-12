@@ -135,6 +135,7 @@ def test_delete_previous_versions_datasets_failure(
     ):
         new_dataset_mock(cloud_event=cloud_event)
 
+
 def test_upload_invalid_file_type(new_dataset_mock, dataset_bucket_repository_mock):
     """
     Tests the validation for when the file extension is not a json
