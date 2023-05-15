@@ -61,6 +61,21 @@ def test_dataset(client, bucket_loader):
             assert "filename" in dataset_metadata
 
 
+def test_empty_bucket(bucket_loader):
+    with open(config.TEST_DATASET_PATH) as f:
+        dataset = json.load(f)
+
+    filename_id = f"integration-test-{str(datetime.now()).replace(' ','-')}"
+    filename = f"{filename_id}.json"
+
+    bucket_loader(filename, dataset)
+    
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
+
+    assert sum(1 for _ in bucket.list_blobs()) == 0
+
+
 def test_post_schema(client):
     """
     Post a schema using the /schema api endpoint and check the metadata
