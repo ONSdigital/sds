@@ -3,18 +3,19 @@ from unittest import TestCase
 
 from config import config
 
-class testConfigVars:
-        conf = "unit"
-        datset_bucket_name = "testDatasetBucket"
-        schema_bucket_name = "testSchemaBucketName"
-        firestore_host = "testFirestoreEmulatorHost"
-        storage_host = "testStorageEmulatorHost"
-        app_credentials = "testAppCredentials"
-        dataset_path = "testDatasetPath"
-        schema_path = "testSchemaPath"
-        api_url = "testAPIUrl"
 
-        
+class testConfigVars:
+    conf = "unit"
+    datset_bucket_name = "testDatasetBucket"
+    schema_bucket_name = "testSchemaBucketName"
+    firestore_host = "testFirestoreEmulatorHost"
+    storage_host = "testStorageEmulatorHost"
+    app_credentials = "testAppCredentials"
+    dataset_path = "testDatasetPath"
+    schema_path = "testSchemaPath"
+    api_url = "testAPIUrl"
+
+
 class ConfigTest(TestCase):
     def test_get_value_from_env(self):
         """
@@ -27,7 +28,6 @@ class ConfigTest(TestCase):
         assert env_value == "test123"
         del os.environ["test"]
 
-
     def test_get_value_from_env_default(self):
         """
         Test that when a default variable has been set the function works as expected.
@@ -37,7 +37,6 @@ class ConfigTest(TestCase):
 
         assert env_value == test_value
 
-
     def test_get_value_from_env_exception(self):
         """
         Test that when nothing has been set the function returns the expected exception.
@@ -46,10 +45,6 @@ class ConfigTest(TestCase):
             config.get_value_from_env("test")
         except Exception as e:
             assert str(e).__contains__("test")
-
-
-   
-
 
     def test_set_Config(self):
         """
@@ -69,7 +64,6 @@ class ConfigTest(TestCase):
             and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
         )
 
-
     def test_set_CloudBuildConfig(self):
         """
         Test that setting the cloud build config object works as intended.
@@ -84,7 +78,6 @@ class ConfigTest(TestCase):
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
             and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
         )
-
 
     def test_set_ServiceEmulatorDevelopementConfig(self):
         """
@@ -107,7 +100,6 @@ class ConfigTest(TestCase):
             and testConfig.STORAGE_EMULATOR_HOST == testConfigVars.storage_host
         )
 
-
     def test_set_CloudDevelopmentConfig(self):
         """
         Test that setting the cloud development config object works as intended.
@@ -124,7 +116,8 @@ class ConfigTest(TestCase):
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
             and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
             and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
-            and testConfig.GOOGLE_APPLICATION_CREDENTIALS == testConfigVars.app_credentials
+            and testConfig.GOOGLE_APPLICATION_CREDENTIALS
+            == testConfigVars.app_credentials
         )
 
     def test_set_UnitTestingConfig(self):

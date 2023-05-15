@@ -1,0 +1,229 @@
+import json
+import os
+import shutil
+import time
+from pathlib import Path
+
+import firebase_admin
+import google.auth.transport.requests
+import google.oauth2.id_token
+import requests
+from config.config_factory import ConfigFactory
+from firebase_admin import _apps, firestore
+from google.cloud import storage
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
+
+config = ConfigFactory.get_config()
+
+if not _apps:
+    firebase_admin.initialize_app()
+
+db = firestore.client()
+
+
+def setup_session() -> requests.Session:
+    """
+    Method to setup a http/s session to facilitate testing.
+
+    Parameters:
+        None
+
+    Returns:
+        Session: a http/s session.
+    """
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
+    return session
+
+
+def generate_headers() -> dict[str, str]:
+    """
+    Method to create headers for authentication if connecting to a remote version of the API.
+
+    Parameters:
+        None
+
+    Returns:
+        dict[str, str]: the headers required for remote authentication.
+    """
+    headers = {}
+    if not config.API_URL.__contains__("localhost"):
+        try:
+            auth_req = google.auth.transport.requests.Request()
+            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
+        except Exception:
+            auth_token = os.environ.get("ACCESS_TOKEN")
+
+        headers = {"Authorization": f"Bearer {auth_token}"}
+
+    return headers
+
+
+def load_json(filepath: str) -> dict:
+    """
+    Method to load json from a file.
+
+    Parameters:
+        filepath: string specifiing the location of the file to be loaded.
+
+    Returns:
+        dict: the json object from the specifiede file.
+    """
+    with open(filepath) as f:
+        return json.load(f)
+
+
+def create_dataset(
+    filename: str, dataset: dict, session: requests.Session, headers: dict[str, str]
+) -> int | None:
+    """
+    Method to create a dataset using either the remote new dataset function or the local version.
+
+    Parameters:
+        filename: the filename to use for the dataset
+        dataset: the dataset to be created
+        session: a session instance for http/s connections
+        headers: the relevant headers for authentication for http/s calls
+
+    Returns:
+        int | None: status code for local function and no return for remote.
+    """
+    if config.API_URL.__contains__("local"):
+        simulate_post_dataset_request = session.post(
+            "http://localhost:3006", json=dataset
+        )
+        return simulate_post_dataset_request.status_code
+    else:
+        bucket = storage.Client().bucket(config.DATASET_BUCKET_NAME)
+        blob = bucket.blob(filename)
+        blob.upload_from_string(
+            json.dumps(dataset, indent=2), content_type="application/json"
+        )
+
+        wait_until_dataset_ready(
+            dataset["survey_id"], dataset["period_id"], session, headers
+        )
+
+
+def wait_until_dataset_ready(
+    survey_id: str,
+    period_id: str,
+    session: requests.Session,
+    headers: dict[str, str],
+    attempts: int = 5,
+    backoff: int = 0.5,
+) -> None:
+    """
+    Method to wait until the specified dataset has been created. Includes exponential back off with adjustable defaults.
+
+    Parameters:
+        survey_id: the survey id of the desired dataset metadata
+        period_id: the period id of the desired dataset metadata
+        session: a session instance for http/s connections
+        headers: the relevant headers for authentication for http/s calls
+        attempts: the number of polling attempts made, this value defaults to 3 attempts
+        backoff: the value determining the exponential backoff, this defaults to 0.5.
+                Please note increasing this value could drastically affect runtime.
+
+    Returns:
+        None
+    """
+    while attempts != 0:
+        test_response = session.get(
+            f"{config.API_URL}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
+            headers=headers,
+        )
+        print(test_response.status_code)
+        if test_response.status_code == 200:
+            return
+        else:
+            attempts -= 1
+            time.sleep(backoff)
+            backoff += backoff
+
+
+def cleanup() -> None:
+    """
+    Method to cleanup all test data created depending on local or remote run.
+    Should be ran before and after test to account for test failures.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
+    if config.API_URL.__contains__("local"):
+        requests.delete(
+            "http://localhost:8080/emulator/v1/projects/mock-project-id/databases/(default)/documents"
+        )
+        schema_bucket_path = Path("devtools/gcp-storage-emulator/data/schema_bucket/")
+        dataset_bucket_path = Path("devtools/gcp-storage-emulator/data/dataset_bucket/")
+        if Path.is_dir(schema_bucket_path):
+            shutil.rmtree(schema_bucket_path)
+        if Path.is_dir(dataset_bucket_path):
+            shutil.rmtree(dataset_bucket_path)
+    else:
+        _delete_blobs(storage.Client().get_bucket(config.DATASET_BUCKET_NAME))
+
+        _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
+
+        _delete_collection(db.collection("datasets"))
+
+        _delete_collection(db.collection("schemas"))
+
+
+def _delete_blobs(bucket) -> None:
+    """
+    Method to delete all blobs in the specified bucket.
+
+    Parameters:
+        bucket: the bucket to clean
+
+    Returns:
+        None
+    """
+    blobs = bucket.list_blobs()
+
+    for blob in blobs:
+        blob.delete()
+
+
+def _delete_collection(collection_ref: firestore.CollectionReference) -> None:
+    """
+    Recursively deletes the collection and its subcollections.
+    Parameters:
+    collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
+    """
+    doc_collection = collection_ref.stream()
+
+    for doc in doc_collection:
+        _recursively_delete_document_and_sub_collections(doc.reference)
+
+
+def _recursively_delete_document_and_sub_collections(
+    doc_ref: firestore.DocumentReference,
+) -> None:
+    """
+    Loops through each collection in a document and deletes the collection.
+    Parameters:
+    doc_ref (firestore.DocumentReference): the reference of the document being deleted.
+    """
+    for collection_ref in doc_ref.collections():
+        _delete_collection(collection_ref)
+
+    doc_ref.delete()
+
+
+MOCK_UNIT_RESPONSE = {
+    "schema_version": "v1.0.0",
+    "sds_schema_version": 4,
+    "survey_id": "test_survey_id",
+    "period_id": "abc",
+    "data": "<encrypted data>",
+}
