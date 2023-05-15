@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 from config.config_factory import ConfigFactory
+from google.cloud import storage
 
 config = ConfigFactory.get_config()
 
@@ -68,7 +69,7 @@ def test_empty_bucket(bucket_loader):
     filename = f"{filename_id}.json"
 
     bucket_loader(filename, dataset)
-    
+
     storage_client = storage.Client()
     bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
 
