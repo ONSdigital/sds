@@ -40,7 +40,6 @@ dataset_metadata: DatasetMetadata = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": early_dataset_version,
     "filename": "test_filename.json",
-    "form_type": "yyy",
 }
 
 dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
@@ -54,7 +53,6 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": early_dataset_version,
         "filename": "test_filename.json",
-        "form_type": "yyy",
     },
     {
         "survey_id": f"{survey_id}_2",
@@ -66,7 +64,6 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": new_dataset_version,
         "filename": "test_filename.json",
-        "form_type": "yyy",
     },
 ]
 
@@ -77,7 +74,6 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {"test": "data", "ruref": "12345"},
     },
     {
@@ -86,7 +82,6 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {"hello": "world", "ruref": "56789"},
     },
 ]
@@ -102,7 +97,6 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": new_dataset_version,
     "filename": "test_filename.json",
-    "form_type": "yyy",
 }
 
 unit_supplementary_data: UnitDataset = {
@@ -111,7 +105,6 @@ unit_supplementary_data: UnitDataset = {
     "period_id": "abc",
     "sds_schema_version": 4,
     "schema_version": "v1.0.0",
-    "form_type": "yyy",
     "data": {
         "ruref": unit_id,
         "runame": "Pipes and Maps Ltd",
@@ -153,7 +146,6 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": "<encrypted data>",
     },
     {
@@ -162,7 +154,6 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
-        "form_type": "yyy",
         "data": {
             "ruref": "65871",
             "runame": "Boats and Floats Ltd",
