@@ -84,10 +84,12 @@ class ProcessDatasetTest(TestCase):
             call(
                 dataset_test_data.existing_dataset_unit_data_collection,
                 dataset_test_data.dataset_unit_data_collection[0],
+                dataset_test_data.dataset_unit_data_ruref[0],
             ),
             call(
                 dataset_test_data.existing_dataset_unit_data_collection,
                 dataset_test_data.dataset_unit_data_collection[1],
+                dataset_test_data.dataset_unit_data_ruref[1],
             ),
         ]
         DatasetFirebaseRepository.append_unit_to_dataset_units_collection.assert_has_calls(

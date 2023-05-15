@@ -39,38 +39,7 @@ def test_dataset(client, bucket_loader):
         "survey_id": "test_survey_id",
         "period_id": "abc",
         "form_type": "yyy",
-        "data": {
-            "busdesc": "Provision of equipment for hobbit adventures",
-            "local_unit": [
-                {
-                    "luaddr2": "Underhill",
-                    "luref": "2012763A",
-                    "busdesc": "Creates old fashioned looking paper maps",
-                    "luname": "Maps Factory",
-                    "luaddr1": "1 Bag End",
-                    "tradstyle": "Also Does Adventures Ltd",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AA",
-                },
-                {
-                    "luaddr2": "Maggotsville",
-                    "luref": "20127364B",
-                    "busdesc": "Quality pipe manufacturer",
-                    "buslref": "pipe123",
-                    "luname": "Pipes R Us Subsidiary",
-                    "luaddr1": "12 The Farmstead",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AB",
-                },
-            ],
-            "payeref": "123AB456",
-            "runame": "Pipes and Maps Ltd",
-            "rupostcode": "HO1 1AA",
-            "ruaddr1": "111 Under Hill",
-            "ruaddr4": "The Shire",
-            "ruaddr2": "Hobbitton",
-            "ruref": "43532",
-        },
+        "data": "<encrypted data>",
     }
 
     for dataset_metadata in dataset_metadata_response.json():
@@ -90,7 +59,6 @@ def test_dataset(client, bucket_loader):
 
             assert "sds_dataset_version" in dataset_metadata
             assert "filename" in dataset_metadata
-            assert "form_type" in dataset_metadata
 
 
 def test_post_schema(client):

@@ -48,6 +48,12 @@ class DatasetProcessorService:
             transformed_dataset,
         )
 
+        logger.info("Extracting rurefs from unit data...")
+        rurefs = self._extract_rurefs_from_unit_data(new_dataset_unit_data_collection)
+        logger.info("Rurefs are extracted and stored successfully.")
+        logger.debug(f"Extracted rurefs: {rurefs}")
+
+        logger.info("Transforming unit data collection...")
         transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
             dataset_id, transformed_dataset, new_dataset_unit_data_collection
         )
@@ -57,7 +63,7 @@ class DatasetProcessorService:
         )
 
         self.dataset_writer_service.write_transformed_unit_data_to_repository(
-            dataset_id, transformed_unit_data_collection
+            dataset_id, transformed_unit_data_collection, rurefs
         )
 
         self.dataset_writer_service.try_delete_previous_versions_datasets(
@@ -151,7 +157,7 @@ class DatasetProcessorService:
             "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
             "schema_version": transformed_dataset_metadata["schema_version"],
             "form_type": transformed_dataset_metadata["form_type"],
-            "data": unit_data_item,
+            "data": unit_data_item["unit_data"],
         }
 
     def get_dataset_metadata_collection(
@@ -189,3 +195,14 @@ class DatasetProcessorService:
         metadata_collection_item["dataset_id"] = dataset_metadata_snapshot.id
 
         return metadata_collection_item
+
+    def _extract_rurefs_from_unit_data(
+        self, raw_dataset_unit_data_collection: list[object]
+    ) -> list:
+        """
+        Extracts all rurefs from unit data to store in a separate list
+
+        Parameters:
+        raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
+        """
+        return [item["ruref"] for item in raw_dataset_unit_data_collection]

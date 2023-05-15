@@ -62,7 +62,7 @@ class DatasetFirebaseRepository:
         return self.datasets_collection.document(dataset_id).collection("units")
 
     def append_unit_to_dataset_units_collection(
-        self, units_collection: list[UnitDataset], unit_data: UnitDataset
+        self, units_collection: list[UnitDataset], unit_data: UnitDataset, ruref: str
     ) -> None:
         """
         Appends a new unit to the collection of units associated with a particular dataset.
@@ -72,7 +72,7 @@ class DatasetFirebaseRepository:
         unit_data (any): The unit being appended
         """
         logger.debug(f"Unit data being appended: {unit_data}")
-        units_collection.document(unit_data["data"]["ruref"]).set(unit_data)
+        units_collection.document(ruref).set(unit_data)
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
