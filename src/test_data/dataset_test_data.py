@@ -2,7 +2,7 @@ from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, Uni
 
 from src.test_data import shared_test_data
 
-cloud_event_test_data = {
+cloud_event_data = {
     "id": "test_id",
     "type": "test_type",
     "bucket": "test_bucket",
@@ -12,7 +12,7 @@ cloud_event_test_data = {
     "name": "test_filename.json",
 }
 
-cloud_event_invalid_filename_test_data = {
+cloud_event_invalid_filename_data = {
     "id": "test_id",
     "type": "test_type",
     "bucket": "test_bucket",
@@ -22,44 +22,47 @@ cloud_event_invalid_filename_test_data = {
     "name": "bad_filename.test",
 }
 
-test_unit_id = "test_unit_id"
-test_survey_id = "xyz"
+
+unit_id = "test_unit_id"
+survey_id = "test_survey_id"
+early_dataset_version = 1
+new_dataset_version = 2
 
 
-dataset_metadata_test_data: DatasetMetadata = {
+dataset_metadata: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
-    "survey_id": test_survey_id,
+    "survey_id": survey_id,
     "period_id": "abc",
     "title": "Which side was better?",
     "sds_schema_version": 4,
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 1,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": 1,
+    "sds_dataset_version": early_dataset_version,
     "filename": "test_filename.json",
 }
 
 dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
     {
-        "survey_id": f"{test_survey_id}_1",
+        "survey_id": f"{survey_id}_1",
         "period_id": "abc",
         "title": "Which side was better?",
         "sds_schema_version": 4,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": 1,
+        "sds_dataset_version": early_dataset_version,
         "filename": "test_filename.json",
     },
     {
-        "survey_id": f"{test_survey_id}_2",
-        "period_id": "abc2",
+        "survey_id": f"{survey_id}_2",
+        "period_id": "abc",
         "title": "Which side was better 2?",
         "sds_schema_version": 4,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": 1,
+        "sds_dataset_version": new_dataset_version,
         "filename": "test_filename.json",
     },
 ]
@@ -67,7 +70,7 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
 existing_dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": test_survey_id,
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -75,7 +78,7 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
     },
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -83,26 +86,27 @@ existing_dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_metadata_without_id: DatasetMetadataWithoutId = {
-    "survey_id": "xyz",
+
+updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+    "survey_id": survey_id,
     "period_id": "abc",
     "title": "Which side was better?",
     "sds_schema_version": 4,
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 2,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": 2,
+    "sds_dataset_version": new_dataset_version,
     "filename": "test_filename.json",
 }
 
-test_unit_supplementary_data: UnitDataset = {
+unit_supplementary_data: UnitDataset = {
     "dataset_id": shared_test_data.test_guid,
-    "survey_id": test_survey_id,
+    "survey_id": survey_id,
     "period_id": "abc",
     "sds_schema_version": 4,
     "schema_version": "v1.0.0",
     "data": {
-        "ruref": test_unit_id,
+        "ruref": unit_id,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",
@@ -135,10 +139,10 @@ test_unit_supplementary_data: UnitDataset = {
     },
 }
 
-new_dataset_unit_data_collection: list[UnitDataset] = [
+dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -174,10 +178,12 @@ new_dataset_unit_data_collection: list[UnitDataset] = [
                 },
             ],
         },
+        "form_type": "yyy",
+        "data": "<encrypted data>",
     },
     {
         "dataset_id": shared_test_data.test_guid,
-        "survey_id": "xyz",
+        "survey_id": survey_id,
         "period_id": "abc",
         "sds_schema_version": 4,
         "schema_version": "v1.0.0",
@@ -223,3 +229,5 @@ new_dataset_unit_data_collection: list[UnitDataset] = [
         },
     },
 ]
+
+dataset_unit_data_ruref: list = ["43532", "65871"]

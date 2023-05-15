@@ -15,25 +15,23 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/v1/schema", response_model=SchemaMetadata)
-async def post_schema_metadata(
-    schema_metadata: Schema = Body(...),
+async def post_schema(
+    schema: Schema = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> SchemaMetadata:
     """
     Posts the schema metadata to be processed.
 
     Parameters:
-    schema_metadata (Schema): schema metadata to be processed.
-    schema_processor_service (SchemaProcessorService): injected processor service for processing the schema metadata.
+    schema (Schema): schema to be processed.
+    schema_processor_service (SchemaProcessorService): injected processor service for processing the schema.
     """
     logger.info("Posting schema metadata...")
-    logger.debug(f"Input body: {{{schema_metadata}}}")
+    logger.debug(f"Input body: {{{schema}}}")
 
-    posted_schema_metadata = schema_processor_service.process_raw_schema_metadata(
-        schema_metadata
-    )
+    posted_schema_metadata = schema_processor_service.process_raw_schema(schema)
 
-    logger.info("Schema metadata successfully posted.")
+    logger.info("Schema successfully posted.")
     logger.debug(f"Schema metadata: {posted_schema_metadata}")
 
     return posted_schema_metadata

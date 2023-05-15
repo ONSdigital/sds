@@ -62,7 +62,7 @@ class DatasetFirebaseRepository:
         return self.datasets_collection.document(dataset_id).collection("units")
 
     def append_unit_to_dataset_units_collection(
-        self, units_collection: list[UnitDataset], unit_data: UnitDataset
+        self, units_collection: list[UnitDataset], unit_data: UnitDataset, ruref: str
     ) -> None:
         """
         Appends a new unit to the collection of units associated with a particular dataset.
@@ -72,7 +72,7 @@ class DatasetFirebaseRepository:
         unit_data (any): The unit being appended
         """
         logger.debug(f"Unit data being appended: {unit_data}")
-        units_collection.document(unit_data["data"]["ruref"]).set(unit_data)
+        units_collection.document(ruref).set(unit_data)
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
@@ -105,3 +105,49 @@ class DatasetFirebaseRepository:
             .where("period_id", "==", period_id)
             .stream()
         )
+
+    def delete_previous_versions_datasets(
+        self, survey_id: str, latest_version: int
+    ) -> None:
+        """
+        Queries firestore for older versions of a dataset associated with a survey id,
+        iterates through them and deletes them and their subcollections recursively. The
+        recursion is needed because you cannot delete subcollections of a document in firestore
+        just by deleting the document, it does not cascade.
+
+        Parameters:
+        survey_id (str): survey id of the dataset.
+        latest_version (int): latest version of the dataset.
+        """
+
+        previous_versions_datasets = self.datasets_collection.where(
+            "survey_id", "==", survey_id
+        ).where("sds_dataset_version", "!=", latest_version)
+
+        self._delete_collection(previous_versions_datasets)
+
+    def _delete_collection(self, collection_ref: firestore.CollectionReference) -> None:
+        """
+        Recursively deletes the collection and its subcollections.
+
+        Parameters:
+        collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
+        """
+        doc_collection = collection_ref.stream()
+
+        for doc in doc_collection:
+            self._recursively_delete_document_and_sub_collections(doc.reference)
+
+    def _recursively_delete_document_and_sub_collections(
+        self, doc_ref: firestore.DocumentReference
+    ) -> None:
+        """
+        Loops through each collection in a document and deletes the collection.
+
+        Parameters:
+        doc_ref (firestore.DocumentReference): the reference of the document being deleted.
+        """
+        for collection_ref in doc_ref.collections():
+            self._delete_collection(collection_ref)
+
+        doc_ref.delete()
