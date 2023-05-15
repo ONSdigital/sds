@@ -11,16 +11,14 @@ from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
 from models.dataset_models import UnitDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 
-from src.test_data import dataset_test_data, shared_test_data
-from src.unit_tests.test_helper import TestHelper
+from src.test_data import shared_test_data
 
 config = ConfigFactory.get_config()
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def datetime_mock():
     """
     Mocks datetime.now() wrapper to always return the same date and time in tests.
@@ -32,7 +30,7 @@ def datetime_mock():
     )
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def uuid_mock():
     """
     Mocks guid generation to always return the same guid.
@@ -42,34 +40,7 @@ def uuid_mock():
     uuid.uuid4.return_value = shared_test_data.test_guid
 
 
-@pytest.fixture()
-def dataset_repository_boundaries_mock():
-    """
-    Mocks the application's firebase boundaries to avoid making database calls.
-    """
-
-    DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-    DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-        TestHelper.create_document_snapshot_generator_mock(
-            [dataset_test_data.dataset_metadata_test_data]
-        )
-    )
-
-    DatasetFirebaseRepository.create_new_dataset = MagicMock()
-    DatasetFirebaseRepository.create_new_dataset.return_value = None
-
-    DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
-    DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
-        dataset_test_data.existing_dataset_unit_data_collection
-    )
-
-    DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
-    DatasetFirebaseRepository.append_unit_to_dataset_units_collection.return_value = (
-        None
-    )
-
-
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def cloud_bucket_credentials_mock(monkeypatch):
     """
     Mocks the google bucket credentials.
@@ -77,8 +48,18 @@ def cloud_bucket_credentials_mock(monkeypatch):
     monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
 
 
+@pytest.fixture(autouse=True)
+def firebase_credentials_mock(monkeypatch):
+    """
+    Mocks firebase credentials.
+    """
+    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
+    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
+    monkeypatch.setattr(firestore, "client", MagicMock())
+
+
 @pytest.fixture()
-def cloud_bucket_mock(cloud_bucket_credentials_mock):
+def dataset_bucket_repository_mock():
     """
     Mocks the application's google bucket boundaries.
     """
@@ -92,28 +73,17 @@ def cloud_bucket_mock(cloud_bucket_credentials_mock):
 
 
 @pytest.fixture()
-def firebase_credentials_mock(monkeypatch):
-    """
-    Mocks firebase credentials.
-    """
-    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
-    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
-    monkeypatch.setattr(firestore, "client", MagicMock())
-
-
-@pytest.fixture()
-def new_dataset_mock(firebase_credentials_mock):
+def new_dataset_mock():
     """
     Mocks the cloud function call.
     """
-
     from main import new_dataset
 
     yield new_dataset
 
 
 @pytest.fixture
-def test_client(firebase_credentials_mock):
+def test_client():
     """
     General client for hitting endpoints in tests, also mocking firebase credentials.
     """
@@ -124,7 +94,7 @@ def test_client(firebase_credentials_mock):
 
 
 @pytest.fixture
-def test_client_no_server_exception(firebase_credentials_mock):
+def test_client_no_server_exception():
     """
     This client is only used to test the 500 server error exception handler,
     therefore server exception for this client is suppressed
