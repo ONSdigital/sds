@@ -83,3 +83,12 @@ test_schema_metadata_collection_without_guid: list[SchemaMetadataWithoutGuid] = 
         "sds_published_at": "test_published_time",
     },
 ]
+
+test_latest_schema_without_guid: list[SchemaMetadataWithoutGuid] = [
+    {
+        "survey_id": "test_survey_id",
+        "schema_location": "test_schema_location",
+        "sds_schema_version": 2,
+        "sds_published_at": "test_published_time",
+    },
+]

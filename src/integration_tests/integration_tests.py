@@ -96,3 +96,8 @@ def test_post_schema(client):
 
         assert response.status_code == 200
         assert response.json() == test_schema
+
+        response = client.get(f"/v1/schema?survey_id={schema['survey_id']}")
+
+        assert response.status_code == 200
+        assert response.json() == test_schema

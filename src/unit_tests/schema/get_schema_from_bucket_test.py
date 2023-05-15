@@ -2,8 +2,10 @@ from unittest.mock import MagicMock
 
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
+from services.schema.schema_processor_service import SchemaProcessorService
 
 from src.test_data import schema_test_data
+from src.unit_tests.test_helper import TestHelper
 
 
 def test_get_schema_from_bucket_200_response(test_client):
@@ -26,6 +28,34 @@ def test_get_schema_from_bucket_200_response(test_client):
     assert response.json() == schema_test_data.test_schema_response
 
 
+def test_get_latest_schema_from_bucket_without_version(test_client):
+    """
+    When the schema is queried without version no, the schema of latest version
+    should be returned with a 200 status code
+    """
+    tmp_storage_1 = SchemaFirebaseRepository.get_latest_schema_with_survey_id
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        TestHelper.create_document_snapshot_generator_mock(
+            schema_test_data.test_latest_schema_without_guid
+        )
+    )
+
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+        schema_test_data.test_schema_response
+    )
+
+    response = test_client.get("/v1/schema?survey_id=test_survey_id")
+
+    assert response.status_code == 200
+    assert response.json() == schema_test_data.test_schema_response
+
+    SchemaFirebaseRepository.get_latest_schema_with_survey_id = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+
+
 def test_get_schema_from_bucket_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
@@ -39,6 +69,20 @@ def test_get_schema_from_bucket_404_response(test_client):
     )
 
     response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+
+def test_get_latest_schema_from_bucket_without_version_404_response(test_client):
+    """
+    When the schema is queried without version but no latest schema version is found,
+    there should be a 404 status code and expected response
+    """
+    SchemaProcessorService.get_latest_schema_version_with_survey_id = MagicMock()
+    SchemaProcessorService.get_latest_schema_version_with_survey_id.return_value = None
+
+    response = test_client.get("/v1/schema?survey_id=test_survey_id")
 
     assert response.status_code == 404
     assert response.json()["message"] == "No schema found"

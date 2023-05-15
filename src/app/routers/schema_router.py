@@ -40,9 +40,10 @@ async def post_schema(
 @router.get("/v1/schema")
 async def get_schema_from_bucket(
     survey_id: str,
-    version: str,
+    version: str = None,
     schema_firebase_repository: SchemaFirebaseRepository = Depends(),
     schema_bucket_repository: SchemaBucketRepository = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(),
 ) -> Schema:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
@@ -58,6 +59,15 @@ async def get_schema_from_bucket(
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
     QueryParameterValidatorService.validate_schema_version_parses(version)
+
+    if version is None:
+        latest_version = (
+            schema_processor_service.get_latest_schema_version_with_survey_id(survey_id)
+        )
+        if latest_version is None:
+            logger.error("Schema metadata not found")
+            raise exceptions.ExceptionNoSchemaFound
+        version = latest_version
 
     bucket_schema_filename = (
         schema_firebase_repository.get_schema_metadata_bucket_filename(
