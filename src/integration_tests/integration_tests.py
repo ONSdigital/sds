@@ -38,7 +38,6 @@ def test_dataset(client, bucket_loader):
         "sds_schema_version": 4,
         "survey_id": "test_survey_id",
         "period_id": "abc",
-        "form_type": "yyy",
         "data": "<encrypted data>",
     }
 

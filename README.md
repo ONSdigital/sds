@@ -31,7 +31,6 @@ curl -X POST localhost:3006 \
 -H "Content-Type: application/cloudevents+json" \
 -d '{ "survey_id": "NRX",
   "period_id": "ttt",
-  "form_type": "yyy",
   "title": "Which side was better?",
   "sds_schema_version": 4,
   "schema_version": "v1.0.0",

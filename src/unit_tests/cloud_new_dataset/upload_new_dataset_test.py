@@ -193,7 +193,6 @@ def test_missing_dataset_keys(new_dataset_mock):
         "period_id": "test_period_id",
         "sds_schema_version": "test_sds_schema_version",
         "schema_version": 1,
-        "form_type": "test_form_type",
         "data": "test_data",
     }
 

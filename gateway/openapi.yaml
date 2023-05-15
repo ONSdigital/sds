@@ -31,9 +31,6 @@ paths:
           schema:
             type: object
             properties:
-              form_type:
-                type: string
-                example: yyy
               survey_id:
                 type: string
                 example: NRX
@@ -379,9 +376,6 @@ definitions:
       filename: 
         type: string
         example: 0d5adee0-c91b-4aeb-9e1c-bfa3b1cdf0a6.json
-      form_type: 
-        type: string
-        example: yyy
       dataset_id: 
         type: string
         example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
