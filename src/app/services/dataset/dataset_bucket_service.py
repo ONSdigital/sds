@@ -1,3 +1,4 @@
+from config.config_factory import ConfigFactory
 from logging_config import logging
 from models.dataset_models import UnitDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
@@ -8,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 class DatasetBucketService:
     def __init__(self, bucket_name):
+        self.config = ConfigFactory.get_config()
+
         self.bucket_name = bucket_name
         self.dataset_bucket_repository = DatasetBucketRepository(bucket_name)
 
@@ -17,7 +20,9 @@ class DatasetBucketService:
         raw_dataset_with_metadata = (
             self.dataset_bucket_repository.get_dataset_file_as_json(filename)
         )
-        self._try_empty_bucket()
+
+        if self.config.AUTODELETE_DATASET_BUCKET_FILE:
+            self._try_empty_bucket()
 
         DatasetValidatorService.validate_raw_dataset(raw_dataset_with_metadata)
 
