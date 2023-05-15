@@ -149,7 +149,7 @@ paths:
               - status
               - message
     get:
-      description: GET method that returns the schema corresponding to the given survey_id and version.
+      description: GET method that returns the schema corresponding to the given survey_id and version. The schema of latest version is returned if version is omitted.
       parameters:
         - name: survey_id
           in: query
@@ -158,12 +158,11 @@ paths:
         - name: version
           in: query
           type: string
-          required: true
       responses:
         200:
           description: Succesfully retrieved schema
           schema:
-            $ref: "#/definitions/sds_schema_metadata"
+            $ref: "#/definitions/sds_schema"
         400:
           description: Invalid version provided
           schema:

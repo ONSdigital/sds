@@ -47,11 +47,12 @@ async def get_schema_from_bucket(
 ) -> Schema:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
-    with specific survey id and version from the bucket.
+    with specific survey id and version from the bucket. Latest version schema will be retrieved
+    if version is omitted
 
     Parameters:
     survey_id (str): survey id of the schema metadata.
-    version (str): version of the survey.
+    version (str) (optional): version of the survey.
     schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
         interacting with the schema collection in firestore.
     """
