@@ -2,10 +2,7 @@ from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
-    IntegrationTestingLocalCloudConfig,
-    IntegrationTestingLocalConfig,
-    IntegrationTestingLocalSDSConfig,
-    IntegrationTestingRemoteCloudConfig,
+    IntegrationTests,
     ServiceEmulatorDevelopementConfig,
     UnitTestingConfig,
 )
@@ -21,17 +18,11 @@ class ConfigFactory:
                 return ServiceEmulatorDevelopementConfig()
             case "cloud-dev":
                 return CloudDevelopmentConfig()
-            case "int-test-localSDS":
-                return IntegrationTestingLocalSDSConfig()
-            case "cloud-int-test-local":
-                return IntegrationTestingLocalCloudConfig()
-            case "int-test-docker":
-                return IntegrationTestingLocalConfig()
             case "unit":
                 return UnitTestingConfig()
             case "cloud-build":
                 return CloudBuildConfig()
-            case "cloud-int-test-remote":
-                return IntegrationTestingRemoteCloudConfig()
+            case "int-test":
+                return IntegrationTests()
             case "default":
                 return Config()

@@ -1,4 +1,5 @@
 import os
+from logging import Logger
 
 
 def get_value_from_env(env_value, default_value="") -> str:
@@ -14,7 +15,7 @@ def get_value_from_env(env_value, default_value="") -> str:
         str: the environment value corresponding to the input
     """
     value = os.environ.get(env_value)
-    if value:
+    if value != None:
         return value
     elif default_value != "":
         return default_value
