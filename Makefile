@@ -2,7 +2,7 @@
 PYTHONPATH=src/app
 TEST_DATASET_PATH=src/test_data/dataset.json
 TEST_SCHEMA_PATH=src/test_data/schema.json
-GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
+GOOGLE_APPLICATION_CREDENTIALS:=sandbox-key.json
 API_URL:=http://localhost:3000
 
 start-cloud-dev:

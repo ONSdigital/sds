@@ -70,6 +70,7 @@ steps:
         export ACCESS_TOKEN=$(cat /workspace/token)
         export API_URL=$_API_URL
         export DATASET_BUCKET_NAME=$_DATASET_BUCKET
+        export GOOGLE_ACCESS_CREDENTIALS=
         make integration-test-sandbox
 options:
   logging: CLOUD_LOGGING_ONLY

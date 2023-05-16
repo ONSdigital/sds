@@ -19,8 +19,6 @@ config = ConfigFactory.get_config()
 if not _apps:
     firebase_admin.initialize_app()
 
-db = firestore.client()
-
 
 def setup_session() -> requests.Session:
     """
@@ -94,7 +92,7 @@ def create_dataset(
     if config.API_URL.__contains__("local"):
         return _create_local_dataset(session, dataset)
     else:
-        _create_remote_dataset(filename, dataset, session, headers)
+        _create_remote_dataset(session, filename, dataset, headers)
 
 
 def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
@@ -202,9 +200,12 @@ def cleanup() -> None:
 
         _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
 
-        _delete_collection(db.collection("datasets"))
+        if os.environ.get("GOOGLE_ACCESS_CREDENTIALS") != "":
+            db = firestore.client()
 
-        _delete_collection(db.collection("schemas"))
+            _delete_collection(db.collection("datasets"))
+
+            _delete_collection(db.collection("schemas"))
 
 
 def _delete_blobs(bucket) -> None:
