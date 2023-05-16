@@ -52,14 +52,12 @@ def generate_headers() -> dict[str, str]:
         dict[str, str]: the headers required for remote authentication.
     """
     headers = {}
-    if not config.API_URL.__contains__("localhost"):
-        try:
-            auth_req = google.auth.transport.requests.Request()
-            auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
-        except Exception:
-            auth_token = os.environ.get("ACCESS_TOKEN")
+    auth_token = os.environ.get("ACCESS_TOKEN")
+    if auth_token is None:
+        auth_req = google.auth.transport.requests.Request()
+        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)      
 
-        headers = {"Authorization": f"Bearer {auth_token}"}
+    headers = {"Authorization": f"Bearer {auth_token}"}
 
     return headers
 
