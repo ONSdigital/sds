@@ -196,13 +196,12 @@ def cleanup() -> None:
         if Path.is_dir(dataset_bucket_path):
             shutil.rmtree(dataset_bucket_path)
     else:
-        _delete_blobs(storage.Client().get_bucket(config.DATASET_BUCKET_NAME))
-
-        _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
-
         if os.environ.get("GOOGLE_ACCESS_CREDENTIALS") != "":
             db = firestore.client()
+            _delete_blobs(storage.Client().get_bucket(config.DATASET_BUCKET_NAME))
 
+            _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
+            
             _delete_collection(db.collection("datasets"))
 
             _delete_collection(db.collection("schemas"))
