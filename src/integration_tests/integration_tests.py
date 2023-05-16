@@ -90,14 +90,16 @@ def test_post_schema(client):
             "sds_published_at": schema["sds_published_at"],
         }
 
-        response = client.get(
+        set_version_schema_response = client.get(
             f"/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}"
         )
 
-        assert response.status_code == 200
-        assert response.json() == test_schema
+        assert set_version_schema_response.status_code == 200
+        assert set_version_schema_response.json() == test_schema
 
-        response = client.get(f"/v1/schema?survey_id={schema['survey_id']}")
+        latest_version_schema_response = client.get(
+            f"/v1/schema?survey_id={schema['survey_id']}"
+        )
 
-        assert response.status_code == 200
-        assert response.json() == test_schema
+        assert latest_version_schema_response.status_code == 200
+        assert latest_version_schema_response.json() == test_schema
