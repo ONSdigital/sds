@@ -37,17 +37,17 @@ def test_get_value_from_env_exception():
 
 
 @pytest.mark.parametrize("acceptable_true_value", ["true", "True"])
-def test_get_bool_value_from_env(acceptable_true_value):
+def test_get_bool_value_from_env_true(acceptable_true_value: str):
     os.environ["test"] = acceptable_true_value
 
-    assert config.get_value_from_env("test") == True
+    assert config.get_value_from_env("test") is True
 
 
 @pytest.mark.parametrize("acceptable_false_value", ["false", "False"])
-def test_get_bool_value_from_env(acceptable_false_value):
+def test_get_bool_value_from_env_false(acceptable_false_value: str):
     os.environ["test"] = acceptable_false_value
 
-    assert config.get_value_from_env("test") == False
+    assert config.get_value_from_env("test") is False
 
 
 class testConfigVars:
