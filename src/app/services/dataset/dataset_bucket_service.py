@@ -22,7 +22,7 @@ class DatasetBucketService:
 
         return raw_dataset_with_metadata
 
-    def _try_empty_bucket(self) -> None:
+    def try_empty_bucket(self) -> None:
         try:
             self.dataset_bucket_repository.empty_bucket()
         except Exception as e:
