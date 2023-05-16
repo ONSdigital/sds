@@ -2,9 +2,9 @@ from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
-    IntegrationTestCloudbuild,
-    IntegrationTests,
-    ServiceEmulatorDevelopementConfig,
+    IntegrationTestCloudbuildConfig,
+    IntegrationTestConfig,
+    ServiceEmulatorDevelopmentConfig,
     UnitTestingConfig,
 )
 from config.config_helpers import get_value_from_env
@@ -16,7 +16,7 @@ class ConfigFactory:
 
         match env_conf:
             case "docker-dev":
-                return ServiceEmulatorDevelopementConfig()
+                return ServiceEmulatorDevelopmentConfig()
             case "cloud-dev":
                 return CloudDevelopmentConfig()
             case "unit":
@@ -24,8 +24,8 @@ class ConfigFactory:
             case "cloud-build":
                 return CloudBuildConfig()
             case "int-test":
-                return IntegrationTests()
+                return IntegrationTestConfig()
             case "int-test-cloudbuild":
-                return IntegrationTestCloudbuild()
+                return IntegrationTestCloudbuildConfig()
             case "default":
                 return Config()

@@ -116,7 +116,7 @@ def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
 
 def _create_remote_dataset(
     session: requests.Session, filename: str, dataset: dict, headers: dict[str, str]
-) -> int:
+) -> None:
     """
     Method to create a remote dataset.
 
@@ -134,7 +134,6 @@ def _create_remote_dataset(
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-
     wait_until_dataset_ready(
         dataset["survey_id"], dataset["period_id"], session, headers
     )
@@ -189,15 +188,11 @@ def cleanup() -> None:
         None
     """
     if config.API_URL.__contains__("local"):
-        requests.delete(
-            "http://localhost:8080/emulator/v1/projects/mock-project-id/databases/(default)/documents"
-        )
-        schema_bucket_path = Path("devtools/gcp-storage-emulator/data/schema_bucket/")
-        dataset_bucket_path = Path("devtools/gcp-storage-emulator/data/dataset_bucket/")
-        if Path.is_dir(schema_bucket_path):
-            shutil.rmtree(schema_bucket_path)
-        if Path.is_dir(dataset_bucket_path):
-            shutil.rmtree(dataset_bucket_path)
+        _delete_local_firestore_data()
+
+        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
+
+        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
         _delete_blobs(storage_client.get_bucket(config.DATASET_BUCKET_NAME))
 
@@ -206,6 +201,36 @@ def cleanup() -> None:
         _delete_collection(db.collection("datasets"))
 
         _delete_collection(db.collection("schemas"))
+
+
+def _delete_local_firestore_data():
+    """
+    Method to cleanup local test data in the emulated firestore instance.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
+    requests.delete(
+        "http://localhost:8080/emulator/v1/projects/mock-project-id/databases/(default)/documents"
+    )
+
+
+def _delete_local_bucket_data(filepath: str):
+    """
+    Method to cleanup local test data in the bucket instance.
+
+    Parameters:
+        filepath: the filepath for the bucket instance to be deleted
+
+    Returns:
+        None
+    """
+    path_instance = Path(filepath)
+    if Path.is_dir(path_instance):
+        shutil.rmtree(path_instance)
 
 
 def _delete_blobs(bucket) -> None:

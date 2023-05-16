@@ -41,7 +41,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
         create_dataset_response = create_dataset(filename, dataset, session, headers)
         if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsucessful request to create dataset"
+            assert False, "Unsuccessful request to create dataset"
 
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",

@@ -16,17 +16,17 @@ class Config(BaseSettings):
     DATASET_BUCKET_NAME: str
 
 
-class IntegrationTests(BaseSettings):
+class IntegrationTestConfig(BaseSettings):
     def __init__(self):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.DATASET_BUCKET_NAME = get_value_from_env(
-            "DATASET_BUCKET_NAME", "testDatasetBucket"
+            "DATASET_BUCKET_NAME", "test_dataset_bucket"
         )
         self.SCHEMA_BUCKET_NAME = get_value_from_env(
-            "SCHEMA_BUCKET_NAME", "testSchemaBucket"
+            "SCHEMA_BUCKET_NAME", "test_schema_bucket"
         )
         self.TEST_DATASET_PATH = get_value_from_env(
             "TEST_DATASET_PATH", "src/test_data/dataset.json"
@@ -48,7 +48,7 @@ class IntegrationTests(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
-class IntegrationTestCloudbuild(BaseSettings):
+class IntegrationTestCloudbuildConfig(BaseSettings):
     def __init__(self):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
@@ -90,7 +90,7 @@ class CloudBuildConfig(BaseSettings):
     SCHEMA_BUCKET_NAME: str
 
 
-class ServiceEmulatorDevelopementConfig(Config):
+class ServiceEmulatorDevelopmentConfig(Config):
     def __init__(self):
         super().__init__()
         self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
