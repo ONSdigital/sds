@@ -71,6 +71,18 @@ integration-test-sandbox:
 	python -m pytest src/integration_tests -vv
 
 
+integration-test-cloudbuild:
+	export CONF=int-test-cloudbuild && \
+	export PYTHONPATH=${PYTHONPATH} && \
+    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
+    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
+	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
+    export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
+	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
+	python -m pytest src/integration_tests -vv
+
+
 lint:
 	black . --check
 	isort . --check-only --profile black

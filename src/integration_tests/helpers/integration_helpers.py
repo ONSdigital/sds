@@ -19,6 +19,9 @@ config = ConfigFactory.get_config()
 if not _apps:
     firebase_admin.initialize_app()
 
+db = firestore.client()
+storage_client = storage.Client()
+
 
 def setup_session() -> requests.Session:
     """
@@ -126,7 +129,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = storage.Client().bucket(config.DATASET_BUCKET_NAME)
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
@@ -196,15 +199,13 @@ def cleanup() -> None:
         if Path.is_dir(dataset_bucket_path):
             shutil.rmtree(dataset_bucket_path)
     else:
-        if os.environ.get("GOOGLE_ACCESS_CREDENTIALS") != "":
-            db = firestore.client()
-            _delete_blobs(storage.Client().get_bucket(config.DATASET_BUCKET_NAME))
+        _delete_blobs(storage_client.get_bucket(config.DATASET_BUCKET_NAME))
 
-            _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
+        _delete_blobs(storage_client.get_bucket(config.SCHEMA_BUCKET_NAME))
 
-            _delete_collection(db.collection("datasets"))
+        _delete_collection(db.collection("datasets"))
 
-            _delete_collection(db.collection("schemas"))
+        _delete_collection(db.collection("schemas"))
 
 
 def _delete_blobs(bucket) -> None:

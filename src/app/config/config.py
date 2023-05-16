@@ -48,6 +48,38 @@ class IntegrationTests(BaseSettings):
     GOOGLE_APPLICATION_CREDENTIALS: str
 
 
+class IntegrationTestCloudbuild(BaseSettings):
+    def __init__(self):
+        super().__init__()
+        self.CONF = get_value_from_env("CONF")
+        self.TIME_FORMAT = TIME_FORMAT_STRING
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.DATASET_BUCKET_NAME = get_value_from_env(
+            "DATASET_BUCKET_NAME", "testDatasetBucket"
+        )
+        self.SCHEMA_BUCKET_NAME = get_value_from_env(
+            "SCHEMA_BUCKET_NAME", "testSchemaBucket"
+        )
+        self.TEST_DATASET_PATH = get_value_from_env(
+            "TEST_DATASET_PATH", "src/test_data/dataset.json"
+        )
+        self.TEST_SCHEMA_PATH = get_value_from_env(
+            "TEST_SCHEMA_PATH", "src/test_data/schema.json"
+        )
+        self.ACCESS_TOKEN = get_value_from_env(
+            "ACCESS_TOKEN"
+        )
+
+    CONF: str
+    TIME_FORMAT: str = TIME_FORMAT_STRING
+    DATASET_BUCKET_NAME: str
+    SCHEMA_BUCKET_NAME: str
+    TEST_DATASET_PATH: str
+    TEST_SCHEMA_PATH: str
+    API_URL: str
+    ACCESS_TOKEN: str
+
+
 class CloudBuildConfig(BaseSettings):
     def __init__(self):
         super().__init__()

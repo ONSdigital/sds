@@ -5,6 +5,7 @@ from config.config import (
     IntegrationTests,
     ServiceEmulatorDevelopementConfig,
     UnitTestingConfig,
+    IntegrationTestCloudbuild,
 )
 from config.config_helpers import get_value_from_env
 
@@ -24,5 +25,7 @@ class ConfigFactory:
                 return CloudBuildConfig()
             case "int-test":
                 return IntegrationTests()
+            case "int-test-cloudbuild":
+                return IntegrationTestCloudbuild()
             case "default":
                 return Config()
