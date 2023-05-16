@@ -31,6 +31,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["API_URL"] = testConfigVars.api_url
+        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
 
     def tearDown(self):
         os.environ["CONF"] = INITIAL_CONF
@@ -42,6 +43,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["STORAGE_EMULATOR_HOST"] = ""
         os.environ["SCHEMA_BUCKET_NAME"] = ""
         os.environ["API_URL"] = ""
+        os.environ["ACCESS_TOKEN"] = ""
 
     def test_docker_dev_factory(self):
         os.environ["CONF"] = "docker-dev"
