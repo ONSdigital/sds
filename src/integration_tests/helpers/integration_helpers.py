@@ -55,7 +55,7 @@ def generate_headers() -> dict[str, str]:
     auth_token = os.environ.get("ACCESS_TOKEN")
     if auth_token is None:
         auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)      
+        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
 
     headers = {"Authorization": f"Bearer {auth_token}"}
 
@@ -92,20 +92,51 @@ def create_dataset(
         int | None: status code for local function and no return for remote.
     """
     if config.API_URL.__contains__("local"):
-        simulate_post_dataset_request = session.post(
-            "http://localhost:3006", json=dataset
-        )
-        return simulate_post_dataset_request.status_code
+        return _create_local_dataset(session, dataset)
     else:
-        bucket = storage.Client().bucket(config.DATASET_BUCKET_NAME)
-        blob = bucket.blob(filename)
-        blob.upload_from_string(
-            json.dumps(dataset, indent=2), content_type="application/json"
-        )
+        _create_remote_dataset(filename, dataset, session, headers)
 
-        wait_until_dataset_ready(
-            dataset["survey_id"], dataset["period_id"], session, headers
-        )
+
+def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
+    """
+    Method to create a local dataset.
+
+    Parameters:
+        dataset: the dataset to be created
+        session: a session instance for http/s connections
+
+    Returns:
+        int: status code for local function.
+    """
+    simulate_post_dataset_request = session.post("http://localhost:3006", json=dataset)
+
+    return simulate_post_dataset_request.status_code
+
+
+def _create_remote_dataset(
+    session: requests.Session, filename: str, dataset: dict, headers: dict[str, str]
+) -> int:
+    """
+    Method to create a remote dataset.
+
+    Parameters:
+        filename: the filename to use for the dataset
+        dataset: the dataset to be created
+        session: a session instance for http/s connections
+        headers: the relevant headers for authentication for http/s calls
+
+    Returns:
+        None
+    """
+    bucket = storage.Client().bucket(config.DATASET_BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_string(
+        json.dumps(dataset, indent=2), content_type="application/json"
+    )
+
+    wait_until_dataset_ready(
+        dataset["survey_id"], dataset["period_id"], session, headers
+    )
 
 
 def wait_until_dataset_ready(
@@ -136,7 +167,7 @@ def wait_until_dataset_ready(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
             headers=headers,
         )
-        print(test_response.status_code)
+
         if test_response.status_code == 200:
             return
         else:
