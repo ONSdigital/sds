@@ -25,7 +25,7 @@ services:
       - DATASET_BUCKET_NAME=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - API_URL=http://cloudfunction-new_dataset:8080
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
       - AUTODELETE_DATASET_BUCKET_FILE=True
     volumes:
       - ./src/app:/src
@@ -63,7 +63,7 @@ services:
       - DATASET_BUCKET_NAME=dataset_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=/devtools/mock_google_app_key.json
       - AUTODELETE_DATASET_BUCKET_FILE=True
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -81,7 +81,7 @@ services:
       - SCHEMA_BUCKET_NAME=schema_bucket
       - GOOGLE_APPLICATION_CREDENTIALS=../devtools/mock_google_app_key.json
       - AUTODELETE_DATASET_BUCKET_FILE=True
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds
