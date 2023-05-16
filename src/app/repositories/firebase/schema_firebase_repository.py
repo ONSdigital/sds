@@ -63,6 +63,25 @@ class SchemaFirebaseRepository:
         for schema in schemas_result:
             return schema.to_dict()["schema_location"]
 
+    def get_latest_schema_metadata_bucket_filename(self, survey_id: str) -> str:
+        """
+        Gets the filename of schema metadata with a specific survey id and version. Should only ever return one entry.
+
+        Parameters:
+        survey_id (str): The survey id of the survey being queried.
+        version (str): The version of the survey being queried
+        """
+
+        schemas_result = (
+            self.schemas_collection.where("survey_id", "==", survey_id)
+            .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+            .limit(1)
+            .stream()
+        )
+
+        for schema in schemas_result:
+            return schema.to_dict()["schema_location"]
+
     def get_schema_metadata_collection(
         self, survey_id: str
     ) -> Generator[DocumentSnapshot, None, None]:

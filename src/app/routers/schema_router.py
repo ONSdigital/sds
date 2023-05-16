@@ -43,7 +43,6 @@ async def get_schema_from_bucket(
     version: str = None,
     schema_firebase_repository: SchemaFirebaseRepository = Depends(),
     schema_bucket_repository: SchemaBucketRepository = Depends(),
-    schema_processor_service: SchemaProcessorService = Depends(),
 ) -> Schema:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
@@ -62,19 +61,17 @@ async def get_schema_from_bucket(
     QueryParameterValidatorService.validate_schema_version_parses(version)
 
     if version is None:
-        latest_version = (
-            schema_processor_service.get_latest_schema_version_with_survey_id(survey_id)
+        bucket_schema_filename = (
+            schema_firebase_repository.get_latest_schema_metadata_bucket_filename(
+                survey_id
+            )
         )
-        if latest_version is None:
-            logger.error("Schema metadata not found")
-            raise exceptions.ExceptionNoSchemaFound
-        version = latest_version
-
-    bucket_schema_filename = (
-        schema_firebase_repository.get_schema_metadata_bucket_filename(
-            survey_id, version
+    else:
+        bucket_schema_filename = (
+            schema_firebase_repository.get_schema_metadata_bucket_filename(
+                survey_id, version
+            )
         )
-    )
 
     if not bucket_schema_filename:
         logger.error("Schema metadata not found")

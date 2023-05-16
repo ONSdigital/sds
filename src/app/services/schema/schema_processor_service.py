@@ -84,21 +84,6 @@ class SchemaProcessorService:
             current_version_metadata, "sds_schema_version"
         )
 
-    def get_latest_schema_version_with_survey_id(self, survey_id: str) -> int:
-        """
-        Get the latest schema version of a particular survey id
-
-        Parameters:
-        survey_id (str): the survey id used to fetch for the latest schema version
-        """
-
-        current_version_metadata = (
-            self.schema_firebase_repository.get_latest_schema_with_survey_id(survey_id)
-        )
-
-        for schema_metadata in current_version_metadata:
-            return schema_metadata.to_dict()["sds_schema_version"]
-
     def get_schema_metadata_collection_with_guid(
         self, survey_id: str
     ) -> list[SchemaMetadata]:
