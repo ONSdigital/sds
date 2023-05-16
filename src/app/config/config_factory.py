@@ -2,10 +2,10 @@ from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
+    IntegrationTestCloudbuild,
     IntegrationTests,
     ServiceEmulatorDevelopementConfig,
     UnitTestingConfig,
-    IntegrationTestCloudbuild,
 )
 from config.config_helpers import get_value_from_env
 

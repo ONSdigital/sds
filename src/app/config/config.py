@@ -66,9 +66,7 @@ class IntegrationTestCloudbuild(BaseSettings):
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "src/test_data/schema.json"
         )
-        self.ACCESS_TOKEN = get_value_from_env(
-            "ACCESS_TOKEN"
-        )
+        self.ACCESS_TOKEN = get_value_from_env("ACCESS_TOKEN")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
