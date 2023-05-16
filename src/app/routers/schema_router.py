@@ -3,7 +3,6 @@ from fastapi import APIRouter, Body, Depends
 from logging_config import logging
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
 from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
