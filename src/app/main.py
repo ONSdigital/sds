@@ -38,5 +38,5 @@ def new_dataset(cloud_event):
 
     logger.info("Dataset uploaded successfully.")
 
-    if config.AUTODELETE_DATASET_BUCKET_FILE:
+    if config.AUTODELETE_DATASET_BUCKET_FILE is True:
         dataset_bucket_service._try_empty_bucket()

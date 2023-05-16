@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from config import config
 
 
@@ -33,6 +34,20 @@ def test_get_value_from_env_exception():
         config.get_value_from_env("test")
     except Exception as e:
         assert str(e).__contains__("test")
+
+
+@pytest.mark.parametrize("acceptable_true_value", ["true", "True"])
+def test_get_bool_value_from_env(acceptable_true_value):
+    os.environ["test"] = acceptable_true_value
+
+    assert config.get_value_from_env("test") == True
+
+
+@pytest.mark.parametrize("acceptable_false_value", ["false", "False"])
+def test_get_bool_value_from_env(acceptable_false_value):
+    os.environ["test"] = acceptable_false_value
+
+    assert config.get_value_from_env("test") == False
 
 
 class testConfigVars:
