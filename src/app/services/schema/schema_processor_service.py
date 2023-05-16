@@ -112,16 +112,10 @@ class SchemaProcessorService:
         the latest schema filename is retrieved
         """
         if version is None:
-            bucket_schema_filename = (
-                self.schema_firebase_repository.get_latest_schema_bucket_filename(
-                    survey_id
-                )
+            return self.schema_firebase_repository.get_latest_schema_bucket_filename(
+                survey_id
             )
         else:
-            bucket_schema_filename = (
-                self.schema_firebase_repository.get_schema_bucket_filename(
-                    survey_id, version
-                )
+            return self.schema_firebase_repository.get_schema_bucket_filename(
+                survey_id, version
             )
-
-        return bucket_schema_filename
