@@ -2,7 +2,6 @@ import json
 from datetime import datetime
 
 from config.config_factory import ConfigFactory
-from google.cloud import storage
 
 config = ConfigFactory.get_config()
 
