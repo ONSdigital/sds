@@ -201,7 +201,7 @@ def cleanup() -> None:
             _delete_blobs(storage.Client().get_bucket(config.DATASET_BUCKET_NAME))
 
             _delete_blobs(storage.Client().get_bucket(config.SCHEMA_BUCKET_NAME))
-            
+
             _delete_collection(db.collection("datasets"))
 
             _delete_collection(db.collection("schemas"))
