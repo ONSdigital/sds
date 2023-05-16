@@ -6,14 +6,15 @@ from config import config
 
 class testConfigVars:
     conf = "unit"
-    datset_bucket_name = "testDatasetBucket"
-    schema_bucket_name = "testSchemaBucketName"
-    firestore_host = "testFirestoreEmulatorHost"
-    storage_host = "testStorageEmulatorHost"
-    app_credentials = "testAppCredentials"
-    dataset_path = "testDatasetPath"
-    schema_path = "testSchemaPath"
-    api_url = "testAPIUrl"
+    datset_bucket_name = "test_dataset_bucket"
+    schema_bucket_name = "test_schema_bucket_name"
+    firestore_host = "test_firestore_emulatorHost"
+    storage_host = "test_storage_emulatorHost"
+    app_credentials = "test_app_credentials"
+    dataset_path = "test_dataset_path"
+    schema_path = "test_schema_path"
+    api_url = "test_API_url"
+    access_token = "test_access_token"
 
 
 class ConfigTest(TestCase):
@@ -89,7 +90,7 @@ class ConfigTest(TestCase):
         os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
 
-        testConfig = config.ServiceEmulatorDevelopementConfig()
+        testConfig = config.ServiceEmulatorDevelopmentConfig()
 
         assert (
             testConfig.CONF == testConfigVars.conf
@@ -153,7 +154,7 @@ class ConfigTest(TestCase):
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
 
-        testConfig = config.IntegrationTests()
+        testConfig = config.IntegrationTestConfig()
 
         assert (
             testConfig.CONF == testConfigVars.conf
@@ -162,4 +163,29 @@ class ConfigTest(TestCase):
             and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
             and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
             and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
+            and testConfig.GOOGLE_APPLICATION_CREDENTIALS
+            == testConfigVars.app_credentials
+        )
+
+    def test_set_IntegrationTestCloudBuildConfig(self):
+        """
+        Test that setting the unit testing config object works as intended.
+        """
+        os.environ["CONF"] = testConfigVars.conf
+        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
+        os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
+        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
+        os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
+        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
+
+        testConfig = config.IntegrationTestCloudbuildConfig()
+
+        assert (
+            testConfig.CONF == testConfigVars.conf
+            and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
+            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
+            and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
+            and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
+            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
+            and testConfig.ACCESS_TOKEN == testConfigVars.access_token
         )

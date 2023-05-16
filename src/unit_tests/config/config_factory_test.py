@@ -5,7 +5,9 @@ from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
-    ServiceEmulatorDevelopementConfig,
+    IntegrationTestCloudbuildConfig,
+    IntegrationTestConfig,
+    ServiceEmulatorDevelopmentConfig,
     UnitTestingConfig,
 )
 from config.config_factory import ConfigFactory
@@ -16,13 +18,6 @@ INITIAL_CONF = os.environ.get("CONF")
 INITIAL_DATASET_BUCKET_NAME = os.environ.get("DATASET_BUCKET_NAME")
 INITIAL_TEST_DATASET_PATH = os.environ.get("TEST_DATASET_PATH")
 INITIAL_TEST_SCHEMA_PATH = os.environ.get("TEST_SCHEMA_PATH")
-INITIAL_GOOGLE_APPLICATION_CREDENTIALS = os.environ.get(
-    "GOOGLE_APPLICATION_CREDENTIALS"
-)
-INITIAL_FIRESTORE_EMULATOR_HOST = os.environ.get("FIRESTORE_EMULATOR_HOST")
-INITIAL_STORAGE_EMULATOR_HOST = os.environ.get("STORAGE_EMULATOR_HOST")
-INITIAL_SCHEMA_BUCKET_NAME = os.environ.get("SCHEMA_BUCKET_NAME")
-INITIAL_API_URL = os.environ.get("API_URL")
 
 
 class ConfigFactoryTest(TestCase):
@@ -42,18 +37,16 @@ class ConfigFactoryTest(TestCase):
         os.environ["DATASET_BUCKET_NAME"] = INITIAL_DATASET_BUCKET_NAME
         os.environ["TEST_DATASET_PATH"] = INITIAL_TEST_DATASET_PATH
         os.environ["TEST_SCHEMA_PATH"] = INITIAL_TEST_SCHEMA_PATH
-        os.environ[
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        ] = INITIAL_GOOGLE_APPLICATION_CREDENTIALS
-        os.environ["FIRESTORE_EMULATOR_HOST"] = INITIAL_FIRESTORE_EMULATOR_HOST
-        os.environ["STORAGE_EMULATOR_HOST"] = INITIAL_STORAGE_EMULATOR_HOST
-        os.environ["SCHEMA_BUCKET_NAME"] = INITIAL_SCHEMA_BUCKET_NAME
-        os.environ["API_URL"] = INITIAL_API_URL
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
+        os.environ["FIRESTORE_EMULATOR_HOST"] = ""
+        os.environ["STORAGE_EMULATOR_HOST"] = ""
+        os.environ["SCHEMA_BUCKET_NAME"] = ""
+        os.environ["API_URL"] = ""
 
     def test_docker_dev_factory(self):
         os.environ["CONF"] = "docker-dev"
 
-        assert ConfigFactory.get_config() == ServiceEmulatorDevelopementConfig()
+        assert ConfigFactory.get_config() == ServiceEmulatorDevelopmentConfig()
 
     def test_cloud_dev_factory(self):
         os.environ["CONF"] = "cloud-dev"
@@ -69,6 +62,16 @@ class ConfigFactoryTest(TestCase):
         os.environ["CONF"] = "cloud-build"
 
         assert ConfigFactory.get_config() == CloudBuildConfig()
+
+    def test_integration_factory(self):
+        os.environ["CONF"] = "int-test"
+
+        assert ConfigFactory.get_config() == IntegrationTestConfig()
+
+    def test_integration_cloud_factory(self):
+        os.environ["CONF"] = "int-test-cloudbuild"
+
+        assert ConfigFactory.get_config() == IntegrationTestCloudbuildConfig()
 
     def test_default_factory(self):
         os.environ["CONF"] = "default"
