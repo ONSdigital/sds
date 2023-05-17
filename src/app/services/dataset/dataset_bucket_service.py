@@ -14,7 +14,7 @@ class DatasetBucketService:
     def get_valid_dataset(self, filename: str) -> UnitDataset:
         """
         Validates and retrieves dataset from bucket
-        
+
         Parameters:
         filename: name of file being retrieved from bucket
         """
