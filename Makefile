@@ -71,6 +71,7 @@ integration-test-sandbox:
 	python -m pytest src/integration_tests -vv
 
 
+#For use only by automated cloudbuild, is not intended to work locally. 
 integration-test-cloudbuild:
 	export CONF=int-test-cloudbuild && \
 	export PYTHONPATH=${PYTHONPATH} && \

@@ -19,7 +19,7 @@ class E2ESchemaIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
 
-    def test_post_schema(self):
+    def test_schema_e2e(self):
         """
         Post a schema using the /schema api endpoint and check the metadata
         can be retrieved. Also check that schema can be retrieved directly from storage.

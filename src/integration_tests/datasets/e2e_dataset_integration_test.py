@@ -23,7 +23,7 @@ class E2ESchemaIntegrationTest(TestCase):
     def tearDown(self) -> None:
         cleanup()
 
-    def test_dataset(self):
+    def test_dataset_e2e(self):
         """
         Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
 

@@ -51,8 +51,8 @@ steps:
         --source=. \
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
-        --trigger-event-filters="bucket=${_DATASET_BUCKET}" \
-        --set-env-vars="SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build"
+        --trigger-event-filters="bucket=ons-sds-sandbox-01-europe-west2-dataset-892a" \
+        --set-env-vars="SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a,CONF=cloud-build"
   - name: 'gcr.io/cloud-builders/gcloud'
     id: "Get token"
     entrypoint: sh
