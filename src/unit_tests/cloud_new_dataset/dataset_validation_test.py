@@ -64,7 +64,7 @@ class DatasetValidationTest(TestCase):
 
     def test_missing_dataset_keys(self):
         """
-        Validates when there are missing mandatory keys from the dataset.
+        Validates when there are mandatory keys missing from the dataset.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
