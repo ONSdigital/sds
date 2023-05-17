@@ -12,6 +12,12 @@ class DatasetBucketService:
         self.dataset_bucket_repository = DatasetBucketRepository(bucket_name)
 
     def get_valid_dataset(self, filename: str) -> UnitDataset:
+        """
+        Validates and retrieves dataset from bucket
+        
+        Parameters:
+        filename: name of file being retrieved from bucket
+        """
         DatasetValidatorService.validate_file_is_json(filename)
 
         raw_dataset_with_metadata = (
@@ -23,6 +29,9 @@ class DatasetBucketService:
         return raw_dataset_with_metadata
 
     def try_empty_bucket(self) -> None:
+        """
+        Tries to empty the bucket, raises an error on failure
+        """
         try:
             self.dataset_bucket_repository.empty_bucket()
         except Exception as e:
