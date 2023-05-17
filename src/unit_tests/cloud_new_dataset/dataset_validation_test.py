@@ -72,12 +72,9 @@ class DatasetValidationTest(TestCase):
         DatasetProcessorService.process_raw_dataset = MagicMock()
 
         DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
-        DatasetBucketRepository.get_dataset_file_as_json.return_value = {
-            "period_id": "test_period_id",
-            "sds_schema_version": "test_sds_schema_version",
-            "schema_version": 1,
-            "data": "test_data",
-        }
+        DatasetBucketRepository.get_dataset_file_as_json.return_value = (
+            dataset_test_data.missing_keys_dataset_metadata
+        )
 
         with raises(
             RuntimeError,

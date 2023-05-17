@@ -197,4 +197,11 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_unit_data_ruref: list = ["43532", "65871"]
+dataset_unit_data_ruref: list[str] = ["43532", "65871"]
+
+missing_keys_dataset_metadata = {
+    "period_id": "test_period_id",
+    "sds_schema_version": "test_sds_schema_version",
+    "schema_version": 1,
+    "data": [{"unit_data": "test_data", "ruref": "12345"}],
+}

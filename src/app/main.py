@@ -29,7 +29,9 @@ def new_dataset(cloud_event):
 
     dataset_bucket_service = DatasetBucketService(bucket_name)
 
-    raw_dataset_with_metadata = dataset_bucket_service.get_valid_dataset(filename)
+    raw_dataset_with_metadata = dataset_bucket_service.get_and_validate_dataset(
+        filename
+    )
 
     logger.info("Dataset obtained from bucket successfully.")
     logger.debug(f"Dataset: {raw_dataset_with_metadata}")

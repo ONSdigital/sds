@@ -11,7 +11,7 @@ class DatasetBucketService:
         self.bucket_name = bucket_name
         self.dataset_bucket_repository = DatasetBucketRepository(bucket_name)
 
-    def get_valid_dataset(self, filename: str) -> UnitDataset:
+    def get_and_validate_dataset(self, filename: str) -> UnitDataset:
         """
         Validates and retrieves dataset from bucket
 
