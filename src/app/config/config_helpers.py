@@ -3,7 +3,7 @@ import os
 
 def can_cast_to_bool(value: str) -> bool:
     """
-    Checks if a string value can be case to a bool value when made lowercase.
+    Checks if a string value can be cast to a bool value when made lowercase.
 
     Parameters:
     value: env value

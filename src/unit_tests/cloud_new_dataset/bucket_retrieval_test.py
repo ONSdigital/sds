@@ -11,13 +11,13 @@ from src.unit_tests.test_helper import TestHelper
 
 class BucketRetrievalTest(TestCase):
     def setUp(self):
-        self.empty_bucket_stash = DatasetBucketRepository.empty_bucket
+        self.empty_bucket_stash = DatasetBucketRepository.delete_bucket_file
         self.process_raw_dataset_stash = DatasetProcessorService.process_raw_dataset
 
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.empty_bucket = self.empty_bucket_stash
+        DatasetBucketRepository.delete_bucket_file = self.empty_bucket_stash
         DatasetProcessorService.process_raw_dataset = self.process_raw_dataset_stash
 
     def test_empty_datasets_bucket_after_retrieval(self):
@@ -27,12 +27,12 @@ class BucketRetrievalTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetBucketRepository.empty_bucket = MagicMock()
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetBucketRepository.empty_bucket.assert_called_once()
+        DatasetBucketRepository.delete_bucket_file.assert_called_once()
 
     def test_empty_datasets_bucket_failure(self):
         """
@@ -41,15 +41,15 @@ class BucketRetrievalTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetBucketRepository.empty_bucket = MagicMock()
-        DatasetBucketRepository.empty_bucket.side_effect = Exception
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+        DatasetBucketRepository.delete_bucket_file.side_effect = Exception
 
         DatasetProcessorService.process_raw_dataset = MagicMock()
 
         with raises(
             RuntimeError,
-            match="Failed to empty dataset bucket.",
+            match="Failed to delete file from dataset bucket.",
         ):
             TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetBucketRepository.empty_bucket.reset_mock()
+        DatasetBucketRepository.delete_bucket_file.reset_mock()

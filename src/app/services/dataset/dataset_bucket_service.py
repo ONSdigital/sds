@@ -29,16 +29,18 @@ class DatasetBucketService:
         DatasetValidatorService.validate_raw_dataset(raw_dataset_with_metadata)
 
         if self.config.AUTODELETE_DATASET_BUCKET_FILE is True:
-            self._try_empty_bucket()
+            self._try_delete_bucket_file(filename)
 
         return raw_dataset_with_metadata
 
-    def _try_empty_bucket(self) -> None:
+    def _try_delete_bucket_file(self, filename) -> None:
         """
-        Tries to empty the bucket, raises an error on failure
+        Tries to delete a file from the bucket, raises an error on failure.
         """
         try:
-            self.dataset_bucket_repository.empty_bucket()
+            self.dataset_bucket_repository.delete_bucket_file(filename)
         except Exception as e:
-            logger.debug(f"Failed to empty bucket {self.bucket_name} with error: {e}")
-            raise RuntimeError("Failed to empty dataset bucket.")
+            logger.debug(
+                f"Failed to delete file {filename} from bucket {self.bucket_name} with error: {e}"
+            )
+            raise RuntimeError("Failed to delete file from dataset bucket.")

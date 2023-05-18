@@ -15,10 +15,11 @@ class BucketRepository:
 
         return json.loads(self.bucket.blob(filename).download_as_string())
 
-    def empty_bucket(self) -> None:
+    def delete_bucket_file(self, filename: str) -> None:
         """
-        Empties the bucket.
+        Deletes a file with the specific filename from the bucket.
+
+        Parameters:
+        filename: name of the file being deleted.
         """
-        blobs = self.bucket.list_blobs()
-        for blob in blobs:
-            blob.delete()
+        self.bucket.blob(filename).delete()
