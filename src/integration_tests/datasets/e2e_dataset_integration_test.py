@@ -4,16 +4,15 @@ from unittest import TestCase
 from config.config_factory import ConfigFactory
 
 from src.integration_tests.helpers.integration_helpers import (
-    MOCK_UNIT_RESPONSE,
     cleanup,
     create_dataset,
     generate_headers,
     load_json,
     setup_session,
 )
+from test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
 
 config = ConfigFactory.get_config()
-UNIT_ID = "43532"
 
 
 class E2ESchemaIntegrationTest(TestCase):
