@@ -2,6 +2,7 @@ from datetime import datetime
 from unittest import TestCase
 
 from config.config_factory import ConfigFactory
+from google.cloud import storage
 
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
@@ -9,6 +10,7 @@ from src.integration_tests.helpers.integration_helpers import (
     generate_headers,
     load_json,
     setup_session,
+    get_dataset_bucket
 )
 from src.test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
 
@@ -28,6 +30,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
         * We load the sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
+        * We then check the uploaded file has been deleted from the bucket
         * We then use the API to get some unit data back using the dataset_id and a known ru_ref
         * The dataset id an auto generated GUID
         """
@@ -41,6 +44,8 @@ class E2ESchemaIntegrationTest(TestCase):
         create_dataset_response = create_dataset(filename, dataset, session, headers)
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
+
+        assert not get_dataset_bucket().blob(filename).exists()
 
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
