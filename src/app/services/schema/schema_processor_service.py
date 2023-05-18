@@ -105,3 +105,17 @@ class SchemaProcessorService:
             schema_metadata_collection_with_guid.append(return_schema)
 
         return schema_metadata_collection_with_guid
+
+    def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
+        """
+        Gets the filename of the schema in bucket. If version is omitted,
+        the latest schema filename is retrieved
+        """
+        if version is None:
+            return self.schema_firebase_repository.get_latest_schema_bucket_filename(
+                survey_id
+            )
+        else:
+            return self.schema_firebase_repository.get_schema_bucket_filename(
+                survey_id, version
+            )

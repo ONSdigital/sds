@@ -10,10 +10,8 @@ def test_get_schema_from_bucket_200_response(test_client):
     """
     When the schema is retrieved successfully from the bucket there should be a 200 status code and expected response.
     """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = (
-        "test_location"
-    )
+    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_schema_bucket_filename.return_value = "test_location"
 
     SchemaBucketRepository.get_schema_file_as_json = MagicMock()
     SchemaBucketRepository.get_schema_file_as_json.return_value = (
@@ -26,12 +24,38 @@ def test_get_schema_from_bucket_200_response(test_client):
     assert response.json() == schema_test_data.test_schema_response
 
 
+def test_get_latest_schema_from_bucket_without_version(test_client):
+    """
+    When the schema is queried without version no, the schema of latest version
+    should be returned with a 200 status code
+    """
+    tmp_storage_1 = SchemaFirebaseRepository.get_latest_schema_bucket_filename
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename.return_value = (
+        "test_location"
+    )
+
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+        schema_test_data.test_schema_response
+    )
+
+    response = test_client.get("/v1/schema?survey_id=test_survey_id")
+
+    assert response.status_code == 200
+    assert response.json() == schema_test_data.test_schema_response
+
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+
+
 def test_get_schema_from_bucket_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
     """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.return_value = None
+    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_schema_bucket_filename.return_value = None
 
     SchemaBucketRepository.get_schema_file_as_json = MagicMock()
     SchemaBucketRepository.get_schema_file_as_json.return_value = (
@@ -44,6 +68,23 @@ def test_get_schema_from_bucket_404_response(test_client):
     assert response.json()["message"] == "No schema found"
 
 
+def test_get_latest_schema_from_bucket_without_version_404_response(test_client):
+    """
+    When the schema is queried without version but no latest schema version is found,
+    there should be a 404 status code and expected response
+    """
+    tmp_storage = SchemaFirebaseRepository.get_latest_schema_bucket_filename
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename.return_value = None
+
+    response = test_client.get("/v1/schema?survey_id=abcdef")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+    SchemaFirebaseRepository.get_latest_schema_bucket_filename = tmp_storage
+
+
 def test_global_error(test_client_no_server_exception):
     """
     Checks that if app encounter a global exception error
@@ -52,8 +93,8 @@ def test_global_error(test_client_no_server_exception):
     Fixture client_no_server_exception is used to avoid exiting
     the test at exception so that the response can be validated
     """
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_metadata_bucket_filename.side_effect = Exception
+    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
+    SchemaFirebaseRepository.get_schema_bucket_filename.side_effect = Exception
 
     response = test_client_no_server_exception.get(
         "/v1/schema?survey_id=076&version=123"

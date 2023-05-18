@@ -3,7 +3,6 @@ from fastapi import APIRouter, Body, Depends
 from logging_config import logging
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.schema.schema_processor_service import SchemaProcessorService
 from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
@@ -40,17 +39,18 @@ async def post_schema(
 @router.get("/v1/schema")
 async def get_schema_from_bucket(
     survey_id: str,
-    version: str,
-    schema_firebase_repository: SchemaFirebaseRepository = Depends(),
+    version: str = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(),
 ) -> Schema:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
-    with specific survey id and version from the bucket.
+    with specific survey id and version from the bucket. Latest version schema will be retrieved
+    if version is omitted
 
     Parameters:
     survey_id (str): survey id of the schema metadata.
-    version (str): version of the survey.
+    version (str) (optional): version of the survey.
     schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
         interacting with the schema collection in firestore.
     """
@@ -59,10 +59,8 @@ async def get_schema_from_bucket(
 
     QueryParameterValidatorService.validate_schema_version_parses(version)
 
-    bucket_schema_filename = (
-        schema_firebase_repository.get_schema_metadata_bucket_filename(
-            survey_id, version
-        )
+    bucket_schema_filename = schema_processor_service.get_schema_bucket_filename(
+        survey_id, version
     )
 
     if not bucket_schema_filename:

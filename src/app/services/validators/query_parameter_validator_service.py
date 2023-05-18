@@ -14,11 +14,12 @@ class QueryParameterValidatorService:
         Parameters:
         version: version of the schema metadata
         """
-        try:
-            version = int(version)
-        except ValueError:
-            logger.error("Invalid version")
-            raise RequestValidationError(errors=ValueError)
+        if version is not None:
+            try:
+                version = int(version)
+            except ValueError:
+                logger.error("Invalid version")
+                raise RequestValidationError(errors=ValueError)
 
     @staticmethod
     def validate_survey_id_from_schema_metadata(survey_id: str) -> None:

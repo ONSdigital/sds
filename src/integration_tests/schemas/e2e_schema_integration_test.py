@@ -54,10 +54,18 @@ class E2ESchemaIntegrationTest(TestCase):
                 "sds_published_at": schema["sds_published_at"],
             }
 
-            response = session.get(
+            set_version_schema_response = session.get(
                 f"{config.API_URL}/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
                 headers=headers,
             )
 
-            assert response.status_code == 200
-            assert response.json() == test_schema
+            assert set_version_schema_response.status_code == 200
+            assert set_version_schema_response.json() == test_schema
+
+            latest_version_schema_response = session.get(
+                f"{config.API_URL}/v1/schema?survey_id={schema['survey_id']}",
+                headers=headers,
+            )
+
+            assert latest_version_schema_response.status_code == 200
+            assert latest_version_schema_response.json() == test_schema
