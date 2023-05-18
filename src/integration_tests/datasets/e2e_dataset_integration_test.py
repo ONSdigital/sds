@@ -8,11 +8,11 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
     generate_headers,
+    get_dataset_bucket,
     load_json,
     setup_session,
-    get_dataset_bucket
 )
-from src.test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
+from src.test_data.shared_test_data import unit_id, unit_response
 
 config = ConfigFactory.get_config()
 
@@ -57,7 +57,7 @@ class E2ESchemaIntegrationTest(TestCase):
             if dataset_metadata["filename"] == filename:
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={UNIT_ID}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
                     headers=headers,
                 )
 
@@ -67,7 +67,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert json_response["dataset_id"] is not None
 
                 json_response.pop("dataset_id")
-                assert MOCK_UNIT_RESPONSE.items() == json_response.items()
+                assert unit_response.items() == json_response.items()
 
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata
