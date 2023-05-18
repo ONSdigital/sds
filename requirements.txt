@@ -12,3 +12,4 @@ flake8==6.0.0
 coverage==7.2.2
 pytest-cov==4.0.0
 google-cloud-storage==2.8.0
+functions-framework==3.3.0
