@@ -15,13 +15,12 @@ class SchemaBucketRepository(BucketRepository):
         self.storage_client = storage.Client()
         self.config = ConfigFactory.get_config()
 
-        try:
+        if not self.storage_client.bucket(self.config.SCHEMA_BUCKET_NAME).exists():
+            self.bucket = self.storage_client.create_bucket(
+                self.config.SCHEMA_BUCKET_NAME
+            )
+        else:
             self.bucket = self.storage_client.bucket(self.config.SCHEMA_BUCKET_NAME)
-        except Exception:
-            if self.config.CONF == "docker-dev" or "IntegrationTestingDocker":
-                self.bucket = self.storage_client.create_bucket("bucket")
-            else:
-                raise Exception("SCHEMA_BUCKET_NAME must be set")
 
     def store_schema_json(self, filename: str, schema: Schema) -> None:
         """

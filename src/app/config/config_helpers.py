@@ -44,7 +44,7 @@ def get_value_from_env(env_value: str, default_value: str = None) -> str | bool:
         str: the environment value corresponding to the input
     """
     value = os.environ.get(env_value)
-    if value:
+    if value is not None:
         return format_value(value)
 
     if default_value is not None:
