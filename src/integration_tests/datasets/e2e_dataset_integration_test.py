@@ -10,7 +10,7 @@ from src.integration_tests.helpers.integration_helpers import (
     load_json,
     setup_session,
 )
-from test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
+from src.test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
 
 config = ConfigFactory.get_config()
 
