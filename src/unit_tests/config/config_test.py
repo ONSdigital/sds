@@ -1,7 +1,6 @@
 import os
 from unittest import TestCase
 
-import pytest
 from config import config
 
 

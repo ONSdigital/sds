@@ -2,7 +2,6 @@ from datetime import datetime
 from unittest import TestCase
 
 from config.config_factory import ConfigFactory
-from google.cloud import storage
 
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
