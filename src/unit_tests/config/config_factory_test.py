@@ -1,95 +1,81 @@
 import os
+from unittest import TestCase
 
 from config.config import (
     CloudBuildConfig,
     CloudDevelopmentConfig,
     Config,
-    IntegrationTestingLocalCloudConfig,
-    IntegrationTestingLocalConfig,
-    IntegrationTestingLocalSDSConfig,
-    IntegrationTestingRemoteCloudConfig,
-    ServiceEmulatorDevelopementConfig,
+    IntegrationTestCloudbuildConfig,
+    IntegrationTestConfig,
+    ServiceEmulatorDevelopmentConfig,
     UnitTestingConfig,
 )
 from config.config_factory import ConfigFactory
 
 from src.unit_tests.config.config_test import testConfigVars
 
-
-def teardown():
-    os.environ["CONF"] = "unit"
-
-
-def setup():
-    os.environ["CONF"] = testConfigVars.conf
-    os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
-    os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
-    os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
-    os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
-    os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
-    os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
-    os.environ["API_URL"] = testConfigVars.api_url
+INITIAL_CONF = os.environ.get("CONF")
+INITIAL_DATASET_BUCKET_NAME = os.environ.get("DATASET_BUCKET_NAME")
+INITIAL_TEST_DATASET_PATH = os.environ.get("TEST_DATASET_PATH")
+INITIAL_TEST_SCHEMA_PATH = os.environ.get("TEST_SCHEMA_PATH")
 
 
-def test_docker_dev_factory():
-    os.environ["CONF"] = "docker-dev"
+class ConfigFactoryTest(TestCase):
+    def setUp(self):
+        os.environ["CONF"] = testConfigVars.conf
+        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
+        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
+        os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
+        os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
+        os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
+        os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
+        os.environ["API_URL"] = testConfigVars.api_url
+        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
 
-    assert ConfigFactory.get_config() == ServiceEmulatorDevelopementConfig()
-    teardown()
+    def tearDown(self):
+        os.environ["CONF"] = INITIAL_CONF
+        os.environ["DATASET_BUCKET_NAME"] = INITIAL_DATASET_BUCKET_NAME
+        os.environ["TEST_DATASET_PATH"] = INITIAL_TEST_DATASET_PATH
+        os.environ["TEST_SCHEMA_PATH"] = INITIAL_TEST_SCHEMA_PATH
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
+        os.environ["FIRESTORE_EMULATOR_HOST"] = ""
+        os.environ["STORAGE_EMULATOR_HOST"] = ""
+        os.environ["SCHEMA_BUCKET_NAME"] = ""
+        os.environ["API_URL"] = ""
+        os.environ["ACCESS_TOKEN"] = ""
 
+    def test_docker_dev_factory(self):
+        os.environ["CONF"] = "docker-dev"
 
-def test_cloud_dev_factory():
-    os.environ["CONF"] = "cloud-dev"
+        assert ConfigFactory.get_config() == ServiceEmulatorDevelopmentConfig()
 
-    assert ConfigFactory.get_config() == CloudDevelopmentConfig()
-    teardown()
+    def test_cloud_dev_factory(self):
+        os.environ["CONF"] = "cloud-dev"
 
+        assert ConfigFactory.get_config() == CloudDevelopmentConfig()
 
-def test_integration_localSDS_factory():
-    os.environ["CONF"] = "int-test-localSDS"
+    def test_unit_factory(self):
+        os.environ["CONF"] = "unit"
 
-    assert ConfigFactory.get_config() == IntegrationTestingLocalSDSConfig()
-    teardown()
+        assert ConfigFactory.get_config() == UnitTestingConfig()
 
+    def test_cloud_build_factory(self):
+        os.environ["CONF"] = "cloud-build"
 
-def test_cloud_integration_local_factory():
-    os.environ["CONF"] = "cloud-int-test-local"
+        assert ConfigFactory.get_config() == CloudBuildConfig()
 
-    assert ConfigFactory.get_config() == IntegrationTestingLocalCloudConfig()
-    teardown()
+    def test_integration_factory(self):
+        os.environ["CONF"] = "int-test"
 
+        assert ConfigFactory.get_config() == IntegrationTestConfig()
 
-def test_docker_integration_factory():
-    os.environ["CONF"] = "int-test-docker"
+    def test_integration_cloud_factory(self):
+        os.environ["CONF"] = "int-test-cloudbuild"
 
-    assert ConfigFactory.get_config() == IntegrationTestingLocalConfig()
-    teardown()
+        assert ConfigFactory.get_config() == IntegrationTestCloudbuildConfig()
 
+    def test_default_factory(self):
+        os.environ["CONF"] = "default"
 
-def test_unit_factory():
-    os.environ["CONF"] = "unit"
-
-    assert ConfigFactory.get_config() == UnitTestingConfig()
-    teardown()
-
-
-def test_cloud_build_factory():
-    os.environ["CONF"] = "cloud-build"
-
-    assert ConfigFactory.get_config() == CloudBuildConfig()
-    teardown()
-
-
-def test_cloud_integration_remote_factory():
-    os.environ["CONF"] = "cloud-int-test-remote"
-
-    assert ConfigFactory.get_config() == IntegrationTestingRemoteCloudConfig()
-    teardown()
-
-
-def test_default_factory():
-    os.environ["CONF"] = "default"
-
-    assert ConfigFactory.get_config() == Config()
-    teardown()
+        assert ConfigFactory.get_config() == Config()
