@@ -48,24 +48,24 @@ class ConfigTest(TestCase):
         except Exception as e:
             assert str(e).__contains__("test")
 
-    @pytest.mark.parametrize("acceptable_true_value", ["true", "True"])
-    def test_get_bool_value_from_env_true(acceptable_true_value: str):
+    def test_get_bool_value_from_env(self):
         """
-        Test that when the env value is a true boolean it casts correctly.
+        Test that when the env value is a boolean it casts correctly.
         """
-        os.environ["test"] = acceptable_true_value
+        bool_env_test_cases = {
+            "true": True,
+            "True": True,
+            "tRuE": True,
+            "false": False,
+            "False": False,
+            "fAlSe": False,
+        }
 
-        assert config.get_value_from_env("test") is True
+        for key, value in bool_env_test_cases.items():
+            os.environ["test"] = key
 
-
-    @pytest.mark.parametrize("acceptable_false_value", ["false", "False"])
-    def test_get_bool_value_from_env_false(acceptable_false_value: str):
-        """
-        Test that when the env value is a false boolean it casts correctly.
-        """
-        os.environ["test"] = acceptable_false_value
-
-        assert config.get_value_from_env("test") is False
+            assert config.get_value_from_env("test") is value
+            del os.environ["test"]
 
     def test_set_Config(self):
         """
