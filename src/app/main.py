@@ -1,6 +1,6 @@
 import functions_framework
 from logging_config import logging
-from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
+from services.dataset.dataset_bucket_service import DatasetBucketService
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.validators.dataset_validator_service import DatasetValidatorService
 
@@ -24,13 +24,11 @@ def new_dataset(cloud_event):
 
     DatasetValidatorService.validate_file_is_json(filename)
 
-    raw_dataset_with_metadata = DatasetBucketRepository(
+    raw_dataset_with_metadata = DatasetBucketService(
         bucket_name
-    ).get_dataset_file_as_json(filename)
+    ).get_and_validate_dataset(filename)
 
-    DatasetValidatorService.validate_raw_dataset(raw_dataset_with_metadata)
-
-    logger.info("Dataset obtained successfully.")
+    logger.info("Dataset obtained from bucket successfully.")
     logger.debug(f"Dataset: {raw_dataset_with_metadata}")
 
     DatasetProcessorService().process_raw_dataset(filename, raw_dataset_with_metadata)

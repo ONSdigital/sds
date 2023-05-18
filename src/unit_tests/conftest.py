@@ -1,4 +1,3 @@
-import json
 import uuid
 from datetime import datetime
 from unittest.mock import MagicMock
@@ -9,8 +8,6 @@ from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
-from models.dataset_models import UnitDataset
-from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.shared.datetime_service import DatetimeService
 
 from src.test_data import shared_test_data
@@ -56,30 +53,6 @@ def firebase_credentials_mock(monkeypatch):
     monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
     monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
     monkeypatch.setattr(firestore, "client", MagicMock())
-
-
-@pytest.fixture()
-def dataset_bucket_repository_mock():
-    """
-    Mocks the application's google bucket boundaries.
-    """
-    with open(config.TEST_DATASET_PATH) as f:
-        dataset_with_metadata: UnitDataset = json.load(f)
-
-    DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
-    DatasetBucketRepository.get_dataset_file_as_json.return_value = (
-        dataset_with_metadata
-    )
-
-
-@pytest.fixture()
-def new_dataset_mock():
-    """
-    Mocks the cloud function call.
-    """
-    from main import new_dataset
-
-    yield new_dataset
 
 
 @pytest.fixture

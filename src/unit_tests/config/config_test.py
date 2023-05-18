@@ -47,6 +47,25 @@ class ConfigTest(TestCase):
         except Exception as e:
             assert str(e).__contains__("test")
 
+    def test_get_bool_value_from_env(self):
+        """
+        Test that when the env value is a boolean it casts correctly.
+        """
+        bool_env_test_cases = {
+            "true": True,
+            "True": True,
+            "tRuE": True,
+            "false": False,
+            "False": False,
+            "fAlSe": False,
+        }
+
+        for key, value in bool_env_test_cases.items():
+            os.environ["test"] = key
+
+            assert config.get_value_from_env("test") is value
+            del os.environ["test"]
+
     def test_set_Config(self):
         """
         Test that setting the default config object works as intended.

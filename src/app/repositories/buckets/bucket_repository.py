@@ -14,3 +14,12 @@ class BucketRepository:
         """
 
         return json.loads(self.bucket.blob(filename).download_as_string())
+
+    def delete_bucket_file(self, filename: str) -> None:
+        """
+        Deletes a file with the specific filename from the bucket.
+
+        Parameters:
+        filename: name of the file being deleted.
+        """
+        self.bucket.blob(filename).delete()

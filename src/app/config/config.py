@@ -10,10 +10,16 @@ class Config(BaseSettings):
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
         self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
+        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
+            "AUTODELETE_DATASET_BUCKET_FILE"
+        )
+        self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
     DATASET_BUCKET_NAME: str
+    AUTODELETE_DATASET_BUCKET_FILE: bool
+    LOG_LEVEL: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -84,10 +90,16 @@ class CloudBuildConfig(BaseSettings):
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
+            "AUTODELETE_DATASET_BUCKET_FILE"
+        )
+        self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
     SCHEMA_BUCKET_NAME: str
+    AUTODELETE_DATASET_BUCKET_FILE: bool
+    LOG_LEVEL: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):

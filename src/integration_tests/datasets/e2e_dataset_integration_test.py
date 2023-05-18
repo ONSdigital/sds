@@ -7,10 +7,11 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
     generate_headers,
+    get_dataset_bucket,
     load_json,
     setup_session,
 )
-from src.test_data.shared_test_data import MOCK_UNIT_RESPONSE, UNIT_ID
+from src.test_data.shared_test_data import unit_id, unit_response
 
 config = ConfigFactory.get_config()
 
@@ -28,6 +29,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
         * We load the sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
+        * We then check the uploaded file has been deleted from the bucket
         * We then use the API to get some unit data back using the dataset_id and a known ru_ref
         * The dataset id an auto generated GUID
         """
@@ -42,6 +44,8 @@ class E2ESchemaIntegrationTest(TestCase):
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
 
+        assert not get_dataset_bucket().blob(filename).exists()
+
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
             headers=headers,
@@ -52,7 +56,7 @@ class E2ESchemaIntegrationTest(TestCase):
             if dataset_metadata["filename"] == filename:
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={UNIT_ID}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
                     headers=headers,
                 )
 
@@ -62,7 +66,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert json_response["dataset_id"] is not None
 
                 json_response.pop("dataset_id")
-                assert MOCK_UNIT_RESPONSE.items() == json_response.items()
+                assert unit_response.items() == json_response.items()
 
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata

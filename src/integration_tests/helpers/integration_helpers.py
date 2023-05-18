@@ -273,3 +273,7 @@ def _recursively_delete_document_and_sub_collections(
         _delete_collection(collection_ref)
 
     doc_ref.delete()
+
+
+def get_dataset_bucket():
+    return storage_client.bucket(config.DATASET_BUCKET_NAME)
