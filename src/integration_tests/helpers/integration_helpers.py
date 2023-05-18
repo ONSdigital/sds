@@ -273,4 +273,3 @@ def _recursively_delete_document_and_sub_collections(
         _delete_collection(collection_ref)
 
     doc_ref.delete()
-
