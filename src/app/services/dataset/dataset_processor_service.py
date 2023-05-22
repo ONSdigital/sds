@@ -157,7 +157,6 @@ class DatasetProcessorService:
             "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
             "schema_version": transformed_dataset_metadata["schema_version"],
             "data": unit_data_item,
-            "form_type": transformed_dataset_metadata["form_type"],
             "data": unit_data_item["unit_data"],
         }
 

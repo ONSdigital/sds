@@ -178,7 +178,6 @@ dataset_unit_data_collection: list[UnitDataset] = [
                 },
             ],
         },
-        "form_type": "yyy",
         "data": "<encrypted data>",
     },
     {

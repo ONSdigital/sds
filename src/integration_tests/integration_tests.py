@@ -70,7 +70,6 @@ def test_dataset(client, bucket_loader):
             "ruaddr2": "Hobbitton",
             "ruref": "43532",
         },
-        "form_type": "yyy",
         "data": "<encrypted data>",
     }
 
