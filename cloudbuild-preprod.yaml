@@ -3,15 +3,6 @@ steps:
     id: "Setup Python"
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
-  - name: docker
-    id: build_and_push
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest" .
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA"
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:latest"
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Run image"
     entrypoint: gcloud
