@@ -8,8 +8,8 @@ from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
-from services.shared.datetime_service import DatetimeService
 from mockfirestore import MockFirestore
+from services.shared.datetime_service import DatetimeService
 
 from src.test_data import shared_test_data
 
