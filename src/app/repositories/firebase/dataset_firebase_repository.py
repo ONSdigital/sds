@@ -5,14 +5,16 @@ from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase import db
+from config.config_factory import ConfigFactory
 
 logger = logging.getLogger(__name__)
-
+config = ConfigFactory.get_config()
 
 class DatasetFirebaseRepository:
     def __init__(self):
         self.db = db
-        self.datasets_collection = self.db.collection("datasets")
+        if config.CONF != "unit":
+            self.datasets_collection = self.db.collection("datasets")
 
         self.document_units_key = "units"
 

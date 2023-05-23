@@ -8,10 +8,11 @@ config = ConfigFactory.get_config()
 
 def __get_db():
     if config.CONF == "unit":
-        if not _apps:
+        """if not _apps:
             firebase_admin.initialize_app()
 
-        __db = firestore.client()
+        __db = firestore.client()"""
+        return None
     else:
         __db = gfs.Client(project=config.PROJECT_ID)
     return __db

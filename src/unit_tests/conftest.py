@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
 from services.shared.datetime_service import DatetimeService
+from mockfirestore import MockFirestore
 
 from src.test_data import shared_test_data
 
@@ -76,3 +77,22 @@ def test_client_no_server_exception():
 
     client = TestClient(app.app, raise_server_exceptions=False)
     yield client
+
+
+"""@pytest.fixture(scope="session")
+def setup_mock_firestore():
+    firestore_client = MockFirestore()
+
+    return firestore_client
+
+
+@pytest.fixture(autouse=True)
+def mock_firestore_schema_collection(mocker, setup_mock_firestore):
+    mocker.patch("src.repositories.firebase.db", return_value=setup_mock_firestore)
+    collection = setup_mock_firestore.collection("mock-project-id")
+    mocker.patch(
+        "src.repositories.firebase.schema_firebase_repository.SchemaFirebaseRepository.schemas_collection",
+        collection,
+    )
+    yield collection
+    setup_mock_firestore.reset()"""
