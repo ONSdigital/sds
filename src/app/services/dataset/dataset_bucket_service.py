@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 class DatasetBucketService:
     def __init__(self, bucket_name):
         self.config = ConfigFactory.get_config()
-        self.bucket_name = bucket_name
         self.dataset_bucket_repository = DatasetBucketRepository(bucket_name)
+        self.bucket_name = bucket_name
 
     def get_and_validate_dataset(self, filename: str) -> UnitDataset:
         """

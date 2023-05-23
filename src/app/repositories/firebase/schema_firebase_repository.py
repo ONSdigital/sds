@@ -1,18 +1,15 @@
 from dataclasses import asdict
 from typing import Generator
 
-import firebase_admin
-from firebase_admin import _apps, firestore
+from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
+from repositories.firebase import db
 
 
 class SchemaFirebaseRepository:
     def __init__(self):
-        if not _apps:
-            firebase_admin.initialize_app()
-
-        self.db = firestore.client()
+        self.db = db
         self.schemas_collection = self.db.collection("schemas")
 
     def get_latest_schema_with_survey_id(

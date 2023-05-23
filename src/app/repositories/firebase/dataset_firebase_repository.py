@@ -1,20 +1,17 @@
 from typing import Generator
 
-import firebase_admin
 from firebase_admin import _apps, firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
+from repositories.firebase import db
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
     def __init__(self):
-        if not _apps:
-            firebase_admin.initialize_app()
-
-        self.db = firestore.client()
+        self.db = db
         self.datasets_collection = self.db.collection("datasets")
 
         self.document_units_key = "units"

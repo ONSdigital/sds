@@ -5,6 +5,7 @@ TEST_SCHEMA_PATH=src/test_data/schema.json
 GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 AUTODELETE_DATASET_BUCKET_FILE=True
 LOG_LEVEL=INFO
+PROJECT_ID = $(shell gcloud config get project)
 API_URL:=http://localhost:3000
 
 start-cloud-dev:
@@ -15,6 +16,7 @@ start-cloud-dev:
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=$(PROJECT_ID) && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 
@@ -27,6 +29,7 @@ start-docker-dev:
 	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=mock-project-id && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 lint-and-unit-test:
@@ -40,6 +43,7 @@ lint-and-unit-test:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=mock-project-id && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/
 	python -m coverage report --fail-under=90 -m
 
@@ -52,6 +56,7 @@ unit-test:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=mock-project-id && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/
 	python -m coverage report --fail-under=90 -m
 
@@ -65,6 +70,7 @@ integration-test-local:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
     export API_URL=${API_URL} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
+	export PROJECT_ID=mock-project-id && \
 	python -m pytest src/integration_tests -vv
 
 integration-test-sandbox:
@@ -76,6 +82,7 @@ integration-test-sandbox:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
     export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
+	export PROJECT_ID=$(PROJECT_ID) && \
 	python -m pytest src/integration_tests -vv
 
 #For use only by automated cloudbuild, is not intended to work locally. 
@@ -90,6 +97,7 @@ integration-test-cloudbuild:
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=$(PROJECT_ID) && \
 	python -m pytest src/integration_tests -vv
 
 lint:

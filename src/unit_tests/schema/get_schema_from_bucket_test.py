@@ -4,6 +4,7 @@ from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 
 from src.test_data import schema_test_data
+from src.unit_tests.test_helper import TestHelper
 
 
 def test_get_schema_from_bucket_200_response(test_client):
@@ -133,6 +134,10 @@ def test_get_schema_metadata_with_not_found_error(test_client):
     when schema metadata is not found at get_schemas_metadata
     endpoint
     """
+    SchemaFirebaseRepository.get_schema_metadata_collection = MagicMock()
+    SchemaFirebaseRepository.get_schema_metadata_collection.return_value = (
+        TestHelper.create_document_snapshot_generator_mock({})
+    )
     response = test_client.get("/v1/schema_metadata?survey_id=123")
 
     assert response.status_code == 404
