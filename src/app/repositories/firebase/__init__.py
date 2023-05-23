@@ -1,6 +1,4 @@
-import firebase_admin
 from config.config_factory import ConfigFactory
-from firebase_admin import _apps, firestore
 from google.cloud import firestore as gfs
 
 config = ConfigFactory.get_config()
