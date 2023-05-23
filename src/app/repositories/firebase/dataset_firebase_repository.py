@@ -1,6 +1,6 @@
 from typing import Generator
 
-from firebase_admin import _apps, firestore
+from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset

@@ -8,7 +8,7 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import ConfigFactory
-from firebase_admin import _apps, firestore
+from firebase_admin import firestore
 from repositories.buckets.bucket_loader import BucketLoader
 from repositories.firebase import db
 from requests.adapters import HTTPAdapter
