@@ -95,8 +95,8 @@ integration-test-cloudbuild:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
     export API_URL=${INT_API_URL} && \
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export LOG_LEVEL=${LOG_LEVEL} && \
+	export AUTODELETE_DATASET_BUCKET_FILE=${INT_AUTODELETE_DATASET_BUCKET_FILE} && \
+	export LOG_LEVEL=${INT_LOG_LEVEL} && \
 	export PROJECT_ID=${INT_PROJECT_ID} && \
 	python -m pytest src/integration_tests -vv
 
