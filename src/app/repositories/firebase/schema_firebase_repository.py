@@ -14,9 +14,6 @@ class SchemaFirebaseRepository:
     def __init__(self):
         firebase_loader = FirebaseLoader()
         self.schemas_collection = firebase_loader.get_schemas_collection()
-        """self.db = db
-        if config.CONF != "unit":
-            self.schemas_collection = self.db.collection("schemas")"""
 
     def get_latest_schema_with_survey_id(
         self, survey_id: str

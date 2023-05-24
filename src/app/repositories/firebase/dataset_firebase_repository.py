@@ -15,10 +15,6 @@ class DatasetFirebaseRepository:
     def __init__(self):
         firebase_loader = FirebaseLoader()
         self.datasets_collection = firebase_loader.get_datasets_collection()
-        """self.db = db
-        if config.CONF != "unit":
-            self.datasets_collection = self.db.collection("datasets")"""
-
         self.document_units_key = "units"
 
     def get_latest_dataset_with_survey_id(
