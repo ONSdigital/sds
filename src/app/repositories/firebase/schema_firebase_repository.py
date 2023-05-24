@@ -5,16 +5,18 @@ from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
-from repositories.firebase import db
+from repositories.firebase.firebase_loader import FirebaseLoader
 
 config = ConfigFactory.get_config()
 
 
 class SchemaFirebaseRepository:
     def __init__(self):
-        self.db = db
+        firebase_loader = FirebaseLoader()
+        self.schemas_collection = firebase_loader.get_schemas_collection()
+        """self.db = db
         if config.CONF != "unit":
-            self.schemas_collection = self.db.collection("schemas")
+            self.schemas_collection = self.db.collection("schemas")"""
 
     def get_latest_schema_with_survey_id(
         self, survey_id: str

@@ -3,15 +3,13 @@ from google.cloud import exceptions, storage
 
 config = ConfigFactory.get_config()
 
-g_schema_bucket = None
-g_dataset_bucket = None
-
 
 class BucketLoader:
     def __init__(self):
-        pass
+        self.schema_bucket = None
+        self.dataset_bucket = None
 
-    def get_or_create_bucket(self, bucket, bucket_name):
+    def __get_or_create_bucket(self, bucket, bucket_name):
         if config.CONF == "unit":
             return None
 
@@ -28,14 +26,14 @@ class BucketLoader:
 
         return bucket
 
-    def get_or_create_schema_bucket(self):
-        global g_schema_bucket
-        g_schema_bucket = self.get_or_create_bucket(
-            g_schema_bucket, config.SCHEMA_BUCKET_NAME
+    def get_schema_bucket(self, bucket_name):
+        self.schema_bucket = self.__get_or_create_bucket(
+            self.schema_bucket, bucket_name
         )
-        return g_schema_bucket
+        return self.schema_bucket
 
-    def get_or_create_dataset_bucket(self, bucket_name):
-        global g_dataset_bucket
-        g_dataset_bucket = self.get_or_create_bucket(g_dataset_bucket, bucket_name)
-        return g_dataset_bucket
+    def get_dataset_bucket(self, bucket_name):
+        self.dataset_bucket = self.__get_or_create_bucket(
+            self.dataset_bucket, bucket_name
+        )
+        return self.dataset_bucket

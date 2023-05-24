@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class DatasetBucketRepository(BucketRepository):
     def __init__(self, bucket_name: str):
         bucket_loader = BucketLoader()
-        self.bucket = bucket_loader.get_or_create_dataset_bucket(bucket_name)
+        self.bucket = bucket_loader.get_dataset_bucket(bucket_name)
 
     def get_dataset_file_as_json(self, filename: str) -> UnitDataset:
         """

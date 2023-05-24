@@ -1,6 +1,7 @@
 import json
 
 import exception.exceptions as exceptions
+from config.config_factory import ConfigFactory
 from logging_config import logging
 from models.schema_models import Schema
 from repositories.buckets.bucket_loader import BucketLoader
@@ -8,11 +9,13 @@ from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
 
+config = ConfigFactory.get_config()
+
 
 class SchemaBucketRepository(BucketRepository):
     def __init__(self):
         bucket_loader = BucketLoader()
-        self.bucket = bucket_loader.get_or_create_schema_bucket()
+        self.bucket = bucket_loader.get_schema_bucket(config.SCHEMA_BUCKET_NAME)
 
     def store_schema_json(self, filename: str, schema: Schema) -> None:
         """
