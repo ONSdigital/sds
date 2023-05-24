@@ -89,15 +89,15 @@ integration-test-sandbox:
 integration-test-cloudbuild:
 	export CONF=int-test-cloudbuild && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
-    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+    export DATASET_BUCKET_NAME=${INT_DATASET_BUCKET_NAME} && \
+    export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
     export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=ons-sds-sandbox-01 && \
+	export PROJECT_ID=${INT_PROJECT_ID} && \
 	python -m pytest src/integration_tests -vv
 
 lint:
