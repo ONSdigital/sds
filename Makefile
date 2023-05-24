@@ -93,7 +93,7 @@ integration-test-cloudbuild:
     export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
-    export API_URL=${API_URL} && \
+    export API_URL=${INT_API_URL} && \
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
