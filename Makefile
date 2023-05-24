@@ -97,7 +97,7 @@ integration-test-cloudbuild:
 	export ACCESS_TOKEN=${ACCESS_TOKEN} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=${PROJECT_ID} && \
+	export PROJECT_ID=ons-sds-sandbox-01 && \
 	python -m pytest src/integration_tests -vv
 
 lint:
