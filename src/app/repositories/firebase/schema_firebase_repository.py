@@ -1,13 +1,10 @@
 from dataclasses import asdict
 from typing import Generator
 
-from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.firebase.firebase_loader import FirebaseLoader
-
-config = ConfigFactory.get_config()
 
 
 class SchemaFirebaseRepository:

@@ -1,6 +1,5 @@
 from typing import Generator
 
-from config.config_factory import ConfigFactory
 from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
@@ -8,7 +7,6 @@ from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
-config = ConfigFactory.get_config()
 
 
 class DatasetFirebaseRepository:
