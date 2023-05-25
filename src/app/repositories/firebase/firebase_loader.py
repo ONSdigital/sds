@@ -25,7 +25,6 @@ class FirebaseLoader:
     def _connect_db(self) -> firestore.Client:
         """
         Connect to the firestore client using PROJECT_ID
-        Bypassed in UnitTest environment
         """
         if config.CONF == "unit":
             return None
@@ -34,7 +33,6 @@ class FirebaseLoader:
     def _set_collection(self, collection) -> firestore.CollectionReference:
         """
         Setup the collection reference for schemas and datasets
-        Bypassed in UnitTest environment
         """
         if config.CONF == "unit":
             return None

@@ -28,7 +28,6 @@ class BucketLoader:
         Else connect to the bucket
 
         Parameters:
-        bucket (storage.Bucket): The bucket that is currently handling
         bucket_name (str): The bucket name
         """
         if config.CONF == "unit":
