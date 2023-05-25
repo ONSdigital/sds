@@ -24,7 +24,7 @@ steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Run image"
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds:$SHORT_SHA',
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT}/sds/sds-preprod:$SHORT_SHA',
             '--region', 'europe-west2' ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
