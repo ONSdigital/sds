@@ -6,11 +6,9 @@ config = ConfigFactory.get_config()
 
 class FirebaseLoader:
     def __init__(self):
-        self.database = None
-        self.datasets_collection = None
-        self.schemas_collection = None
-        self._connect_db()
-        self._set_collections()
+        self.database = self._connect_db()
+        self.datasets_collection = self._set_collection("datasets")
+        self.schemas_collection = self._set_collection("schemas")
 
     def get_datasets_collection(self) -> firestore.CollectionReference:
         """
@@ -24,19 +22,20 @@ class FirebaseLoader:
         """
         return self.schemas_collection
 
-    def _connect_db(self):
+    def _connect_db(self) -> firestore.Client:
         """
         Connect to the firestore client using PROJECT_ID
         Bypassed in UnitTest environment
         """
-        if config.CONF != "unit":
-            self.database = firestore.Client(project=config.PROJECT_ID)
+        if config.CONF == "unit":
+            return None
+        return firestore.Client(project=config.PROJECT_ID)
 
-    def _set_collections(self):
+    def _set_collection(self, collection) -> firestore.CollectionReference:
         """
         Setup the collection reference for schemas and datasets
         Bypassed in UnitTest environment
         """
-        if config.CONF != "unit":
-            self.datasets_collection = self.database.collection("datasets")
-            self.schemas_collection = self.database.collection("schemas")
+        if config.CONF == "unit":
+            return None
+        return self.database.collection(collection)
