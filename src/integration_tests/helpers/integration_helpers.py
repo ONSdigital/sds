@@ -125,7 +125,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = bucket_loader.get_dataset_bucket(config.DATASET_BUCKET_NAME)
+    bucket = bucket_loader.get_dataset_bucket()
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
@@ -190,9 +190,9 @@ def cleanup() -> None:
 
         _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        _delete_blobs(bucket_loader.get_dataset_bucket(config.DATASET_BUCKET_NAME))
+        _delete_blobs(bucket_loader.get_dataset_bucket())
 
-        _delete_blobs(bucket_loader.get_schema_bucket(config.SCHEMA_BUCKET_NAME))
+        _delete_blobs(bucket_loader.get_schema_bucket())
 
         _delete_collection(firebase_loader.get_datasets_collection())
 
@@ -272,4 +272,4 @@ def _recursively_delete_document_and_sub_collections(
 
 
 def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket(config.DATASET_BUCKET_NAME)
+    return bucket_loader.get_dataset_bucket()

@@ -4,12 +4,12 @@ from repositories.buckets.bucket_loader import BucketLoader
 from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
+bucket_loader = BucketLoader()
 
 
 class DatasetBucketRepository(BucketRepository):
-    def __init__(self, bucket_name: str):
-        bucket_loader = BucketLoader()
-        self.bucket = bucket_loader.get_dataset_bucket(bucket_name)
+    def __init__(self):
+        self.bucket = bucket_loader.get_dataset_bucket()
 
     def get_dataset_file_as_json(self, filename: str) -> UnitDataset:
         """

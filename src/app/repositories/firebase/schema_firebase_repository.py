@@ -6,10 +6,11 @@ from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.firebase.firebase_loader import FirebaseLoader
 
+firebase_loader = FirebaseLoader()
+
 
 class SchemaFirebaseRepository:
     def __init__(self):
-        firebase_loader = FirebaseLoader()
         self.schemas_collection = firebase_loader.get_schemas_collection()
 
     def get_latest_schema_with_survey_id(

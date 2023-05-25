@@ -8,10 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetBucketService:
-    def __init__(self, bucket_name):
+    def __init__(self):
         self.config = ConfigFactory.get_config()
-        self.bucket_name = bucket_name
-        self.dataset_bucket_repository = DatasetBucketRepository(bucket_name)
+        self.dataset_bucket_repository = DatasetBucketRepository()
 
     def get_and_validate_dataset(self, filename: str) -> UnitDataset:
         """
@@ -41,6 +40,6 @@ class DatasetBucketService:
             self.dataset_bucket_repository.delete_bucket_file(filename)
         except Exception as e:
             logger.debug(
-                f"Failed to delete file {filename} from bucket {self.bucket_name} with error: {e}"
+                f"Failed to delete file {filename} from bucket {self.config.DATASET_BUCKET_NAME} with error: {e}"
             )
             raise RuntimeError("Failed to delete file from dataset bucket.")

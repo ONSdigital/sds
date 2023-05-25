@@ -10,8 +10,6 @@ More information on this service can be found on Confluence:
 
 The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
 
-- You will need to create a new file called `mock_google_app_key.json` within the `/devtools` directory and copy the contents from this fake service acount found here [Mock service account](https://github.com/firebase/firebase-admin-python/blob/master/tests/data/service_account.json).
-
 ```
 docker-compose up
 ```
@@ -158,7 +156,7 @@ gcloud functions deploy new-dataset-function \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
 --trigger-event-filters="bucket=$DATASET_BUCKET" \
---set-env-vars="SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME"
+--set-env-vars="DATASET_BUCKET_NAME=$DATASET_BUCKET,SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME"
 ```
 
 ## Running the integration tests

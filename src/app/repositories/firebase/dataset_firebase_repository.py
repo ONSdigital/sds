@@ -7,11 +7,11 @@ from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
+firebase_loader = FirebaseLoader()
 
 
 class DatasetFirebaseRepository:
     def __init__(self):
-        firebase_loader = FirebaseLoader()
         self.datasets_collection = firebase_loader.get_datasets_collection()
         self.document_units_key = "units"
 

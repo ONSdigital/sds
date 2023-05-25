@@ -10,12 +10,12 @@ from repositories.buckets.bucket_repository import BucketRepository
 logger = logging.getLogger(__name__)
 
 config = ConfigFactory.get_config()
+bucket_loader = BucketLoader()
 
 
 class SchemaBucketRepository(BucketRepository):
     def __init__(self):
-        bucket_loader = BucketLoader()
-        self.bucket = bucket_loader.get_schema_bucket(config.SCHEMA_BUCKET_NAME)
+        self.bucket = bucket_loader.get_schema_bucket()
 
     def store_schema_json(self, filename: str, schema: Schema) -> None:
         """
