@@ -96,6 +96,7 @@ class CloudBuildConfig(BaseSettings):
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+        self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
         self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
             "AUTODELETE_DATASET_BUCKET_FILE"
         )
@@ -105,6 +106,7 @@ class CloudBuildConfig(BaseSettings):
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
     SCHEMA_BUCKET_NAME: str
+    DATASET_BUCKET_NAME: str
     AUTODELETE_DATASET_BUCKET_FILE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
