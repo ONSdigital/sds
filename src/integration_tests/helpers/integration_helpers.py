@@ -4,23 +4,19 @@ import shutil
 import time
 from pathlib import Path
 
-import firebase_admin
 import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import ConfigFactory
-from firebase_admin import _apps, firestore
-from google.cloud import storage
+from firebase_admin import firestore
+from repositories.buckets.bucket_loader import BucketLoader
+from repositories.firebase.firebase_loader import FirebaseLoader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 config = ConfigFactory.get_config()
-
-if not _apps:
-    firebase_admin.initialize_app()
-
-db = firestore.client()
-storage_client = storage.Client()
+bucket_loader = BucketLoader()
+firebase_loader = FirebaseLoader()
 
 
 def setup_session() -> requests.Session:
@@ -129,7 +125,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
+    bucket = bucket_loader.get_dataset_bucket()
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
@@ -194,13 +190,13 @@ def cleanup() -> None:
 
         _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        _delete_blobs(storage_client.get_bucket(config.DATASET_BUCKET_NAME))
+        _delete_blobs(bucket_loader.get_dataset_bucket())
 
-        _delete_blobs(storage_client.get_bucket(config.SCHEMA_BUCKET_NAME))
+        _delete_blobs(bucket_loader.get_schema_bucket())
 
-        _delete_collection(db.collection("datasets"))
+        _delete_collection(firebase_loader.get_datasets_collection())
 
-        _delete_collection(db.collection("schemas"))
+        _delete_collection(firebase_loader.get_schemas_collection())
 
 
 def _delete_local_firestore_data():
@@ -214,7 +210,7 @@ def _delete_local_firestore_data():
         None
     """
     requests.delete(
-        "http://localhost:8080/emulator/v1/projects/mock-project-id/databases/(default)/documents"
+        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
     )
 
 
@@ -276,4 +272,4 @@ def _recursively_delete_document_and_sub_collections(
 
 
 def get_dataset_bucket():
-    return storage_client.bucket(config.DATASET_BUCKET_NAME)
+    return bucket_loader.get_dataset_bucket()

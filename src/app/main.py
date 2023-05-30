@@ -19,14 +19,13 @@ def new_dataset(cloud_event):
     logger.info("Uploading new dataset...")
     logger.debug(f"Cloud event data: {cloud_event.data}")
 
-    bucket_name = cloud_event.data["bucket"]
     filename = cloud_event.data["name"]
 
     DatasetValidatorService.validate_file_is_json(filename)
 
-    raw_dataset_with_metadata = DatasetBucketService(
-        bucket_name
-    ).get_and_validate_dataset(filename)
+    raw_dataset_with_metadata = DatasetBucketService().get_and_validate_dataset(
+        filename
+    )
 
     logger.info("Dataset obtained from bucket successfully.")
     logger.debug(f"Dataset: {raw_dataset_with_metadata}")

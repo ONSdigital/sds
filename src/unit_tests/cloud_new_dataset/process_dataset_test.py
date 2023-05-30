@@ -2,6 +2,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, call
 
 from pytest import raises
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 from src.test_data import dataset_test_data, shared_test_data
@@ -23,6 +24,7 @@ class ProcessDatasetTest(TestCase):
         self.delete_previous_versions_datasets_stash = (
             DatasetFirebaseRepository.delete_previous_versions_datasets
         )
+        self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
 
         TestHelper.mock_get_dataset_from_bucket()
 
@@ -40,6 +42,7 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.delete_previous_versions_datasets = (
             self.delete_previous_versions_datasets_stash
         )
+        DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
 
     def test_upload_new_dataset(
         self,
@@ -65,6 +68,10 @@ class ProcessDatasetTest(TestCase):
         )
 
         DatasetFirebaseRepository.append_unit_to_dataset_units_collection = MagicMock()
+
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+
+        DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
 
@@ -121,6 +128,8 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
 
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+
         TestHelper.new_dataset_mock(cloud_event)
 
         DatasetFirebaseRepository.delete_previous_versions_datasets.assert_called_once_with(
@@ -154,6 +163,8 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.delete_previous_versions_datasets.side_effect = (
             Exception
         )
+
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
 
         with raises(
             RuntimeError,

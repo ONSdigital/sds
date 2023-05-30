@@ -2,11 +2,9 @@ import uuid
 from datetime import datetime
 from unittest.mock import MagicMock
 
-import firebase_admin
 import pytest
 from config.config_factory import ConfigFactory
 from fastapi.testclient import TestClient
-from firebase_admin import firestore
 from google.cloud import storage as google_cloud_storage
 from services.shared.datetime_service import DatetimeService
 
@@ -43,16 +41,6 @@ def cloud_bucket_credentials_mock(monkeypatch):
     Mocks the google bucket credentials.
     """
     monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
-
-
-@pytest.fixture(autouse=True)
-def firebase_credentials_mock(monkeypatch):
-    """
-    Mocks firebase credentials.
-    """
-    monkeypatch.setattr(firebase_admin, "credentials", MagicMock())
-    monkeypatch.setattr(firebase_admin, "initialize_app", MagicMock())
-    monkeypatch.setattr(firestore, "client", MagicMock())
 
 
 @pytest.fixture

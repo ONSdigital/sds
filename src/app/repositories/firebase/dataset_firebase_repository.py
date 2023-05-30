@@ -1,22 +1,18 @@
 from typing import Generator
 
-import firebase_admin
-from firebase_admin import _apps, firestore
+from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
+from repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
+firebase_loader = FirebaseLoader()
 
 
 class DatasetFirebaseRepository:
     def __init__(self):
-        if not _apps:
-            firebase_admin.initialize_app()
-
-        self.db = firestore.client()
-        self.datasets_collection = self.db.collection("datasets")
-
+        self.datasets_collection = firebase_loader.get_datasets_collection()
         self.document_units_key = "units"
 
     def get_latest_dataset_with_survey_id(
