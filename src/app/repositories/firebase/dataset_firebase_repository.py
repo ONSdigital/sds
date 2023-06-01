@@ -31,7 +31,7 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def create_new_dataset(
+    def write_dataset_metadata_to_repository(
         self,
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,

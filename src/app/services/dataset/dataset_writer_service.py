@@ -1,5 +1,5 @@
 from logging_config import logging
-from models.dataset_models import DatasetMetadata
+from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 logger = logging.getLogger(__name__)
@@ -12,23 +12,26 @@ class DatasetWriterService:
     ):
         self.dataset_repository = dataset_repository
 
-    def write_transformed_dataset_to_repository(
+    def write_dataset_metadata_to_repository(
         self,
-        dataset_id,
-        transformed_dataset: DatasetMetadata,
+        dataset_id: str,
+        dataset_metadata_without_id: DatasetMetadataWithoutId,
     ) -> None:
         """
-        Writes the transformed data to the database
+        Writes the dataset metadata data to the database
 
         Parameters:
-        transformed_dataset (DatasetMetadata): the transformed dataset being written
+        dataset_id: id of the dataset
+        dataset_metadata_without_id: the dataset metadata being written
         """
-        logger.info("Writing transformed dataset to repository...")
-        logger.debug(f"Writing dataset with id {dataset_id}")
+        logger.info("Writing Dataset metadata to repository...")
+        logger.debug(f"Writing dataset metadata with id {dataset_id}")
 
-        self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
+        self.dataset_repository.write_dataset_metadata_to_repository(
+            dataset_id, dataset_metadata_without_id
+        )
 
-        logger.info("Transformed dataset written to repository successfully.")
+        logger.info("Dataset metadata written to repository successfully.")
 
     def write_unit_data_to_repository(
         self,

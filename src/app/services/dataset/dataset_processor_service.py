@@ -42,7 +42,7 @@ class DatasetProcessorService:
             raw_dataset, filename, new_dataset_unit_data_collection
         )
 
-        self.dataset_writer_service.write_transformed_dataset_to_repository(
+        self.dataset_writer_service.write_dataset_metadata_to_repository(
             dataset_id,
             dataset_metadata_without_id,
         )

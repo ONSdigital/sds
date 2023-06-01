@@ -14,7 +14,9 @@ class ProcessDatasetTest(TestCase):
         self.get_latest_dataset_with_survey_id_stash = (
             DatasetFirebaseRepository.get_latest_dataset_with_survey_id
         )
-        self.create_new_dataset_stash = DatasetFirebaseRepository.create_new_dataset
+        self.write_dataset_metadata_to_repository_stash = (
+            DatasetFirebaseRepository.write_dataset_metadata_to_repository
+        )
         self.get_dataset_unit_collection_stash = (
             DatasetFirebaseRepository.get_dataset_unit_collection
         )
@@ -32,7 +34,9 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = (
             self.get_latest_dataset_with_survey_id_stash
         )
-        DatasetFirebaseRepository.create_new_dataset = self.create_new_dataset_stash
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository = (
+            self.write_dataset_metadata_to_repository_stash
+        )
         DatasetFirebaseRepository.get_dataset_unit_collection = (
             self.get_dataset_unit_collection_stash
         )
@@ -60,7 +64,7 @@ class ProcessDatasetTest(TestCase):
             )
         )
 
-        DatasetFirebaseRepository.create_new_dataset = MagicMock()
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository = MagicMock()
 
         DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
         DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
@@ -78,7 +82,7 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.assert_called_once_with(
             dataset_test_data.survey_id
         )
-        DatasetFirebaseRepository.create_new_dataset.assert_called_once_with(
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository.assert_called_once_with(
             shared_test_data.test_guid,
             dataset_test_data.updated_dataset_metadata_without_id,
         )
@@ -117,7 +121,7 @@ class ProcessDatasetTest(TestCase):
             )
         )
 
-        DatasetFirebaseRepository.create_new_dataset = MagicMock()
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository = MagicMock()
 
         DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
         DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
@@ -150,7 +154,7 @@ class ProcessDatasetTest(TestCase):
             )
         )
 
-        DatasetFirebaseRepository.create_new_dataset = MagicMock()
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository = MagicMock()
 
         DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
         DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
