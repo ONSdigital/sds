@@ -30,7 +30,7 @@ class DatasetWriterService:
 
         logger.info("Transformed dataset written to repository successfully.")
 
-    def write_transformed_unit_data_to_repository(
+    def write_unit_data_to_repository(
         self,
         dataset_id: str,
         new_dataset_unit_data_collection: list[object],
