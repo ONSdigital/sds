@@ -30,6 +30,7 @@ class DatasetWriterService:
         unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
         extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
         """
+        logger.info("Beginning dataset transaction...")
         try:
             self.dataset_repository.write_dataset_metadata_to_repository(
                 dataset_id, dataset_metadata_without_id
@@ -39,9 +40,15 @@ class DatasetWriterService:
                 unit_data_collection_with_metadata,
                 extracted_unit_data_rurefs,
             )
+
+            logger.info("Committing dataset transaction")
             firestore_transaction_service.commit_transaction()
+            logger.info("Dataset transaction committed")
         except Exception as e:
+            logger.error(f"Performing dataset transaction: exception raised: {e}")
+            logger.error("Rolling back dataset transaction")
             firestore_transaction_service.rollback_transaction()
+            logger.info("Dataset transaction rolled back")
 
     def _write_unit_data_to_repository(
         self,

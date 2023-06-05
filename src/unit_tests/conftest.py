@@ -3,7 +3,6 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
-from config.config_factory import config
 from fastapi.testclient import TestClient
 from google.cloud import firestore, storage
 from services.shared.datetime_service import DatetimeService

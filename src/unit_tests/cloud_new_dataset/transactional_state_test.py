@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from repositories.firebase.firebase_loader import FirebaseLoader
 from services.shared.firestore_transaction_service import FirestoreTransactionService
 
 from src.test_data import dataset_test_data
