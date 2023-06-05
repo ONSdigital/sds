@@ -3,14 +3,12 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from fastapi.testclient import TestClient
-from google.cloud import storage as google_cloud_storage
+from google.cloud import firestore, storage
 from services.shared.datetime_service import DatetimeService
 
 from src.test_data import shared_test_data
-
-config = ConfigFactory.get_config()
 
 
 @pytest.fixture(autouse=True)
@@ -36,11 +34,23 @@ def uuid_mock():
 
 
 @pytest.fixture(autouse=True)
+def firestore_credentials_mock(monkeypatch):
+    """
+    Mocks firestore credentials
+    """
+    mock_client = MagicMock()
+    mock_client.transaction = MagicMock(return_value=MagicMock())
+    mock_client.collection = MagicMock(return_value=MagicMock())
+
+    monkeypatch.setattr(firestore, "Client", mock_client)
+
+
+@pytest.fixture(autouse=True)
 def cloud_bucket_credentials_mock(monkeypatch):
     """
     Mocks the google bucket credentials.
     """
-    monkeypatch.setattr(google_cloud_storage, "Client", MagicMock())
+    monkeypatch.setattr(storage, "Client", MagicMock())
 
 
 @pytest.fixture

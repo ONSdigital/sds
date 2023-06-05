@@ -4,10 +4,9 @@ from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
-from repositories.firebase.firebase_loader import FirebaseLoader
+from repositories.firebase.firebase_loader import firebase_loader
 
 logger = logging.getLogger(__name__)
-firebase_loader = FirebaseLoader()
 
 
 class DatasetFirebaseRepository:
@@ -43,10 +42,12 @@ class DatasetFirebaseRepository:
         dataset_id (str): uniquely generated GUID id of the dataset.
         dataset_metadata_without_id (DatasetMetadataWithoutId): metadata of the new dataset without id.
         """
+        logger.info("Writing Dataset metadata to repository...")
         logger.debug(
             f"Setting dataset with id {dataset_id} and data {dataset_metadata_without_id}"
         )
         self.datasets_collection.document(dataset_id).set(dataset_metadata_without_id)
+        logger.info("Dataset metadata written to repository successfully.")
 
     def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
         """

@@ -1,6 +1,6 @@
 import uuid
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
@@ -10,8 +10,6 @@ from services.shared.document_version_service import DocumentVersionService
 
 class SchemaProcessorService:
     def __init__(self) -> None:
-        self.config = ConfigFactory.get_config()
-
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
@@ -60,9 +58,7 @@ class SchemaProcessorService:
             sds_schema_version=self.calculate_next_schema_version(schema_metadata),
             survey_id=schema_metadata.survey_id,
             sds_published_at=str(
-                DatetimeService.get_current_date_and_time().strftime(
-                    self.config.TIME_FORMAT
-                )
+                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
         )
 

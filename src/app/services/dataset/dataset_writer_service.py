@@ -1,6 +1,7 @@
 from logging_config import logging
-from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId
+from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.shared.firestore_transaction_service import firestore_transaction_service
 
 logger = logging.getLogger(__name__)
 
@@ -12,39 +13,49 @@ class DatasetWriterService:
     ):
         self.dataset_repository = dataset_repository
 
-    def write_dataset_metadata_to_repository(
+    def perform_dataset_transaction(
         self,
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
+        unit_data_collection_with_metadata: list[UnitDataset],
+        extracted_unit_data_rurefs: list[str],
     ) -> None:
         """
-        Writes the dataset metadata data to the database
+        Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
+        rolling back otherwise.
 
         Parameters:
-        dataset_id: id of the dataset
-        dataset_metadata_without_id: the dataset metadata being written
+        dataset_id: the uniquely generated id of the dataset
+        dataset_metadata_without_id: the metadata of the dataset without its id
+        unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
+        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
         """
-        logger.info("Writing Dataset metadata to repository...")
-        logger.debug(f"Writing dataset metadata with id {dataset_id}")
+        try:
+            self.dataset_repository.write_dataset_metadata_to_repository(
+                dataset_id, dataset_metadata_without_id
+            )
+            self._write_unit_data_to_repository(
+                dataset_id,
+                unit_data_collection_with_metadata,
+                extracted_unit_data_rurefs,
+            )
+            firestore_transaction_service.commit_transaction()
+        except Exception as e:
+            firestore_transaction_service.rollback_transaction()
 
-        self.dataset_repository.write_dataset_metadata_to_repository(
-            dataset_id, dataset_metadata_without_id
-        )
-
-        logger.info("Dataset metadata written to repository successfully.")
-
-    def write_unit_data_to_repository(
+    def _write_unit_data_to_repository(
         self,
         dataset_id: str,
-        new_dataset_unit_data_collection: list[object],
-        rurefs: list,
+        unit_data_collection_with_metadata: list[UnitDataset],
+        rurefs: list[str],
     ) -> None:
         """
         Writes the new unit data to the database
 
         Parameters:
-        dataset_id (str): the uniquely generated id of the dataset
-        new_dataset_unit_data_collection (list[object]): the collection of unit data associated with the new dataset
+        dataset_id: the uniquely generated id of the dataset
+        unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
+        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
         """
         logger.info("Writing transformed unit data to repository...")
         database_unit_data_collection = (
@@ -53,7 +64,7 @@ class DatasetWriterService:
 
         rurefs_iter = iter(rurefs)
 
-        for unit_data in new_dataset_unit_data_collection:
+        for unit_data in unit_data_collection_with_metadata:
             self.dataset_repository.append_unit_to_dataset_units_collection(
                 database_unit_data_collection, unit_data, next(rurefs_iter)
             )

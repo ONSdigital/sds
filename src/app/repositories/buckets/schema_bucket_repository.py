@@ -1,16 +1,12 @@
 import json
 
 import exception.exceptions as exceptions
-from config.config_factory import ConfigFactory
 from logging_config import logging
 from models.schema_models import Schema
-from repositories.buckets.bucket_loader import BucketLoader
+from repositories.buckets.bucket_loader import bucket_loader
 from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
-
-config = ConfigFactory.get_config()
-bucket_loader = BucketLoader()
 
 
 class SchemaBucketRepository(BucketRepository):

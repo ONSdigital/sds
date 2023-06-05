@@ -2,12 +2,10 @@ import json
 from typing import Generator
 from unittest.mock import MagicMock
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.dataset_models import UnitDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
-
-config = ConfigFactory.get_config()
 
 
 class TestHelper:

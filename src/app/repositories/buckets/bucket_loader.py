@@ -1,7 +1,5 @@
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from google.cloud import exceptions, storage
-
-config = ConfigFactory.get_config()
 
 
 class BucketLoader:
@@ -44,3 +42,6 @@ class BucketLoader:
             )
 
         return bucket
+
+
+bucket_loader = BucketLoader()

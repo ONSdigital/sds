@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
@@ -8,8 +8,6 @@ from src.integration_tests.helpers.integration_helpers import (
     load_json,
     setup_session,
 )
-
-config = ConfigFactory.get_config()
 
 
 class E2ESchemaIntegrationTest(TestCase):

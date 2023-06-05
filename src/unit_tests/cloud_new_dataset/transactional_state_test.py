@@ -1,7 +1,10 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
+
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from repositories.firebase.firebase_loader import FirebaseLoader
+from services.shared.firestore_transaction_service import FirestoreTransactionService
 
 from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -26,6 +29,11 @@ class ProcessDatasetTest(TestCase):
         )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
 
+        self.commit_transaction_stash = FirestoreTransactionService.commit_transaction
+        self.rollback_transaction_stash = (
+            FirestoreTransactionService.rollback_transaction
+        )
+
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
@@ -46,11 +54,16 @@ class ProcessDatasetTest(TestCase):
         )
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
 
+        FirestoreTransactionService.commit_transaction = self.commit_transaction_stash
+        FirestoreTransactionService.rollback_transaction = (
+            self.rollback_transaction_stash
+        )
+
     def test_transaction_rolled_back_on_metadata_write_failure(
         self,
     ):
         """
-        The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+        Testing the first transaction action, writing metadata, causes the transaction to rollback if it fails.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -61,8 +74,6 @@ class ProcessDatasetTest(TestCase):
                 [dataset_test_data.dataset_metadata]
             )
         )
-
-        DatasetFirebaseRepository.write_dataset_metadata_to_repository = MagicMock()
 
         DatasetFirebaseRepository.get_dataset_unit_collection = MagicMock()
         DatasetFirebaseRepository.get_dataset_unit_collection.return_value = (
@@ -75,4 +86,18 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
 
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository = MagicMock()
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository.side_effect = (
+            Exception
+        )
+
+        FirestoreTransactionService.commit_transaction = MagicMock()
+        FirestoreTransactionService.rollback_transaction = MagicMock()
+
         TestHelper.new_dataset_mock(cloud_event)
+
+        DatasetFirebaseRepository.write_dataset_metadata_to_repository.assert_called_once()
+        DatasetFirebaseRepository.append_unit_to_dataset_units_collection.assert_not_called()
+
+        FirestoreTransactionService.commit_transaction.assert_not_called()
+        FirestoreTransactionService.rollback_transaction.assert_called_once()

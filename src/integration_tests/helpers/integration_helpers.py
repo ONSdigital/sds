@@ -7,16 +7,12 @@ from pathlib import Path
 import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from firebase_admin import firestore
-from repositories.buckets.bucket_loader import BucketLoader
-from repositories.firebase.firebase_loader import FirebaseLoader
+from repositories.buckets.bucket_loader import bucket_loader
+from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
-
-config = ConfigFactory.get_config()
-bucket_loader = BucketLoader()
-firebase_loader = FirebaseLoader()
 
 
 def setup_session() -> requests.Session:
