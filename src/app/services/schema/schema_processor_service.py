@@ -22,7 +22,7 @@ class SchemaProcessorService:
 
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
-        self.schmea_transaction_handler = FirebaseTransactionHandler(
+        self.schema_transaction_handler = FirebaseTransactionHandler(
             self.schema_firebase_repository.get_database_client()
         )
 
@@ -41,7 +41,7 @@ class SchemaProcessorService:
             schema_id, stored_schema_filename, schema_metadata
         )
 
-        post_schema_transaction = self.schmea_transaction_handler.transaction_begin()
+        post_schema_transaction = self.schema_transaction_handler.transaction_initiate()
 
         try:
             self.schema_firebase_repository.create_schema_in_transaction(
@@ -52,16 +52,12 @@ class SchemaProcessorService:
                 stored_schema_filename, schema_metadata
             )
 
-            self.schmea_transaction_handler.transaction_commit()
+            self.schema_transaction_handler.transaction_commit()
 
             return next_version_schema_metadata
 
         except Exception as e:
             logger.error(f"Performing schema transaction: exception raised: {e}")
-            logger.error("Rolling back schema transaction")
-            self.schmea_transaction_handler.transaction_rollback()
-
-            logger.info("Schema transaction rolled back")
             raise exceptions.GlobalException
 
     def build_next_version_schema_metadata(

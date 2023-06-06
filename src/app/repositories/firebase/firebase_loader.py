@@ -11,7 +11,9 @@ class FirebaseLoader:
         self.schemas_collection = self._set_collection("schemas")
 
     def get_database_client(self) -> firestore.Client:
-        """ """
+        """
+        Get the firestore client reference
+        """
         return self.client
 
     def get_datasets_collection(self) -> firestore.CollectionReference:

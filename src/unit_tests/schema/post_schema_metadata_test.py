@@ -25,14 +25,12 @@ class PostSchemaMetadataTest(TestCase):
         self.create_schema_in_transaction_stash = (
             SchemaFirebaseRepository.create_schema_in_transaction
         )
-        self.transaction_rollback_stash = (
-            FirebaseTransactionHandler.transaction_rollback
-        )
         self.transaction_commit_stash = FirebaseTransactionHandler.transaction_commit
-        self.transaction_begin_stash = FirebaseTransactionHandler.transaction_begin
+        self.transaction_initiate_stash = (
+            FirebaseTransactionHandler.transaction_initiate
+        )
         FirebaseTransactionHandler.transaction_commit = MagicMock()
-        FirebaseTransactionHandler.transaction_rollback = MagicMock()
-        FirebaseTransactionHandler.transaction_begin = MagicMock()
+        FirebaseTransactionHandler.transaction_initiate = MagicMock()
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
@@ -42,11 +40,10 @@ class PostSchemaMetadataTest(TestCase):
         SchemaFirebaseRepository.create_schema_in_transaction = (
             self.create_schema_in_transaction_stash
         )
-        FirebaseTransactionHandler.transaction_rollback = (
-            self.transaction_rollback_stash
-        )
         FirebaseTransactionHandler.transaction_commit = self.transaction_commit_stash
-        FirebaseTransactionHandler.transaction_begin = self.transaction_begin_stash
+        FirebaseTransactionHandler.transaction_initiate = (
+            self.transaction_initiate_stash
+        )
 
     def test_200_response_updated_schema_version(self):
         SchemaBucketRepository.store_schema_json = MagicMock()
@@ -138,4 +135,3 @@ class PostSchemaMetadataTest(TestCase):
         assert response.json()["message"] == "Unable to process request"
 
         FirebaseTransactionHandler.transaction_commit.assert_not_called()
-        FirebaseTransactionHandler.transaction_rollback.assert_called_once()
