@@ -6,9 +6,14 @@ config = ConfigFactory.get_config()
 
 class FirebaseLoader:
     def __init__(self):
-        self.database = self._connect_db()
+        self.client = self._connect_db()
         self.datasets_collection = self._set_collection("datasets")
         self.schemas_collection = self._set_collection("schemas")
+
+    def get_database_client(self) -> firestore.Client:
+        """
+        """
+        return self.client
 
     def get_datasets_collection(self) -> firestore.CollectionReference:
         """
@@ -36,4 +41,4 @@ class FirebaseLoader:
         """
         if config.CONF == "unit":
             return None
-        return self.database.collection(collection)
+        return self.client.collection(collection)

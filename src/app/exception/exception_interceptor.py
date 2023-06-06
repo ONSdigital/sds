@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 
 class ExceptionInterceptor:
-    def throw_500_global_exception() -> JSONResponse:
+    def throw_500_global_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When an exception is raised and a global error 500 HTTP response is returned.
         """
@@ -13,7 +13,7 @@ class ExceptionInterceptor:
         )
         return er.throw_er_with_json()
 
-    def throw_400_validation_exception() -> JSONResponse:
+    def throw_400_validation_exception(request: Request, exc: Exception) -> JSONResponse:
         """
         When a validation fails and a 400 HTTP response is returned.
         """

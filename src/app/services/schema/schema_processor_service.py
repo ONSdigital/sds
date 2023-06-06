@@ -6,7 +6,13 @@ from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
+from logging_config import logging
+import exception.exceptions as exceptions
+from repositories.firebase.firebase_transaction_handler import FirebaseTransactionHandler
+from config.config_factory import ConfigFactory
 
+logger = logging.getLogger(__name__)
+config = ConfigFactory.get_config()
 
 class SchemaProcessorService:
     def __init__(self) -> None:
@@ -14,6 +20,7 @@ class SchemaProcessorService:
 
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
+        self.schmea_transaction_handler = FirebaseTransactionHandler(self.schema_firebase_repository.get_database_client())
 
     def process_raw_schema(self, schema_metadata: SchemaMetadataWithoutGuid):
         """
@@ -21,24 +28,36 @@ class SchemaProcessorService:
 
         Parameters:
         schema_metadata (SchemaMetadata): incoming schema metadata.
-        """
+        """          
 
         schema_id = str(uuid.uuid4())
         stored_schema_filename = f"{schema_metadata.survey_id}/{schema_id}.json"
-
-        self.schema_bucket_repository.store_schema_json(
-            stored_schema_filename, schema_metadata
-        )
 
         next_version_schema_metadata = self.build_next_version_schema_metadata(
             schema_id, stored_schema_filename, schema_metadata
         )
 
-        self.schema_firebase_repository.create_schema(
-            schema_id, next_version_schema_metadata
-        )
+        post_schema_transaction = self.schmea_transaction_handler.transaction_begin()
 
-        return next_version_schema_metadata
+        try:
+            self.schema_firebase_repository.create_schema_in_transaction(
+                schema_id, next_version_schema_metadata, post_schema_transaction
+            )
+
+            self.schema_bucket_repository.store_schema_json(
+                stored_schema_filename, schema_metadata
+            )
+
+            self.schmea_transaction_handler.transaction_commit()
+
+            return next_version_schema_metadata
+        
+        except Exception as e:
+            self.schmea_transaction_handler.transaction_rollback()
+
+            logger.error("Failed to post schema")
+            raise exceptions.GlobalException
+
 
     def build_next_version_schema_metadata(
         self,

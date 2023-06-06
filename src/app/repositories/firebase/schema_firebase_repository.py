@@ -5,13 +5,21 @@ from firebase_admin import firestore
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.firebase.firebase_loader import FirebaseLoader
+from google.cloud.firestore import Transaction, Client
 
 firebase_loader = FirebaseLoader()
 
 
 class SchemaFirebaseRepository:
     def __init__(self):
+        self.database = firebase_loader.get_database_client()
         self.schemas_collection = firebase_loader.get_schemas_collection()
+
+    def get_database_client(self) -> Client:
+        """
+        Gets the database client
+        """
+        return self.database
 
     def get_latest_schema_with_survey_id(
         self, survey_id: str
@@ -42,6 +50,19 @@ class SchemaFirebaseRepository:
         """
 
         self.schemas_collection.document(schema_id).set(asdict(schema_metadata))
+
+    def create_schema_in_transaction(
+        self, schema_id: str, schema_metadata: SchemaMetadataWithoutGuid, transaction: Transaction
+    ) -> SchemaMetadata:
+        """
+        Creates a new schema metadata entry in firestore.
+
+        Parameters:
+        schema_id (str): The unique id of the new schema.
+        schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
+        """
+
+        transaction.set(self.schemas_collection.document(schema_id),(asdict(schema_metadata)))
 
     def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
         """
