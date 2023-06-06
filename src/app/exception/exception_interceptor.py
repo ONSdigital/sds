@@ -13,7 +13,9 @@ class ExceptionInterceptor:
         )
         return er.throw_er_with_json()
 
-    def throw_400_validation_exception(request: Request, exc: Exception) -> JSONResponse:
+    def throw_400_validation_exception(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
         """
         When a validation fails and a 400 HTTP response is returned.
         """

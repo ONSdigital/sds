@@ -1,10 +1,12 @@
-import pytest
 from unittest import TestCase
 from unittest.mock import MagicMock
 
+import pytest
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
+from repositories.firebase.firebase_transaction_handler import (
+    FirebaseTransactionHandler,
+)
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
-from repositories.firebase.firebase_transaction_handler import FirebaseTransactionHandler
 
 from src.test_data import schema_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -16,9 +18,7 @@ class PostSchemaMetadataTest(TestCase):
         self.test_client = test_client
 
     def setUp(self):
-        self.store_schema_json_stash = (
-            SchemaBucketRepository.store_schema_json
-        )
+        self.store_schema_json_stash = SchemaBucketRepository.store_schema_json
         self.get_latest_schema_with_survey_id_stash = (
             SchemaFirebaseRepository.get_latest_schema_with_survey_id
         )
@@ -28,22 +28,14 @@ class PostSchemaMetadataTest(TestCase):
         self.transaction_rollback_stash = (
             FirebaseTransactionHandler.transaction_rollback
         )
-        self.transaction_commit_stash = (
-            FirebaseTransactionHandler.transaction_commit
-        )
-        self.transaction_begin_stash = (
-            FirebaseTransactionHandler.transaction_begin
-        
-        )
+        self.transaction_commit_stash = FirebaseTransactionHandler.transaction_commit
+        self.transaction_begin_stash = FirebaseTransactionHandler.transaction_begin
         FirebaseTransactionHandler.transaction_commit = MagicMock()
         FirebaseTransactionHandler.transaction_rollback = MagicMock()
         FirebaseTransactionHandler.transaction_begin = MagicMock()
 
-
     def tearDown(self):
-        SchemaBucketRepository.store_schema_json = (
-            self.store_schema_json_stash
-        )
+        SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = (
             self.get_latest_schema_with_survey_id_stash
         )
@@ -53,12 +45,8 @@ class PostSchemaMetadataTest(TestCase):
         FirebaseTransactionHandler.transaction_rollback = (
             self.transaction_rollback_stash
         )
-        FirebaseTransactionHandler.transaction_commit = (
-            self.transaction_commit_stash
-        )
-        FirebaseTransactionHandler.transaction_begin = (
-            self.transaction_begin_stash
-        )
+        FirebaseTransactionHandler.transaction_commit = self.transaction_commit_stash
+        FirebaseTransactionHandler.transaction_begin = self.transaction_begin_stash
 
     def test_200_response_updated_schema_version(self):
         SchemaBucketRepository.store_schema_json = MagicMock()
@@ -85,7 +73,6 @@ class PostSchemaMetadataTest(TestCase):
             response.json()
             == schema_test_data.test_post_schema_metadata_updated_version_response
         )
-
 
     def test_200_response_first_schema_version(self):
         """
@@ -115,20 +102,19 @@ class PostSchemaMetadataTest(TestCase):
             == schema_test_data.test_post_schema_metadata_first_version_response
         )
 
-
     def test_post_bad_schema_400_response(self):
         """
         Checks that fastAPI returns a 400 error with appropriate
         message if the schema is badly formatted.
         """
-        response = self.test_client.post("/v1/schema", json={"schema": "is missing some fields"})
+        response = self.test_client.post(
+            "/v1/schema", json={"schema": "is missing some fields"}
+        )
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
-
     def test_data_integrity_when_store_schema_failed(self):
-        """
-        """
+        """ """
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.side_effect = Exception
 

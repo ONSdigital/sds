@@ -2,10 +2,10 @@ from dataclasses import asdict
 from typing import Generator
 
 from firebase_admin import firestore
+from google.cloud.firestore import Client, Transaction
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.firebase.firebase_loader import FirebaseLoader
-from google.cloud.firestore import Transaction, Client
 
 firebase_loader = FirebaseLoader()
 
@@ -52,7 +52,10 @@ class SchemaFirebaseRepository:
         self.schemas_collection.document(schema_id).set(asdict(schema_metadata))
 
     def create_schema_in_transaction(
-        self, schema_id: str, schema_metadata: SchemaMetadataWithoutGuid, transaction: Transaction
+        self,
+        schema_id: str,
+        schema_metadata: SchemaMetadataWithoutGuid,
+        transaction: Transaction,
     ) -> SchemaMetadata:
         """
         Creates a new schema metadata entry in firestore.
@@ -62,7 +65,9 @@ class SchemaFirebaseRepository:
         schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
         """
 
-        transaction.set(self.schemas_collection.document(schema_id),(asdict(schema_metadata)))
+        transaction.set(
+            self.schemas_collection.document(schema_id), (asdict(schema_metadata))
+        )
 
     def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
         """

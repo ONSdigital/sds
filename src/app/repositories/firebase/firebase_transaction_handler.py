@@ -1,10 +1,11 @@
+import exception.exceptions as exceptions
+from config.config_factory import ConfigFactory
 from google.cloud.firestore import Client, Transaction
 from logging_config import logging
-from config.config_factory import ConfigFactory
-import exception.exceptions as exceptions
 
 logger = logging.getLogger(__name__)
 config = ConfigFactory.get_config()
+
 
 class FirebaseTransactionHandler:
     def __init__(self, client: Client):
@@ -18,7 +19,9 @@ class FirebaseTransactionHandler:
             self._transaction._begin()
             return self._transaction
         else:
-            logger.error("Transaction is already active and re-initialising is not allowed before commit or rollback")
+            logger.error(
+                "Transaction is already active and re-initialising is not allowed before commit or rollback"
+            )
             raise exceptions.GlobalException
 
     def transaction_commit(self):
