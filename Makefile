@@ -43,7 +43,7 @@ lint-and-unit-test:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=mock-project-id && \
+	export PROJECT_ID=$(PROJECT_ID) && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
@@ -56,7 +56,7 @@ unit-test:
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=mock-project-id && \
+	export PROJECT_ID=$(PROJECT_ID) && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
