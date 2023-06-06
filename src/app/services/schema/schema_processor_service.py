@@ -57,9 +57,11 @@ class SchemaProcessorService:
             return next_version_schema_metadata
 
         except Exception as e:
+            logger.error(f"Performing schema transaction: exception raised: {e}")
+            logger.error("Rolling back schema transaction")
             self.schmea_transaction_handler.transaction_rollback()
 
-            logger.error("Failed to post schema")
+            logger.info("Schema transaction rolled back")
             raise exceptions.GlobalException
 
     def build_next_version_schema_metadata(

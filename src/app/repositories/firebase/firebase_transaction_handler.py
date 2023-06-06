@@ -15,7 +15,7 @@ class FirebaseTransactionHandler:
             self._transaction = None
 
     def transaction_begin(self) -> Transaction:
-        if self._transaction.id == None:
+        if self._transaction.id is None:
             self._transaction._begin()
             return self._transaction
         else:
@@ -25,14 +25,14 @@ class FirebaseTransactionHandler:
             raise exceptions.GlobalException
 
     def transaction_commit(self):
-        if self._transaction.id == None:
+        if self._transaction.id is None:
             logger.error("No active transaction to commit. Transaction ID is missing")
             raise exceptions.GlobalException
         else:
             self._transaction.commit()
 
     def transaction_rollback(self):
-        if self._transaction.id == None:
+        if self._transaction.id is None:
             logger.error("No active transaction to rollback. Transaction ID is missing")
             raise exceptions.GlobalException
         else:
