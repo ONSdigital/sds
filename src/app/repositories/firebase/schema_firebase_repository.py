@@ -12,14 +12,14 @@ firebase_loader = FirebaseLoader()
 
 class SchemaFirebaseRepository:
     def __init__(self):
-        self.database = firebase_loader.get_database_client()
+        self.client = firebase_loader.get_database_client()
         self.schemas_collection = firebase_loader.get_schemas_collection()
 
     def get_database_client(self) -> Client:
         """
-        Gets the database client
+        Gets the database client reference
         """
-        return self.database
+        return self.client
 
     def get_latest_schema_with_survey_id(
         self, survey_id: str

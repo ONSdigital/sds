@@ -1,4 +1,3 @@
-import exception.exceptions as exceptions
 from config.config_factory import ConfigFactory
 from google.cloud.firestore import Client, Transaction
 from logging_config import logging

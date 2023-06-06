@@ -21,10 +21,10 @@ class SchemaProcessorService:
         self.config = ConfigFactory.get_config()
 
         self.schema_firebase_repository = SchemaFirebaseRepository()
-        self.schema_bucket_repository = SchemaBucketRepository()
         self.schema_transaction_handler = FirebaseTransactionHandler(
             self.schema_firebase_repository.get_database_client()
         )
+        self.schema_bucket_repository = SchemaBucketRepository()
 
     def process_raw_schema(self, schema_metadata: SchemaMetadataWithoutGuid):
         """
