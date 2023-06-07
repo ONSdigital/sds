@@ -2,12 +2,13 @@ import json
 import uuid
 
 import requests
-from config.config_factory import config
+from config_factory import ConfigFactory
 from fastapi import FastAPI, Request
 from google.cloud import storage
 
 app = FastAPI()
 
+config = ConfigFactory.get_config()
 
 @app.post("/")
 async def dev_simulate_publish_dataset(request: Request):
