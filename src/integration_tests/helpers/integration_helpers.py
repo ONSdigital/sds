@@ -4,19 +4,23 @@ import shutil
 import time
 from pathlib import Path
 
+import firebase_admin
 import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import ConfigFactory
-from firebase_admin import firestore
-from repositories.buckets.bucket_loader import BucketLoader
-from repositories.firebase.firebase_loader import FirebaseLoader
+from firebase_admin import _apps, firestore
+from google.cloud import storage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 config = ConfigFactory.get_config()
-bucket_loader = BucketLoader()
-firebase_loader = FirebaseLoader()
+
+if not _apps:
+    firebase_admin.initialize_app()
+
+db = firestore.client()
+storage_client = storage.Client()
 
 
 def setup_session() -> requests.Session:
@@ -52,7 +56,7 @@ def generate_headers() -> dict[str, str]:
     auth_token = os.environ.get("ACCESS_TOKEN")
     if auth_token is None:
         auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
+        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, audience='617152572733-mmi45u4k5c8pj8ii72qsnri7s0nvk11d.apps.googleusercontent.com')
 
     headers = {"Authorization": f"Bearer {auth_token}"}
 
@@ -91,7 +95,7 @@ def create_dataset(
     if config.API_URL.__contains__("local"):
         return _create_local_dataset(session, dataset)
     else:
-        _create_remote_dataset(session, filename, dataset, headers)
+        return _create_remote_dataset(session, filename, dataset, headers)
 
 
 def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
@@ -112,7 +116,7 @@ def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
 
 def _create_remote_dataset(
     session: requests.Session, filename: str, dataset: dict, headers: dict[str, str]
-) -> None:
+) -> bool:
     """
     Method to create a remote dataset.
 
@@ -125,14 +129,15 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = bucket_loader.get_dataset_bucket()
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-    wait_until_dataset_ready(
+    return wait_until_dataset_ready(
         dataset["survey_id"], dataset["period_id"], session, headers
     )
+        
 
 
 def wait_until_dataset_ready(
@@ -142,7 +147,7 @@ def wait_until_dataset_ready(
     headers: dict[str, str],
     attempts: int = 5,
     backoff: int = 0.5,
-) -> None:
+) -> bool:
     """
     Method to wait until the specified dataset has been created. Includes exponential back off with adjustable defaults.
 
@@ -163,13 +168,14 @@ def wait_until_dataset_ready(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
             headers=headers,
         )
-
+        print(test_response)
         if test_response.status_code == 200:
-            return
+            return True
         else:
             attempts -= 1
             time.sleep(backoff)
             backoff += backoff
+    return False
 
 
 def cleanup() -> None:
@@ -190,13 +196,13 @@ def cleanup() -> None:
 
         _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        _delete_blobs(bucket_loader.get_dataset_bucket())
+        _delete_blobs(storage_client.get_bucket(config.DATASET_BUCKET_NAME))
 
-        _delete_blobs(bucket_loader.get_schema_bucket())
+        _delete_blobs(storage_client.get_bucket(config.SCHEMA_BUCKET_NAME))
 
-        _delete_collection(firebase_loader.get_datasets_collection())
+        _delete_collection(db.collection("datasets"))
 
-        _delete_collection(firebase_loader.get_schemas_collection())
+        _delete_collection(db.collection("schemas"))
 
 
 def _delete_local_firestore_data():
@@ -210,7 +216,7 @@ def _delete_local_firestore_data():
         None
     """
     requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
+        "http://localhost:8080/emulator/v1/projects/mock-project-id/databases/(default)/documents"
     )
 
 
@@ -269,7 +275,3 @@ def _recursively_delete_document_and_sub_collections(
         _delete_collection(collection_ref)
 
     doc_ref.delete()
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
