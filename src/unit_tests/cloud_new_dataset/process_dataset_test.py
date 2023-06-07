@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, call
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.firestore_transaction_service import FirestoreTransactionService
+from services.shared.firebase_transaction_service import FirebaseTransactionService
 
 from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -29,9 +29,9 @@ class ProcessDatasetTest(TestCase):
         )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
 
-        self.commit_transaction_stash = FirestoreTransactionService.commit_transaction
+        self.commit_transaction_stash = FirebaseTransactionService.commit_transaction
         self.rollback_transaction_stash = (
-            FirestoreTransactionService.rollback_transaction
+            FirebaseTransactionService.rollback_transaction
         )
 
         TestHelper.mock_get_dataset_from_bucket()
@@ -55,8 +55,8 @@ class ProcessDatasetTest(TestCase):
 
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
 
-        FirestoreTransactionService.commit_transaction = self.commit_transaction_stash
-        FirestoreTransactionService.rollback_transaction = (
+        FirebaseTransactionService.commit_transaction = self.commit_transaction_stash
+        FirebaseTransactionService.rollback_transaction = (
             self.rollback_transaction_stash
         )
 
@@ -89,8 +89,8 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
 
-        FirestoreTransactionService.commit_transaction = MagicMock()
-        FirestoreTransactionService.rollback_transaction = MagicMock()
+        FirebaseTransactionService.commit_transaction = MagicMock()
+        FirebaseTransactionService.rollback_transaction = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
 
@@ -149,8 +149,8 @@ class ProcessDatasetTest(TestCase):
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
-        FirestoreTransactionService.commit_transaction = MagicMock()
-        FirestoreTransactionService.rollback_transaction = MagicMock()
+        FirebaseTransactionService.commit_transaction = MagicMock()
+        FirebaseTransactionService.rollback_transaction = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
 
@@ -188,8 +188,8 @@ class ProcessDatasetTest(TestCase):
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
-        FirestoreTransactionService.commit_transaction = MagicMock()
-        FirestoreTransactionService.rollback_transaction = MagicMock()
+        FirebaseTransactionService.commit_transaction = MagicMock()
+        FirebaseTransactionService.rollback_transaction = MagicMock()
 
         with raises(
             RuntimeError,

@@ -1,7 +1,7 @@
 from logging_config import logging
 from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.firestore_transaction_service import firestore_transaction_service
+from services.shared.firebase_transaction_service import firebase_transaction_service
 
 logger = logging.getLogger(__name__)
 
@@ -32,51 +32,56 @@ class DatasetWriterService:
         """
         logger.info("Beginning dataset transaction...")
         try:
-            self.dataset_repository.write_dataset_metadata_to_repository(
-                dataset_id, dataset_metadata_without_id
+            dataset_transaction = lambda transaction: firebase_transaction_service.dataset_transaction_callback(
+                transaction,
+                dataset_id, 
+                dataset_metadata_without_id, 
+                unit_data_collection_with_metadata, 
+                extracted_unit_data_rurefs
             )
-            self._write_unit_data_to_repository(
-                dataset_id,
-                unit_data_collection_with_metadata,
-                extracted_unit_data_rurefs,
-            )
+            firebase_transaction_service.run_transaction(dataset_transaction)
 
-            logger.info("Committing dataset transaction")
-            firestore_transaction_service.commit_transaction()
-            logger.info("Dataset transaction committed")
+            # self.dataset_repository.write_dataset_metadata_to_repository(
+            #     dataset_id, dataset_metadata_without_id
+            # )
+            # self._write_unit_data_to_repository(
+            #     dataset_id,
+            #     unit_data_collection_with_metadata,
+            #     extracted_unit_data_rurefs,
+            # )
+
+            # firebase_transaction_service.commit_transaction()
         except Exception as e:
-            logger.error(f"Performing dataset transaction: exception raised: {e}")
+            logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction")
-            firestore_transaction_service.rollback_transaction()
-            logger.info("Dataset transaction rolled back")
 
-    def _write_unit_data_to_repository(
-        self,
-        dataset_id: str,
-        unit_data_collection_with_metadata: list[UnitDataset],
-        rurefs: list[str],
-    ) -> None:
-        """
-        Writes the new unit data to the database
+    # def _write_unit_data_to_repository(
+    #     self,
+    #     dataset_id: str,
+    #     unit_data_collection_with_metadata: list[UnitDataset],
+    #     rurefs: list[str],
+    # ) -> None:
+    #     """
+    #     Writes the new unit data to the database
 
-        Parameters:
-        dataset_id: the uniquely generated id of the dataset
-        unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
-        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
-        """
-        logger.info("Writing transformed unit data to repository...")
-        database_unit_data_collection = (
-            self.dataset_repository.get_dataset_unit_collection(dataset_id)
-        )
+    #     Parameters:
+    #     dataset_id: the uniquely generated id of the dataset
+    #     unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
+    #     extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
+    #     """
+    #     logger.info("Writing transformed unit data to repository...")
+    #     unit_data_collection_snapshot = (
+    #         self.dataset_repository.get_dataset_unit_collection(dataset_id)
+    #     )
 
-        rurefs_iter = iter(rurefs)
+    #     rurefs_iter = iter(rurefs)
 
-        for unit_data in unit_data_collection_with_metadata:
-            self.dataset_repository.append_unit_to_dataset_units_collection(
-                database_unit_data_collection, unit_data, next(rurefs_iter)
-            )
+    #     for unit_data in unit_data_collection_with_metadata:
+    #         self.dataset_repository.append_unit_to_dataset_units_collection(
+    #             unit_data_collection_snapshot, unit_data, next(rurefs_iter)
+    #         )
 
-        logger.info("Transformed unit data written to repository successfully.")
+    #     logger.info("Transformed unit data written to repository successfully.")
 
     def try_delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.firestore_transaction_service import FirestoreTransactionService
+from services.shared.firebase_transaction_service import FirebaseTransactionService
 
 from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -28,9 +28,9 @@ class ProcessDatasetTest(TestCase):
         )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
 
-        self.commit_transaction_stash = FirestoreTransactionService.commit_transaction
+        self.commit_transaction_stash = FirebaseTransactionService.commit_transaction
         self.rollback_transaction_stash = (
-            FirestoreTransactionService.rollback_transaction
+            FirebaseTransactionService.rollback_transaction
         )
 
         TestHelper.mock_get_dataset_from_bucket()
@@ -53,8 +53,8 @@ class ProcessDatasetTest(TestCase):
         )
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
 
-        FirestoreTransactionService.commit_transaction = self.commit_transaction_stash
-        FirestoreTransactionService.rollback_transaction = (
+        FirebaseTransactionService.commit_transaction = self.commit_transaction_stash
+        FirebaseTransactionService.rollback_transaction = (
             self.rollback_transaction_stash
         )
 
@@ -90,13 +90,13 @@ class ProcessDatasetTest(TestCase):
             Exception
         )
 
-        FirestoreTransactionService.commit_transaction = MagicMock()
-        FirestoreTransactionService.rollback_transaction = MagicMock()
+        FirebaseTransactionService.commit_transaction = MagicMock()
+        FirebaseTransactionService.rollback_transaction = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
 
         DatasetFirebaseRepository.write_dataset_metadata_to_repository.assert_called_once()
         DatasetFirebaseRepository.append_unit_to_dataset_units_collection.assert_not_called()
 
-        FirestoreTransactionService.commit_transaction.assert_not_called()
-        FirestoreTransactionService.rollback_transaction.assert_called_once()
+        FirebaseTransactionService.commit_transaction.assert_not_called()
+        FirebaseTransactionService.rollback_transaction.assert_called_once()

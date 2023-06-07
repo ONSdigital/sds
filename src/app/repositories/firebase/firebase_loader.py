@@ -8,8 +8,8 @@ class FirebaseLoader:
         self.datasets_collection = self.client.collection("datasets")
         self.schemas_collection = self.client.collection("schemas")
 
-    def get_transaction(self) -> firestore.Transaction:
-        return self.client.transaction()
+    def get_client(self) -> firestore.Client:
+        return self.client
 
     def get_datasets_collection(self) -> firestore.CollectionReference:
         """
