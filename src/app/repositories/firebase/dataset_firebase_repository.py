@@ -38,7 +38,8 @@ class DatasetFirebaseRepository:
         extracted_unit_data_rurefs: list[str],
     ):
         """
-        Writes dataset metadata and unit data to firestore as a transaction, which is rolled back if any of the operations fail.
+        Writes dataset metadata and unit data to firestore as a transaction, which is
+        rolled back if any of the operations fail.
 
         Parameters:
         dataset_id: id of the dataset

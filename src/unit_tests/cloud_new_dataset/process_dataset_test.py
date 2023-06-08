@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock
 
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository

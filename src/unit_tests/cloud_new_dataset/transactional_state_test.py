@@ -62,6 +62,6 @@ class ProcessDatasetTest(TestCase):
 
         with raises(
             Exception,
-            match=f"Error performing dataset transaction.",
+            match="Error performing dataset transaction.",
         ):
             TestHelper.new_dataset_mock(cloud_event)
