@@ -30,25 +30,6 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def write_dataset_metadata_to_repository(
-        self,
-        dataset_id: str,
-        dataset_metadata_without_id: DatasetMetadataWithoutId,
-    ) -> None:
-        """
-        Creates a new dataset in firestore with a specified ID and data.
-
-        Parameters:
-        dataset_id (str): uniquely generated GUID id of the dataset.
-        dataset_metadata_without_id (DatasetMetadataWithoutId): metadata of the new dataset without id.
-        """
-        logger.info("Writing Dataset metadata to repository...")
-        logger.debug(
-            f"Setting dataset with id {dataset_id} and data {dataset_metadata_without_id}"
-        )
-        self.datasets_collection.document(dataset_id).set(dataset_metadata_without_id)
-        logger.info("Dataset metadata written to repository successfully.")
-
     def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
         """
         Gets the collection of units associated with a particular dataset.
@@ -58,18 +39,25 @@ class DatasetFirebaseRepository:
         """
         return self.datasets_collection.document(dataset_id).collection("units")
 
-    def append_unit_to_dataset_units_collection(
-        self, units_collection: list[UnitDataset], unit_data: UnitDataset, ruref: str
-    ) -> None:
-        """
-        Appends a new unit to the collection of units associated with a particular dataset.
+    def perform_new_dataset_transaction(
+        self,
+        dataset_id: str,
+        dataset_metadata_without_id: DatasetMetadataWithoutId,
+        unit_data_collection_with_metadata: list[UnitDataset],
+        extracted_unit_data_rurefs: list[str],
+    ):
+        @firestore.transactional
+        def dataset_transaction(transaction: firestore.Transaction):
+            new_dataset_document = self.datasets_collection.document(dataset_id)
 
-        Parameters:
-        units_collection (any): The collection of units that data is being appended to.
-        unit_data (any): The unit being appended
-        """
-        logger.debug(f"Unit data being appended: {unit_data}")
-        units_collection.document(ruref).set(unit_data)
+            transaction.set(new_dataset_document, dataset_metadata_without_id, merge=True)
+            unit_data_collection_snapshot = new_dataset_document.collection("units")
+
+            for unit_data, ruref in zip(unit_data_collection_with_metadata, iter(extracted_unit_data_rurefs)):
+                new_unit = unit_data_collection_snapshot.document(ruref)
+                transaction.set(new_unit, unit_data, merge=True)
+        
+        dataset_transaction(self.client.transaction())
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
