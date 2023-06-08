@@ -63,7 +63,7 @@ class DatasetFirebaseRepository:
                 new_unit = unit_data_collection_snapshot.document(ruref)
                 transaction.set(new_unit, unit_data, merge=True)
 
-        dataset_transaction(self.client.transaction())
+        dataset_transaction(firebase_loader.client.transaction())
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
