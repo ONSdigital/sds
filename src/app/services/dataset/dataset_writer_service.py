@@ -41,6 +41,8 @@ class DatasetWriterService:
             logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction")
             raise Exception("Error performing dataset transaction.")
+        
+        logger.info("Dataset transaction committed successfully.")
 
     def try_delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int
