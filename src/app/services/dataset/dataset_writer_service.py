@@ -8,9 +8,9 @@ logger = logging.getLogger(__name__)
 class DatasetWriterService:
     def __init__(
         self,
-        dataset_repository: DatasetFirebaseRepository,
+        dataset_firebase_repository: DatasetFirebaseRepository,
     ):
-        self.dataset_repository = dataset_repository
+        self.dataset_firebase_repository = dataset_firebase_repository
 
     def perform_dataset_transaction(
         self,
@@ -31,16 +31,16 @@ class DatasetWriterService:
         """
         logger.info("Beginning dataset transaction...")
         try:
-            self.firebase_repository.perform_new_dataset_transaction(
-                dataset_id, 
-                dataset_metadata_without_id, 
-                unit_data_collection_with_metadata, 
-                extracted_unit_data_rurefs
+            self.dataset_firebase_repository.perform_new_dataset_transaction(
+                dataset_id,
+                dataset_metadata_without_id,
+                unit_data_collection_with_metadata,
+                extracted_unit_data_rurefs,
             )
         except Exception as e:
             logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction")
-            raise Exception('Error performing dataset transaction.')
+            raise Exception("Error performing dataset transaction.")
 
     def try_delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int
@@ -55,7 +55,7 @@ class DatasetWriterService:
 
         logger.info("Deleting previous dataset versions...")
         try:
-            self.dataset_repository.delete_previous_versions_datasets(
+            self.dataset_firebase_repository.delete_previous_versions_datasets(
                 survey_id, latest_version
             )
             logger.info("Previous versions deleted succesfully.")

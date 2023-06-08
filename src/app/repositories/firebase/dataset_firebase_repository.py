@@ -30,15 +30,6 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
-        """
-        Gets the collection of units associated with a particular dataset.
-
-        Parameters:
-        dataset_id (str): uniquely generated GUID id of the dataset.
-        """
-        return self.datasets_collection.document(dataset_id).collection("units")
-
     def perform_new_dataset_transaction(
         self,
         dataset_id: str,
@@ -46,17 +37,31 @@ class DatasetFirebaseRepository:
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_rurefs: list[str],
     ):
+        """
+        Writes dataset metadata and unit data to firestore as a transaction, which is rolled back if any of the operations fail.
+
+        Parameters:
+        dataset_id: id of the dataset
+        dataset_metadata_without_id: dataset metadata without a dataset id
+        unit_data_collection_with_metadata: collection of unit data associated to a dataset
+        extracted_unit_data_rurefs: rurefs associated with the unit data collection
+        """
+
         @firestore.transactional
         def dataset_transaction(transaction: firestore.Transaction):
             new_dataset_document = self.datasets_collection.document(dataset_id)
 
-            transaction.set(new_dataset_document, dataset_metadata_without_id, merge=True)
+            transaction.set(
+                new_dataset_document, dataset_metadata_without_id, merge=True
+            )
             unit_data_collection_snapshot = new_dataset_document.collection("units")
 
-            for unit_data, ruref in zip(unit_data_collection_with_metadata, iter(extracted_unit_data_rurefs)):
+            for unit_data, ruref in zip(
+                unit_data_collection_with_metadata, iter(extracted_unit_data_rurefs)
+            ):
                 new_unit = unit_data_collection_snapshot.document(ruref)
                 transaction.set(new_unit, unit_data, merge=True)
-        
+
         dataset_transaction(self.client.transaction())
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
