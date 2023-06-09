@@ -1,5 +1,5 @@
 from logging_config import logging
-from models.dataset_models import DatasetMetadata
+from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 logger = logging.getLogger(__name__)
@@ -8,54 +8,41 @@ logger = logging.getLogger(__name__)
 class DatasetWriterService:
     def __init__(
         self,
-        dataset_repository: DatasetFirebaseRepository,
+        dataset_firebase_repository: DatasetFirebaseRepository,
     ):
-        self.dataset_repository = dataset_repository
+        self.dataset_firebase_repository = dataset_firebase_repository
 
-    def write_transformed_dataset_to_repository(
-        self,
-        dataset_id,
-        transformed_dataset: DatasetMetadata,
-    ) -> None:
-        """
-        Writes the transformed data to the database
-
-        Parameters:
-        transformed_dataset (DatasetMetadata): the transformed dataset being written
-        """
-        logger.info("Writing transformed dataset to repository...")
-        logger.debug(f"Writing dataset with id {dataset_id}")
-
-        self.dataset_repository.create_new_dataset(dataset_id, transformed_dataset)
-
-        logger.info("Transformed dataset written to repository successfully.")
-
-    def write_transformed_unit_data_to_repository(
+    def perform_dataset_transaction(
         self,
         dataset_id: str,
-        new_dataset_unit_data_collection: list[object],
-        rurefs: list,
+        dataset_metadata_without_id: DatasetMetadataWithoutId,
+        unit_data_collection_with_metadata: list[UnitDataset],
+        extracted_unit_data_rurefs: list[str],
     ) -> None:
         """
-        Writes the new unit data to the database
+        Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
+        rolling back otherwise.
 
         Parameters:
-        dataset_id (str): the uniquely generated id of the dataset
-        new_dataset_unit_data_collection (list[object]): the collection of unit data associated with the new dataset
+        dataset_id: the uniquely generated id of the dataset
+        dataset_metadata_without_id: the metadata of the dataset without its id
+        unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
+        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
         """
-        logger.info("Writing transformed unit data to repository...")
-        database_unit_data_collection = (
-            self.dataset_repository.get_dataset_unit_collection(dataset_id)
-        )
-
-        rurefs_iter = iter(rurefs)
-
-        for unit_data in new_dataset_unit_data_collection:
-            self.dataset_repository.append_unit_to_dataset_units_collection(
-                database_unit_data_collection, unit_data, next(rurefs_iter)
+        logger.info("Beginning dataset transaction...")
+        try:
+            self.dataset_firebase_repository.perform_new_dataset_transaction(
+                dataset_id,
+                dataset_metadata_without_id,
+                unit_data_collection_with_metadata,
+                extracted_unit_data_rurefs,
             )
+        except Exception as e:
+            logger.error(f"Dataset transaction error, exception raised: {e}")
+            logger.error("Rolling back dataset transaction")
+            raise Exception("Error performing dataset transaction.")
 
-        logger.info("Transformed unit data written to repository successfully.")
+        logger.info("Dataset transaction committed successfully.")
 
     def try_delete_previous_versions_datasets(
         self, survey_id: str, latest_version: int
@@ -70,7 +57,7 @@ class DatasetWriterService:
 
         logger.info("Deleting previous dataset versions...")
         try:
-            self.dataset_repository.delete_previous_versions_datasets(
+            self.dataset_firebase_repository.delete_previous_versions_datasets(
                 survey_id, latest_version
             )
             logger.info("Previous versions deleted succesfully.")

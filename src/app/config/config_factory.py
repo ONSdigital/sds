@@ -29,3 +29,6 @@ class ConfigFactory:
                 return IntegrationTestCloudbuildConfig()
             case "default":
                 return Config()
+
+
+config = ConfigFactory.get_config()

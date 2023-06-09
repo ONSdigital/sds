@@ -1,6 +1,6 @@
 import uuid
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import (
@@ -19,8 +19,6 @@ logger = logging.getLogger(__name__)
 
 class DatasetProcessorService:
     def __init__(self) -> None:
-        self.config = ConfigFactory.get_config()
-
         self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
@@ -38,36 +36,26 @@ class DatasetProcessorService:
         new_dataset_unit_data_collection = raw_dataset.pop("data")
         dataset_id = str(uuid.uuid4())
 
-        transformed_dataset = self._add_metadata_to_new_dataset(
+        dataset_metadata_without_id = self._add_metadata_to_new_dataset(
             raw_dataset, filename, new_dataset_unit_data_collection
         )
-        logger.info("Dataset transformed successfully.")
+        unit_data_collection_with_metadata = self._add_metadata_to_unit_data_collection(
+            dataset_id, dataset_metadata_without_id, new_dataset_unit_data_collection
+        )
+        extracted_unit_data_rurefs = self._extract_rurefs_from_unit_data(
+            new_dataset_unit_data_collection
+        )
 
-        self.dataset_writer_service.write_transformed_dataset_to_repository(
+        self.dataset_writer_service.perform_dataset_transaction(
             dataset_id,
-            transformed_dataset,
-        )
-
-        logger.info("Extracting rurefs from unit data...")
-        rurefs = self._extract_rurefs_from_unit_data(new_dataset_unit_data_collection)
-        logger.info("Rurefs are extracted and stored successfully.")
-        logger.debug(f"Extracted rurefs: {rurefs}")
-
-        logger.info("Transforming unit data collection...")
-        transformed_unit_data_collection = self._add_metadata_to_unit_data_collection(
-            dataset_id, transformed_dataset, new_dataset_unit_data_collection
-        )
-        logger.info("Unit data collection transformed successfully.")
-        logger.debug(
-            f"Transformed unit data collection for dataset with id: {dataset_id}"
-        )
-
-        self.dataset_writer_service.write_transformed_unit_data_to_repository(
-            dataset_id, transformed_unit_data_collection, rurefs
+            dataset_metadata_without_id,
+            unit_data_collection_with_metadata,
+            extracted_unit_data_rurefs,
         )
 
         self.dataset_writer_service.try_delete_previous_versions_datasets(
-            transformed_dataset["survey_id"], transformed_dataset["sds_dataset_version"]
+            dataset_metadata_without_id["survey_id"],
+            dataset_metadata_without_id["sds_dataset_version"],
         )
 
     def _add_metadata_to_new_dataset(
@@ -84,20 +72,23 @@ class DatasetProcessorService:
         filename (str): the filename of the json containing the dataset data
         dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
-        logger.info("Transforming new dataset metadata...")
-        return {
+        logger.info("Adding metadata to new dataset...")
+
+        dataset_metadata_without_id = {
             **raw_dataset_metadata,
             "filename": filename,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(
-                    self.config.TIME_FORMAT
-                )
+                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
                 raw_dataset_metadata["survey_id"]
             ),
         }
+
+        logger.info("Metadata added to new dataset successfully.")
+
+        return dataset_metadata_without_id
 
     def _calculate_next_dataset_version(self, survey_id: str) -> int:
         """
@@ -128,13 +119,21 @@ class DatasetProcessorService:
         transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset metadata without id
         raw_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
-        logger.info("Transforming unit data collection...")
-        return [
+        logger.info("Adding metadata to unit data collection...")
+
+        unit_data_collection_with_metadata = [
             self._add_metatadata_to_unit_data_item(
                 dataset_id, transformed_dataset_metadata, item
             )
             for item in raw_dataset_unit_data_collection
         ]
+
+        logger.info("Metadata added to unit data collection transformed successfully.")
+        logger.debug(
+            f"Metadata added to unit data collection for dataset with id: {dataset_id}"
+        )
+
+        return unit_data_collection_with_metadata
 
     def _add_metatadata_to_unit_data_item(
         self,
@@ -204,4 +203,13 @@ class DatasetProcessorService:
         Parameters:
         raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
         """
-        return [item["ruref"] for item in raw_dataset_unit_data_collection]
+        logger.info("Extracting rurefs from unit data...")
+
+        extracted_unit_data_rurefs = [
+            item["ruref"] for item in raw_dataset_unit_data_collection
+        ]
+
+        logger.info("Rurefs are extracted and stored successfully.")
+        logger.debug(f"Extracted rurefs: {extracted_unit_data_rurefs}")
+
+        return extracted_unit_data_rurefs

@@ -1,10 +1,9 @@
 from logging_config import logging
 from models.dataset_models import UnitDataset
-from repositories.buckets.bucket_loader import BucketLoader
+from repositories.buckets.bucket_loader import bucket_loader
 from repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
-bucket_loader = BucketLoader()
 
 
 class DatasetBucketRepository(BucketRepository):

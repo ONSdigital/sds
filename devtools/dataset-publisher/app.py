@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from google.cloud import storage
 
 app = FastAPI()
+
 config = ConfigFactory.get_config()
 
 
