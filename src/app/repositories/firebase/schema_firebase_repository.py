@@ -78,7 +78,7 @@ class SchemaFirebaseRepository:
         """
 
         transaction.set(
-            firebase_loader.schemas_collection.document(schema_id),
+            self.schemas_collection.document(schema_id),
             asdict(schema_metadata),
             merge=True,
         )
