@@ -1,6 +1,6 @@
 import uuid
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import (
@@ -19,8 +19,6 @@ logger = logging.getLogger(__name__)
 
 class DatasetProcessorService:
     def __init__(self) -> None:
-        self.config = ConfigFactory.get_config()
-
         self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
@@ -89,9 +87,7 @@ class DatasetProcessorService:
             **raw_dataset_metadata,
             "filename": filename,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(
-                    self.config.TIME_FORMAT
-                )
+                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(

@@ -1,18 +1,16 @@
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from google.cloud import firestore
-
-config = ConfigFactory.get_config()
 
 
 class FirebaseLoader:
     def __init__(self):
-        self.client = self._connect_db()
+        self.client = self._connect_client()
         self.datasets_collection = self._set_collection("datasets")
         self.schemas_collection = self._set_collection("schemas")
 
-    def get_database_client(self) -> firestore.Client:
+    def get_client(self) -> firestore.Client:
         """
-        Get the firestore client reference
+        Get the firestore client
         """
         return self.client
 
@@ -28,7 +26,7 @@ class FirebaseLoader:
         """
         return self.schemas_collection
 
-    def _connect_db(self) -> firestore.Client:
+    def _connect_client(self) -> firestore.Client:
         """
         Connect to the firestore client using PROJECT_ID
         """
@@ -43,3 +41,6 @@ class FirebaseLoader:
         if config.CONF == "unit":
             return None
         return self.client.collection(collection)
+
+
+firebase_loader = FirebaseLoader()

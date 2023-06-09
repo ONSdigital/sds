@@ -1,70 +1,78 @@
 import uuid
 
 import exception.exceptions as exceptions
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 from logging_config import logging
-from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
+from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithoutGuid
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from repositories.firebase.firebase_transaction_handler import (
-    FirebaseTransactionHandler,
-)
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
 
 logger = logging.getLogger(__name__)
-config = ConfigFactory.get_config()
 
 
 class SchemaProcessorService:
     def __init__(self) -> None:
-        self.config = ConfigFactory.get_config()
-
         self.schema_firebase_repository = SchemaFirebaseRepository()
-        self.schema_transaction_handler = FirebaseTransactionHandler(
-            self.schema_firebase_repository.get_database_client()
-        )
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema(self, schema_metadata: SchemaMetadataWithoutGuid):
+    def process_raw_schema(self, schema: Schema):
         """
-        Processes incoming schema metadata.
+        Processes incoming schema.
 
         Parameters:
-        schema_metadata (SchemaMetadata): incoming schema metadata.
+        schema (Schema): incoming schema.
         """
 
         schema_id = str(uuid.uuid4())
-        stored_schema_filename = f"{schema_metadata.survey_id}/{schema_id}.json"
+        stored_schema_filename = f"{schema.survey_id}/{schema_id}.json"
 
         next_version_schema_metadata = self.build_next_version_schema_metadata(
-            schema_id, stored_schema_filename, schema_metadata
+            schema_id, stored_schema_filename, schema
         )
 
-        post_schema_transaction = self.schema_transaction_handler.transaction_initiate()
+        self.process_raw_schema_in_transaction(
+            schema_id, next_version_schema_metadata, schema, stored_schema_filename
+        )
 
+        return next_version_schema_metadata
+
+    def process_raw_schema_in_transaction(
+        self,
+        schema_id: str,
+        next_version_schema_metadata: SchemaMetadata,
+        schema: Schema,
+        stored_schema_filename: str,
+    ):
+        """
+        Process the new schema by calling a transactional function that wrap the procedures
+        Commit if the function is sucessful, rolling back otherwise.
+
+        Parameters:
+        schema_id (str): The unique id of the new schema.
+        next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
+        schema (Schema): The schema being stored.
+        stored_schema_filename (str): Filename of uploaded json schema.
+        """
         try:
-            self.schema_firebase_repository.create_schema_in_transaction(
-                schema_id, next_version_schema_metadata, post_schema_transaction
+            logger.info("Beginning schema transaction...")
+            self.schema_firebase_repository.perform_new_schema_transaction(
+                schema_id, next_version_schema_metadata, schema, stored_schema_filename
             )
 
-            self.schema_bucket_repository.store_schema_json(
-                stored_schema_filename, schema_metadata
-            )
-
-            self.schema_transaction_handler.transaction_commit()
-
+            logger.info("Schema transaction committed successfully.")
             return next_version_schema_metadata
-
         except Exception as e:
             logger.error(f"Performing schema transaction: exception raised: {e}")
+            logger.error("Rolling back schema transaction")
             raise exceptions.GlobalException
 
     def build_next_version_schema_metadata(
         self,
         schema_id: str,
         stored_schema_filename: str,
-        schema_metadata: SchemaMetadataWithoutGuid,
+        schema: Schema,
     ) -> SchemaMetadata:
         """
         Builds the next version of schema metadata being processed.
@@ -77,16 +85,14 @@ class SchemaProcessorService:
         return SchemaMetadata(
             guid=schema_id,
             schema_location=stored_schema_filename,
-            sds_schema_version=self.calculate_next_schema_version(schema_metadata),
-            survey_id=schema_metadata.survey_id,
+            sds_schema_version=self.calculate_next_schema_version(schema),
+            survey_id=schema.survey_id,
             sds_published_at=str(
-                DatetimeService.get_current_date_and_time().strftime(
-                    self.config.TIME_FORMAT
-                )
+                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
         )
 
-    def calculate_next_schema_version(self, schema_metadata: SchemaMetadataWithoutGuid):
+    def calculate_next_schema_version(self, schema: Schema):
         """
         Calculates the next schema version for the metadata being built.
 
@@ -96,7 +102,7 @@ class SchemaProcessorService:
 
         current_version_metadata = (
             self.schema_firebase_repository.get_latest_schema_with_survey_id(
-                schema_metadata.survey_id
+                schema.survey_id
             )
         )
 

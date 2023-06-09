@@ -1,7 +1,7 @@
 from datetime import datetime
 from unittest import TestCase
 
-from config.config_factory import ConfigFactory
+from config.config_factory import config
 
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
@@ -12,8 +12,6 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_session,
 )
 from src.test_data.shared_test_data import unit_id, unit_response
-
-config = ConfigFactory.get_config()
 
 
 class E2ESchemaIntegrationTest(TestCase):

@@ -2,17 +2,15 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 import pytest
+from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from repositories.firebase.firebase_transaction_handler import (
-    FirebaseTransactionHandler,
-)
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 
 from src.test_data import schema_test_data
 from src.unit_tests.test_helper import TestHelper
 
 
-class PostSchemaMetadataTest(TestCase):
+class PostSchemaTest(TestCase):
     @pytest.fixture(autouse=True)
     def prepare_fixture(self, test_client):
         self.test_client = test_client
@@ -22,30 +20,23 @@ class PostSchemaMetadataTest(TestCase):
         self.get_latest_schema_with_survey_id_stash = (
             SchemaFirebaseRepository.get_latest_schema_with_survey_id
         )
-        self.create_schema_in_transaction_stash = (
-            SchemaFirebaseRepository.create_schema_in_transaction
+        self.perform_new_schema_transaction_stash = (
+            SchemaFirebaseRepository.perform_new_schema_transaction
         )
-        self.transaction_commit_stash = FirebaseTransactionHandler.transaction_commit
-        self.transaction_initiate_stash = (
-            FirebaseTransactionHandler.transaction_initiate
-        )
-        FirebaseTransactionHandler.transaction_commit = MagicMock()
-        FirebaseTransactionHandler.transaction_initiate = MagicMock()
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = (
             self.get_latest_schema_with_survey_id_stash
         )
-        SchemaFirebaseRepository.create_schema_in_transaction = (
-            self.create_schema_in_transaction_stash
-        )
-        FirebaseTransactionHandler.transaction_commit = self.transaction_commit_stash
-        FirebaseTransactionHandler.transaction_initiate = (
-            self.transaction_initiate_stash
+        SchemaFirebaseRepository.perform_new_schema_transaction = (
+            self.perform_new_schema_transaction_stash
         )
 
     def test_200_response_updated_schema_version(self):
+        """
+        Tests when a schema is posted, a 200 response and the schema metadata will be received
+        """
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
 
@@ -56,8 +47,8 @@ class PostSchemaMetadataTest(TestCase):
             )
         )
 
-        SchemaFirebaseRepository.create_schema_in_transaction = MagicMock()
-        SchemaFirebaseRepository.create_schema_in_transaction.return_value = (
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
+        SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
@@ -69,6 +60,14 @@ class PostSchemaMetadataTest(TestCase):
         assert (
             response.json()
             == schema_test_data.test_post_schema_metadata_updated_version_response
+        )
+        SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
+            schema_test_data.test_guid,
+            SchemaMetadata(
+                **schema_test_data.test_post_schema_metadata_updated_version_response
+            ),
+            Schema(**schema_test_data.test_post_schema_metadata_body),
+            schema_test_data.test_filename,
         )
 
     def test_200_response_first_schema_version(self):
@@ -84,8 +83,8 @@ class PostSchemaMetadataTest(TestCase):
             TestHelper.create_document_snapshot_generator_mock([])
         )
 
-        SchemaFirebaseRepository.create_schema_in_transaction = MagicMock()
-        SchemaFirebaseRepository.create_schema_in_transaction.return_value = (
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
+        SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
@@ -98,6 +97,7 @@ class PostSchemaMetadataTest(TestCase):
             response.json()
             == schema_test_data.test_post_schema_metadata_first_version_response
         )
+        SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once()
 
     def test_post_bad_schema_400_response(self):
         """
@@ -110,11 +110,12 @@ class PostSchemaMetadataTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
-    def test_data_integrity_when_store_schema_failed(self):
-        """ """
-        SchemaBucketRepository.store_schema_json = MagicMock()
-        SchemaBucketRepository.store_schema_json.side_effect = Exception
-
+    def test_post_schema_transaction_exception_500_response(self):
+        """
+        Test the post schema transaction. A 500 response will be received
+        with appropriate error message if an exception is found in new
+        schema transaction
+        """
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
             TestHelper.create_document_snapshot_generator_mock(
@@ -122,10 +123,8 @@ class PostSchemaMetadataTest(TestCase):
             )
         )
 
-        SchemaFirebaseRepository.create_schema_in_transaction = MagicMock()
-        SchemaFirebaseRepository.create_schema_in_transaction.return_value = (
-            schema_test_data.test_post_schema_metadata_updated_version_response
-        )
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
+        SchemaFirebaseRepository.perform_new_schema_transaction.side_effect = Exception
 
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
@@ -133,5 +132,3 @@ class PostSchemaMetadataTest(TestCase):
 
         assert response.status_code == 500
         assert response.json()["message"] == "Unable to process request"
-
-        FirebaseTransactionHandler.transaction_commit.assert_not_called()

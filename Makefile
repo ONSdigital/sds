@@ -44,7 +44,7 @@ lint-and-unit-test:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=mock-project-id && \
-	python -m pytest -vv --cov=src/app ./src/unit_tests/
+	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
 unit-test:
@@ -57,7 +57,7 @@ unit-test:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=mock-project-id && \
-	python -m pytest -vv --cov=src/app ./src/unit_tests/
+	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
 
@@ -71,7 +71,7 @@ integration-test-local:
     export API_URL=${API_URL} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export PROJECT_ID=mock-project-id && \
-	python -m pytest src/integration_tests -vv
+	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
 	export CONF=int-test && \
@@ -83,7 +83,7 @@ integration-test-sandbox:
     export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export PROJECT_ID=$(PROJECT_ID) && \
-	python -m pytest src/integration_tests -vv
+	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally. 
 integration-test-cloudbuild:
@@ -98,7 +98,7 @@ integration-test-cloudbuild:
 	export AUTODELETE_DATASET_BUCKET_FILE=${INT_AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${INT_LOG_LEVEL} && \
 	export PROJECT_ID=${INT_PROJECT_ID} && \
-	python -m pytest src/integration_tests -vv
+	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 lint:
 	black . --check
