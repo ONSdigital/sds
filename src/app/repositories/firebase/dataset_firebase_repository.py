@@ -30,44 +30,43 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def create_new_dataset(
+    def perform_new_dataset_transaction(
         self,
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
-    ) -> None:
+        unit_data_collection_with_metadata: list[UnitDataset],
+        extracted_unit_data_rurefs: list[str],
+    ):
         """
-        Creates a new dataset in firestore with a specified ID and data.
+        Writes dataset metadata and unit data to firestore as a transaction, which is
+        rolled back if any of the operations fail.
 
         Parameters:
-        dataset_id (str): uniquely generated GUID id of the dataset.
-        dataset_metadata_without_id (DatasetMetadataWithoutId): metadata of the new dataset without id.
+        dataset_id: id of the dataset
+        dataset_metadata_without_id: dataset metadata without a dataset id
+        unit_data_collection_with_metadata: collection of unit data associated to a dataset
+        extracted_unit_data_rurefs: rurefs associated with the unit data collection
         """
-        logger.debug(
-            f"Setting dataset with id {dataset_id} and data {dataset_metadata_without_id}"
-        )
-        self.datasets_collection.document(dataset_id).set(dataset_metadata_without_id)
 
-    def get_dataset_unit_collection(self, dataset_id: str) -> list[UnitDataset]:
-        """
-        Gets the collection of units associated with a particular dataset.
+        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
+        # to be 'transaction', but since we're using classes the first parameter is always
+        # 'self'. Encapsulating the transaction within this function circumvents the issue.
+        @firestore.transactional
+        def dataset_transaction(transaction: firestore.Transaction):
+            new_dataset_document = self.datasets_collection.document(dataset_id)
 
-        Parameters:
-        dataset_id (str): uniquely generated GUID id of the dataset.
-        """
-        return self.datasets_collection.document(dataset_id).collection("units")
+            transaction.set(
+                new_dataset_document, dataset_metadata_without_id, merge=True
+            )
+            unit_data_collection_snapshot = new_dataset_document.collection("units")
 
-    def append_unit_to_dataset_units_collection(
-        self, units_collection: list[UnitDataset], unit_data: UnitDataset, ruref: str
-    ) -> None:
-        """
-        Appends a new unit to the collection of units associated with a particular dataset.
+            for unit_data, ruref in zip(
+                unit_data_collection_with_metadata, iter(extracted_unit_data_rurefs)
+            ):
+                new_unit = unit_data_collection_snapshot.document(ruref)
+                transaction.set(new_unit, unit_data, merge=True)
 
-        Parameters:
-        units_collection (any): The collection of units that data is being appended to.
-        unit_data (any): The unit being appended
-        """
-        logger.debug(f"Unit data being appended: {unit_data}")
-        units_collection.document(ruref).set(unit_data)
+        dataset_transaction(firebase_loader.client.transaction())
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """

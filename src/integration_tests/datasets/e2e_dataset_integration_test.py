@@ -39,6 +39,7 @@ class E2ESchemaIntegrationTest(TestCase):
         filename = f"integration-test-{str(datetime.now()).replace(' ','-')}.json"
 
         create_dataset_response = create_dataset(filename, dataset, session, headers)
+
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
 
