@@ -3,6 +3,7 @@ from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithoutGu
 test_guid = "test_guid"
 test_survey_id = "test_survey_id"
 test_published_at = "2023-04-20T12:00:00Z"
+test_filename = f"{test_survey_id}/{test_guid}.json"
 
 test_post_schema_metadata_first_version_response: SchemaMetadata = {
     "guid": test_guid,
@@ -14,7 +15,7 @@ test_post_schema_metadata_first_version_response: SchemaMetadata = {
 
 test_post_schema_metadata_updated_version_response: SchemaMetadata = {
     "guid": test_guid,
-    "schema_location": f"{test_survey_id}/{test_guid}.json",
+    "schema_location": test_filename,
     "sds_published_at": test_published_at,
     "sds_schema_version": 2,
     "survey_id": test_survey_id,

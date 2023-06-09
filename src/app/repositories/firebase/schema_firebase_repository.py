@@ -2,14 +2,18 @@ from dataclasses import asdict
 from typing import Generator
 
 from firebase_admin import firestore
+from google.cloud.firestore import Transaction
 from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
+from models.schema_models import Schema, SchemaMetadata
+from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.firebase_loader import firebase_loader
 
 
 class SchemaFirebaseRepository:
     def __init__(self):
+        self.client = firebase_loader.get_client()
         self.schemas_collection = firebase_loader.get_schemas_collection()
+        self.schema_bucket_repository = SchemaBucketRepository()
 
     def get_latest_schema_with_survey_id(
         self, survey_id: str
@@ -28,9 +32,43 @@ class SchemaFirebaseRepository:
             .stream()
         )
 
-    def create_schema(
-        self, schema_id: str, schema_metadata: SchemaMetadataWithoutGuid
-    ) -> SchemaMetadata:
+    def perform_new_schema_transaction(
+        self,
+        schema_id: str,
+        next_version_schema_metadata: SchemaMetadata,
+        schema: Schema,
+        stored_schema_filename: str,
+    ) -> None:
+        """
+        A transactional function that wrap schema creation and schema storage processes
+
+        Parameters:
+        schema_id (str): The unique id of the new schema.
+        next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
+        schema (Schema): The schema being stored.
+        stored_schema_filename (str): Filename of uploaded json schema.
+        """
+
+        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
+        # to be 'transaction', but since we're using classes the first parameter is always
+        # 'self'. Encapsulating the transaction within this function circumvents the issue.
+        @firestore.transactional
+        def post_schema_transaction_run(transaction: Transaction):
+            self.create_schema_in_transaction(
+                transaction, schema_id, next_version_schema_metadata
+            )
+            self.schema_bucket_repository.store_schema_json(
+                stored_schema_filename, schema
+            )
+
+        post_schema_transaction_run(self.client.transaction())
+
+    def create_schema_in_transaction(
+        self,
+        transaction: Transaction,
+        schema_id: str,
+        schema_metadata: SchemaMetadata,
+    ) -> None:
         """
         Creates a new schema metadata entry in firestore.
 
@@ -39,7 +77,11 @@ class SchemaFirebaseRepository:
         schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
         """
 
-        self.schemas_collection.document(schema_id).set(asdict(schema_metadata))
+        transaction.set(
+            self.schemas_collection.document(schema_id),
+            asdict(schema_metadata),
+            merge=True,
+        )
 
     def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
         """

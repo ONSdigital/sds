@@ -32,6 +32,10 @@ app.add_exception_handler(
     exceptions.ExceptionNoUnitData,
     ExceptionInterceptor.throw_404_unit_data_no_response_exception,
 )
+app.add_exception_handler(
+    exceptions.GlobalException,
+    ExceptionInterceptor.throw_500_global_exception,
+)
 
 
 @app.exception_handler(500)
@@ -40,7 +44,7 @@ async def internal_exception_handler(request: Request, exc: Exception):
     Override the global exception handler (500 internal server error) in
     FastAPI and throw error in JSON format
     """
-    return ExceptionInterceptor.throw_500_global_exception()
+    return ExceptionInterceptor.throw_500_global_exception(request, exc)
 
 
 @app.exception_handler(RequestValidationError)
@@ -50,7 +54,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     RequestValidationError. This function override the default
     validation exception handler to return 400 instead of 422
     """
-    return ExceptionInterceptor.throw_400_validation_exception()
+    return ExceptionInterceptor.throw_400_validation_exception(request, exc)
 
 
 app.include_router(dataset_router.router)
