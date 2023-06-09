@@ -47,6 +47,7 @@ class DatasetFirebaseRepository:
         unit_data_collection_with_metadata: collection of unit data associated to a dataset
         extracted_unit_data_rurefs: rurefs associated with the unit data collection
         """
+
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
         # to be 'transaction', but since we're using classes the first parameter is always
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
