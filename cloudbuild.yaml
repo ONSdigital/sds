@@ -22,7 +22,6 @@ steps:
       - '-c'
       - |
         make setup 
-        export INT_PROJECT_ID=$_PROJECT_ID
         make unit-test
   - name: docker
     id: build_and_push

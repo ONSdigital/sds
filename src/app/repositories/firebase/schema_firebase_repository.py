@@ -4,7 +4,6 @@ from typing import Generator
 from firebase_admin import firestore
 from google.cloud.firestore import Transaction
 from google.cloud.firestore_v1.document import DocumentSnapshot
-
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.firebase_loader import firebase_loader
