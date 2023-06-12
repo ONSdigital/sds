@@ -4,9 +4,9 @@ from google.cloud import firestore
 
 class FirebaseLoader:
     def __init__(self):
-        self.client = firestore.Client(project=config.PROJECT_ID)
-        self.datasets_collection = self.client.collection("datasets")
-        self.schemas_collection = self.client.collection("schemas")
+        self.client = self._connect_client()
+        self.datasets_collection = self._set_collection("datasets")
+        self.schemas_collection = self._set_collection("schemas")
 
     def get_client(self) -> firestore.Client:
         """
