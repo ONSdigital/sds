@@ -53,7 +53,7 @@ class DatasetProcessorService:
             extracted_unit_data_rurefs,
         )
 
-        self.dataset_writer_service.try_delete_previous_versions_datasets(
+        self.dataset_writer_service.try_perform_delete_previous_versions_datasets_transaction(
             dataset_metadata_without_id["survey_id"],
             dataset_metadata_without_id["sds_dataset_version"],
         )

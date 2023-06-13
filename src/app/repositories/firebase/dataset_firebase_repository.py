@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 class DatasetFirebaseRepository:
     def __init__(self):
+        self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
-        self.document_units_key = "units"
 
     def get_latest_dataset_with_survey_id(
         self, survey_id: str
@@ -66,7 +66,7 @@ class DatasetFirebaseRepository:
                 new_unit = unit_data_collection_snapshot.document(ruref)
                 transaction.set(new_unit, unit_data, merge=True)
 
-        dataset_transaction(firebase_loader.client.transaction())
+        dataset_transaction(self.client.transaction())
 
     def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
         """
@@ -78,7 +78,7 @@ class DatasetFirebaseRepository:
         """
         return (
             self.datasets_collection.document(dataset_id)
-            .collection(self.document_units_key)
+            .collection("units")
             .document(unit_id)
             .get()
             .to_dict()
@@ -100,7 +100,7 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-    def delete_previous_versions_datasets(
+    def perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
     ) -> None:
         """
@@ -114,34 +114,49 @@ class DatasetFirebaseRepository:
         latest_version (int): latest version of the dataset.
         """
 
-        previous_versions_datasets = self.datasets_collection.where(
-            "survey_id", "==", survey_id
-        ).where("sds_dataset_version", "!=", latest_version)
+        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
+        # to be 'transaction', but since we're using classes the first parameter is always
+        # 'self'. Encapsulating the transaction within this function circumvents the issue.
+        @firestore.transactional
+        def delete_collection_transaction(transaction: firestore.Transaction):
+            previous_versions_datasets = self.datasets_collection.where(
+                "survey_id", "==", survey_id
+            ).where("sds_dataset_version", "!=", latest_version)
 
-        self._delete_collection(previous_versions_datasets)
+            self._delete_collection(transaction, previous_versions_datasets)
 
-    def _delete_collection(self, collection_ref: firestore.CollectionReference) -> None:
+        delete_collection_transaction(self.client.transaction())
+
+    def _delete_collection(
+        self,
+        transaction: firestore.Transaction,
+        collection_ref: firestore.CollectionReference,
+    ) -> None:
         """
         Recursively deletes the collection and its subcollections.
 
         Parameters:
-        collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
+        transaction: the firestore transaction performing the delete.
+        collection_ref: the reference of the collection being deleted.
         """
         doc_collection = collection_ref.stream()
 
         for doc in doc_collection:
-            self._recursively_delete_document_and_sub_collections(doc.reference)
+            self._recursively_delete_document_and_sub_collections(
+                transaction, doc.reference
+            )
 
     def _recursively_delete_document_and_sub_collections(
-        self, doc_ref: firestore.DocumentReference
+        self, transaction: firestore.Transaction, doc_ref: firestore.DocumentReference
     ) -> None:
         """
         Loops through each collection in a document and deletes the collection.
 
         Parameters:
-        doc_ref (firestore.DocumentReference): the reference of the document being deleted.
+        transaction: the firestore transaction performing the delete.
+        doc_ref: the reference of the document being deleted.
         """
         for collection_ref in doc_ref.collections():
-            self._delete_collection(collection_ref)
+            self._delete_collection(transaction, collection_ref)
 
-        doc_ref.delete()
+        transaction.delete(doc_ref)

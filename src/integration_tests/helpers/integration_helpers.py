@@ -190,9 +190,13 @@ def cleanup() -> None:
 
         _delete_blobs(bucket_loader.get_schema_bucket())
 
-        _delete_collection(firebase_loader.get_datasets_collection())
-
-        _delete_collection(firebase_loader.get_schemas_collection())
+        client = firebase_loader.get_client()
+        perform_delete_transaction(
+            client.transaction(), firebase_loader.get_datasets_collection()
+        )
+        perform_delete_transaction(
+            client.transaction(), firebase_loader.get_schemas_collection()
+        )
 
 
 def _delete_local_firestore_data():
@@ -241,7 +245,16 @@ def _delete_blobs(bucket) -> None:
         blob.delete()
 
 
-def _delete_collection(collection_ref: firestore.CollectionReference) -> None:
+@firestore.transactional
+def perform_delete_transaction(
+    transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
+):
+    delete_collection(transaction, collection_ref)
+
+
+def delete_collection(
+    transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
+) -> None:
     """
     Recursively deletes the collection and its subcollections.
     Parameters:
@@ -250,10 +263,11 @@ def _delete_collection(collection_ref: firestore.CollectionReference) -> None:
     doc_collection = collection_ref.stream()
 
     for doc in doc_collection:
-        _recursively_delete_document_and_sub_collections(doc.reference)
+        recursively_delete_document_and_sub_collections(transaction, doc.reference)
 
 
-def _recursively_delete_document_and_sub_collections(
+def recursively_delete_document_and_sub_collections(
+    transaction: firestore.Transaction,
     doc_ref: firestore.DocumentReference,
 ) -> None:
     """
@@ -262,9 +276,9 @@ def _recursively_delete_document_and_sub_collections(
     doc_ref (firestore.DocumentReference): the reference of the document being deleted.
     """
     for collection_ref in doc_ref.collections():
-        _delete_collection(collection_ref)
+        delete_collection(transaction, collection_ref)
 
-    doc_ref.delete()
+    transaction.delete(doc_ref)
 
 
 def get_dataset_bucket():

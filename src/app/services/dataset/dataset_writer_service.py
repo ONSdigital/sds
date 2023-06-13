@@ -44,20 +44,19 @@ class DatasetWriterService:
 
         logger.info("Dataset transaction committed successfully.")
 
-    def try_delete_previous_versions_datasets(
+    def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
     ) -> None:
         """
         Tries to delete all versions of a dataset except the latest version, if this fails an error is raised.
 
         Parameters:
-        survey_id (str): survey id of the dataset.
-        latest_version (int): latest version of the dataset.
+        survey_id: survey id of the dataset.
+        latest_version: latest version of the dataset.
         """
-
         logger.info("Deleting previous dataset versions...")
         try:
-            self.dataset_firebase_repository.delete_previous_versions_datasets(
+            self.dataset_firebase_repository.perform_delete_previous_versions_datasets_transaction(
                 survey_id, latest_version
             )
             logger.info("Previous versions deleted succesfully.")
@@ -67,5 +66,5 @@ class DatasetWriterService:
                 and latest version {latest_version}, message: {e}"
             )
             raise RuntimeError(
-                "Failed to delete previous dataset versions from firestore."
+                "Failed to delete previous dataset versions from firestore. Rolling back..."
             )

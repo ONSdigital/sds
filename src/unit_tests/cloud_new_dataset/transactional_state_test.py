@@ -17,8 +17,8 @@ class ProcessDatasetTest(TestCase):
         self.perform_new_dataset_transaction_stash = (
             DatasetFirebaseRepository.perform_new_dataset_transaction
         )
-        self.delete_previous_versions_datasets_stash = (
-            DatasetFirebaseRepository.delete_previous_versions_datasets
+        self.perform_delete_previous_versions_datasets_transaction_stash = (
+            DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction
         )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
 
@@ -31,8 +31,8 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.perform_new_dataset_transaction = (
             self.perform_new_dataset_transaction_stash
         )
-        DatasetFirebaseRepository.delete_previous_versions_datasets = (
-            self.delete_previous_versions_datasets_stash
+        DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction = (
+            self.perform_delete_previous_versions_datasets_transaction_stash
         )
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
 
@@ -58,7 +58,9 @@ class ProcessDatasetTest(TestCase):
         )
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
-        DatasetFirebaseRepository.delete_previous_versions_datasets = MagicMock()
+        DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction = (
+            MagicMock()
+        )
 
         with raises(
             Exception,
