@@ -244,8 +244,11 @@ def _delete_blobs(bucket) -> None:
     for blob in blobs:
         blob.delete()
 
+
 @firestore.transactional
-def perform_delete_transaction(transaction: firestore.Transaction, collection_ref: firestore.CollectionReference):
+def perform_delete_transaction(
+    transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
+):
     delete_collection(transaction, collection_ref)
 
 
