@@ -8,7 +8,7 @@ import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
-from google.cloud import firestore
+from firebase_admin import firestore
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
@@ -191,11 +191,10 @@ def cleanup() -> None:
         _delete_blobs(bucket_loader.get_schema_bucket())
 
         client = firebase_loader.get_client()
-        _delete_collection(
+        perform_delete_transaction(
             client.transaction(), firebase_loader.get_datasets_collection()
         )
-
-        _delete_collection(
+        perform_delete_transaction(
             client.transaction(), firebase_loader.get_schemas_collection()
         )
 
@@ -245,9 +244,12 @@ def _delete_blobs(bucket) -> None:
     for blob in blobs:
         blob.delete()
 
-
 @firestore.transactional
-def _delete_collection(
+def perform_delete_transaction(transaction: firestore.Transaction, collection_ref: firestore.CollectionReference):
+    delete_collection(transaction, collection_ref)
+
+
+def delete_collection(
     transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
 ) -> None:
     """
@@ -258,10 +260,10 @@ def _delete_collection(
     doc_collection = collection_ref.stream()
 
     for doc in doc_collection:
-        _recursively_delete_document_and_sub_collections(transaction, doc.reference)
+        recursively_delete_document_and_sub_collections(transaction, doc.reference)
 
 
-def _recursively_delete_document_and_sub_collections(
+def recursively_delete_document_and_sub_collections(
     transaction: firestore.Transaction,
     doc_ref: firestore.DocumentReference,
 ) -> None:
@@ -271,7 +273,7 @@ def _recursively_delete_document_and_sub_collections(
     doc_ref (firestore.DocumentReference): the reference of the document being deleted.
     """
     for collection_ref in doc_ref.collections():
-        _delete_collection(transaction, collection_ref)
+        delete_collection(transaction, collection_ref)
 
     transaction.delete(doc_ref)
 
