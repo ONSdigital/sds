@@ -1,6 +1,7 @@
 import uuid
 
 from config.config_factory import config
+from google.cloud import pubsub_v1
 from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import (
@@ -57,6 +58,17 @@ class DatasetProcessorService:
             dataset_metadata_without_id["survey_id"],
             dataset_metadata_without_id["sds_dataset_version"],
         )
+
+        publisher = pubsub_v1.PublisherClient()
+        topic_path = publisher.topic_path(config.PROJECT_ID, config.DATASET_TOPIC_ID)
+
+        dataset_json = {
+            **dataset_metadata_without_id,
+            "dataset_id": dataset_id,
+        }
+        publish_data = str(dataset_json).encode("utf-8")
+
+        publisher.publish(topic_path, data=publish_data)
 
     def _add_metadata_to_new_dataset(
         self,

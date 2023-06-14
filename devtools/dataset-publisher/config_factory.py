@@ -29,9 +29,11 @@ class Config(BaseSettings):
         super().__init__()
         self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     SCHEMA_BUCKET_NAME: str
     DATASET_BUCKET_NAME: str
+    DATASET_TOPIC_ID: str
 
 
 class ConfigFactory:

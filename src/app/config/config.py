@@ -15,6 +15,7 @@ class Config(BaseSettings):
         )
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -22,6 +23,7 @@ class Config(BaseSettings):
     AUTODELETE_DATASET_BUCKET_FILE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
+    DATASET_TOPIC_ID: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -46,6 +48,7 @@ class IntegrationTestConfig(BaseSettings):
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -56,6 +59,7 @@ class IntegrationTestConfig(BaseSettings):
     API_URL: str
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
+    DATASET_TOPIC_ID: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -78,6 +82,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         )
         self.ACCESS_TOKEN = get_value_from_env("ACCESS_TOKEN")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -88,6 +93,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     API_URL: str
     ACCESS_TOKEN: str
     PROJECT_ID: str
+    DATASET_TOPIC_ID: str
 
 
 class CloudBuildConfig(BaseSettings):
@@ -102,6 +108,7 @@ class CloudBuildConfig(BaseSettings):
         )
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -110,6 +117,7 @@ class CloudBuildConfig(BaseSettings):
     AUTODELETE_DATASET_BUCKET_FILE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
+    DATASET_TOPIC_ID: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):
@@ -131,6 +139,7 @@ class CloudDevelopmentConfig(Config):
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
+        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     SCHEMA_BUCKET_NAME: str
     GOOGLE_APPLICATION_CREDENTIALS: str

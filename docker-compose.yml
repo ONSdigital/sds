@@ -27,6 +27,7 @@ services:
       - LOG_LEVEL=DEBUG
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - PROJECT_ID=mock-project-id
+      - DATASET_TOPIC_ID=mock-dataset-topic-id
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -64,6 +65,7 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
+      - DATASET_TOPIC_ID=mock-dataset-topic-id
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -82,6 +84,7 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
+      - DATASET_TOPIC_ID=mock-dataset-topic-id
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds
