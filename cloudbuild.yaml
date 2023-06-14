@@ -24,7 +24,7 @@ steps:
         make setup 
         make unit-test
   - name: python
-    id: 'Audit packages'
+    id: "Audit packages"
     entrypoint: sh
     args:
       - '-c'
