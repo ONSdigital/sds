@@ -106,7 +106,7 @@ lint:
 	flake8 src --max-line-length=127
 
 audit:
-	pip-audit
+	python -m pip_audit
 
 lint-fix:
 	black .
