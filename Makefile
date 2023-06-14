@@ -105,13 +105,12 @@ lint:
 	isort . --check-only --profile black
 	flake8 src --max-line-length=127
 
+audit:
+	pip-audit
 
 lint-fix:
 	black .
 	isort . --profile black
-
-audit:
- 	python -m pip_audit
 
 
 setup: requirements.txt
