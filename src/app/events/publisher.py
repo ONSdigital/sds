@@ -40,7 +40,7 @@ class Publisher:
         try:
             self.client.get_topic(request={"topic": self.topic_path})
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     def _publish_message(self, topic_id: str, data) -> None:

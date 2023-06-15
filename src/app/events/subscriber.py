@@ -44,7 +44,7 @@ class Subscriber:
                 request={"subscription": self.subscription_path}
             )
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     def pull_messages_and_acknowledge(
