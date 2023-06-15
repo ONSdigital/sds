@@ -20,6 +20,7 @@ services:
       - CONF=docker-dev
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - PUBSUB_EMULATOR_HOST=firestore:8085
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
       - DATASET_BUCKET_NAME=dataset_bucket
@@ -60,6 +61,7 @@ services:
       - SCHEMA_BUCKET_NAME=schema_bucket
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - PUBSUB_EMULATOR_HOST=firestore:8085
       - FIRESTORE_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
       - AUTODELETE_DATASET_BUCKET_FILE=True
@@ -78,6 +80,7 @@ services:
     environment:
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
+      - PUBSUB_EMULATOR_HOST=firestore:8085
       - FIRESTORE_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
       - SCHEMA_BUCKET_NAME=schema_bucket

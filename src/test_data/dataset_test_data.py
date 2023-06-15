@@ -25,7 +25,7 @@ cloud_event_invalid_filename_data = {
 
 unit_id = "test_unit_id"
 survey_id = "test_survey_id"
-early_dataset_version = 1
+old_dataset_version = 1
 new_dataset_version = 2
 
 
@@ -38,7 +38,7 @@ dataset_metadata: DatasetMetadata = {
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 1,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": early_dataset_version,
+    "sds_dataset_version": old_dataset_version,
     "filename": "test_filename.json",
 }
 
@@ -51,7 +51,7 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": early_dataset_version,
+        "sds_dataset_version": old_dataset_version,
         "filename": "test_filename.json",
     },
     {
@@ -97,6 +97,11 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": new_dataset_version,
     "filename": "test_filename.json",
+}
+
+updated_dataset_metadata: DatasetMetadata = {
+    **updated_dataset_metadata_without_id,
+    "dataset_id": shared_test_data.test_guid,
 }
 
 unit_supplementary_data: UnitDataset = {

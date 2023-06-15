@@ -1,6 +1,8 @@
+from config.config_factory import config
 from logging_config import logging
-from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
+from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +45,15 @@ class DatasetWriterService:
             raise Exception("Error performing dataset transaction.")
 
         logger.info("Dataset transaction committed successfully.")
+
+    def try_publish_dataset_metadata_to_topic(
+        self,
+        dataset_metadata: DatasetMetadata,
+    ) -> None:
+        publisher_service.publish_data_to_topic(
+            dataset_metadata,
+            config.DATASET_TOPIC_ID,
+        )
 
     def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
