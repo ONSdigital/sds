@@ -9,6 +9,7 @@ import google.oauth2.id_token
 import requests
 from config.config_factory import config
 from firebase_admin import firestore
+from google.cloud import storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
@@ -67,6 +68,10 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath) as f:
         return json.load(f)
+
+
+def get_dataset_bucket():
+    return bucket_loader.get_dataset_bucket()
 
 
 def create_dataset(
@@ -186,16 +191,17 @@ def cleanup() -> None:
 
         _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        _delete_blobs(bucket_loader.get_dataset_bucket())
-
-        _delete_blobs(bucket_loader.get_schema_bucket())
-
         client = firebase_loader.get_client()
+
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_datasets_collection()
+            client.transaction(),
+            firebase_loader.get_datasets_collection(),
+            bucket_loader.get_dataset_bucket(),
         )
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_schemas_collection()
+            client.transaction(),
+            firebase_loader.get_schemas_collection(),
+            bucket_loader.get_schema_bucket(),
         )
 
 
@@ -229,7 +235,17 @@ def _delete_local_bucket_data(filepath: str):
         shutil.rmtree(path_instance)
 
 
-def _delete_blobs(bucket) -> None:
+@firestore.transactional
+def perform_delete_transaction(
+    transaction: firestore.Transaction,
+    collection_ref: firestore.CollectionReference,
+    bucket: storage.Bucket,
+):
+    _delete_collection(transaction, collection_ref)
+    _delete_blobs(bucket)
+
+
+def _delete_blobs(bucket: storage.Bucket) -> None:
     """
     Method to delete all blobs in the specified bucket.
 
@@ -245,14 +261,7 @@ def _delete_blobs(bucket) -> None:
         blob.delete()
 
 
-@firestore.transactional
-def perform_delete_transaction(
-    transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
-):
-    delete_collection(transaction, collection_ref)
-
-
-def delete_collection(
+def _delete_collection(
     transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
 ) -> None:
     """
@@ -263,10 +272,10 @@ def delete_collection(
     doc_collection = collection_ref.stream()
 
     for doc in doc_collection:
-        recursively_delete_document_and_sub_collections(transaction, doc.reference)
+        _recursively_delete_document_and_sub_collections(transaction, doc.reference)
 
 
-def recursively_delete_document_and_sub_collections(
+def _recursively_delete_document_and_sub_collections(
     transaction: firestore.Transaction,
     doc_ref: firestore.DocumentReference,
 ) -> None:
@@ -276,10 +285,6 @@ def recursively_delete_document_and_sub_collections(
     doc_ref (firestore.DocumentReference): the reference of the document being deleted.
     """
     for collection_ref in doc_ref.collections():
-        delete_collection(transaction, collection_ref)
+        _delete_collection(transaction, collection_ref)
 
     transaction.delete(doc_ref)
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
