@@ -7,6 +7,8 @@ from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.firebase_loader import firebase_loader
+from events.publisher import publisher
+from config.config_factory import config
 
 
 class SchemaFirebaseRepository:
@@ -60,6 +62,7 @@ class SchemaFirebaseRepository:
             self.schema_bucket_repository.store_schema_json(
                 stored_schema_filename, schema
             )
+            publisher.publish_message_for_schema(config.SCHEMA_TOPIC_ID, next_version_schema_metadata)
 
         post_schema_transaction_run(self.client.transaction())
 

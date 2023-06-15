@@ -1,6 +1,9 @@
 from unittest import TestCase
+from src.app.events.subscriber import subscriber
+import json
+from src.test_data.schema_test_data import test_post_schema_metadata_first_version_response
 
-from config.config_factory import config
+from src.app.config.config_factory import config
 
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
@@ -31,13 +34,20 @@ class E2ESchemaIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema", json=test_schema, headers=headers
         )
 
+        received_messages = subscriber.pull_messages_and_acknowledge(config.SCHEMA_TOPIC_ID, 'test_subscriber')
+        decoded_received_messages = [x.decode("utf-8") for x in received_messages]
+        decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
+
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
+        assert received_messages == test_post_schema_metadata_first_version_response
 
+        
         test_schema_get_response = session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
             headers=headers,
         )
+
         assert test_schema_get_response.status_code == 200
 
         response_as_json = test_schema_get_response.json()

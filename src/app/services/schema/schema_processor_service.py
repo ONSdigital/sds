@@ -17,7 +17,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema(self, schema: Schema):
+    def process_raw_schema(self, schema: Schema) -> SchemaMetadata:
         """
         Processes incoming schema.
 
