@@ -13,7 +13,6 @@ from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRep
 from services.dataset.dataset_writer_service import DatasetWriterService
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
-from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
