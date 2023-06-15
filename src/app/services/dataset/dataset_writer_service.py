@@ -51,7 +51,9 @@ class DatasetWriterService:
         dataset_metadata: DatasetMetadata,
     ) -> None:
         logger.info("Publishing dataset metadata to topic...")
-        logger.debug(f'Dataset metadata {dataset_metadata} published to topic {config.DATASET_TOPIC_ID}')
+        logger.debug(
+            f"Dataset metadata {dataset_metadata} published to topic {config.DATASET_TOPIC_ID}"
+        )
         publisher_service.publish_data_to_topic(
             dataset_metadata,
             config.DATASET_TOPIC_ID,
