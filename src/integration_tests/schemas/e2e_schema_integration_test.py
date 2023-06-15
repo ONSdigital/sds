@@ -1,15 +1,16 @@
-from unittest import TestCase
-from src.app.events.subscriber import subscriber
 import json
-from src.test_data.schema_test_data import test_post_schema_metadata_first_version_response
+from unittest import TestCase
 
 from src.app.config.config_factory import config
-
+from src.app.events.subscriber import subscriber
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
     setup_session,
+)
+from src.test_data.schema_test_data import (
+    test_post_schema_metadata_first_version_response,
 )
 
 
@@ -34,7 +35,9 @@ class E2ESchemaIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema", json=test_schema, headers=headers
         )
 
-        received_messages = subscriber.pull_messages_and_acknowledge(config.SCHEMA_TOPIC_ID, 'test_subscriber')
+        received_messages = subscriber.pull_messages_and_acknowledge(
+            config.SCHEMA_TOPIC_ID, "test_subscriber"
+        )
         decoded_received_messages = [x.decode("utf-8") for x in received_messages]
         decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
 
@@ -42,7 +45,6 @@ class E2ESchemaIntegrationTest(TestCase):
         assert "guid" in schema_post_response.json()
         assert received_messages == test_post_schema_metadata_first_version_response
 
-        
         test_schema_get_response = session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
             headers=headers,
