@@ -7,7 +7,11 @@ logger = logging.getLogger(__name__)
 
 class Subscriber:
     def __init__(self):
-        self.client = pubsub_v1.SubscriberClient()
+        if config.CONF == "unit":
+            self.client = None
+        else:
+            self.client = pubsub_v1.SubscriberClient()
+
         self.subscription_path = None
         self.topic_path = None
 

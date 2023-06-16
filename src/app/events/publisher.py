@@ -11,7 +11,11 @@ logger = logging.getLogger(__name__)
 
 class Publisher:
     def __init__(self):
-        self.client = pubsub_v1.PublisherClient()
+        if config.CONF == "unit":
+            self.client = None
+        else:
+            self.client = pubsub_v1.PublisherClient()
+
         self.topic_path = None
 
     def publish_message_for_schema(self, topic_id: str, data: SchemaMetadata) -> None:
