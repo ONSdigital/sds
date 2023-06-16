@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 from google.cloud import firestore, storage
+from google.cloud import pubsub_v1
 from services.shared.datetime_service import DatetimeService
 
 from src.test_data import shared_test_data
@@ -42,6 +43,20 @@ def firestore_credentials_mock(monkeypatch):
     mock_client.collection = MagicMock(return_value=MagicMock())
 
     monkeypatch.setattr(firestore, "Client", mock_client)
+
+
+@pytest.fixture(autouse=True)
+def publisher_mock(monkeypatch):
+    """
+    """
+    monkeypatch.setattr(pubsub_v1, "PublisherClient", MagicMock())
+
+
+@pytest.fixture(autouse=True)
+def subscriber_mock(monkeypatch):
+    """
+    """
+    monkeypatch.setattr(pubsub_v1, "SubscriberClient", MagicMock())
 
 
 @pytest.fixture(autouse=True)
