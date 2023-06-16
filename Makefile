@@ -7,7 +7,7 @@ AUTODELETE_DATASET_BUCKET_FILE=True
 LOG_LEVEL=INFO
 PROJECT_ID = $(shell gcloud config get project)
 API_URL:=http://localhost:3000
-SCHEMA_TOPIC_ID="ons-sds-pub-schema"
+SCHEMA_TOPIC_ID=ons-sds-pub-schema
 
 start-cloud-dev:
 	export CONF=cloud-dev && \
