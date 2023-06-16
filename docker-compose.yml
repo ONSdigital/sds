@@ -27,6 +27,8 @@ services:
       - LOG_LEVEL=DEBUG
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - PROJECT_ID=mock-project-id
+      - SCHEMA_TOPIC_ID=ons-sds-pub-schema
+      - PUBSUB_EMULATOR_HOST=firestore:8085
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -64,6 +66,7 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
+      - SCHEMA_TOPIC_ID=ons-sds-pub-schema
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -82,6 +85,7 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
+      - SCHEMA_TOPIC_ID=ons-sds-pub-schema
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds
