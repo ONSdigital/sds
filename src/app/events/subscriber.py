@@ -54,18 +54,16 @@ class Subscriber:
         self._create_topic_path(topic_id)
         self._create_subscription(subscription_id)
 
- 
         response = self.client.pull(
             request={
                 "subscription": self.subscription_path,
                 "max_messages": 50,
             }
         )
-        
+
         messages = []
         ack_ids = []
         if len(response.received_messages) > 0:
-            
             for msg in response.received_messages:
                 message_data = msg.message.data.decode("utf-8")
                 messages.append(message_data)
@@ -77,7 +75,9 @@ class Subscriber:
                     "ack_ids": ack_ids,
                 }
             )
-            logger.info(f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}.")
+            logger.info(
+                f"Received and acknowledged {len(response.received_messages)} messages from {self.subscription_path}."
+            )
         else:
             logger.info("No message received")
 
