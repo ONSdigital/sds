@@ -42,6 +42,7 @@ class DatasetWriterService:
         except Exception as e:
             logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction")
+
             raise Exception("Error performing dataset transaction.")
 
         logger.info("Dataset transaction committed successfully.")
