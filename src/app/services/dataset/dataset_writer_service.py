@@ -64,7 +64,7 @@ class DatasetWriterService:
             logger.debug(
                 f"Dataset metadata {dataset_metadata} failed to publish to topic {config.DATASET_TOPIC_ID} with error {e}"
             )
-            logger.error("Error publishing dataset metadata to topic")
+            logger.error("Error publishing dataset metadata to topic.")
 
     def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
