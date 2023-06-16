@@ -74,6 +74,10 @@ def load_json(filepath: str) -> dict:
         return json.load(f)
 
 
+def get_dataset_bucket():
+    return bucket_loader.get_dataset_bucket()
+
+
 def create_dataset(
     filename: str, dataset: dict, session: requests.Session, headers: dict[str, str]
 ) -> int | None:
@@ -194,9 +198,14 @@ def cleanup() -> None:
         delete_blobs(bucket_loader.get_schema_bucket())
 
         client = firebase_loader.get_client()
+
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_datasets_collection()
+            client.transaction(),
+            firebase_loader.get_datasets_collection(),
+            bucket_loader.get_dataset_bucket(),
         )
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_schemas_collection()
+            client.transaction(),
+            firebase_loader.get_schemas_collection(),
+            bucket_loader.get_schema_bucket(),
         )
