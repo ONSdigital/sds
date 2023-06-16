@@ -50,15 +50,21 @@ class DatasetWriterService:
         self,
         dataset_metadata: DatasetMetadata,
     ) -> None:
-        logger.info("Publishing dataset metadata to topic...")
-        logger.debug(
-            f"Dataset metadata {dataset_metadata} published to topic {config.DATASET_TOPIC_ID}"
-        )
-        publisher_service.publish_data_to_topic(
-            dataset_metadata,
-            config.DATASET_TOPIC_ID,
-        )
-        logger.info("Dataset data published successfully.")
+        try:
+            logger.info("Publishing dataset metadata to topic...")
+            publisher_service.publish_data_to_topic(
+                dataset_metadata,
+                config.DATASET_TOPIC_ID,
+            )
+            logger.debug(
+                f"Dataset metadata {dataset_metadata} published to topic {config.DATASET_TOPIC_ID}"
+            )
+            logger.info("Dataset metadata published successfully.")
+        except Exception as e:
+            logger.debug(
+                f"Dataset metadata {dataset_metadata} failed to publish to topic {config.DATASET_TOPIC_ID} with error {e}"
+            )
+            logger.error("Error publishing dataset metadata to topic")
 
     def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
