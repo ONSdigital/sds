@@ -10,7 +10,6 @@ class PublisherService:
     def publish_data_to_topic(
         self, publish_data: DatasetMetadata, topic_id: str
     ) -> None:
-        """"""
         topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
         self.publisher.publish(topic_path, data=str(publish_data).encode("utf-8"))
 
