@@ -29,6 +29,7 @@ services:
       - PROJECT_ID=mock-project-id
       - SCHEMA_TOPIC_ID=ons-sds-pub-schema
       - PUBSUB_EMULATOR_HOST=firestore:8085
+      - PUBSUB_PROJECT_ID=mock-project-id
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -42,6 +43,7 @@ services:
     ports:
       - 8080:8080
       - 4000:4000
+      - 8085:8085
     environment:
       - GCP_PROJECT=mock-project-id
       - ENABLE_UI=true

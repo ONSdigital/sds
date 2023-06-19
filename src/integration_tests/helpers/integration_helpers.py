@@ -283,3 +283,10 @@ def recursively_delete_document_and_sub_collections(
 
 def get_dataset_bucket():
     return bucket_loader.get_dataset_bucket()
+
+
+def setup_emulated_subscriber():
+    os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
+    from events.subscriber import subscriber
+
+    return subscriber

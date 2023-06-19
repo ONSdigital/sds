@@ -87,21 +87,4 @@ class Subscriber:
 
         return messages
 
-        """def callback(message: pubsub_v1.subscriber.message.Message) -> None:
-            message.ack()
-
-        streaming_pull_future = self.client.subscribe(
-            self.subscription_path, callback=callback
-        )
-
-        with self.client:
-            try:
-                result = streaming_pull_future.result(timeout=20.0)
-                return result
-            except TimeoutError:
-                logger.error("Pull message has timeouted")
-                streaming_pull_future.cancel()
-                streaming_pull_future.result()"""
-
-
 subscriber = Subscriber()

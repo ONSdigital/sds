@@ -8,10 +8,12 @@ from src.integration_tests.helpers.integration_helpers import (
     generate_headers,
     load_json,
     setup_session,
+    setup_emulated_subscriber,
 )
 from src.test_data.schema_test_data import (
     test_post_schema_metadata_first_version_response,
 )
+from src.integration_tests.helpers.subscriber_helper import subscriber_helper
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -29,6 +31,7 @@ class E2ESchemaIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
+
         test_schema = load_json(config.TEST_SCHEMA_PATH)
 
         schema_post_response = session.post(
@@ -38,12 +41,15 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
+        subscriber = setup_emulated_subscriber()
+
         received_messages = subscriber.pull_messages_and_acknowledge(
             config.SCHEMA_TOPIC_ID, "test_subscriber"
         )
-        decoded_received_messages = [x.decode("utf-8") for x in received_messages]
-        decoded_received_messages = [json.loads(x) for x in decoded_received_messages]
-        assert received_messages == test_post_schema_metadata_first_version_response
+        
+        received_messages_json = json.loads(received_messages[0])
+        assert received_messages_json == schema_post_response.json()
+
 
         test_schema_get_response = session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
