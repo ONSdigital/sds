@@ -1,7 +1,6 @@
 import json
 
 from config.config_factory import config
-from google.api_core import retry
 from google.cloud import pubsub_v1
 
 
@@ -37,7 +36,6 @@ class SubscriberHelper:
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
-            retry=retry.Retry(deadline=300),
         )
 
         messages = []
