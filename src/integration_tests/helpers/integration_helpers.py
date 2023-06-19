@@ -206,4 +206,4 @@ def cleanup() -> None:
             firebase_loader.get_schemas_collection(),
         )
 
-        subscriber_helper.delete_subscriber_if_exists(test_subscriber_id)
+        # subscriber_helper.delete_subscriber_if_exists(test_subscriber_id)
