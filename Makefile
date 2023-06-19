@@ -105,7 +105,7 @@ integration-test-cloudbuild:
 	export AUTODELETE_DATASET_BUCKET_FILE=${INT_AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${INT_LOG_LEVEL} && \
 	export PROJECT_ID=${INT_PROJECT_ID} && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
+	export SCHEMA_TOPIC_ID=${INT_SCHEMA_TOPIC_ID} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 lint:
