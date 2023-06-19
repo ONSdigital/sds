@@ -2,16 +2,12 @@ import json
 from unittest import TestCase
 
 from src.app.config.config_factory import config
-from src.app.events.subscriber import subscriber
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
     setup_emulated_subscriber,
     setup_session,
-)
-from src.test_data.schema_test_data import (
-    test_post_schema_metadata_first_version_response,
 )
 
 
