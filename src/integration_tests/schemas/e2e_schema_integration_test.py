@@ -10,7 +10,6 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_emulated_subscriber,
     setup_session,
 )
-from src.integration_tests.helpers.subscriber_helper import subscriber_helper
 from src.test_data.schema_test_data import (
     test_post_schema_metadata_first_version_response,
 )

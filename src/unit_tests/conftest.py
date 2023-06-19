@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
-from google.cloud import firestore, pubsub_v1, storage
+from google.cloud import firestore, storage
 from services.shared.datetime_service import DatetimeService
 
 from src.test_data import shared_test_data
