@@ -1,3 +1,5 @@
+import json
+
 from config.config_factory import config
 from google.api_core import retry
 from google.cloud import pubsub_v1
@@ -25,7 +27,7 @@ class SubscriberHelper:
                 }
             )
 
-    def pull_messages(self, subscriber_id: str) -> any:
+    def pull_messages(self, subscriber_id: str) -> dict:
         """Pulling messages synchronously."""
 
         subscription_path = self.subscriber_client.subscription_path(
@@ -41,7 +43,7 @@ class SubscriberHelper:
         messages = []
         ack_ids = []
         for received_message in response.received_messages:
-            messages.append(received_message.message.decode("utf8"))
+            messages.append(self.format_received_message_data(received_message))
             ack_ids.append(received_message.ack_id)
 
         if ack_ids:
@@ -52,6 +54,11 @@ class SubscriberHelper:
             print("No Ack IDs found in the response, messages cannot be acknowledged")
 
         return messages
+
+    def format_received_message_data(self, received_message) -> dict:
+        return json.loads(
+            received_message.message.data.decode("utf-8").replace("'", '"')
+        )
 
     def delete_subscriber_if_exists(self, subscriber_id: str) -> None:
         subscription_path = self.subscriber_client.subscription_path(

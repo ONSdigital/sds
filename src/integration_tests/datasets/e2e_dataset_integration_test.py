@@ -78,4 +78,5 @@ class E2ESchemaIntegrationTest(TestCase):
 
         received_messages = subscriber_helper.pull_messages(test_subscriber_id)
 
-        assert received_messages == dataset_test_data.updated_dataset_metadata
+        for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
+            assert received_messages[0][key] == value

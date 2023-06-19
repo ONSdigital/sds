@@ -210,3 +210,13 @@ missing_keys_dataset_metadata = {
     "schema_version": 1,
     "data": [{"unit_data": "test_data", "ruref": "12345"}],
 }
+
+nonrandom_pubsub_dataset_metadata = {
+    "survey_id": "test_survey_id",
+    "period_id": "abc",
+    "title": "Which side was better?",
+    "sds_schema_version": 4,
+    "total_reporting_units": 2,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": 1,
+}
