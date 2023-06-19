@@ -1,6 +1,6 @@
 import requests
-from firebase_admin import firestore
 from config.config_factory import config
+from firebase_admin import firestore
 
 
 @firestore.transactional

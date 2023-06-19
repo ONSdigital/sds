@@ -11,7 +11,9 @@ from src.integration_tests.helpers.integration_helpers import (
     load_json,
     setup_session,
 )
-from src.test_data.shared_test_data import unit_id, unit_response
+from src.integration_tests.helpers.subscriber_helper import subscriber_helper
+from src.test_data import dataset_test_data
+from src.test_data.shared_test_data import test_subscriber_id, unit_id, unit_response
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -37,6 +39,10 @@ class E2ESchemaIntegrationTest(TestCase):
         dataset = load_json(config.TEST_DATASET_PATH)
 
         filename = f"integration-test-{str(datetime.now()).replace(' ','-')}.json"
+
+        subscriber_helper.try_create_subscriber(
+            config.DATASET_TOPIC_ID, test_subscriber_id
+        )
 
         create_dataset_response = create_dataset(filename, dataset, session, headers)
 
@@ -69,3 +75,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata
+
+        received_messages = subscriber_helper.pull_messages(test_subscriber_id)
+
+        assert received_messages == dataset_test_data.updated_dataset_metadata

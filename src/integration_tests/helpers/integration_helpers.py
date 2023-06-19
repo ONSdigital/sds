@@ -18,6 +18,8 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
+from src.integration_tests.helpers.subscriber_helper import subscriber_helper
+from src.test_data.shared_test_data import test_subscriber_id
 
 
 def setup_session() -> requests.Session:
@@ -72,10 +74,6 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath) as f:
         return json.load(f)
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
 
 
 def create_dataset(
@@ -202,10 +200,10 @@ def cleanup() -> None:
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_datasets_collection(),
-            bucket_loader.get_dataset_bucket(),
         )
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_schemas_collection(),
-            bucket_loader.get_schema_bucket(),
         )
+
+        subscriber_helper.delete_subscriber_if_exists(test_subscriber_id)
