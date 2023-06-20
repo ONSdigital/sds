@@ -18,7 +18,7 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
-from src.integration_tests.helpers.subscriber_helper import subscriber_helper
+from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
 from src.test_data.shared_test_data import test_subscriber_id
 
 
@@ -205,5 +205,3 @@ def cleanup() -> None:
             client.transaction(),
             firebase_loader.get_schemas_collection(),
         )
-
-        subscriber_helper.delete_subscriber_if_exists(test_subscriber_id)

@@ -126,7 +126,7 @@ class ServiceEmulatorDevelopmentConfig(Config):
         self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
         self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
-        self.PUBSUB_EMULATOR_HOST = "https://localhost:8085"
+        self.PUBSUB_EMULATOR_HOST = get_value_from_env("PUBSUB_EMULATOR_HOST")
 
     SCHEMA_BUCKET_NAME: str
     FIRESTORE_EMULATOR_HOST: str
