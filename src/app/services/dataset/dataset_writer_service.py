@@ -1,6 +1,11 @@
 from config.config_factory import config
 from logging_config import logging
-from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
+from models.dataset_models import (
+    DatasetMetadata,
+    DatasetMetadataWithoutId,
+    DatasetPublishResponse,
+    UnitDataset,
+)
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.publisher_service import publisher_service
 
@@ -20,7 +25,7 @@ class DatasetWriterService:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_rurefs: list[str],
-    ) -> None:
+    ) -> DatasetMetadata | DatasetPublishResponse:
         """
         Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
         rolling back otherwise.
@@ -39,11 +44,15 @@ class DatasetWriterService:
                 unit_data_collection_with_metadata,
                 extracted_unit_data_rurefs,
             )
+            return {
+                **dataset_metadata_without_id,
+                "dataset_id": dataset_id,
+            }
         except Exception as e:
             logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction")
 
-            raise Exception("Error performing dataset transaction.")
+            return {"status": "error", "message": "Publishing dataset has failed."}
 
         logger.info("Dataset transaction committed successfully.")
 

@@ -138,3 +138,37 @@ class ProcessDatasetTest(TestCase):
             match="Failed to delete previous dataset versions from firestore. Rolling back...",
         ):
             TestHelper.new_dataset_mock(cloud_event)
+
+    def test_dataset_metadata_publish_fail(
+        self,
+    ):
+        """
+        The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
+        """
+        cloud_event = MagicMock()
+        cloud_event.data = dataset_test_data.cloud_event_data
+
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+            TestHelper.create_document_snapshot_generator_mock(
+                [dataset_test_data.dataset_metadata]
+            )
+        )
+
+        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_new_dataset_transaction.side_effect = (
+            Exception
+        )
+        PublisherService.publish_data_to_topic = MagicMock()
+
+        DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction = (
+            MagicMock()
+        )
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+
+        TestHelper.new_dataset_mock(cloud_event)
+
+        PublisherService.publish_data_to_topic.assert_called_once_with(
+            {"status": "error", "message": "Publishing dataset has failed."},
+            config.DATASET_TOPIC_ID,
+        )
