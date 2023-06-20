@@ -143,7 +143,8 @@ class ProcessDatasetTest(TestCase):
         self,
     ):
         """
-        The e2e journey for when a new dataset is uploaded, when the dataset transaction fails and an unhappy path response is published.
+        The e2e journey for when a new dataset is uploaded, when the dataset transaction fails and 
+        an unhappy path response is published.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
