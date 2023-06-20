@@ -7,8 +7,10 @@ from repositories.buckets.bucket_loader import bucket_loader
 def delete_local_bucket_data(filepath: str):
     """
     Method to cleanup local test data in the bucket instance.
+
     Parameters:
         filepath: the filepath for the bucket instance to be deleted
+
     Returns:
         None
     """
@@ -20,8 +22,10 @@ def delete_local_bucket_data(filepath: str):
 def delete_blobs(bucket) -> None:
     """
     Method to delete all blobs in the specified bucket.
+
     Parameters:
         bucket: the bucket to clean
+
     Returns:
         None
     """

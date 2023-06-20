@@ -18,8 +18,6 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
-from src.integration_tests.helpers.subscriber_helper import subscriber_helper
-from src.test_data.shared_test_data import test_subscriber_id
 
 
 def setup_session() -> requests.Session:
@@ -198,10 +196,10 @@ def cleanup() -> None:
         client = firebase_loader.get_client()
 
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_datasets_collection()
+            client.transaction(),
+            firebase_loader.get_datasets_collection(),
         )
         perform_delete_transaction(
-            client.transaction(), firebase_loader.get_schemas_collection()
+            client.transaction(),
+            firebase_loader.get_schemas_collection(),
         )
-
-        subscriber_helper.delete_subscriber_if_exists(test_subscriber_id)

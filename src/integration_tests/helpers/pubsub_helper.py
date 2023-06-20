@@ -4,28 +4,54 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
+from src.test_data.shared_test_data import test_subscriber_id
 
-class SubscriberHelper:
-    def __init__(self):
+
+class PubSubHelper:
+    def __init__(self, topic_id: str, subscriber_id: str):
         if config.API_URL.__contains__("local"):
             os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
 
         self.subscriber_client = pubsub_v1.SubscriberClient()
         self.publisher_client = pubsub_v1.PublisherClient()
 
-    def try_create_subscriber(self, topic_id: str, subscriber_id: str) -> None:
+        if config.API_URL.__contains__("local"):
+            self._create_topic(topic_id)
+
+        self._try_create_subscriber(topic_id, subscriber_id)
+
+    def _create_topic(self, topic_id: str) -> None:
+        """ """
+        self.topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+
+        try:
+            if not self._topic_exists():
+                self.publisher_client.create_topic(request={"name": self.topic_path})
+        except Exception as e:
+            print(f"Fail to create topic. Topic path: {self.topic_path} Error: {e}")
+
+    def _topic_exists(self) -> bool:
+        """
+        Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
+        """
+        try:
+            self.publisher_client.get_topic(request={"topic": self.topic_path})
+            return True
+        except Exception:
+            return False
+
+    def _try_create_subscriber(self, topic_id: str, subscriber_id: str) -> None:
         """Create a new pull subscription on the given topic."""
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         if not self._subscription_exists(subscriber_id):
             self.subscriber_client.create_subscription(
                 request={
                     "name": subscription_path,
-                    "topic": topic_path,
+                    "topic": self.topic_path,
                     "enable_message_ordering": True,
                 }
             )
@@ -62,16 +88,6 @@ class SubscriberHelper:
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
 
-    def delete_subscriber_if_exists(self, subscriber_id: str) -> None:
-        subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
-        )
-
-        if self._subscription_exists(subscriber_id):
-            self.subscriber_client.delete_subscription(
-                request={"subscription": subscription_path}
-            )
-
     def _subscription_exists(self, subscriber_id: str) -> None:
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -86,4 +102,5 @@ class SubscriberHelper:
             return False
 
 
-subscriber_helper = SubscriberHelper()
+#dataset_pubsub_helper = PubSubHelper(config.DATASET_TOPIC_ID, test_subscriber_id)
+schema_pubsub_helper = PubSubHelper(config.SCHEMA_TOPIC_ID, test_subscriber_id)

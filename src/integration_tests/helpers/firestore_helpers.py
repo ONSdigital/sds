@@ -42,8 +42,10 @@ def _recursively_delete_document_and_sub_collections(
 def delete_local_firestore_data():
     """
     Method to cleanup local test data in the emulated firestore instance.
+
     Parameters:
         None
+
     Returns:
         None
     """
