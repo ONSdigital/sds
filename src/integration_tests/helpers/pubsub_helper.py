@@ -21,7 +21,12 @@ class PubSubHelper:
         self._try_create_subscriber(topic_id, subscriber_id)
 
     def _create_topic(self, topic_id: str) -> None:
-        """ """
+        """
+        Creates a topic with a specified topic id.
+
+        Parameters:
+        topic_id: The unique id of the topic being created.
+        """
         self.topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         try:
@@ -41,7 +46,13 @@ class PubSubHelper:
             return False
 
     def _try_create_subscriber(self, topic_id: str, subscriber_id: str) -> None:
-        """Create a new pull subscription on the given topic."""
+        """
+        Creates a subscriber with a unique subscriber id if one does not already exist.
+
+        Parameters:
+        topic_id: the unique id of the topic the subscriber is being created on.
+        subscriber_id: the unique id of the subscriber being created.
+        """
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -58,7 +69,12 @@ class PubSubHelper:
             )
 
     def pull_messages(self, subscriber_id: str) -> dict:
-        """Pulling messages synchronously."""
+        """
+        Pulls all messages published to a topic via a subscriber.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -85,11 +101,24 @@ class PubSubHelper:
         return messages
 
     def format_received_message_data(self, received_message) -> dict:
+        """
+        Formats a messages received from a topic.
+
+        Parameters:
+        received_message: The message received from the topic.
+        """
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
 
     def _subscription_exists(self, subscriber_id: str) -> None:
+        """
+        Checks a subscription exists.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        """
+
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
