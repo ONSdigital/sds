@@ -1,4 +1,3 @@
-import json
 from unittest import TestCase
 
 from src.app.config.config_factory import config
