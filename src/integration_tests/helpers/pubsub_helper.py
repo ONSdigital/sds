@@ -22,26 +22,27 @@ class PubSubHelper:
 
     def _create_topic(self, topic_id: str) -> None:
         """ """
-        self.topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         try:
-            if not self._topic_exists():
-                self.publisher_client.create_topic(request={"name": self.topic_path})
+            if not self._topic_exists(topic_path):
+                self.publisher_client.create_topic(request={"name": topic_path})
         except Exception as e:
-            print(f"Fail to create topic. Topic path: {self.topic_path} Error: {e}")
+            print(f"Fail to create topic. Topic path: {topic_path} Error: {e}")
 
-    def _topic_exists(self) -> bool:
+    def _topic_exists(self, topic_path: str) -> bool:
         """
-        Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
+        Returns `true` if the topic defined by `topic_path` exists otherwise returns `false`.
         """
         try:
-            self.publisher_client.get_topic(request={"topic": self.topic_path})
+            self.publisher_client.get_topic(request={"topic": topic_path})
             return True
         except Exception:
             return False
 
     def _try_create_subscriber(self, topic_id: str, subscriber_id: str) -> None:
         """Create a new pull subscription on the given topic."""
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -51,7 +52,7 @@ class PubSubHelper:
             self.subscriber_client.create_subscription(
                 request={
                     "name": subscription_path,
-                    "topic": self.topic_path,
+                    "topic": topic_path,
                     "enable_message_ordering": True,
                 }
             )
@@ -102,5 +103,5 @@ class PubSubHelper:
             return False
 
 
-# dataset_pubsub_helper = PubSubHelper(config.DATASET_TOPIC_ID, test_subscriber_id)
+dataset_pubsub_helper = PubSubHelper(config.DATASET_TOPIC_ID, test_subscriber_id)
 schema_pubsub_helper = PubSubHelper(config.SCHEMA_TOPIC_ID, test_subscriber_id)
