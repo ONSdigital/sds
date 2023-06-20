@@ -3,11 +3,11 @@ from unittest import TestCase
 
 from config.config_factory import config
 
+from src.integration_tests.helpers.bucket_helpers import get_dataset_bucket
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
     generate_headers,
-    get_dataset_bucket,
     load_json,
     setup_session,
 )

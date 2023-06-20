@@ -85,6 +85,9 @@ class Subscriber:
         else:
             logger.info("No message received")
 
+        print("hello")
+        print(messages)
+
         return messages
 
 

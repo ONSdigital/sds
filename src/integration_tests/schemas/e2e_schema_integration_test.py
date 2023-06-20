@@ -6,9 +6,10 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
-    setup_emulated_subscriber,
     setup_session,
 )
+from src.integration_tests.helpers.subscriber_helper import subscriber_helper
+from src.test_data.shared_test_data import test_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -35,13 +36,13 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
-        subscriber = setup_emulated_subscriber()
-
-        received_messages = subscriber.pull_messages_and_acknowledge(
-            config.SCHEMA_TOPIC_ID, "test_subscriber"
+        subscriber_helper.try_create_subscriber(
+            config.SCHEMA_TOPIC_ID, test_subscriber_id
         )
 
-        received_messages_json = json.loads(received_messages[0])
+        received_messages = subscriber_helper.pull_messages(test_subscriber_id)
+
+        received_messages_json = received_messages[0]
         assert received_messages_json == schema_post_response.json()
 
         test_schema_get_response = session.get(
