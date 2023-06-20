@@ -1,11 +1,13 @@
-from config.config_factory import config
-from google.cloud.pubsub_v1 import PublisherClient
-from models.dataset_models import DatasetMetadata
-from models.schema_models import SchemaMetadata
-from logging_config import logging
 import json
 
+from config.config_factory import config
+from google.cloud.pubsub_v1 import PublisherClient
+from logging_config import logging
+from models.dataset_models import DatasetMetadata
+from models.schema_models import SchemaMetadata
+
 logger = logging.getLogger(__name__)
+
 
 class PublisherService:
     def __init__(self):

@@ -37,9 +37,7 @@ class SchemaProcessorService:
             schema_id, next_version_schema_metadata, schema, stored_schema_filename
         )
 
-        self.try_publish_schema_metadata_to_topic(
-            next_version_schema_metadata
-        )
+        self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
 
         return next_version_schema_metadata
 
@@ -151,7 +149,9 @@ class SchemaProcessorService:
                 survey_id, version
             )
 
-    def try_publish_schema_metadata_to_topic(self, next_version_schema_metadata: SchemaMetadata) -> None:
+    def try_publish_schema_metadata_to_topic(
+        self, next_version_schema_metadata: SchemaMetadata
+    ) -> None:
         try:
             logger.info("Publishing schema metadata to topic...")
             publisher_service.publish_schema_data_to_topic(
