@@ -164,6 +164,7 @@ class SchemaProcessorService:
             logger.info("Schema metadata published successfully.")
         except Exception as e:
             logger.debug(
-                f"Schema metadata {next_version_schema_metadata} failed to publish to topic {config.SCHEMA_TOPIC_ID} with error {e}"
+                f"Schema metadata {next_version_schema_metadata} failed to publish to topic "
+                f"{config.SCHEMA_TOPIC_ID} with error {e}"
             )
             logger.error("Error publishing schema metadata to topic.")
