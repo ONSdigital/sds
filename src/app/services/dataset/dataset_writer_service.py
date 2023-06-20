@@ -28,13 +28,13 @@ class DatasetWriterService:
     ) -> DatasetMetadata | DatasetPublishResponse:
         """
         Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
-        rolling back otherwise.
+        rolling back otherwise, and returning a publish response.
 
         Parameters:
         dataset_id: the uniquely generated id of the dataset
         dataset_metadata_without_id: the metadata of the dataset without its id
         unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
-        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection
+        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection.
         """
         logger.info("Beginning dataset transaction...")
         try:
@@ -44,37 +44,44 @@ class DatasetWriterService:
                 unit_data_collection_with_metadata,
                 extracted_unit_data_rurefs,
             )
+            logger.info("Publishing dataset metadata to topic.")
             return {
                 **dataset_metadata_without_id,
                 "dataset_id": dataset_id,
             }
         except Exception as e:
             logger.error(f"Dataset transaction error, exception raised: {e}")
-            logger.error("Rolling back dataset transaction")
+            logger.error("Rolling back dataset transaction.")
 
+            logger.info("Publishing dataset error response to topic.")
             return {"status": "error", "message": "Publishing dataset has failed."}
 
         logger.info("Dataset transaction committed successfully.")
 
     def try_publish_dataset_metadata_to_topic(
-        self,
-        dataset_metadata: DatasetMetadata,
+        self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse
     ) -> None:
+        """
+        Publishes dataset response to google pubsub topic, raising an exception if unsuccessful.
+
+        Parameters:
+        dataset_publish_response: dataset metadata or unhappy path response to be published.
+        """
         try:
-            logger.info("Publishing dataset metadata to topic...")
             publisher_service.publish_data_to_topic(
-                dataset_metadata,
+                dataset_publish_response,
                 config.DATASET_TOPIC_ID,
             )
             logger.debug(
-                f"Dataset metadata {dataset_metadata} published to topic {config.DATASET_TOPIC_ID}"
+                f"Dataset response {dataset_publish_response} published to topic {config.DATASET_TOPIC_ID}"
             )
-            logger.info("Dataset metadata published successfully.")
+            logger.info("Dataset response published successfully.")
         except Exception as e:
             logger.debug(
-                f"Dataset metadata {dataset_metadata} failed to publish to topic {config.DATASET_TOPIC_ID} with error {e}"
+                f"Dataset response {dataset_publish_response} failed to publish to topic {config.DATASET_TOPIC_ID} "
+                f"with error {e}"
             )
-            logger.error("Error publishing dataset metadata to topic.")
+            logger.error("Error publishing dataset response to topic.")
 
     def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int
