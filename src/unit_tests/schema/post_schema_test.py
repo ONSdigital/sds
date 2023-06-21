@@ -3,8 +3,6 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
-from logging_config import logging
-from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.publisher_service import PublisherService

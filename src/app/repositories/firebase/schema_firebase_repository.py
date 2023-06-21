@@ -1,4 +1,3 @@
-from dataclasses import asdict
 from typing import Generator
 
 from firebase_admin import firestore
