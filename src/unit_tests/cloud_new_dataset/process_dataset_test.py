@@ -1,7 +1,6 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-from config.config_factory import config
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository

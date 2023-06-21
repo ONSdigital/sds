@@ -7,7 +7,7 @@ from repositories.buckets.dataset_bucket_repository import DatasetBucketReposito
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.publisher_service import PublisherService
 
-from src.test_data import dataset_test_data, shared_test_data
+from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
 
 
