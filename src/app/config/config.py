@@ -141,7 +141,6 @@ class CloudDevelopmentConfig(Config):
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
-        self.DATASET_TOPIC_ID = get_value_from_env("DATASET_TOPIC_ID")
 
     SCHEMA_BUCKET_NAME: str
     GOOGLE_APPLICATION_CREDENTIALS: str
