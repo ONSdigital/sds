@@ -2,9 +2,11 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 import pytest
+from config.config_factory import config
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
+from services.shared.publisher_service import PublisherService
 
 from src.test_data import schema_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -23,6 +25,9 @@ class PostSchemaTest(TestCase):
         self.perform_new_schema_transaction_stash = (
             SchemaFirebaseRepository.perform_new_schema_transaction
         )
+        self.publish_schema_data_to_topic_stash = (
+            PublisherService.publish_schema_data_to_topic
+        )
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
@@ -31,6 +36,9 @@ class PostSchemaTest(TestCase):
         )
         SchemaFirebaseRepository.perform_new_schema_transaction = (
             self.perform_new_schema_transaction_stash
+        )
+        PublisherService.publish_schema_data_to_topic = (
+            self.publish_schema_data_to_topic_stash
         )
 
     def test_200_response_updated_schema_version(self):
@@ -52,6 +60,8 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
+        PublisherService.publish_schema_data_to_topic = MagicMock()
+
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
         )
@@ -60,6 +70,12 @@ class PostSchemaTest(TestCase):
         assert (
             response.json()
             == schema_test_data.test_post_schema_metadata_updated_version_response
+        )
+        PublisherService.publish_schema_data_to_topic.assert_called_once_with(
+            SchemaMetadata(
+                **schema_test_data.test_post_schema_metadata_updated_version_response
+            ),
+            config.SCHEMA_TOPIC_ID,
         )
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
@@ -87,6 +103,8 @@ class PostSchemaTest(TestCase):
         SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
+
+        PublisherService.publish_schema_data_to_topic = MagicMock()
 
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
