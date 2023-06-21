@@ -16,47 +16,53 @@ class PublisherService:
     def publish_data_to_topic(
         self, publish_data: DatasetMetadata, topic_id: str
     ) -> None:
-        """"""
-        self._set_topic_path(topic_id)
-        self._try_create_topic()
+        """
+        Publishes data to the pubsub topic.
 
-        self.publisher.publish(self.topic_path, data=str(publish_data).encode("utf-8"))
+        Parameters:
+        publish_data: data to be sent to the pubsub topic,
+        topic_id: unique identifier of the topic the data is published to
+        """
+        topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
+        self._try_create_topic(topic_path)
+
+        self.publisher.publish(topic_path, data=str(publish_data).encode("utf-8"))
 
     def publish_schema_data_to_topic(
         self, publish_data: SchemaMetadata, topic_id: str
     ) -> None:
-        """"""
-        self._set_topic_path(topic_id)
-        self._try_create_topic()
+        """
+        Publish schema metatdata to pubsub topic.
+
+        Parameters:
+        publish_data: schema metadata to be sent to the pubsub topic,
+        topic_id: unique identifier of the topic the data is published to
+        """
+        topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
+        self._try_create_topic(topic_path)
 
         data_bytestring = json.dumps(publish_data.__dict__).encode("utf-8")
-        self.publisher.publish(self.topic_path, data=data_bytestring)
+        self.publisher.publish(topic_path, data=data_bytestring)
 
-    def _set_topic_path(self, topic_id: str) -> None:
+    def _try_create_topic(self, topic_path: str) -> None:
         """
-        Set a topic path
-        """
-        self.topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
-
-    def _try_create_topic(self) -> None:
-        """
-        Try to create a topic for publisher. Necessary for local docker development
+        Try to create a topic for publisher if not exists
         """
         try:
-            if not self._topic_exists():
+            if not self._topic_exists(topic_path):
                 logger.debug("Topic does not exists. Creating topic...")
-                self.publisher.create_topic(request={"name": self.topic_path})
+                self.publisher.create_topic(request={"name": topic_path})
 
-                logger.debug(f"Topic with path {self.topic_path} created successfully")
+                logger.debug(f"Topic with path {topic_path} created successfully")
         except Exception as e:
-            print(f"Fail to create topic. Topic path: {self.topic_path} Error: {e}")
+            print(f"Fail to create topic. Topic path: {topic_path} Error: {e}")
 
-    def _topic_exists(self) -> bool:
+    def _topic_exists(self, topic_path: str) -> bool:
         """
-        Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
+        Returns True if the topic exists otherwise returns False.
         """
         try:
-            self.publisher.get_topic(request={"topic": self.topic_path})
+            self.publisher.get_topic(request={"topic": topic_path})
             return True
         except Exception:
             return False

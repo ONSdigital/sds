@@ -71,12 +71,14 @@ class PostSchemaTest(TestCase):
             response.json()
             == schema_test_data.test_post_schema_metadata_updated_version_response
         )
+
         PublisherService.publish_schema_data_to_topic.assert_called_once_with(
             SchemaMetadata(
                 **schema_test_data.test_post_schema_metadata_updated_version_response
             ),
             config.SCHEMA_TOPIC_ID,
         )
+
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
             SchemaMetadata(

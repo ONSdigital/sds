@@ -19,12 +19,14 @@ class PubSubHelper:
         self.publisher_client = pubsub_v1.PublisherClient()
 
         if config.API_URL.__contains__("local"):
-            self._create_topic(topic_id)
+            self._try_create_topic(topic_id)
 
         self._try_create_subscriber(topic_id, subscriber_id)
 
-    def _create_topic(self, topic_id: str) -> None:
-        """ """
+    def _try_create_topic(self, topic_id: str) -> None:
+        """
+        Try to create a topic for publisher if not exists
+        """
         topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         try:
@@ -35,7 +37,7 @@ class PubSubHelper:
 
     def _topic_exists(self, topic_path: str) -> bool:
         """
-        Returns `true` if the topic defined by `topic_path` exists otherwise returns `false`.
+        Returns True if the topic exists otherwise returns False.
         """
         try:
             self.publisher_client.get_topic(request={"topic": topic_path})
