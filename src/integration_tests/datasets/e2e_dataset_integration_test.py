@@ -73,7 +73,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert "filename" in dataset_metadata
 
         received_messages = dataset_pubsub_helper.pull_messages(
-            dataset_test_data.test_subscriber_id
+            dataset_test_data.test_dataset_subscriber_id
         )
 
         for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
