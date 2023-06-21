@@ -8,7 +8,7 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_session,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
-from src.test_data.shared_test_data import test_subscriber_id
+from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -35,7 +35,9 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
-        received_messages = schema_pubsub_helper.pull_messages(test_subscriber_id)
+        received_messages = schema_pubsub_helper.pull_messages(
+            test_schema_subscriber_id
+        )
 
         received_messages_json = received_messages[0]
         assert received_messages_json == schema_post_response.json()

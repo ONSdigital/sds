@@ -4,7 +4,10 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-from src.test_data.shared_test_data import test_subscriber_id
+from src.test_data.shared_test_data import (
+    test_dataset_subscriber_id,
+    test_schema_subscriber_id,
+)
 
 
 class PubSubHelper:
@@ -103,5 +106,7 @@ class PubSubHelper:
             return False
 
 
-# dataset_pubsub_helper = PubSubHelper(config.DATASET_TOPIC_ID, test_subscriber_id)
-schema_pubsub_helper = PubSubHelper(config.SCHEMA_TOPIC_ID, test_subscriber_id)
+dataset_pubsub_helper = PubSubHelper(
+    config.DATASET_TOPIC_ID, test_dataset_subscriber_id
+)
+schema_pubsub_helper = PubSubHelper(config.SCHEMA_TOPIC_ID, test_schema_subscriber_id)
