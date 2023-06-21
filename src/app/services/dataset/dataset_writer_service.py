@@ -44,6 +44,8 @@ class DatasetWriterService:
                 unit_data_collection_with_metadata,
                 extracted_unit_data_rurefs,
             )
+            logger.info("Dataset transaction committed successfully.")
+
             logger.info("Publishing dataset metadata to topic.")
             return {
                 **dataset_metadata_without_id,
@@ -55,8 +57,6 @@ class DatasetWriterService:
 
             logger.info("Publishing dataset error response to topic.")
             return {"status": "error", "message": "Publishing dataset has failed."}
-
-        logger.info("Dataset transaction committed successfully.")
 
     def try_publish_dataset_metadata_to_topic(
         self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse
@@ -81,7 +81,7 @@ class DatasetWriterService:
                 f"Dataset response {dataset_publish_response} failed to publish to topic {config.DATASET_TOPIC_ID} "
                 f"with error {e}"
             )
-            logger.error("Error publishing dataset response to topic.")
+            raise RuntimeError("Error publishing dataset response to the topic.")
 
     def try_perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int

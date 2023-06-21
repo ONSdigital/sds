@@ -4,7 +4,7 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-from src.test_data.shared_test_data import test_subscriber_id
+from src.test_data import dataset_test_data
 
 
 class PubSubHelper:
@@ -27,20 +27,20 @@ class PubSubHelper:
         Parameters:
         topic_id: The unique id of the topic being created.
         """
-        self.topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         try:
-            if not self._topic_exists():
-                self.publisher_client.create_topic(request={"name": self.topic_path})
+            if not self._topic_exists(topic_path):
+                self.publisher_client.create_topic(request={"name": topic_path})
         except Exception as e:
-            print(f"Fail to create topic. Topic path: {self.topic_path} Error: {e}")
+            print(f"Fail to create topic. Topic path: {topic_path} Error: {e}")
 
-    def _topic_exists(self) -> bool:
+    def _topic_exists(self, topic_path: str) -> bool:
         """
         Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
         """
         try:
-            self.publisher_client.get_topic(request={"topic": self.topic_path})
+            self.publisher_client.get_topic(request={"topic": topic_path})
             return True
         except Exception:
             return False
@@ -53,11 +53,11 @@ class PubSubHelper:
         topic_id: the unique id of the topic the subscriber is being created on.
         subscriber_id: the unique id of the subscriber being created.
         """
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         if not self._subscription_exists(subscriber_id):
             self.subscriber_client.create_subscription(
@@ -132,4 +132,6 @@ class PubSubHelper:
             return False
 
 
-dataset_pubsub_helper = PubSubHelper(config.DATASET_TOPIC_ID, test_subscriber_id)
+dataset_pubsub_helper = PubSubHelper(
+    config.DATASET_TOPIC_ID, dataset_test_data.test_subscriber_id
+)

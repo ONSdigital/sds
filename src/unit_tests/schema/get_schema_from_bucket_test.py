@@ -94,8 +94,9 @@ def test_global_error(test_client_no_server_exception):
     Fixture client_no_server_exception is used to avoid exiting
     the test at exception so that the response can be validated
     """
-    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_bucket_filename.side_effect = Exception
+    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock(
+        side_effect=Exception
+    )
 
     response = test_client_no_server_exception.get(
         "/v1/schema?survey_id=076&version=123"

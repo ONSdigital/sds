@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
 from src.test_data import dataset_test_data
-from src.test_data.shared_test_data import test_subscriber_id, unit_id, unit_response
+from src.test_data.shared_test_data import unit_id, unit_response
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -72,7 +72,9 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata
 
-        received_messages = dataset_pubsub_helper.pull_messages(test_subscriber_id)
+        received_messages = dataset_pubsub_helper.pull_messages(
+            dataset_test_data.test_subscriber_id
+        )
 
         for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
             assert received_messages[0][key] == value
