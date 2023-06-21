@@ -168,3 +168,4 @@ class SchemaProcessorService:
                 f"{config.SCHEMA_TOPIC_ID} with error {e}"
             )
             logger.error("Error publishing schema metadata to topic.")
+            raise exceptions.GlobalException

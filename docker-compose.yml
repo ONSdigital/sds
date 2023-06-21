@@ -28,8 +28,8 @@ services:
       - LOG_LEVEL=DEBUG
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - PROJECT_ID=mock-project-id
-      - SCHEMA_TOPIC_ID=mock-schema-topic-id
-      - DATASET_TOPIC_ID=mock-dataset-topic-id
+      - SCHEMA_TOPIC_ID=ons-sds-schema-events
+      - DATASET_TOPIC_ID=ons-sds-dataset-events
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -69,8 +69,8 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
-      - SCHEMA_TOPIC_ID=mock-schema-topic-id
-      - DATASET_TOPIC_ID=mock-dataset-topic-id
+      - SCHEMA_TOPIC_ID=ons-sds-schema-events
+      - DATASET_TOPIC_ID=ons-sds-dataset-events
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -90,8 +90,8 @@ services:
       - AUTODELETE_DATASET_BUCKET_FILE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
-      - SCHEMA_TOPIC_ID=mock-schema-topic-id
-      - DATASET_TOPIC_ID=mock-dataset-topic-id
+      - SCHEMA_TOPIC_ID=ons-sds-schema-events
+      - DATASET_TOPIC_ID=ons-sds-dataset-events
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds
