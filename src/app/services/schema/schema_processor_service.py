@@ -85,15 +85,16 @@ class SchemaProcessorService:
         stored_schema_filename (str): the filename of schema when it is stored.
         schema_metadata (SchemaMetadata): schema metadata being processed.
         """
-        return SchemaMetadata(
-            guid=schema_id,
-            schema_location=stored_schema_filename,
-            sds_schema_version=self.calculate_next_schema_version(schema),
-            survey_id=schema.survey_id,
-            sds_published_at=str(
+        next_version_schema_metadata = {
+            "guid": schema_id,
+            "schema_location": stored_schema_filename,
+            "sds_schema_version": self.calculate_next_schema_version(schema),
+            "survey_id": schema.survey_id,
+            "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
-        )
+        }
+        return next_version_schema_metadata
 
     def calculate_next_schema_version(self, schema: Schema):
         """
@@ -154,7 +155,7 @@ class SchemaProcessorService:
     ) -> None:
         try:
             logger.info("Publishing schema metadata to topic...")
-            publisher_service.publish_schema_data_to_topic(
+            publisher_service.publish_data_to_topic(
                 next_version_schema_metadata,
                 config.SCHEMA_TOPIC_ID,
             )

@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
+from logging_config import logging
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
@@ -25,9 +26,7 @@ class PostSchemaTest(TestCase):
         self.perform_new_schema_transaction_stash = (
             SchemaFirebaseRepository.perform_new_schema_transaction
         )
-        self.publish_schema_data_to_topic_stash = (
-            PublisherService.publish_schema_data_to_topic
-        )
+        self.publish_data_to_topic_stash = PublisherService.publish_data_to_topic
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
@@ -37,13 +36,12 @@ class PostSchemaTest(TestCase):
         SchemaFirebaseRepository.perform_new_schema_transaction = (
             self.perform_new_schema_transaction_stash
         )
-        PublisherService.publish_schema_data_to_topic = (
-            self.publish_schema_data_to_topic_stash
-        )
+        PublisherService.publish_data_to_topic = self.publish_data_to_topic_stash
 
     def test_200_response_updated_schema_version(self):
         """
         Tests when a schema is posted, a 200 response and the schema metadata will be received
+        and the appropriate message will be sent to publisher
         """
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
@@ -60,7 +58,7 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_schema_data_to_topic = MagicMock()
+        PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
@@ -72,18 +70,14 @@ class PostSchemaTest(TestCase):
             == schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_schema_data_to_topic.assert_called_once_with(
-            SchemaMetadata(
-                **schema_test_data.test_post_schema_metadata_updated_version_response
-            ),
+        PublisherService.publish_data_to_topic.assert_called_once_with(
+            schema_test_data.test_post_schema_metadata_updated_version_response,
             config.SCHEMA_TOPIC_ID,
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
-            SchemaMetadata(
-                **schema_test_data.test_post_schema_metadata_updated_version_response
-            ),
+            schema_test_data.test_post_schema_metadata_updated_version_response,
             Schema(**schema_test_data.test_post_schema_metadata_body),
             schema_test_data.test_filename,
         )
@@ -106,7 +100,7 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_schema_data_to_topic = MagicMock()
+        PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
@@ -152,3 +146,41 @@ class PostSchemaTest(TestCase):
 
         assert response.status_code == 500
         assert response.json()["message"] == "Unable to process request"
+
+    def test_publish_schema_exception_500_response(self):
+        """
+        Tests when a schema is posted and the publisher raised an exception
+        a 500 response will be receieved with appropriate error message and
+        error log
+        """
+        SchemaBucketRepository.store_schema_json = MagicMock()
+        SchemaBucketRepository.store_schema_json.return_value = None
+
+        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+            TestHelper.create_document_snapshot_generator_mock(
+                [schema_test_data.test_post_schema_metadata_first_version_response]
+            )
+        )
+
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
+        SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
+            schema_test_data.test_post_schema_metadata_updated_version_response
+        )
+
+        PublisherService.publish_data_to_topic = MagicMock(side_effect=Exception)
+
+        with self.assertLogs(level="ERROR") as lm:
+            response = self.test_client.post(
+                "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            )
+
+        assert response.status_code == 500
+        assert response.json()["message"] == "Unable to process request"
+        self.assertEqual(
+            lm.output,
+            [
+                "ERROR:services.schema.schema_processor_service:"
+                "Error publishing schema metadata to topic."
+            ],
+        )

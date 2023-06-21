@@ -14,7 +14,7 @@ class PublisherService:
         self.publisher = None if config.CONF == "unit" else PublisherClient()
 
     def publish_data_to_topic(
-        self, publish_data: DatasetMetadata, topic_id: str
+        self, publish_data: DatasetMetadata | SchemaMetadata, topic_id: str
     ) -> None:
         """
         Publishes data to the pubsub topic.
@@ -26,23 +26,9 @@ class PublisherService:
         topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
         self._try_create_topic(topic_path)
 
-        self.publisher.publish(topic_path, data=str(publish_data).encode("utf-8"))
-
-    def publish_schema_data_to_topic(
-        self, publish_data: SchemaMetadata, topic_id: str
-    ) -> None:
-        """
-        Publish schema metatdata to pubsub topic.
-
-        Parameters:
-        publish_data: schema metadata to be sent to the pubsub topic,
-        topic_id: unique identifier of the topic the data is published to
-        """
-        topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
-        self._try_create_topic(topic_path)
-
-        data_bytestring = json.dumps(publish_data.__dict__).encode("utf-8")
-        self.publisher.publish(topic_path, data=data_bytestring)
+        self.publisher.publish(
+            topic_path, data=json.dumps(publish_data).encode("utf-8")
+        )
 
     def _try_create_topic(self, topic_path: str) -> None:
         """

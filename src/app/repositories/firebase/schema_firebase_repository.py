@@ -79,7 +79,7 @@ class SchemaFirebaseRepository:
 
         transaction.set(
             self.schemas_collection.document(schema_id),
-            asdict(schema_metadata),
+            schema_metadata,
             merge=True,
         )
 
