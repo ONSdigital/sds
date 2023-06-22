@@ -70,15 +70,15 @@ class DatasetWriterService:
         try:
             publisher_service.publish_data_to_topic(
                 dataset_publish_response,
-                config.DATASET_TOPIC_ID,
+                config.PUBLISH_DATASET_TOPIC_ID,
             )
             logger.debug(
-                f"Dataset response {dataset_publish_response} published to topic {config.DATASET_TOPIC_ID}"
+                f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
             )
             logger.info("Dataset response published successfully.")
         except Exception as e:
             logger.debug(
-                f"Dataset response {dataset_publish_response} failed to publish to topic {config.DATASET_TOPIC_ID} "
+                f"Dataset response {dataset_publish_response} failed to publish to topic {config.PUBLISH_DATASET_TOPIC_ID} "
                 f"with error {e}"
             )
             raise RuntimeError("Error publishing dataset response to the topic.")

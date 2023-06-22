@@ -66,7 +66,7 @@ class PubSubTest(TestCase):
         TestHelper.new_dataset_mock(cloud_event)
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
-            dataset_test_data.updated_dataset_metadata, config.DATASET_TOPIC_ID
+            dataset_test_data.updated_dataset_metadata, config.PUBLISH_DATASET_TOPIC_ID
         )
 
     def test_dataset_transaction_fail_publish_response(
@@ -100,7 +100,7 @@ class PubSubTest(TestCase):
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
             {"status": "error", "message": "Publishing dataset has failed."},
-            config.DATASET_TOPIC_ID,
+            config.PUBLISH_DATASET_TOPIC_ID,
         )
 
     def test_dataset_metadata_transaction_fail_publish_response(

@@ -133,5 +133,5 @@ class PubSubHelper:
 
 
 dataset_pubsub_helper = PubSubHelper(
-    config.DATASET_TOPIC_ID, dataset_test_data.test_dataset_subscriber_id
+    config.PUBLISH_DATASET_TOPIC_ID, dataset_test_data.test_dataset_subscriber_id
 )
