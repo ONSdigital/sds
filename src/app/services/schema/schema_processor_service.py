@@ -105,7 +105,6 @@ class SchemaProcessorService:
                 schema.survey_id
             )
         )
-        print("here", current_version_metadata)
 
         return DocumentVersionService.calculate_survey_version(
             current_version_metadata, "sds_schema_version"

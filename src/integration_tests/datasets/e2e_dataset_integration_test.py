@@ -28,7 +28,7 @@ class E2ESchemaIntegrationTest(TestCase):
         * We load the sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
         * We then check the uploaded file has been deleted from the bucket
-        * We then use the API to get some unit data back using the dataset_id and a known ru_re
+        * We then use the API to get some unit data back using the dataset_id and a known ru_ref
         * The dataset id an auto generated GUID
         """
         session = setup_session()

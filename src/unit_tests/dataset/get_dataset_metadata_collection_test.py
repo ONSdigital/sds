@@ -24,7 +24,7 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     ]
 
     response = test_client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
-    print(response.json()[0], "\n\n", expected[0])
+
     assert response.status_code == 200
     assert response.json() == expected
 
