@@ -10,11 +10,13 @@ import requests
 from config.config_factory import config
 from firebase_admin import firestore
 from google.cloud import storage
-from repositories.buckets.bucket_loader import bucket_loader
+
+# from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+storage_client = storage.Client()
 
 def setup_session() -> requests.Session:
     """
@@ -70,8 +72,8 @@ def load_json(filepath: str) -> dict:
         return json.load(f)
 
 
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
+def get_bucket(bucket_name: str):
+    return storage_client.bucket(bucket_name)
 
 
 def create_dataset(
@@ -126,7 +128,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = bucket_loader.get_dataset_bucket()
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
@@ -196,12 +198,12 @@ def cleanup() -> None:
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_datasets_collection(),
-            bucket_loader.get_dataset_bucket(),
+            get_bucket(config.DATASET_BUCKET_NAME),
         )
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_schemas_collection(),
-            bucket_loader.get_schema_bucket(),
+            get_bucket(config.SCHEMA_BUCKET_NAME),
         )
 
 

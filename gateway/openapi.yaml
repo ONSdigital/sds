@@ -342,42 +342,44 @@ definitions:
         type: string
         example: 2023-05-05T08:18:07Z
   sds_dataset_metadata:
-    type: object
-    properties: 
-      survey_id: 
-        type: string
-        example: NRX
-      period_id: 
-        type: string
-        example: ttt
-      title: 
-        type: string
-        example: Which side was better?
-      sds_schema_version: 
-        type: integer
-        format: int32
-        example: 4
-      sds_published_at: 
-        type: string
-        format: date-time
-        example: 2023-05-04T14:35:05Z
-      total_reporting_units: 
-        type: integer
-        format: int32
-        example: 2
-      schema_version: 
-        type: string
-        example: v1.0.0
-      sds_dataset_version: 
-        type: integer
-        format: int32
-        example: 1
-      filename: 
-        type: string
-        example: 0d5adee0-c91b-4aeb-9e1c-bfa3b1cdf0a6.json
-      dataset_id: 
-        type: string
-        example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
+    type: array
+    items: 
+      type: object
+      properties: 
+        survey_id: 
+          type: string
+          example: NRX
+        period_id: 
+          type: string
+          example: ttt
+        title: 
+          type: string
+          example: Which side was better?
+        sds_schema_version: 
+          type: integer
+          format: int32
+          example: 4
+        sds_published_at: 
+          type: string
+          format: date-time
+          example: 2023-05-04T14:35:05Z
+        total_reporting_units: 
+          type: integer
+          format: int32
+          example: 2
+        schema_version: 
+          type: string
+          example: v1.0.0
+        sds_dataset_version: 
+          type: integer
+          format: int32
+          example: 1
+        filename: 
+          type: string
+          example: 0d5adee0-c91b-4aeb-9e1c-bfa3b1cdf0a6.json
+        dataset_id: 
+          type: string
+          example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
   sds_schema:
     type: object
     properties:

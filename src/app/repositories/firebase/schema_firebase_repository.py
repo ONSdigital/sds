@@ -1,9 +1,7 @@
 from dataclasses import asdict
-from typing import Generator
 
 from firebase_admin import firestore
 from google.cloud.firestore import Transaction
-from google.cloud.firestore_v1.document import DocumentSnapshot
 from models.schema_models import Schema, SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.firebase_loader import firebase_loader
@@ -15,9 +13,7 @@ class SchemaFirebaseRepository:
         self.schemas_collection = firebase_loader.get_schemas_collection()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def get_latest_schema_with_survey_id(
-        self, survey_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    def get_latest_schema_with_survey_id(self, survey_id: str) -> list[Schema]:
         """
         Gets a stream of the most up to date schema in firestore with a specific survey id.
 
@@ -25,12 +21,19 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the dataset.
         """
 
-        return (
+        returned_schema = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
         )
+
+        schema_list: list[Schema] = []
+        for schema in returned_schema:
+            v: Schema = {**schema.to_dict()}
+            schema_list.append(v)
+
+        return schema_list
 
     def perform_new_schema_transaction(
         self,
@@ -119,9 +122,7 @@ class SchemaFirebaseRepository:
         for schema in schemas_result:
             return schema.to_dict()["schema_location"]
 
-    def get_schema_metadata_collection(
-        self, survey_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    def get_schema_metadata_collection(self, survey_id: str) -> list[SchemaMetadata]:
         """
         Gets the collection of schema metadata with a specific survey id.
 
@@ -129,4 +130,13 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the schema metadata being collected.
         """
 
-        return self.schemas_collection.where("survey_id", "==", survey_id).stream()
+        returned_schema_metadata = self.schemas_collection.where(
+            "survey_id", "==", survey_id
+        ).stream()
+
+        schema_metadata_list: list[SchemaMetadata] = []
+        for schema_metadata in returned_schema_metadata:
+            v: SchemaMetadata = {**(schema_metadata.to_dict())}
+            schema_metadata_list.append(v)
+
+        return schema_metadata_list

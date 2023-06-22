@@ -1,7 +1,6 @@
 import uuid
 
 from config.config_factory import config
-from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
 from models.dataset_models import (
     DatasetMetadata,
@@ -169,30 +168,9 @@ class DatasetProcessorService:
         period_id (str): period id of the collection.
         """
 
-        dataset_metadata_collection_generator = (
-            self.dataset_repository.get_dataset_metadata_collection(
-                survey_id, period_id
-            )
+        return self.dataset_repository.get_dataset_metadata_collection(
+            survey_id, period_id
         )
-
-        return [
-            self._create_dataset_metadata_item_with_id(dataset_metadata_snapshot_item)
-            for dataset_metadata_snapshot_item in dataset_metadata_collection_generator
-        ]
-
-    def _create_dataset_metadata_item_with_id(
-        self, dataset_metadata_snapshot: DocumentSnapshot
-    ):
-        """
-        Creates a dataset metadata dictionary item from a firestore document snapshot.
-
-        Parameters:
-        dataset_metadata_snapshot (DocumentSnapshot): firestore document snapshot of a dataset metadata item.
-        """
-        metadata_collection_item = dataset_metadata_snapshot.to_dict()
-        metadata_collection_item["dataset_id"] = dataset_metadata_snapshot.id
-
-        return metadata_collection_item
 
     def _extract_rurefs_from_unit_data(
         self, raw_dataset_unit_data_collection: list[object]

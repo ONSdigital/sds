@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 from src.test_data import dataset_test_data
-from src.unit_tests.test_helper import TestHelper
 
 
 def test_get_dataset_metadata_collection_200_response(test_client):
@@ -12,24 +11,20 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     """
     DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
     DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
-        TestHelper.create_document_snapshot_generator_mock(
-            dataset_test_data.dataset_metadata_collection_no_id
-        )
+        dataset_test_data.dataset_metadata_collection
     )
 
     expected = [
         {
-            "dataset_id": "id_0",
-            **dataset_test_data.dataset_metadata_collection_no_id[0],
+            **dataset_test_data.dataset_metadata_collection[0],
         },
         {
-            "dataset_id": "id_1",
-            **dataset_test_data.dataset_metadata_collection_no_id[1],
+            **dataset_test_data.dataset_metadata_collection[1],
         },
     ]
 
     response = test_client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
-
+    print(response.json()[0], "\n\n", expected[0])
     assert response.status_code == 200
     assert response.json() == expected
 

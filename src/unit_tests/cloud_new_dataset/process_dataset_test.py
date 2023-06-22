@@ -47,9 +47,7 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [dataset_test_data.dataset_metadata]
-            )
+            dataset_test_data.dataset_metadata
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -80,9 +78,7 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [dataset_test_data.dataset_metadata]
-            )
+            dataset_test_data.dataset_metadata
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -106,9 +102,7 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [dataset_test_data.dataset_metadata]
-            )
+            dataset_test_data.dataset_metadata
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
