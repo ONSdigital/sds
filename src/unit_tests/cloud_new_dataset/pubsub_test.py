@@ -42,7 +42,7 @@ class PubSubTest(TestCase):
 
     def test_dataset_transaction_success_publish_response(self):
         """
-        When the dataset transaction is successful a success response should be published to the datset topic
+        When the dataset transaction is successful a success response should be published to the dataset topic
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -73,7 +73,7 @@ class PubSubTest(TestCase):
         self,
     ):
         """
-        When the dataset transaction fails a failure response should be published to the datset topic
+        When the dataset transaction fails a failure response should be published to the dataset topic
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
