@@ -10,7 +10,6 @@ import requests
 from config.config_factory import config
 from firebase_admin import firestore
 from google.cloud import storage
-
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
