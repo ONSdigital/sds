@@ -109,6 +109,8 @@ class PubSubHelper:
 
 
 dataset_pubsub_helper = PubSubHelper(
-    config.DATASET_TOPIC_ID, test_dataset_subscriber_id
+    config.PUBLISH_DATASET_TOPIC_ID, test_dataset_subscriber_id
 )
-schema_pubsub_helper = PubSubHelper(config.SCHEMA_TOPIC_ID, test_schema_subscriber_id)
+schema_pubsub_helper = PubSubHelper(
+    config.PUBLISH_SCHEMA_TOPIC_ID, test_schema_subscriber_id
+)

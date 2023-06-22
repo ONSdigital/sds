@@ -71,7 +71,7 @@ class PostSchemaTest(TestCase):
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
             schema_test_data.test_post_schema_metadata_updated_version_response,
-            config.SCHEMA_TOPIC_ID,
+            config.PUBLISH_SCHEMA_TOPIC_ID,
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(

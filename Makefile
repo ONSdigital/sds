@@ -7,8 +7,8 @@ AUTODELETE_DATASET_BUCKET_FILE=True
 LOG_LEVEL=INFO
 PROJECT_ID = $(shell gcloud config get project)
 API_URL:=http://localhost:3000
-SCHEMA_TOPIC_ID=ons-sds-schema-events
-DATASET_TOPIC_ID=ons-sds-dataset-events
+PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema-events
+PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset-events
 
 start-cloud-dev:
 	export CONF=cloud-dev && \
@@ -19,8 +19,8 @@ start-cloud-dev:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=$(PROJECT_ID) && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 
@@ -34,8 +34,8 @@ start-docker-dev:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=mock-project-id && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
 lint-and-unit-test:
@@ -50,8 +50,8 @@ lint-and-unit-test:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=mock-project-id && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
@@ -65,8 +65,8 @@ unit-test:
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=mock-project-id && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --fail-under=90 -m
 
@@ -81,8 +81,8 @@ integration-test-local:
     export API_URL=${API_URL} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export PROJECT_ID=mock-project-id && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
@@ -95,7 +95,8 @@ integration-test-sandbox:
     export API_URL=https://sds-jjpah7fbzq-nw.a.run.app && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export PROJECT_ID=$(PROJECT_ID) && \
-	export SCHEMA_TOPIC_ID=${SCHEMA_TOPIC_ID} && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(PUBLISH_DATASET_TOPIC_ID) && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally. 
@@ -111,8 +112,8 @@ integration-test-cloudbuild:
 	export AUTODELETE_DATASET_BUCKET_FILE=${INT_AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${INT_LOG_LEVEL} && \
 	export PROJECT_ID=${INT_PROJECT_ID} && \
-	export SCHEMA_TOPIC_ID=${INT_SCHEMA_TOPIC_ID} && \
-	export DATASET_TOPIC_ID=$(INT_DATASET_TOPIC_ID) && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${INT_PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=$(INT_PUBLISH_DATASET_TOPIC_ID) && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 lint:
