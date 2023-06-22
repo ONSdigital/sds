@@ -106,7 +106,7 @@ class DatasetFirebaseRepository:
             v: DatasetMetadata = {**dataset_metadata.to_dict()}
             v["dataset_id"] = dataset_metadata.id
             dataset_metadata_list.append(v)
-        
+
         return dataset_metadata_list
 
     def perform_delete_previous_versions_datasets_transaction(

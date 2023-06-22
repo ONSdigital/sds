@@ -53,7 +53,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": early_dataset_version,
         "filename": "test_filename.json",
-        "dataset_id": '0',
+        "dataset_id": "0",
     },
     {
         "survey_id": f"{survey_id}_2",
@@ -65,7 +65,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": new_dataset_version,
         "filename": "test_filename.json",
-        "dataset_id": '1',
+        "dataset_id": "1",
     },
 ]
 

@@ -18,6 +18,7 @@ from urllib3 import Retry
 
 storage_client = storage.Client()
 
+
 def setup_session() -> requests.Session:
     """
     Method to setup a http/s session to facilitate testing.
