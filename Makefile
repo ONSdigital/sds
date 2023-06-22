@@ -7,7 +7,7 @@ AUTODELETE_DATASET_BUCKET_FILE=True
 LOG_LEVEL=INFO
 PROJECT_ID = $(shell gcloud config get project)
 API_URL:=http://localhost:3000
-PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset-events
+PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
 
 start-cloud-dev:
 	export CONF=cloud-dev && \
