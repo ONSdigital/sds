@@ -4,7 +4,6 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-from src.test_data import dataset_test_data
 from src.test_data.shared_test_data import (
     test_dataset_subscriber_id,
     test_schema_subscriber_id,
