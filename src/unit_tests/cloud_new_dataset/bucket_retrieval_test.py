@@ -41,8 +41,7 @@ class BucketRetrievalTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetBucketRepository.delete_bucket_file = MagicMock()
-        DatasetBucketRepository.delete_bucket_file.side_effect = Exception
+        DatasetBucketRepository.delete_bucket_file = MagicMock(side_effect=Exception)
 
         DatasetProcessorService.process_raw_dataset = MagicMock()
 

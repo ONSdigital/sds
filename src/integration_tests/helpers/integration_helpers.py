@@ -1,19 +1,23 @@
 import json
 import os
-import shutil
 import time
-from pathlib import Path
 
-import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
-from firebase_admin import firestore
-from google.cloud import storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
+
+from src.integration_tests.helpers.bucket_helpers import (
+    delete_blobs,
+    delete_local_bucket_data,
+)
+from src.integration_tests.helpers.firestore_helpers import (
+    delete_local_firestore_data,
+    perform_delete_transaction,
+)
 
 
 def setup_session() -> requests.Session:
@@ -68,10 +72,6 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath) as f:
         return json.load(f)
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
 
 
 def create_dataset(
@@ -185,106 +185,21 @@ def cleanup() -> None:
         None
     """
     if config.API_URL.__contains__("local"):
-        _delete_local_firestore_data()
+        delete_local_firestore_data()
 
-        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
-
-        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
+        delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
+        delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
+        delete_blobs(bucket_loader.get_dataset_bucket())
+        delete_blobs(bucket_loader.get_schema_bucket())
+
         client = firebase_loader.get_client()
 
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_datasets_collection(),
-            bucket_loader.get_dataset_bucket(),
         )
         perform_delete_transaction(
             client.transaction(),
             firebase_loader.get_schemas_collection(),
-            bucket_loader.get_schema_bucket(),
         )
-
-
-def _delete_local_firestore_data():
-    """
-    Method to cleanup local test data in the emulated firestore instance.
-
-    Parameters:
-        None
-
-    Returns:
-        None
-    """
-    requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
-    )
-
-
-def _delete_local_bucket_data(filepath: str):
-    """
-    Method to cleanup local test data in the bucket instance.
-
-    Parameters:
-        filepath: the filepath for the bucket instance to be deleted
-
-    Returns:
-        None
-    """
-    path_instance = Path(filepath)
-    if Path.is_dir(path_instance):
-        shutil.rmtree(path_instance)
-
-
-@firestore.transactional
-def perform_delete_transaction(
-    transaction: firestore.Transaction,
-    collection_ref: firestore.CollectionReference,
-    bucket: storage.Bucket,
-):
-    _delete_collection(transaction, collection_ref)
-    _delete_blobs(bucket)
-
-
-def _delete_blobs(bucket: storage.Bucket) -> None:
-    """
-    Method to delete all blobs in the specified bucket.
-
-    Parameters:
-        bucket: the bucket to clean
-
-    Returns:
-        None
-    """
-    blobs = bucket.list_blobs()
-
-    for blob in blobs:
-        blob.delete()
-
-
-def _delete_collection(
-    transaction: firestore.Transaction, collection_ref: firestore.CollectionReference
-) -> None:
-    """
-    Recursively deletes the collection and its subcollections.
-    Parameters:
-    collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
-    """
-    doc_collection = collection_ref.stream()
-
-    for doc in doc_collection:
-        _recursively_delete_document_and_sub_collections(transaction, doc.reference)
-
-
-def _recursively_delete_document_and_sub_collections(
-    transaction: firestore.Transaction,
-    doc_ref: firestore.DocumentReference,
-) -> None:
-    """
-    Loops through each collection in a document and deletes the collection.
-    Parameters:
-    doc_ref (firestore.DocumentReference): the reference of the document being deleted.
-    """
-    for collection_ref in doc_ref.collections():
-        _delete_collection(transaction, collection_ref)
-
-    transaction.delete(doc_ref)

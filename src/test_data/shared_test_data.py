@@ -8,3 +8,5 @@ unit_response = {
     "period_id": "abc",
     "data": "<encrypted data>",
 }
+
+test_subscriber_id = "test_subscriber_id"
