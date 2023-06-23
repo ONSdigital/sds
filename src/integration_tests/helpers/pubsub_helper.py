@@ -4,13 +4,11 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-
+from src.test_data import dataset_test_data
 from src.test_data.shared_test_data import (
     test_dataset_subscriber_id,
     test_schema_subscriber_id,
 )
-from src.test_data import dataset_test_data
-
 
 
 class PubSubHelper:
@@ -29,7 +27,7 @@ class PubSubHelper:
     def _try_create_topic(self, topic_id: str) -> None:
         """
         Try to create a topic for publisher if not exists
-        
+
         Parameters:
         topic_id: The unique id of the topic being created.
         """
