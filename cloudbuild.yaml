@@ -59,7 +59,7 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
+        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
   - name: 'gcr.io/cloud-builders/gcloud'
     id: "Get token"
     entrypoint: sh
@@ -81,6 +81,7 @@ steps:
         export INT_LOG_LEVEL=$_LOG_LEVEL
         export INT_PROJECT_ID=$_PROJECT_ID
         export INT_SCHEMA_BUCKET_NAME=$_SCHEMA_BUCKET_NAME
+        export INT_PUBLISH_SCHEMA_TOPIC_ID=$_PUBLISH_SCHEMA_TOPIC_ID
         export INT_PUBLISH_DATASET_TOPIC_ID=$_PUBLISH_DATASET_TOPIC_ID
         make integration-test-cloudbuild
 options:

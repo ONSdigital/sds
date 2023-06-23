@@ -8,6 +8,7 @@ from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
+from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema(self, schema: Schema):
+    def process_raw_schema(self, schema: Schema) -> SchemaMetadata:
         """
         Processes incoming schema.
 
@@ -35,6 +36,8 @@ class SchemaProcessorService:
         self.process_raw_schema_in_transaction(
             schema_id, next_version_schema_metadata, schema, stored_schema_filename
         )
+
+        self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
 
         return next_version_schema_metadata
 
@@ -82,15 +85,16 @@ class SchemaProcessorService:
         stored_schema_filename (str): the filename of schema when it is stored.
         schema_metadata (SchemaMetadata): schema metadata being processed.
         """
-        return SchemaMetadata(
-            guid=schema_id,
-            schema_location=stored_schema_filename,
-            sds_schema_version=self.calculate_next_schema_version(schema),
-            survey_id=schema.survey_id,
-            sds_published_at=str(
+        next_version_schema_metadata = {
+            "guid": schema_id,
+            "schema_location": stored_schema_filename,
+            "sds_schema_version": self.calculate_next_schema_version(schema),
+            "survey_id": schema.survey_id,
+            "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
-        )
+        }
+        return next_version_schema_metadata
 
     def calculate_next_schema_version(self, schema: Schema):
         """
@@ -145,3 +149,24 @@ class SchemaProcessorService:
             return self.schema_firebase_repository.get_schema_bucket_filename(
                 survey_id, version
             )
+
+    def try_publish_schema_metadata_to_topic(
+        self, next_version_schema_metadata: SchemaMetadata
+    ) -> None:
+        try:
+            logger.info("Publishing schema metadata to topic...")
+            publisher_service.publish_data_to_topic(
+                next_version_schema_metadata,
+                config.PUBLISH_SCHEMA_TOPIC_ID,
+            )
+            logger.debug(
+                f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
+            )
+            logger.info("Schema metadata published successfully.")
+        except Exception as e:
+            logger.debug(
+                f"Schema metadata {next_version_schema_metadata} failed to publish to topic "
+                f"{config.PUBLISH_SCHEMA_TOPIC_ID} with error {e}"
+            )
+            logger.error("Error publishing schema metadata to topic.")
+            raise exceptions.GlobalException

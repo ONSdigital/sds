@@ -4,7 +4,10 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-from src.test_data import dataset_test_data
+from src.test_data.shared_test_data import (
+    test_dataset_subscriber_id,
+    test_schema_subscriber_id,
+)
 
 
 class PubSubHelper:
@@ -16,13 +19,13 @@ class PubSubHelper:
         self.publisher_client = pubsub_v1.PublisherClient()
 
         if config.API_URL.__contains__("local"):
-            self._create_topic(topic_id)
+            self._try_create_topic(topic_id)
 
         self._try_create_subscriber(topic_id, subscriber_id)
 
-    def _create_topic(self, topic_id: str) -> None:
+    def _try_create_topic(self, topic_id: str) -> None:
         """
-        Creates a topic with a specified topic id.
+        Try to create a topic for publisher if not exists
 
         Parameters:
         topic_id: The unique id of the topic being created.
@@ -37,7 +40,7 @@ class PubSubHelper:
 
     def _topic_exists(self, topic_path: str) -> bool:
         """
-        Returns `true` if the topic defined by `self.topic_path` exists otherwise returns `false`.
+        Returns True if the topic exists otherwise returns False.
         """
         try:
             self.publisher_client.get_topic(request={"topic": topic_path})
@@ -75,7 +78,6 @@ class PubSubHelper:
         Parameters:
         subscriber_id: the unique id of the subscriber being created.
         """
-
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
@@ -118,7 +120,6 @@ class PubSubHelper:
         Parameters:
         subscriber_id: the unique id of the subscriber being checked.
         """
-
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
@@ -133,5 +134,8 @@ class PubSubHelper:
 
 
 dataset_pubsub_helper = PubSubHelper(
-    config.PUBLISH_DATASET_TOPIC_ID, dataset_test_data.test_dataset_subscriber_id
+    config.PUBLISH_DATASET_TOPIC_ID, test_dataset_subscriber_id
+)
+schema_pubsub_helper = PubSubHelper(
+    config.PUBLISH_SCHEMA_TOPIC_ID, test_schema_subscriber_id
 )
