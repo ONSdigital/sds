@@ -136,8 +136,9 @@ class PostSchemaTest(TestCase):
             )
         )
 
-        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
-        SchemaFirebaseRepository.perform_new_schema_transaction.side_effect = Exception
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock(
+            side_effect=Exception
+        )
 
         response = self.test_client.post(
             "/v1/schema", json=schema_test_data.test_post_schema_metadata_body

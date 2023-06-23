@@ -30,9 +30,13 @@ class PublisherService:
             topic_path, data=json.dumps(publish_data).encode("utf-8")
         )
 
+
     def _try_create_topic(self, topic_path: str) -> None:
         """
-        Try to create a topic for publisher if not exists
+        Try to creates a topic with a specified topic id if none exists.
+
+        Parameters:
+        topic_id: The unique id of the topic being created.
         """
         try:
             if not self._topic_exists(topic_path):

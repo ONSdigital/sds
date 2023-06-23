@@ -37,3 +37,9 @@ class UnitDataset:
     sds_schema_version: int
     schema_version: str
     data: object
+
+
+@dataclass
+class DatasetPublishResponse:
+    status: str
+    message: str
