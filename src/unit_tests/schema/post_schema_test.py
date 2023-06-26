@@ -9,6 +9,7 @@ from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepos
 from services.shared.publisher_service import PublisherService
 
 from src.test_data import schema_test_data
+from src.unit_tests.test_helper import TestHelper
 
 
 class PostSchemaTest(TestCase):

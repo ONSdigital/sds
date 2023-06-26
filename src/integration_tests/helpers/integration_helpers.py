@@ -10,6 +10,7 @@ from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
+
 from src.integration_tests.helpers.bucket_helpers import (
     delete_blobs,
     delete_local_bucket_data,
@@ -20,6 +21,7 @@ from src.integration_tests.helpers.firestore_helpers import (
 )
 
 storage_client = storage.Client()
+
 
 def setup_session() -> requests.Session:
     """

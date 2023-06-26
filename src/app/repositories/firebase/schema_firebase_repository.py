@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from firebase_admin import firestore
 from google.cloud.firestore import Transaction
 from models.schema_models import Schema, SchemaMetadata
