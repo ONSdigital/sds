@@ -103,9 +103,9 @@ class DatasetFirebaseRepository:
 
         dataset_metadata_list: list[DatasetMetadata] = []
         for dataset_metadata in returned_dataset_metadata:
-            v: DatasetMetadata = {**dataset_metadata.to_dict()}
-            v["dataset_id"] = dataset_metadata.id
-            dataset_metadata_list.append(v)
+            metadata: DatasetMetadata = {**dataset_metadata.to_dict()}
+            metadata["dataset_id"] = dataset_metadata.id
+            dataset_metadata_list.append(metadata)
 
         return dataset_metadata_list
 

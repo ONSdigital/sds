@@ -21,7 +21,7 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the dataset.
         """
 
-        returned_schema = (
+        returned_schemas = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
             .limit(1)
@@ -29,9 +29,9 @@ class SchemaFirebaseRepository:
         )
 
         schema_list: list[Schema] = []
-        for schema in returned_schema:
-            v: Schema = {**schema.to_dict()}
-            schema_list.append(v)
+        for returned_schema in returned_schemas:
+            schema: Schema = {**returned_schema.to_dict()}
+            schema_list.append(schema)
 
         return schema_list
 
@@ -82,7 +82,7 @@ class SchemaFirebaseRepository:
 
         transaction.set(
             self.schemas_collection.document(schema_id),
-            asdict(schema_metadata),
+            schema_metadata,
             merge=True,
         )
 
@@ -136,7 +136,7 @@ class SchemaFirebaseRepository:
 
         schema_metadata_list: list[SchemaMetadata] = []
         for schema_metadata in returned_schema_metadata:
-            v: SchemaMetadata = {**(schema_metadata.to_dict())}
-            schema_metadata_list.append(v)
+            metadata: SchemaMetadata = {**(schema_metadata.to_dict())}
+            schema_metadata_list.append(metadata)
 
         return schema_metadata_list

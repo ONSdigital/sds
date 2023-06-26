@@ -14,9 +14,8 @@ class DocumentVersionService:
         Parameters:
         version_key (str): the key being accessed to find out the document version.
         """
-        try:
-            latest_version = document_current_version[version_key] + 1
-        except Exception:
-            latest_version = 1
-
-        return latest_version
+        
+        if version_key in document_current_version:
+            return document_current_version[version_key] + 1
+        else: 
+            return 1

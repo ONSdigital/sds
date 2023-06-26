@@ -1,13 +1,14 @@
 from unittest import TestCase
 
-from config.config_factory import config
-
+from src.app.config.config_factory import config
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
     setup_session,
 )
+from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
+from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -34,10 +35,18 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
+        received_messages = schema_pubsub_helper.pull_messages(
+            test_schema_subscriber_id
+        )
+
+        received_messages_json = received_messages[0]
+        assert received_messages_json == schema_post_response.json()
+
         test_schema_get_response = session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
             headers=headers,
         )
+
         assert test_schema_get_response.status_code == 200
 
         response_as_json = test_schema_get_response.json()
