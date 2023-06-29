@@ -1,9 +1,6 @@
-from typing import Generator
-
 from firebase_admin import firestore
-from google.cloud.firestore_v1.document import DocumentSnapshot
 from logging_config import logging
-from models.dataset_models import DatasetMetadataWithoutId, UnitDataset
+from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.firebase_loader import firebase_loader
 
 logger = logging.getLogger(__name__)
@@ -14,21 +11,25 @@ class DatasetFirebaseRepository:
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
 
-    def get_latest_dataset_with_survey_id(
-        self, survey_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    def get_latest_dataset_with_survey_id(self, survey_id: str) -> UnitDataset:
         """
         Gets a DocumentSnapshot generator of the latest dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        return (
+        latest_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
         )
+
+        unit_dataset: UnitDataset = None
+        for dataset in latest_dataset:
+            unit_dataset: UnitDataset = {**(dataset.to_dict())}
+
+        return unit_dataset
 
     def perform_new_dataset_transaction(
         self,
@@ -86,7 +87,7 @@ class DatasetFirebaseRepository:
 
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    ) -> list[DatasetMetadata]:
         """
         Get the collection of dataset metadata from firestore associated with a specific survey and period id.
 
@@ -94,11 +95,19 @@ class DatasetFirebaseRepository:
         survey_id (str): The survey id of the dataset.
         period_id (str): The period id of the unit on the dataset.
         """
-        return (
+        returned_dataset_metadata = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
             .stream()
         )
+
+        dataset_metadata_list: list[DatasetMetadata] = []
+        for dataset_metadata in returned_dataset_metadata:
+            metadata: DatasetMetadata = {**dataset_metadata.to_dict()}
+            metadata["dataset_id"] = dataset_metadata.id
+            dataset_metadata_list.append(metadata)
+
+        return dataset_metadata_list
 
     def perform_delete_previous_versions_datasets_transaction(
         self, survey_id: str, latest_version: int

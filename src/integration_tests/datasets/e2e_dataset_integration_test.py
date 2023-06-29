@@ -2,8 +2,8 @@ from datetime import datetime
 from unittest import TestCase
 
 from config.config_factory import config
+from google.cloud import storage
 
-from src.integration_tests.helpers.bucket_helpers import get_dataset_bucket
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
@@ -45,7 +45,12 @@ class E2ESchemaIntegrationTest(TestCase):
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
 
-        assert not get_dataset_bucket().blob(filename).exists()
+        assert (
+            not storage.Client()
+            .bucket(config.DATASET_BUCKET_NAME)
+            .blob(filename)
+            .exists()
+        )
 
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",

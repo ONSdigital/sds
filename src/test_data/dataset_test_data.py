@@ -42,7 +42,7 @@ dataset_metadata: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
-dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
+dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{survey_id}_1",
         "period_id": "abc",
@@ -53,6 +53,7 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": old_dataset_version,
         "filename": "test_filename.json",
+        "dataset_id": "0",
     },
     {
         "survey_id": f"{survey_id}_2",
@@ -64,6 +65,7 @@ dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
         "schema_version": "v1.0.0",
         "sds_dataset_version": new_dataset_version,
         "filename": "test_filename.json",
+        "dataset_id": "1",
     },
 ]
 

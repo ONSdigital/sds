@@ -1,12 +1,11 @@
-from typing import Generator
-
-from google.cloud.firestore_v1.document import DocumentSnapshot
+from models.dataset_models import UnitDataset
+from models.schema_models import Schema
 
 
 class DocumentVersionService:
     @staticmethod
     def calculate_survey_version(
-        document_current_version: Generator[DocumentSnapshot, None, None],
+        document_current_version: Schema | UnitDataset,
         version_key: str,
     ) -> int:
         """
@@ -16,8 +15,6 @@ class DocumentVersionService:
         version_key (str): the key being accessed to find out the document version.
         """
         try:
-            latest_version = next(document_current_version).to_dict()[version_key] + 1
-        except StopIteration:
-            latest_version = 1
-
-        return latest_version
+            return document_current_version[version_key] + 1
+        except Exception:
+            return 1

@@ -5,6 +5,7 @@ import time
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
+from google.cloud import storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
@@ -18,6 +19,8 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
+
+storage_client = storage.Client()
 
 
 def setup_session() -> requests.Session:
@@ -126,7 +129,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = bucket_loader.get_dataset_bucket()
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"

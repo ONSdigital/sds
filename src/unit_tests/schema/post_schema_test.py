@@ -9,7 +9,6 @@ from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepos
 from services.shared.publisher_service import PublisherService
 
 from src.test_data import schema_test_data
-from src.unit_tests.test_helper import TestHelper
 
 
 class PostSchemaTest(TestCase):
@@ -47,9 +46,7 @@ class PostSchemaTest(TestCase):
 
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [schema_test_data.test_post_schema_metadata_first_version_response]
-            )
+            schema_test_data.test_post_schema_metadata_first_version_response
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
@@ -90,9 +87,7 @@ class PostSchemaTest(TestCase):
         SchemaBucketRepository.store_schema_json.return_value = None
 
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock([])
-        )
+        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = []
 
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
         SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
@@ -131,9 +126,7 @@ class PostSchemaTest(TestCase):
         """
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [schema_test_data.test_post_schema_metadata_first_version_response]
-            )
+            schema_test_data.test_post_schema_metadata_first_version_response
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock(
@@ -158,9 +151,7 @@ class PostSchemaTest(TestCase):
 
         SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
-            TestHelper.create_document_snapshot_generator_mock(
-                [schema_test_data.test_post_schema_metadata_first_version_response]
-            )
+            schema_test_data.test_post_schema_metadata_first_version_response
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
