@@ -51,14 +51,13 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
             return_value=None
         )
-
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
-
-        PublisherService.publish_data_to_topic = MagicMock()
-
         DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction = (
             MagicMock()
         )
+
+        PublisherService.publish_data_to_topic = MagicMock()
+
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
         TestHelper.new_dataset_mock(cloud_event)
@@ -116,9 +115,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            dataset_test_data.dataset_metadata_first_version
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
+            return_value=(dataset_test_data.dataset_metadata_first_version)
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -143,9 +141,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            dataset_test_data.dataset_metadata_first_version
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
+            return_value=(dataset_test_data.dataset_metadata_first_version)
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()

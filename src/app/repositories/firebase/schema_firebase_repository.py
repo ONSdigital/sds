@@ -11,7 +11,7 @@ class SchemaFirebaseRepository:
         self.schemas_collection = firebase_loader.get_schemas_collection()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def get_latest_schema_with_survey_id(self, survey_id: str) -> list[Schema]:
+    def get_latest_schema_with_survey_id(self, survey_id: str) -> Schema | None:
         """
         Gets a stream of the most up to date schema in firestore with a specific survey id.
 
@@ -19,19 +19,18 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the dataset.
         """
 
-        returned_schemas = (
+        latest_schema = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
         )
 
-        schema_list: list[Schema] = []
-        for returned_schema in returned_schemas:
+        schema: Schema = None
+        for returned_schema in latest_schema:
             schema: Schema = {**returned_schema.to_dict()}
-            schema_list.append(schema)
 
-        return schema_list
+        return schema
 
     def perform_new_schema_transaction(
         self,

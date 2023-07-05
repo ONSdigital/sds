@@ -36,6 +36,32 @@ class PostSchemaTest(TestCase):
         )
         PublisherService.publish_data_to_topic = self.publish_data_to_topic_stash
 
+    def test_200_response_first_schema_version(self):
+        """
+        Tests when there the first version of a schema is posted it should give it version 1 and return 200.
+        """
+        SchemaBucketRepository.store_schema_json = MagicMock(return_value=None)
+
+        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock(
+            return_value=None
+        )
+        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock(
+            return_value=schema_test_data.test_post_schema_metadata_updated_version_response
+        )
+
+        PublisherService.publish_data_to_topic = MagicMock()
+
+        response = self.test_client.post(
+            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+        )
+
+        assert response.status_code == 200
+        assert (
+            response.json()
+            == schema_test_data.test_post_schema_metadata_first_version_response
+        )
+        SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once()
+
     def test_200_response_updated_schema_version(self):
         """
         Tests when a schema is posted, a 200 response and the schema metadata will be received
@@ -77,35 +103,6 @@ class PostSchemaTest(TestCase):
             Schema(**schema_test_data.test_post_schema_metadata_body),
             schema_test_data.test_filename,
         )
-
-    def test_200_response_first_schema_version(self):
-        """
-        Tests when there the first version of a schema is posted it should give it version 1 and return 200.
-        """
-
-        SchemaBucketRepository.store_schema_json = MagicMock()
-        SchemaBucketRepository.store_schema_json.return_value = None
-
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = []
-
-        SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock()
-        SchemaFirebaseRepository.perform_new_schema_transaction.return_value = (
-            schema_test_data.test_post_schema_metadata_updated_version_response
-        )
-
-        PublisherService.publish_data_to_topic = MagicMock()
-
-        response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
-        )
-
-        assert response.status_code == 200
-        assert (
-            response.json()
-            == schema_test_data.test_post_schema_metadata_first_version_response
-        )
-        SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once()
 
     def test_post_bad_schema_400_response(self):
         """
