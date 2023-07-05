@@ -17,5 +17,4 @@ class DocumentVersionService:
         if document_current_version is None:
             return 1
 
-        if version_key in document_current_version:
-            return document_current_version[version_key] + 1
+        return document_current_version[version_key] + 1
