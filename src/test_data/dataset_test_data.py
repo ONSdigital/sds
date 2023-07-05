@@ -25,11 +25,11 @@ cloud_event_invalid_filename_data = {
 
 unit_id = "test_unit_id"
 survey_id = "test_survey_id"
-old_dataset_version = 1
-new_dataset_version = 2
+first_dataset_version = 1
+updated_dataset_version = 2
 
 
-dataset_metadata: DatasetMetadata = {
+dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
     "period_id": "abc",
@@ -38,7 +38,7 @@ dataset_metadata: DatasetMetadata = {
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 1,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": old_dataset_version,
+    "sds_dataset_version": first_dataset_version,
     "filename": "test_filename.json",
 }
 
@@ -51,7 +51,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": old_dataset_version,
+        "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "0",
     },
@@ -63,31 +63,23 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": new_dataset_version,
+        "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "1",
     },
 ]
 
-existing_dataset_unit_data_collection: list[UnitDataset] = [
-    {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
-        "schema_version": "v1.0.0",
-        "data": {"test": "data", "ruref": "12345"},
-    },
-    {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
-        "schema_version": "v1.0.0",
-        "data": {"hello": "world", "ruref": "56789"},
-    },
-]
-
+first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+    "survey_id": survey_id,
+    "period_id": "abc",
+    "title": "Which side was better?",
+    "sds_schema_version": 4,
+    "sds_published_at": "2023-04-20T12:00:00Z",
+    "total_reporting_units": 2,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": first_dataset_version,
+    "filename": "test_filename.json",
+}
 
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
@@ -97,7 +89,7 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 2,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": new_dataset_version,
+    "sds_dataset_version": updated_dataset_version,
     "filename": "test_filename.json",
 }
 

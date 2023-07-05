@@ -49,7 +49,7 @@ class PubSubTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            dataset_test_data.dataset_metadata
+            dataset_test_data.dataset_metadata_first_version
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -78,7 +78,7 @@ class PubSubTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            dataset_test_data.dataset_metadata
+            dataset_test_data.dataset_metadata_first_version
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock(
@@ -110,7 +110,7 @@ class PubSubTest(TestCase):
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
-            dataset_test_data.dataset_metadata
+            dataset_test_data.dataset_metadata_first_version
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()

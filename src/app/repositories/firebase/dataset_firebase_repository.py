@@ -11,9 +11,9 @@ class DatasetFirebaseRepository:
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
 
-    def get_latest_dataset_with_survey_id(self, survey_id: str) -> UnitDataset:
+    def get_latest_dataset_with_survey_id(self, survey_id: str) -> UnitDataset | None:
         """
-        Gets a DocumentSnapshot generator of the latest dataset from firestore with a specific survey_id.
+        Gets the latest dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
