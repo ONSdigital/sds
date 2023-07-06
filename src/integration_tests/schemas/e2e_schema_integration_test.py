@@ -64,7 +64,8 @@ class E2ESchemaIntegrationTest(TestCase):
             }
 
             set_version_schema_response = session.get(
-                f"{config.LOAD_BALANCER_ADDRESS}/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
+                f"{config.LOAD_BALANCER_ADDRESS}/v1/schema?"
+                f"survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
                 headers=headers,
             )
 

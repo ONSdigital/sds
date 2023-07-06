@@ -6,11 +6,9 @@ import google.oauth2.id_token
 import requests
 from config.config_factory import config
 from google.cloud import storage
-from oauthlib.oauth2 import MobileApplicationClient
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
-from requests_oauthlib import OAuth2Session
 from urllib3 import Retry
 
 from src.integration_tests.helpers.bucket_helpers import (
