@@ -16,6 +16,8 @@ class testConfigVars:
     schema_path = "test_schema_path"
     api_url = "test_API_url"
     access_token = "test_access_token"
+    load_balancer_address = "test_load_balancer_address"
+    oauth_client_id = "test_oauth_client_id"
 
 
 class ConfigTest(TestCase):

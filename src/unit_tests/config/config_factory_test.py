@@ -33,6 +33,8 @@ class ConfigFactoryTest(TestCase):
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["API_URL"] = testConfigVars.api_url
         os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
+        os.environ["LOAD_BALANCER_ADDRESS"] = testConfigVars.load_balancer_address
+        os.environ["OAUTH_CLIENT_ID"] = testConfigVars.oauth_client_id
 
     def tearDown(self):
         os.environ["CONF"] = INITIAL_CONF
@@ -45,6 +47,8 @@ class ConfigFactoryTest(TestCase):
         os.environ["SCHEMA_BUCKET_NAME"] = ""
         os.environ["API_URL"] = ""
         os.environ["ACCESS_TOKEN"] = ""
+        os.environ["LOAD_BALANCER_ADDRESS"] = ""
+        os.environ["OAUTH_CLIENT_ID"] = ""
 
     def test_docker_dev_factory(self):
         os.environ["CONF"] = "docker-dev"

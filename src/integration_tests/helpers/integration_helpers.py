@@ -6,9 +6,11 @@ import google.oauth2.id_token
 import requests
 from config.config_factory import config
 from google.cloud import storage
+from oauthlib.oauth2 import MobileApplicationClient
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
+from requests_oauthlib import OAuth2Session
 from urllib3 import Retry
 
 from src.integration_tests.helpers.bucket_helpers import (
@@ -56,9 +58,14 @@ def generate_headers() -> dict[str, str]:
     auth_token = os.environ.get("ACCESS_TOKEN")
     if auth_token is None:
         auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
+        auth_token = google.oauth2.id_token.fetch_id_token(
+            auth_req, audience=config.OAUTH_CLIENT_ID
+        )
 
-    headers = {"Authorization": f"Bearer {auth_token}"}
+    headers = {
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json",
+    }
 
     return headers
 

@@ -52,6 +52,10 @@ class IntegrationTestConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.LOAD_BALANCER_ADDRESS = get_value_from_env(
+            "LOAD_BALANCER_ADDRESS", "localhost"
+        )
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -64,6 +68,8 @@ class IntegrationTestConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    LOAD_BALANCER_ADDRESS: str
+    OAUTH_CLIENT_ID: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -88,6 +94,10 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.LOAD_BALANCER_ADDRESS = get_value_from_env(
+            "LOAD_BALANCER_ADDRESS", "localhost"
+        )
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -100,6 +110,8 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    LOAD_BALANCER_ADDRESS: str
+    OAUTH_CLIENT_ID: str
 
 
 class CloudBuildConfig(BaseSettings):

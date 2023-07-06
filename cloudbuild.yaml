@@ -83,6 +83,9 @@ steps:
         export INT_SCHEMA_BUCKET_NAME=$_SCHEMA_BUCKET_NAME
         export INT_PUBLISH_SCHEMA_TOPIC_ID=$_PUBLISH_SCHEMA_TOPIC_ID
         export INT_PUBLISH_DATASET_TOPIC_ID=$_PUBLISH_DATASET_TOPIC_ID
+        export INT_LOAD_BALANCER_ADDRESS=$_LOAD_BALANCER_ADDRESS
+        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
+	      export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         make integration-test-cloudbuild
 options:
   logging: CLOUD_LOGGING_ONLY
