@@ -11,7 +11,7 @@ class DatasetFirebaseRepository:
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
 
-    def get_latest_dataset_with_survey_id(self, survey_id: str) -> UnitDataset | None:
+    def get_latest_dataset_with_survey_id(self, survey_id: str) -> DatasetMetadataWithoutId | None:
         """
         Gets the latest dataset from firestore with a specific survey_id.
 
@@ -25,9 +25,9 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        unit_dataset: UnitDataset = None
+        unit_dataset: DatasetMetadataWithoutId = None
         for dataset in latest_dataset:
-            unit_dataset: UnitDataset = {**(dataset.to_dict())}
+            unit_dataset: DatasetMetadataWithoutId = {**(dataset.to_dict())}
 
         return unit_dataset
 

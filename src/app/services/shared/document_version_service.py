@@ -1,13 +1,13 @@
 from typing import Literal
 
-from models.dataset_models import UnitDataset
+from models.dataset_models import DatasetMetadataWithoutId
 from models.schema_models import Schema
 
 
 class DocumentVersionService:
     @staticmethod
     def calculate_survey_version(
-        document_current_version: Schema | UnitDataset,
+        document_current_version: Schema | DatasetMetadataWithoutId,
         version_key: Literal["sds_dataset_version", "sds_schema_version"],
     ) -> int:
         """
