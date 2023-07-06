@@ -19,5 +19,8 @@ class DocumentVersionService:
         """
         if document_current_version is None:
             return 1
+        
+        if version_key not in document_current_version:
+            raise RuntimeError('Document must contain version key')
 
         return document_current_version[version_key] + 1
