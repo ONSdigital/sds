@@ -53,12 +53,11 @@ def generate_headers() -> dict[str, str]:
         dict[str, str]: the headers required for remote authentication.
     """
     headers = {}
-    auth_token = os.environ.get("ACCESS_TOKEN")
-    if auth_token is None:
-        auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(
-            auth_req, audience=config.OAUTH_CLIENT_ID
-        )
+    
+    auth_req = google.auth.transport.requests.Request()
+    auth_token = google.oauth2.id_token.fetch_id_token(
+        auth_req, audience=config.OAUTH_CLIENT_ID
+    )
 
     headers = {
         "Authorization": f"Bearer {auth_token}",

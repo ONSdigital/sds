@@ -61,13 +61,23 @@ steps:
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
         --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: "Get token"
+    id: 'Get api gateway hostname'
+    id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
     entrypoint: sh
     args:
       - '-c'
       - |
-        gcloud auth print-identity-token --impersonate-service-account=${_CLOUDBUILD_SA} > /workspace/token
-        curl -H "Authorization: Bearer $(cat /workspace/token)" ${_API_URL}/docs
+        gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=${PROJECT_ID} \
+        > /workspace/oauth_brand_name
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Retrieve `OAUTH_CLIENT_NAME` and save it to workspace'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
+        --limit=1 \
+        > /workspace/oauth_client_name
   - name: python
     id: "Run integration test"
     entrypoint: sh
