@@ -33,7 +33,7 @@ class E2ESchemaIntegrationTest(TestCase):
             json=test_schema,
             headers=headers,
         )
-        print(schema_post_response.content)
+
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
