@@ -29,7 +29,7 @@ class E2ESchemaIntegrationTest(TestCase):
         test_schema = load_json(config.TEST_SCHEMA_PATH)
 
         schema_post_response = session.post(
-            f"{config.LOAD_BALANCER_ADDRESS}/v1/schema",
+            f"{config.API_URL}/v1/schema",
             json=test_schema,
             headers=headers,
         )
@@ -45,7 +45,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert received_messages_json == schema_post_response.json()
 
         test_schema_get_response = session.get(
-            f"{config.LOAD_BALANCER_ADDRESS}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
+            f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
             headers=headers,
         )
 
@@ -64,7 +64,7 @@ class E2ESchemaIntegrationTest(TestCase):
             }
 
             set_version_schema_response = session.get(
-                f"{config.LOAD_BALANCER_ADDRESS}/v1/schema?"
+                f"{config.API_URL}/v1/schema?"
                 f"survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
                 headers=headers,
             )
@@ -73,7 +73,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_version_schema_response.json() == test_schema
 
             latest_version_schema_response = session.get(
-                f"{config.LOAD_BALANCER_ADDRESS}/v1/schema?survey_id={schema['survey_id']}",
+                f"{config.API_URL}/v1/schema?survey_id={schema['survey_id']}",
                 headers=headers,
             )
 

@@ -53,7 +53,7 @@ class E2ESchemaIntegrationTest(TestCase):
         )
 
         dataset_metadata_response = session.get(
-            f"{config.LOAD_BALANCER_ADDRESS}/v1/dataset_metadata?"
+            f"{config.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
             headers=headers,
         )
@@ -63,7 +63,7 @@ class E2ESchemaIntegrationTest(TestCase):
             if dataset_metadata["filename"] == filename:
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.LOAD_BALANCER_ADDRESS}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
                     headers=headers,
                 )
 

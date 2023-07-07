@@ -82,7 +82,7 @@ integration-test-local:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export LOAD_BALANCER_ADDRESS=${LOCAL_URL} && \
+	export API_URL=${LOCAL_URL} && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
@@ -97,7 +97,7 @@ integration-test-sandbox:
 	export PROJECT_ID=$(PROJECT_ID) && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export LOAD_BALANCER_ADDRESS=https://34.36.238.222.nip.io && \
+	export API_URL=https://34.36.238.222.nip.io && \
 	export OAUTH_CLIENT_ID=293516424663-6ebeaknvn4b3s6lplvo6v12trahghfsc.apps.googleusercontent.com && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
@@ -114,7 +114,7 @@ integration-test-cloudbuild:
 	export PROJECT_ID=${INT_PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${INT_PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${INT_PUBLISH_DATASET_TOPIC_ID} && \
-	export LOAD_BALANCER_ADDRESS=${INT_LOAD_BALANCER_ADDRESS} && \
+	export API_URL=${INT_API_URL} && \
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 

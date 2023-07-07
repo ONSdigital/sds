@@ -14,7 +14,7 @@ class testConfigVars:
     app_credentials = "test_app_credentials"
     dataset_path = "test_dataset_path"
     schema_path = "test_schema_path"
-    load_balancer_address = "test_load_balancer_address"
+    api_url = "test_api_url"
     oauth_client_id = "test_oauth_client_id"
 
 

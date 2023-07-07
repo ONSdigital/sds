@@ -31,7 +31,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
         os.environ["PUBSUB_EMULATOR_HOST"] = testConfigVars.pubsub_emulator_host
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
-        os.environ["LOAD_BALANCER_ADDRESS"] = testConfigVars.load_balancer_address
+        os.environ["API_URL"] = testConfigVars.api_url
         os.environ["OAUTH_CLIENT_ID"] = testConfigVars.oauth_client_id
 
     def tearDown(self):
@@ -43,7 +43,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["FIRESTORE_EMULATOR_HOST"] = ""
         os.environ["STORAGE_EMULATOR_HOST"] = ""
         os.environ["SCHEMA_BUCKET_NAME"] = ""
-        os.environ["LOAD_BALANCER_ADDRESS"] = ""
+        os.environ["API_URL"] = ""
         os.environ["OAUTH_CLIENT_ID"] = ""
 
     def test_docker_dev_factory(self):

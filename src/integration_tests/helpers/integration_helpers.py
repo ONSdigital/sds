@@ -167,7 +167,7 @@ def wait_until_dataset_ready(
     """
     while attempts != 0:
         test_response = session.get(
-            f"{config.LOAD_BALANCER_ADDRESS}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
+            f"{config.API_URL}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
             headers=headers,
         )
 

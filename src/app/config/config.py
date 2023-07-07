@@ -51,8 +51,8 @@ class IntegrationTestConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.LOAD_BALANCER_ADDRESS = get_value_from_env(
-            "LOAD_BALANCER_ADDRESS", "localhost"
+        self.API_URL = get_value_from_env(
+            "API_URL", "localhost"
         )
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
@@ -66,7 +66,7 @@ class IntegrationTestConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
-    LOAD_BALANCER_ADDRESS: str
+    API_URL: str
     OAUTH_CLIENT_ID: str
 
 
@@ -90,8 +90,8 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.LOAD_BALANCER_ADDRESS = get_value_from_env(
-            "LOAD_BALANCER_ADDRESS", "localhost"
+        self.API_URL = get_value_from_env(
+            "API_URL", "localhost"
         )
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
@@ -104,7 +104,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
-    LOAD_BALANCER_ADDRESS: str
+    API_URL: str
     OAUTH_CLIENT_ID: str
 
 
