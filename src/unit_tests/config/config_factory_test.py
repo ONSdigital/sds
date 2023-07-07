@@ -31,8 +31,6 @@ class ConfigFactoryTest(TestCase):
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
         os.environ["PUBSUB_EMULATOR_HOST"] = testConfigVars.pubsub_emulator_host
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
-        os.environ["API_URL"] = testConfigVars.api_url
-        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
         os.environ["LOAD_BALANCER_ADDRESS"] = testConfigVars.load_balancer_address
         os.environ["OAUTH_CLIENT_ID"] = testConfigVars.oauth_client_id
 
@@ -45,8 +43,6 @@ class ConfigFactoryTest(TestCase):
         os.environ["FIRESTORE_EMULATOR_HOST"] = ""
         os.environ["STORAGE_EMULATOR_HOST"] = ""
         os.environ["SCHEMA_BUCKET_NAME"] = ""
-        os.environ["API_URL"] = ""
-        os.environ["ACCESS_TOKEN"] = ""
         os.environ["LOAD_BALANCER_ADDRESS"] = ""
         os.environ["OAUTH_CLIENT_ID"] = ""
 

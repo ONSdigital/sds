@@ -95,7 +95,7 @@ def create_dataset(
     Returns:
         int | None: status code for local function and no return for remote.
     """
-    if config.API_URL.__contains__("local"):
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers)
@@ -167,7 +167,7 @@ def wait_until_dataset_ready(
     """
     while attempts != 0:
         test_response = session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
+            f"{config.LOAD_BALANCER_ADDRESS}/v1/dataset_metadata?survey_id={survey_id}&period_id={period_id}",
             headers=headers,
         )
 
@@ -190,7 +190,7 @@ def cleanup() -> None:
     Returns:
         None
     """
-    if config.API_URL.__contains__("local"):
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
         delete_local_firestore_data()
 
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
