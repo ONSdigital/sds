@@ -6,6 +6,10 @@ GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 AUTODELETE_DATASET_BUCKET_FILE=True
 LOG_LEVEL=INFO
 PROJECT_ID = $(shell gcloud config get project)
+OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
+OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
+        --limit=1)
+OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
 LOCAL_URL:=http://localhost:3000
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
@@ -98,7 +102,7 @@ integration-test-sandbox:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export API_URL=https://34.36.238.222.nip.io && \
-	export OAUTH_CLIENT_ID=293516424663-6ebeaknvn4b3s6lplvo6v12trahghfsc.apps.googleusercontent.com && \
+	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally. 
