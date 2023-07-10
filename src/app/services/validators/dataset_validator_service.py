@@ -74,7 +74,6 @@ class DatasetValidatorService:
         mandatory_keys = [
             "survey_id",
             "period_id",
-            "sds_schema_version",
             "schema_version",
             "data",
         ]

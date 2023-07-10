@@ -158,7 +158,6 @@ class DatasetProcessorService:
             "dataset_id": dataset_id,
             "survey_id": transformed_dataset_metadata["survey_id"],
             "period_id": transformed_dataset_metadata["period_id"],
-            "sds_schema_version": transformed_dataset_metadata["sds_schema_version"],
             "schema_version": transformed_dataset_metadata["schema_version"],
             "data": unit_data_item["unit_data"],
         }
