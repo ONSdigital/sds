@@ -46,7 +46,7 @@ test_schema_response: Schema = {
     "title": "Roofing Tiles",
     "description": "Roofing Tiles",
     "schema_version": "v2.1.0",
-    "sample_unit_key_field": "ruref",
+    "sample_unit_key_field": "identifier",
     "properties": [],
     "examples": [],
     "$schema": "https://json-schema.org/draft/2020-12/schema",

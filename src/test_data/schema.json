@@ -5,15 +5,15 @@
   "title": "Roofing Tiles",
   "description": "Roofing Tiles",
   "schema_version": "v1.0.0",
-  "sample_unit_key_field": "ruref",
+  "sample_unit_key_field": "identifier",
   "properties": [
     {
       "type": "object",
       "required": [
-        "ruref"
+        "identifier"
       ],
       "properties": {
-        "ruref": {
+        "identifier": {
           "type": "string"
         },
         "runame": {
@@ -48,7 +48,7 @@
   ],
   "examples": [
     {
-      "ruref": "43532",
+      "identifier": "43532",
       "runame": "Pipes and Maps Ltd",
       "ruaddr": [
         "111 Under Hill",

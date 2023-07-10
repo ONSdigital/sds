@@ -16,7 +16,7 @@ curl -X POST localhost:3006 \
   "schema_version": "v1.0.0",
   "data": [
     {
-      "ruref": "43532",
+      "identifier": "43532",
       "runame": "Pipes and Maps Ltd",
       "local_unit": [
         {

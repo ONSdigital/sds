@@ -24,7 +24,7 @@ class DatasetWriterService:
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
-        extracted_unit_data_rurefs: list[str],
+        extracted_unit_data_identifiers: list[str],
     ) -> DatasetMetadata | DatasetPublishResponse:
         """
         Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
@@ -34,7 +34,7 @@ class DatasetWriterService:
         dataset_id: the uniquely generated id of the dataset
         dataset_metadata_without_id: the metadata of the dataset without its id
         unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
-        extracted_unit_data_rurefs: list of rurefs ordered to match the ruref for each set of unit data in the collection.
+        extracted_unit_data_identifiers: list of identifiers ordered to match the identifier for each set of unit data in the collection.
         """
         logger.info("Beginning dataset transaction...")
         try:
@@ -42,7 +42,7 @@ class DatasetWriterService:
                 dataset_id,
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
-                extracted_unit_data_rurefs,
+                extracted_unit_data_identifiers,
             )
             logger.info("Dataset transaction committed successfully.")
 

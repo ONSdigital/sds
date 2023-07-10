@@ -99,7 +99,7 @@ unit_supplementary_data: UnitDataset = {
     "period_id": "abc",
     "schema_version": "v1.0.0",
     "data": {
-        "ruref": unit_id,
+        "identifier": unit_id,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",
@@ -146,7 +146,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "schema_version": "v1.0.0",
         "data": {
-            "ruref": "65871",
+            "identifier": "65871",
             "runame": "Boats and Floats Ltd",
             "ruaddr1": "111 Upper Hill",
             "ruaddr2": "Mordor",
@@ -188,12 +188,12 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_unit_data_ruref: list[str] = ["43532", "65871"]
+dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 
 missing_keys_dataset_metadata = {
     "period_id": "test_period_id",
     "schema_version": 1,
-    "data": [{"unit_data": "test_data", "ruref": "12345"}],
+    "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
 test_dataset_subscriber_id = "test_dataset_subscriber_id"

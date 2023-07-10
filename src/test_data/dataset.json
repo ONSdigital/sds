@@ -5,13 +5,13 @@
   "schema_version": "v1.0.0",
   "data": [
     {
-      "ruref": "43532",
+      "identifier": "43532",
       "unit_data": "<encrypted data>"
     },
     {
-      "ruref": "65871",
+      "identifier": "65871",
       "unit_data": {
-        "ruref": "65871",
+        "identifier": "65871",
         "runame": "Boats and Floats Ltd",
         "ruaddr1": "111 Upper Hill",
         "ruaddr2": "Mordor",

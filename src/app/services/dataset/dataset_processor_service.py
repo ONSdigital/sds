@@ -41,7 +41,7 @@ class DatasetProcessorService:
         unit_data_collection_with_metadata = self._add_metadata_to_unit_data_collection(
             dataset_id, dataset_metadata_without_id, new_dataset_unit_data_collection
         )
-        extracted_unit_data_rurefs = self._extract_rurefs_from_unit_data(
+        extracted_unit_data_identifiers = self._extract_identifiers_from_unit_data(
             new_dataset_unit_data_collection
         )
 
@@ -50,7 +50,7 @@ class DatasetProcessorService:
                 dataset_id,
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
-                extracted_unit_data_rurefs,
+                extracted_unit_data_identifiers,
             )
         )
 
@@ -177,22 +177,22 @@ class DatasetProcessorService:
             survey_id, period_id
         )
 
-    def _extract_rurefs_from_unit_data(
+    def _extract_identifiers_from_unit_data(
         self, raw_dataset_unit_data_collection: list[object]
     ) -> list:
         """
-        Extracts all rurefs from unit data to store in a separate list
+        Extracts all identifiers from unit data to store in a separate list
 
         Parameters:
-        raw_dataset_unit_data_collection (list[object]): list of unit data containing ruref
+        raw_dataset_unit_data_collection (list[object]): list of unit data containing identifier
         """
-        logger.info("Extracting rurefs from unit data...")
+        logger.info("Extracting identifiers from unit data...")
 
-        extracted_unit_data_rurefs = [
-            item["ruref"] for item in raw_dataset_unit_data_collection
+        extracted_unit_data_identifiers = [
+            item["identifier"] for item in raw_dataset_unit_data_collection
         ]
 
-        logger.info("Rurefs are extracted and stored successfully.")
-        logger.debug(f"Extracted rurefs: {extracted_unit_data_rurefs}")
+        logger.info("identifiers are extracted and stored successfully.")
+        logger.debug(f"Extracted identifiers: {extracted_unit_data_identifiers}")
 
-        return extracted_unit_data_rurefs
+        return extracted_unit_data_identifiers

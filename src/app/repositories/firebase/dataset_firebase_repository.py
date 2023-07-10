@@ -38,7 +38,7 @@ class DatasetFirebaseRepository:
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
-        extracted_unit_data_rurefs: list[str],
+        extracted_unit_data_identifiers: list[str],
     ):
         """
         Writes dataset metadata and unit data to firestore as a transaction, which is
@@ -48,7 +48,7 @@ class DatasetFirebaseRepository:
         dataset_id: id of the dataset
         dataset_metadata_without_id: dataset metadata without a dataset id
         unit_data_collection_with_metadata: collection of unit data associated to a dataset
-        extracted_unit_data_rurefs: rurefs associated with the unit data collection
+        extracted_unit_data_identifiers: identifiers associated with the unit data collection
         """
 
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
@@ -63,10 +63,11 @@ class DatasetFirebaseRepository:
             )
             unit_data_collection_snapshot = new_dataset_document.collection("units")
 
-            for unit_data, ruref in zip(
-                unit_data_collection_with_metadata, iter(extracted_unit_data_rurefs)
+            for unit_data, identifier in zip(
+                unit_data_collection_with_metadata,
+                iter(extracted_unit_data_identifiers),
             ):
-                new_unit = unit_data_collection_snapshot.document(ruref)
+                new_unit = unit_data_collection_snapshot.document(identifier)
                 transaction.set(new_unit, unit_data, merge=True)
 
         dataset_transaction(self.client.transaction())
