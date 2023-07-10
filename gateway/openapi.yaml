@@ -43,7 +43,7 @@ paths:
                       luname:
                         type: string
                         example: Maps Factory
-                      luref:
+                      identifier:
                         type: string
                         example: 20127364B
                   identifier:
@@ -447,14 +447,14 @@ definitions:
                       type: array
                       items: 
                         type: string
-                        example: luref
+                        example: identifier
                     properties: 
                       type: object
                       properties: 
                         key_field: 
                           type: string
-                          example: luref
-                        luref: 
+                          example: identifier
+                        identifier: 
                           type: object
                           properties: 
                             type: 
@@ -496,7 +496,7 @@ definitions:
               items: 
                 type: object
                 properties: 
-                  luref: 
+                  identifier: 
                     type: string
                     example: 2012763A
                   luname: 

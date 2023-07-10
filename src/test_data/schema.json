@@ -27,11 +27,11 @@
         "repeats": {
           "type": "array",
           "required": [
-            "luref"
+            "identifier"
           ],
           "properties": {
-            "key_field": "luref",
-            "luref": {
+            "key_field": "identifier",
+            "identifier": {
               "type": "string"
             },
             "luname": {
@@ -58,7 +58,7 @@
       ],
       "local_unit": [
         {
-          "luref": "2012763A",
+          "identifier": "2012763A",
           "luname": "Maps Factory",
           "luaddr": [
             "1 Bag End",
@@ -68,7 +68,7 @@
           ]
         },
         {
-          "luref": "20127364B",
+          "identifier": "20127364B",
           "luname": "Pipes R Us Subsidiary",
           "luaddr": [
             "12 The Farmstead",
@@ -78,7 +78,7 @@
           ]
         },
         {
-          "luref": "20127365C",
+          "identifier": "20127365C",
           "luname": "Rings N Things",
           "luaddr": [
             "5 Barrow Lane",
@@ -88,7 +88,7 @@
           ]
         },
         {
-          "luref": "20127366D",
+          "identifier": "20127366D",
           "luname": "Tobacco Sales Inc",
           "luaddr": [
             "23 Rosie Avenue",

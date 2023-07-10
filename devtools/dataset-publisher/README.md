@@ -20,11 +20,11 @@ curl -X POST localhost:3006 \
       "runame": "Pipes and Maps Ltd",
       "local_unit": [
         {
-          "luref": "2012763A",
+          "identifier": "2012763A",
           "luname": "Maps Factory"
         },
         {
-          "luref": "20127364B",
+          "identifier": "20127364B",
           "luname": "Pipes R Us Subsidiary"
         }
       ]

@@ -109,7 +109,7 @@ unit_supplementary_data: UnitDataset = {
         "busdesc": "Provision of equipment for hobbit adventures",
         "local_unit": [
             {
-                "luref": "2012763A",
+                "identifier": "2012763A",
                 "luname": "Maps Factory",
                 "luaddr1": "1 Bag End",
                 "luaddr2": "Underhill",
@@ -119,7 +119,7 @@ unit_supplementary_data: UnitDataset = {
                 "busdesc": "Creates old fashioned looking paper maps",
             },
             {
-                "luref": "20127364B",
+                "identifier": "20127364B",
                 "luname": "Pipes R Us Subsidiary",
                 "luaddr1": "12 The Farmstead",
                 "luaddr2": "Maggotsville",
@@ -155,7 +155,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
             "busdesc": "Provision of equipment for the bad guys.",
             "local_unit": [
                 {
-                    "luref": "2012763A",
+                    "identifier": "2012763A",
                     "luname": "Arms Factory",
                     "luaddr1": "1 Bag End",
                     "luaddr2": "Underhill",
@@ -165,7 +165,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "busdesc": "Creates old fashioned looking paper maps",
                 },
                 {
-                    "luref": "20127364B",
+                    "identifier": "20127364B",
                     "luname": "Swords Subsidiary",
                     "luaddr1": "12 The Farmstead",
                     "luaddr2": "Maggotsville",
@@ -175,7 +175,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "buslref": "pipe123",
                 },
                 {
-                    "luref": "20127365C",
+                    "identifier": "20127365C",
                     "luname": "Armor N Things",
                     "luaddr1": "5 Barrow Lane",
                     "luaddr2": "Striderton",
