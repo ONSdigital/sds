@@ -12,13 +12,13 @@ from src.test_data.shared_test_data import (
 
 class PubSubHelper:
     def __init__(self, topic_id: str, subscriber_id: str):
-        if config.API_URL.__contains__("local"):
+        if config.OAUTH_CLIENT_ID.__contains__("local"):
             os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
 
         self.subscriber_client = pubsub_v1.SubscriberClient()
         self.publisher_client = pubsub_v1.PublisherClient()
 
-        if config.API_URL.__contains__("local"):
+        if config.OAUTH_CLIENT_ID.__contains__("local"):
             self._try_create_topic(topic_id)
 
         self._try_create_subscriber(topic_id, subscriber_id)

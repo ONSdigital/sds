@@ -1,5 +1,4 @@
 import json
-import os
 import time
 
 import google.oauth2.id_token
@@ -53,12 +52,16 @@ def generate_headers() -> dict[str, str]:
         dict[str, str]: the headers required for remote authentication.
     """
     headers = {}
-    auth_token = os.environ.get("ACCESS_TOKEN")
-    if auth_token is None:
-        auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
 
-    headers = {"Authorization": f"Bearer {auth_token}"}
+    auth_req = google.auth.transport.requests.Request()
+    auth_token = google.oauth2.id_token.fetch_id_token(
+        auth_req, audience=config.OAUTH_CLIENT_ID
+    )
+
+    headers = {
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json",
+    }
 
     return headers
 
@@ -92,7 +95,7 @@ def create_dataset(
     Returns:
         int | None: status code for local function and no return for remote.
     """
-    if config.API_URL.__contains__("local"):
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers)
@@ -187,7 +190,7 @@ def cleanup() -> None:
     Returns:
         None
     """
-    if config.API_URL.__contains__("local"):
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
         delete_local_firestore_data()
 
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")

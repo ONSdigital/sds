@@ -53,7 +53,8 @@ class E2ESchemaIntegrationTest(TestCase):
         )
 
         dataset_metadata_response = session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
+            f"{config.API_URL}/v1/dataset_metadata?"
+            f"survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
             headers=headers,
         )
         assert dataset_metadata_response.status_code == 200

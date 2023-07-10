@@ -29,7 +29,9 @@ class E2ESchemaIntegrationTest(TestCase):
         test_schema = load_json(config.TEST_SCHEMA_PATH)
 
         schema_post_response = session.post(
-            f"{config.API_URL}/v1/schema", json=test_schema, headers=headers
+            f"{config.API_URL}/v1/schema",
+            json=test_schema,
+            headers=headers,
         )
 
         assert schema_post_response.status_code == 200
@@ -62,7 +64,8 @@ class E2ESchemaIntegrationTest(TestCase):
             }
 
             set_version_schema_response = session.get(
-                f"{config.API_URL}/v1/schema?survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
+                f"{config.API_URL}/v1/schema?"
+                f"survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
                 headers=headers,
             )
 

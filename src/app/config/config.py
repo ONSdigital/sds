@@ -33,7 +33,6 @@ class IntegrationTestConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.API_URL = get_value_from_env("API_URL", "localhost")
         self.DATASET_BUCKET_NAME = get_value_from_env(
             "DATASET_BUCKET_NAME", "test_dataset_bucket"
         )
@@ -52,6 +51,8 @@ class IntegrationTestConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -59,11 +60,12 @@ class IntegrationTestConfig(BaseSettings):
     SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
-    API_URL: str
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    API_URL: str
+    OAUTH_CLIENT_ID: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -71,7 +73,6 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.API_URL = get_value_from_env("API_URL", "localhost")
         self.DATASET_BUCKET_NAME = get_value_from_env(
             "DATASET_BUCKET_NAME", "testDatasetBucket"
         )
@@ -84,10 +85,11 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "src/test_data/schema.json"
         )
-        self.ACCESS_TOKEN = get_value_from_env("ACCESS_TOKEN")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -95,11 +97,11 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
-    API_URL: str
-    ACCESS_TOKEN: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    API_URL: str
+    OAUTH_CLIENT_ID: str
 
 
 class CloudBuildConfig(BaseSettings):
