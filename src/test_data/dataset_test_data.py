@@ -205,3 +205,10 @@ nonrandom_pubsub_dataset_metadata = {
     "schema_version": "v1.0.0",
     "sds_dataset_version": 1,
 }
+
+unit_response = {
+    "schema_version": "v1.0.0",
+    "survey_id": "test_survey_id",
+    "period_id": "abc",
+    "data": "<encrypted data>",
+}
