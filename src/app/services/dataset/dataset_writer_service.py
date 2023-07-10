@@ -34,7 +34,8 @@ class DatasetWriterService:
         dataset_id: the uniquely generated id of the dataset
         dataset_metadata_without_id: the metadata of the dataset without its id
         unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
-        extracted_unit_data_identifiers: list of identifiers ordered to match the identifier for each set of unit data in the collection.
+        extracted_unit_data_identifiers: list of identifiers ordered to match the identifier for each set of 
+            unit data in the collection.
         """
         logger.info("Beginning dataset transaction...")
         try:
