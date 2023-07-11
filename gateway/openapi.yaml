@@ -43,10 +43,10 @@ paths:
                       luname:
                         type: string
                         example: Maps Factory
-                      luref:
+                      identifier:
                         type: string
                         example: 20127364B
-                  ruref:
+                  identifier:
                     type: string
                     example: 43532
                   runame:
@@ -396,7 +396,7 @@ definitions:
         example: v2.0.1
       sample_unit_key_field: 
         type: string
-        example: ruref
+        example: identifier
       properties: 
         type: array
         items: 
@@ -409,11 +409,11 @@ definitions:
               type: array
               items: 
                 type: string
-                example: ruref
+                example: identifier
             properties: 
               type: object
               properties: 
-                ruref: 
+                identifier: 
                   type: object
                   properties: 
                     type: 
@@ -447,14 +447,14 @@ definitions:
                       type: array
                       items: 
                         type: string
-                        example: luref
+                        example: identifier
                     properties: 
                       type: object
                       properties: 
                         key_field: 
                           type: string
-                          example: luref
-                        luref: 
+                          example: identifier
+                        identifier: 
                           type: object
                           properties: 
                             type: 
@@ -480,7 +480,7 @@ definitions:
         items: 
           type: object
           properties: 
-            ruref: 
+            identifier: 
               type: string
               example: 43532
             runame: 
@@ -496,7 +496,7 @@ definitions:
               items: 
                 type: object
                 properties: 
-                  luref: 
+                  identifier: 
                     type: string
                     example: 2012763A
                   luname: 

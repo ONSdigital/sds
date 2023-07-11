@@ -99,7 +99,7 @@ unit_supplementary_data: UnitDataset = {
     "period_id": "abc",
     "schema_version": "v1.0.0",
     "data": {
-        "ruref": unit_id,
+        "identifier": unit_id,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",
@@ -109,7 +109,7 @@ unit_supplementary_data: UnitDataset = {
         "busdesc": "Provision of equipment for hobbit adventures",
         "local_unit": [
             {
-                "luref": "2012763A",
+                "identifier": "2012763A",
                 "luname": "Maps Factory",
                 "luaddr1": "1 Bag End",
                 "luaddr2": "Underhill",
@@ -119,7 +119,7 @@ unit_supplementary_data: UnitDataset = {
                 "busdesc": "Creates old fashioned looking paper maps",
             },
             {
-                "luref": "20127364B",
+                "identifier": "20127364B",
                 "luname": "Pipes R Us Subsidiary",
                 "luaddr1": "12 The Farmstead",
                 "luaddr2": "Maggotsville",
@@ -146,7 +146,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "period_id": "abc",
         "schema_version": "v1.0.0",
         "data": {
-            "ruref": "65871",
+            "identifier": "65871",
             "runame": "Boats and Floats Ltd",
             "ruaddr1": "111 Upper Hill",
             "ruaddr2": "Mordor",
@@ -155,7 +155,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
             "busdesc": "Provision of equipment for the bad guys.",
             "local_unit": [
                 {
-                    "luref": "2012763A",
+                    "identifier": "2012763A",
                     "luname": "Arms Factory",
                     "luaddr1": "1 Bag End",
                     "luaddr2": "Underhill",
@@ -165,7 +165,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "busdesc": "Creates old fashioned looking paper maps",
                 },
                 {
-                    "luref": "20127364B",
+                    "identifier": "20127364B",
                     "luname": "Swords Subsidiary",
                     "luaddr1": "12 The Farmstead",
                     "luaddr2": "Maggotsville",
@@ -175,7 +175,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "buslref": "pipe123",
                 },
                 {
-                    "luref": "20127365C",
+                    "identifier": "20127365C",
                     "luname": "Armor N Things",
                     "luaddr1": "5 Barrow Lane",
                     "luaddr2": "Striderton",
@@ -188,12 +188,12 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_unit_data_ruref: list[str] = ["43532", "65871"]
+dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 
 missing_keys_dataset_metadata = {
     "period_id": "test_period_id",
     "schema_version": 1,
-    "data": [{"unit_data": "test_data", "ruref": "12345"}],
+    "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
 test_dataset_subscriber_id = "test_dataset_subscriber_id"

@@ -9,7 +9,7 @@
     "busdesc": "Provision of equipment for hobbit adventures",
     "local_unit": [
       {
-        "luref": "2012763A",
+        "identifier": "2012763A",
         "luname": "Maps Factory",
         "luaddr1": "1 Bag End",
         "luaddr2": "Underhill",
@@ -19,7 +19,7 @@
         "busdesc": "Creates old fashioned looking paper maps"
       },
       {
-        "luref": "20127364B",
+        "identifier": "20127364B",
         "luname": "Pipes R Us Subsidiary",
         "luaddr1": "12 The Farmstead",
         "luaddr2": "Maggotsville",
@@ -29,7 +29,7 @@
         "buslref": "pipe123"
       },
       {
-        "luref": "20127365C",
+        "identifier": "20127365C",
         "luname": "Rings N Things",
         "luaddr1": "5 Barrow Lane",
         "luaddr2": "Striderton",
@@ -38,7 +38,7 @@
         "busdesc": "Magic ring foundry"
       },
       {
-        "luref": "20127366D",
+        "identifier": "20127366D",
         "luname": "Tobacco Sales Inc",
         "luaddr1": "23 Rosie Avenue",
         "luaddr2": "Buckhampton",

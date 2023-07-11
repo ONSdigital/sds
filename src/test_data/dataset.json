@@ -5,13 +5,13 @@
   "schema_version": "v1.0.0",
   "data": [
     {
-      "ruref": "43532",
+      "identifier": "43532",
       "unit_data": "<encrypted data>"
     },
     {
-      "ruref": "65871",
+      "identifier": "65871",
       "unit_data": {
-        "ruref": "65871",
+        "identifier": "65871",
         "runame": "Boats and Floats Ltd",
         "ruaddr1": "111 Upper Hill",
         "ruaddr2": "Mordor",
@@ -20,7 +20,7 @@
         "busdesc": "Provision of equipment for the bad guys.",
         "local_unit": [
           {
-            "luref": "2012763A",
+            "identifier": "2012763A",
             "luname": "Arms Factory",
             "luaddr1": "1 Bag End",
             "luaddr2": "Underhill",
@@ -30,7 +30,7 @@
             "busdesc": "Creates old fashioned looking paper maps"
           },
           {
-            "luref": "20127364B",
+            "identifier": "20127364B",
             "luname": "Swords Subsidiary",
             "luaddr1": "12 The Farmstead",
             "luaddr2": "Maggotsville",
@@ -40,7 +40,7 @@
             "buslref": "pipe123"
           },
           {
-            "luref": "20127365C",
+            "identifier": "20127365C",
             "luname": "Armor N Things",
             "luaddr1": "5 Barrow Lane",
             "luaddr2": "Striderton",

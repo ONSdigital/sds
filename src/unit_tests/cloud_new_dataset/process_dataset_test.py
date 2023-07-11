@@ -70,7 +70,7 @@ class ProcessDatasetTest(TestCase):
             shared_test_data.test_guid,
             dataset_test_data.first_dataset_metadata_without_id,
             dataset_test_data.dataset_unit_data_collection,
-            dataset_test_data.dataset_unit_data_ruref,
+            dataset_test_data.dataset_unit_data_identifier,
         )
 
     def test_upload_new_dataset_updated_version(
@@ -105,7 +105,7 @@ class ProcessDatasetTest(TestCase):
             shared_test_data.test_guid,
             dataset_test_data.updated_dataset_metadata_without_id,
             dataset_test_data.dataset_unit_data_collection,
-            dataset_test_data.dataset_unit_data_ruref,
+            dataset_test_data.dataset_unit_data_identifier,
         )
 
     def test_perform_delete_previous_versions_datasets_transaction_success(self):

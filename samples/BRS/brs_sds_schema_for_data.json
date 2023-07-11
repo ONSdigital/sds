@@ -8,7 +8,7 @@
   "schemaVersion": "1",
   "schemaVersionDate": "01-SEP-2022",
   "sampleUnitTypeName": "reporting_unit",
-  "sampleUnitKeyName": "ruref",
+  "sampleUnitKeyName": "identifier",
   "required": [
     "reporting_unit"
   ],
