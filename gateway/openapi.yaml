@@ -55,9 +55,6 @@ paths:
               period_id:
                 type: string
                 example: ttt
-              sds_schema_version:
-                type: integer
-                example: 4
               dataset_id:
                 type: string
                 example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
@@ -355,10 +352,6 @@ definitions:
         title: 
           type: string
           example: Which side was better?
-        sds_schema_version: 
-          type: integer
-          format: int32
-          example: 4
         sds_published_at: 
           type: string
           format: date-time

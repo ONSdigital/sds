@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
 from src.test_data import dataset_test_data
-from src.test_data.shared_test_data import unit_id, unit_response
+from src.test_data.shared_test_data import unit_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -73,7 +73,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert json_response["dataset_id"] is not None
 
                 json_response.pop("dataset_id")
-                assert unit_response.items() == json_response.items()
+                assert dataset_test_data.unit_response.items() == json_response.items()
 
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata

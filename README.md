@@ -30,7 +30,6 @@ curl -X POST localhost:3006 \
 -d '{ "survey_id": "NRX",
   "period_id": "ttt",
   "title": "Which side was better?",
-  "sds_schema_version": 4,
   "schema_version": "v1.0.0",
   "data": [
     {
