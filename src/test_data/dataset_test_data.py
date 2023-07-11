@@ -33,6 +33,7 @@ dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
     "period_id": "abc",
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 1,
@@ -45,6 +46,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{survey_id}_1",
         "period_id": "abc",
+        "form_types": ["123", "456", "789"],
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
@@ -56,6 +58,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{survey_id}_2",
         "period_id": "abc",
+        "form_types": ["abc", "def", "hij"],
         "title": "Which side was better 2?",
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
@@ -69,6 +72,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
     "period_id": "abc",
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 2,
@@ -80,6 +84,7 @@ first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
     "period_id": "abc",
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 2,
@@ -98,6 +103,7 @@ unit_supplementary_data: UnitDataset = {
     "survey_id": survey_id,
     "period_id": "abc",
     "schema_version": "v1.0.0",
+    "form_types": ["klk", "xyz", "tzr"],
     "data": {
         "identifier": unit_id,
         "runame": "Pipes and Maps Ltd",
@@ -138,6 +144,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "survey_id": survey_id,
         "period_id": "abc",
         "schema_version": "v1.0.0",
+        "form_types": ["klk", "xyz", "tzr"],
         "data": "<encrypted data>",
     },
     {
@@ -145,6 +152,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
         "survey_id": survey_id,
         "period_id": "abc",
         "schema_version": "v1.0.0",
+        "form_types": ["klk", "xyz", "tzr"],
         "data": {
             "identifier": "65871",
             "runame": "Boats and Floats Ltd",
@@ -193,6 +201,11 @@ dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 missing_keys_dataset_metadata = {
     "period_id": "test_period_id",
     "schema_version": 1,
+    "form_types": [
+        "abc",
+        "def",
+        "ghi",
+    ],
     "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
@@ -200,6 +213,7 @@ test_dataset_subscriber_id = "test_dataset_subscriber_id"
 nonrandom_pubsub_dataset_metadata = {
     "survey_id": "test_survey_id",
     "period_id": "abc",
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "total_reporting_units": 2,
     "schema_version": "v1.0.0",
@@ -210,5 +224,6 @@ unit_response = {
     "schema_version": "v1.0.0",
     "survey_id": "test_survey_id",
     "period_id": "abc",
+    "form_types": ["klk", "xyz", "tzr"],
     "data": "<encrypted data>",
 }
