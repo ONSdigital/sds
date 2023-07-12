@@ -35,6 +35,7 @@ class UnitDataset:
     survey_id: str
     period_id: str
     schema_version: str
+    form_types: list[str]
     data: object
 
 
