@@ -151,7 +151,9 @@ gcloud config set project $PROJECT_NAME
 
 cd src/app/
 gcloud functions deploy new-dataset-function \
+--allow-unauthenticated \
 --gen2 \
+--ingress-settings=internal-and-gclb \
 --runtime=python311 \
 --region=europe-west2 \
 --source=. \
@@ -159,8 +161,6 @@ gcloud functions deploy new-dataset-function \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
 --trigger-event-filters="bucket=$DATASET_BUCKET" \
 --set-env-vars="DATASET_BUCKET_NAME=$DATASET_BUCKET,SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,SCHEMA_TOPIC_ID=ons-sds-schema-events,DATASET_TOPIC_ID=ons-sds-dataset-events"
---allow-unauthenticated \
---ingress-settings=internal-and-gclb \
 ```
 
 ## Running the integration tests
