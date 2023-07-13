@@ -61,6 +61,11 @@ paths:
               schema_version:
                 type: string
                 example: v1.0.0
+              form_types:
+                type: array
+                items:
+                  type: string
+                example: ["klk", "xyz", "tzr"]
         400:
           description: Bad request
           schema:
@@ -349,6 +354,11 @@ definitions:
         period_id: 
           type: string
           example: ttt
+        form_types:
+          type: array
+          items:
+            type: string
+          example: ["klk", "xyz", "tzr"]
         title: 
           type: string
           example: Which side was better?

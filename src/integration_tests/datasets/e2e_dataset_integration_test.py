@@ -77,6 +77,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
                 assert "sds_dataset_version" in dataset_metadata
                 assert "filename" in dataset_metadata
+                assert "form_types" in dataset_metadata
 
         received_messages = dataset_pubsub_helper.pull_messages(
             dataset_test_data.test_dataset_subscriber_id

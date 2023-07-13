@@ -14,6 +14,11 @@ curl -X POST localhost:3006 \
   "period_id": "ttt",
   "title": "Which side was better?",
   "schema_version": "v1.0.0",
+  "form_types": [
+    "klk",
+    "xyz",
+    "tzr"
+  ],
   "data": [
     {
       "identifier": "43532",

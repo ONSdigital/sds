@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class DatasetMetadataWithoutId:
     survey_id: str
     period_id: str
+    form_types: list[str]
     title: str
     sds_published_at: str
     total_reporting_units: int
@@ -23,6 +24,7 @@ class UnitDatasetWithoutData:
     dataset_id: str
     survey_id: str
     period_id: str
+    form_types: list[str]
     title: str
     schema_version: str
 
@@ -33,6 +35,7 @@ class UnitDataset:
     survey_id: str
     period_id: str
     schema_version: str
+    form_types: list[str]
     data: object
 
 
