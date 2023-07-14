@@ -25,6 +25,8 @@ cloud_event_invalid_filename_data = {
 
 unit_id = "test_unit_id"
 survey_id = "test_survey_id"
+period_id = "test_period_id"
+
 first_dataset_version = 1
 updated_dataset_version = 2
 
@@ -32,7 +34,7 @@ updated_dataset_version = 2
 dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -45,7 +47,7 @@ dataset_metadata_first_version: DatasetMetadata = {
 dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{survey_id}_1",
-        "period_id": "abc",
+        "period_id": period_id,
         "form_types": ["123", "456", "789"],
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -57,7 +59,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     },
     {
         "survey_id": f"{survey_id}_2",
-        "period_id": "abc",
+        "period_id": period_id,
         "form_types": ["abc", "def", "hij"],
         "title": "Which side was better 2?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -71,7 +73,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
 
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -83,7 +85,7 @@ first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
 
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -101,7 +103,7 @@ updated_dataset_metadata: DatasetMetadata = {
 unit_supplementary_data: UnitDataset = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
     "schema_version": "v1.0.0",
     "form_types": ["klk", "xyz", "tzr"],
     "data": {
@@ -142,7 +144,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": survey_id,
-        "period_id": "abc",
+        "period_id": period_id,
         "schema_version": "v1.0.0",
         "form_types": ["klk", "xyz", "tzr"],
         "data": "<encrypted data>",
@@ -150,7 +152,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": survey_id,
-        "period_id": "abc",
+        "period_id": period_id,
         "schema_version": "v1.0.0",
         "form_types": ["klk", "xyz", "tzr"],
         "data": {
@@ -199,7 +201,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
 dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 
 missing_keys_dataset_metadata = {
-    "period_id": "test_period_id",
+    "period_id": period_id,
     "schema_version": 1,
     "form_types": [
         "abc",
@@ -212,7 +214,7 @@ missing_keys_dataset_metadata = {
 test_dataset_subscriber_id = "test_dataset_subscriber_id"
 nonrandom_pubsub_dataset_metadata = {
     "survey_id": "test_survey_id",
-    "period_id": "abc",
+    "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "total_reporting_units": 2,
@@ -222,7 +224,7 @@ nonrandom_pubsub_dataset_metadata = {
 
 unit_response = {
     "schema_version": "v1.0.0",
-    "survey_id": "test_survey_id",
+    "survey_id": period_id,
     "period_id": "abc",
     "form_types": ["klk", "xyz", "tzr"],
     "data": "<encrypted data>",

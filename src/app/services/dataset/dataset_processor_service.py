@@ -87,7 +87,7 @@ class DatasetProcessorService:
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
-                raw_dataset_metadata["survey_id"]
+                raw_dataset_metadata["survey_id"], raw_dataset_metadata["period_id"]
             ),
         }
 
@@ -95,15 +95,17 @@ class DatasetProcessorService:
 
         return dataset_metadata_without_id
 
-    def _calculate_next_dataset_version(self, survey_id: str) -> int:
+    def _calculate_next_dataset_version(self, survey_id: str, period_id: str) -> int:
         """
         Calculates the next sds_dataset_version from a single dataset from firestore with a specific survey_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
         """
-        datasets_result = self.dataset_repository.get_latest_dataset_with_survey_id(
-            survey_id
+        datasets_result = (
+            self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(
+                survey_id, period_id
+            )
         )
 
         return DocumentVersionService.calculate_survey_version(

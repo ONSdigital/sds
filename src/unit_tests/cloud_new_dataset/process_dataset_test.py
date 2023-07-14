@@ -13,7 +13,7 @@ from src.unit_tests.test_helper import TestHelper
 class ProcessDatasetTest(TestCase):
     def setUp(self):
         self.get_latest_dataset_with_survey_id_stash = (
-            DatasetFirebaseRepository.get_latest_dataset_with_survey_id
+            DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
         )
         self.perform_new_dataset_transaction_stash = (
             DatasetFirebaseRepository.perform_new_dataset_transaction
@@ -27,7 +27,7 @@ class ProcessDatasetTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = (
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
         )
         DatasetFirebaseRepository.perform_new_dataset_transaction = (
@@ -48,8 +48,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
-            return_value=None
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=None)
         )
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
         DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction = (
@@ -62,8 +62,8 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.assert_called_once_with(
-            dataset_test_data.survey_id
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.assert_called_once_with(
+            dataset_test_data.survey_id, dataset_test_data.period_id
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction.assert_called_once_with(
@@ -82,8 +82,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
-            return_value=dataset_test_data.dataset_metadata_first_version
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=dataset_test_data.dataset_metadata_first_version)
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -97,8 +97,8 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.assert_called_once_with(
-            dataset_test_data.survey_id
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.assert_called_once_with(
+            dataset_test_data.survey_id, dataset_test_data.period_id
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction.assert_called_once_with(
@@ -115,8 +115,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
-            return_value=(dataset_test_data.dataset_metadata_first_version)
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
@@ -141,8 +141,8 @@ class ProcessDatasetTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock(
-            return_value=(dataset_test_data.dataset_metadata_first_version)
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
 
         DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()

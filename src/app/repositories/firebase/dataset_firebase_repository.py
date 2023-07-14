@@ -11,8 +11,8 @@ class DatasetFirebaseRepository:
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
 
-    def get_latest_dataset_with_survey_id(
-        self, survey_id: str
+    def get_latest_dataset_with_survey_id_and_period_id(
+        self, survey_id: str, period_id: int
     ) -> DatasetMetadataWithoutId | None:
         """
         Gets the latest dataset from firestore with a specific survey_id.
@@ -22,6 +22,7 @@ class DatasetFirebaseRepository:
         """
         latest_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
+            .where("period_id", "==", period_id)
             .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
