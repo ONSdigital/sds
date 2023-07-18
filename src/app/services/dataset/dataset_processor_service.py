@@ -100,7 +100,8 @@ class DatasetProcessorService:
         Calculates the next sds_dataset_version from a single dataset from firestore with a specific survey_id.
 
         Parameters:
-        survey_id (str): survey_id of the specified dataset.
+        survey_id: survey_id of the specified dataset.
+        period_id: period_id of the specified dataset.
         """
         datasets_result = (
             self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(

@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 
 import google.oauth2.id_token
 import requests
@@ -78,6 +79,16 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath) as f:
         return json.load(f)
+
+
+def create_filepath(file_prefix: str):
+    """
+    Creates a filepath for uploading a dataset file to a bucket
+
+    Parameters:
+        file_prefix: prefix to identify the file being uploaded
+    """
+    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
 def create_dataset(

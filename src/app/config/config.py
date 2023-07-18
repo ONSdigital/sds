@@ -40,10 +40,10 @@ class IntegrationTestConfig(BaseSettings):
             "SCHEMA_BUCKET_NAME", "test_schema_bucket"
         )
         self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/dataset.json"
+            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
         self.TEST_SCHEMA_PATH = get_value_from_env(
-            "TEST_SCHEMA_PATH", "src/test_data/schema.json"
+            "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
         )
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
