@@ -16,7 +16,7 @@ from src.test_data import dataset_test_data
 from src.test_data.shared_test_data import unit_id
 
 
-class E2ESchemaIntegrationTest(TestCase):
+class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
 

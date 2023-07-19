@@ -114,7 +114,7 @@ class DatasetFirebaseRepository:
         return dataset_metadata_list
 
     def perform_delete_previous_versions_datasets_transaction(
-        self, survey_id: str, latest_version: int
+        self, survey_id: str, period_id: str, latest_version: int
     ) -> None:
         """
         Queries firestore for older versions of a dataset associated with a survey id,
@@ -123,8 +123,9 @@ class DatasetFirebaseRepository:
         just by deleting the document, it does not cascade.
 
         Parameters:
-        survey_id (str): survey id of the dataset.
-        latest_version (int): latest version of the dataset.
+        survey_id: survey id of the dataset.
+        period_id: period id of the dataset.
+        latest_version: latest version of the dataset.
         """
 
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
@@ -132,9 +133,11 @@ class DatasetFirebaseRepository:
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
         @firestore.transactional
         def delete_collection_transaction(transaction: firestore.Transaction):
-            previous_versions_datasets = self.datasets_collection.where(
-                "survey_id", "==", survey_id
-            ).where("sds_dataset_version", "!=", latest_version)
+            previous_versions_datasets = (
+                self.datasets_collection.where("survey_id", "==", survey_id)
+                .where("period_id", "==", period_id)
+                .where("sds_dataset_version", "!=", latest_version)
+            )
 
             self._delete_collection(transaction, previous_versions_datasets)
 

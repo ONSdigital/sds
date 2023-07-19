@@ -131,7 +131,9 @@ class ProcessDatasetTest(TestCase):
         TestHelper.new_dataset_mock(cloud_event)
 
         DatasetFirebaseRepository.perform_delete_previous_versions_datasets_transaction.assert_called_once_with(
-            dataset_test_data.survey_id, dataset_test_data.updated_dataset_version
+            dataset_test_data.survey_id,
+            dataset_test_data.period_id,
+            dataset_test_data.updated_dataset_version,
         )
 
     def test_perform_delete_previous_versions_datasets_transaction_failure(self):
