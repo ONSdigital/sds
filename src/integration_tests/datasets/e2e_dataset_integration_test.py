@@ -86,6 +86,8 @@ class E2EDatasetIntegrationTest(TestCase):
         for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
             assert received_messages[0][key] == value
 
+        dataset_pubsub_helper.delete_subscriber(dataset_test_data.test_dataset_subscriber_id)
+
     def test_different_period_and_survey_id(self):
         """
         Test that if we upload datasets that have the same survey_id or period_id but not both then distinct entries will

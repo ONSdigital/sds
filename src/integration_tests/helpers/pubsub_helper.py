@@ -131,6 +131,15 @@ class PubSubHelper:
             return True
         except Exception:
             return False
+        
+    def delete_subscriber(self, subscriber_id: str) -> None:
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, subscriber_id
+        )
+
+        with self.subscriber_client:
+            self.subscriber_client.delete_subscription(request={"subscription": subscription_path})
+
 
 
 dataset_pubsub_helper = PubSubHelper(
