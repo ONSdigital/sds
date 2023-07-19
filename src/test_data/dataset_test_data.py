@@ -213,7 +213,7 @@ missing_keys_dataset_metadata = {
 
 test_dataset_subscriber_id = "test_dataset_subscriber_id"
 nonrandom_pubsub_dataset_metadata = {
-    "survey_id": "test_survey_id",
+    "survey_id": survey_id,
     "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
@@ -224,8 +224,8 @@ nonrandom_pubsub_dataset_metadata = {
 
 unit_response = {
     "schema_version": "v1.0.0",
-    "survey_id": period_id,
-    "period_id": "abc",
+    "survey_id": survey_id,
+    "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "data": "<encrypted data>",
 }
