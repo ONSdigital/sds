@@ -156,7 +156,9 @@ gcloud config set project $PROJECT_NAME
 
 cd src/app/
 gcloud functions deploy new-dataset-function \
+--allow-unauthenticated \
 --gen2 \
+--ingress-settings=internal-and-gclb \
 --runtime=python311 \
 --region=europe-west2 \
 --source=. \
