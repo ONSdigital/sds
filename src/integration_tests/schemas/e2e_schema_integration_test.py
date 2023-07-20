@@ -6,17 +6,21 @@ from src.integration_tests.helpers.integration_helpers import (
     generate_headers,
     load_json,
     setup_session,
+    pubsub_setup,
+    pubsub_teardown
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
-    def tearDown(self) -> None:
-        cleanup()
-
     def setUp(self) -> None:
         cleanup()
+        pubsub_setup()
+
+    def tearDown(self) -> None:
+        cleanup()
+        pubsub_teardown()
 
     def test_schema_e2e(self):
         """

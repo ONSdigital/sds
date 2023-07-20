@@ -238,7 +238,7 @@ def pubsub_setup() -> None:
 
 
 def pubsub_teardown():
-    """Pulls from subscribers that may have been published to in tests"""
+    """Deletes subscribers that may have been used in tests"""
 
-    dataset_pubsub_helper.pull_and_acknowledge_messages(test_dataset_subscriber_id)
-    schema_pubsub_helper.pull_and_acknowledge_messages(test_schema_subscriber_id)
+    dataset_pubsub_helper.try_delete_subscriber(test_dataset_subscriber_id)
+    schema_pubsub_helper.try_delete_subscriber(test_schema_subscriber_id)

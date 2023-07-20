@@ -103,6 +103,16 @@ class PubSubHelper:
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
+    
+    def try_delete_subscriber(self, subscriber_id: str) -> None:
+        subscriber = pubsub_v1.SubscriberClient()
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, subscriber_id
+        )
+
+        if self._subscription_exists(subscriber_id):
+            with subscriber:
+                subscriber.delete_subscription(request={"subscription": subscription_path})
 
     def _subscription_exists(self, subscriber_id: str) -> None:
         """
@@ -122,6 +132,7 @@ class PubSubHelper:
             return True
         except Exception:
             return False
+    
 
 
 dataset_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_TOPIC_ID)
