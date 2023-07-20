@@ -5,9 +5,9 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
-    setup_session,
     pubsub_setup,
-    pubsub_teardown
+    pubsub_teardown,
+    setup_session,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.shared_test_data import test_schema_subscriber_id
