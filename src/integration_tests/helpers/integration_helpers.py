@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 
 import google.oauth2.id_token
 import requests
@@ -18,6 +19,7 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
+from src.integration_tests.helpers.pubsub_helper import PubSubHelper
 
 storage_client = storage.Client()
 
@@ -78,6 +80,16 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath) as f:
         return json.load(f)
+
+
+def create_filepath(file_prefix: str):
+    """
+    Creates a filepath for uploading a dataset file to a bucket
+
+    Parameters:
+        file_prefix: prefix to identify the file being uploaded
+    """
+    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
 def create_dataset(
@@ -209,3 +221,13 @@ def cleanup() -> None:
             client.transaction(),
             firebase_loader.get_schemas_collection(),
         )
+
+
+def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+    """Creates any subscribers that may be used in tests"""
+    pubsub_helper.try_create_subscriber(subscriber_id)
+
+
+def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
+    """Deletes subscribers that may have been used in tests"""
+    pubsub_helper.try_delete_subscriber(subscriber_id)

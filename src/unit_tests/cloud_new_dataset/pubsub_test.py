@@ -14,7 +14,7 @@ from src.unit_tests.test_helper import TestHelper
 class PubSubTest(TestCase):
     def setUp(self):
         self.get_latest_dataset_with_survey_id_stash = (
-            DatasetFirebaseRepository.get_latest_dataset_with_survey_id
+            DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
         )
         self.perform_new_dataset_transaction_stash = (
             DatasetFirebaseRepository.perform_new_dataset_transaction
@@ -28,7 +28,7 @@ class PubSubTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = (
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
         )
         DatasetFirebaseRepository.perform_new_dataset_transaction = (
@@ -47,8 +47,10 @@ class PubSubTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock()
+        )
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.return_value = (
             dataset_test_data.dataset_metadata_first_version
         )
 
@@ -76,8 +78,10 @@ class PubSubTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock()
+        )
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.return_value = (
             dataset_test_data.dataset_metadata_first_version
         )
 
@@ -108,8 +112,10 @@ class PubSubTest(TestCase):
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id = MagicMock()
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id.return_value = (
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock()
+        )
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.return_value = (
             dataset_test_data.dataset_metadata_first_version
         )
 

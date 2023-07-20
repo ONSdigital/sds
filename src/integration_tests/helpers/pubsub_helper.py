@@ -4,33 +4,24 @@ import os
 from config.config_factory import config
 from google.cloud import pubsub_v1
 
-from src.test_data.shared_test_data import (
-    test_dataset_subscriber_id,
-    test_schema_subscriber_id,
-)
-
 
 class PubSubHelper:
-    def __init__(self, topic_id: str, subscriber_id: str):
+    def __init__(self, topic_id: str):
         if config.OAUTH_CLIENT_ID.__contains__("local"):
             os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
 
         self.subscriber_client = pubsub_v1.SubscriberClient()
         self.publisher_client = pubsub_v1.PublisherClient()
+        self.topic_id = topic_id
 
         if config.OAUTH_CLIENT_ID.__contains__("local"):
-            self._try_create_topic(topic_id)
+            self._try_create_topic()
 
-        self._try_create_subscriber(topic_id, subscriber_id)
-
-    def _try_create_topic(self, topic_id: str) -> None:
+    def _try_create_topic(self) -> None:
         """
         Try to create a topic for publisher if not exists
-
-        Parameters:
-        topic_id: The unique id of the topic being created.
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
 
         try:
             if not self._topic_exists(topic_path):
@@ -48,15 +39,14 @@ class PubSubHelper:
         except Exception:
             return False
 
-    def _try_create_subscriber(self, topic_id: str, subscriber_id: str) -> None:
+    def try_create_subscriber(self, subscriber_id: str) -> None:
         """
         Creates a subscriber with a unique subscriber id if one does not already exist.
 
         Parameters:
-        topic_id: the unique id of the topic the subscriber is being created on.
         subscriber_id: the unique id of the subscriber being created.
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
 
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -71,7 +61,7 @@ class PubSubHelper:
                 }
             )
 
-    def pull_messages(self, subscriber_id: str) -> dict:
+    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -85,6 +75,7 @@ class PubSubHelper:
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
+            timeout=5.0,
         )
 
         messages = []
@@ -113,6 +104,18 @@ class PubSubHelper:
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
 
+    def try_delete_subscriber(self, subscriber_id: str) -> None:
+        subscriber = pubsub_v1.SubscriberClient()
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, subscriber_id
+        )
+
+        if self._subscription_exists(subscriber_id):
+            with subscriber:
+                subscriber.delete_subscription(
+                    request={"subscription": subscription_path}
+                )
+
     def _subscription_exists(self, subscriber_id: str) -> None:
         """
         Checks a subscription exists.
@@ -133,9 +136,5 @@ class PubSubHelper:
             return False
 
 
-dataset_pubsub_helper = PubSubHelper(
-    config.PUBLISH_DATASET_TOPIC_ID, test_dataset_subscriber_id
-)
-schema_pubsub_helper = PubSubHelper(
-    config.PUBLISH_SCHEMA_TOPIC_ID, test_schema_subscriber_id
-)
+dataset_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_TOPIC_ID)
+schema_pubsub_helper = PubSubHelper(config.PUBLISH_SCHEMA_TOPIC_ID)

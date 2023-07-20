@@ -5,6 +5,8 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
+    pubsub_setup,
+    pubsub_teardown,
     setup_session,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
@@ -12,11 +14,13 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
-    def tearDown(self) -> None:
-        cleanup()
-
     def setUp(self) -> None:
         cleanup()
+        pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
+
+    def tearDown(self) -> None:
+        cleanup()
+        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     def test_schema_e2e(self):
         """
@@ -37,7 +41,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
-        received_messages = schema_pubsub_helper.pull_messages(
+        received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
             test_schema_subscriber_id
         )
 
