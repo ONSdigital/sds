@@ -16,11 +16,11 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 class E2ESchemaIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        pubsub_setup()
+        pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
 
     def tearDown(self) -> None:
         cleanup()
-        pubsub_teardown()
+        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     def test_schema_e2e(self):
         """

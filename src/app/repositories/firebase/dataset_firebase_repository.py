@@ -12,7 +12,7 @@ class DatasetFirebaseRepository:
         self.datasets_collection = firebase_loader.get_datasets_collection()
 
     def get_latest_dataset_with_survey_id_and_period_id(
-        self, survey_id: str, period_id: int
+        self, survey_id: str, period_id: str
     ) -> DatasetMetadataWithoutId | None:
         """
         Gets the latest dataset from firestore with a specific survey_id.

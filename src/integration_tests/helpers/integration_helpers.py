@@ -19,14 +19,7 @@ from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_transaction,
 )
-from src.integration_tests.helpers.pubsub_helper import (
-    dataset_pubsub_helper,
-    schema_pubsub_helper,
-)
-from src.test_data.shared_test_data import (
-    test_dataset_subscriber_id,
-    test_schema_subscriber_id,
-)
+from src.integration_tests.helpers.pubsub_helper import PubSubHelper
 
 storage_client = storage.Client()
 
@@ -230,15 +223,11 @@ def cleanup() -> None:
         )
 
 
-def pubsub_setup() -> None:
+def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Creates any subscribers that may be used in tests"""
-
-    dataset_pubsub_helper.try_create_subscriber(test_dataset_subscriber_id)
-    schema_pubsub_helper.try_create_subscriber(test_schema_subscriber_id)
+    pubsub_helper.try_create_subscriber(subscriber_id)
 
 
-def pubsub_teardown():
+def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
     """Deletes subscribers that may have been used in tests"""
-
-    dataset_pubsub_helper.try_delete_subscriber(test_dataset_subscriber_id)
-    schema_pubsub_helper.try_delete_subscriber(test_schema_subscriber_id)
+    pubsub_helper.try_delete_subscriber(subscriber_id)

@@ -15,17 +15,17 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
 from src.test_data import dataset_test_data
-from src.test_data.shared_test_data import unit_id
+from src.test_data.shared_test_data import test_dataset_subscriber_id, unit_id
 
 
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        pubsub_setup()
+        pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
 
     def tearDown(self) -> None:
         cleanup()
-        pubsub_teardown()
+        pubsub_teardown(dataset_pubsub_helper, test_dataset_subscriber_id)
 
     def test_dataset_e2e(self):
         """
