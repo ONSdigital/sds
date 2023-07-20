@@ -9,6 +9,8 @@ from src.integration_tests.helpers.integration_helpers import (
     create_filepath,
     generate_headers,
     load_json,
+    pubsub_setup,
+    pubsub_teardown,
     setup_session,
 )
 from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
@@ -19,9 +21,11 @@ from src.test_data.shared_test_data import unit_id
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
+        pubsub_setup()
 
     def tearDown(self) -> None:
         cleanup()
+        pubsub_teardown()
 
     def test_dataset_e2e(self):
         """
@@ -79,14 +83,12 @@ class E2EDatasetIntegrationTest(TestCase):
                 assert "filename" in dataset_metadata
                 assert "form_types" in dataset_metadata
 
-        received_messages = dataset_pubsub_helper.pull_messages(
+        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
             dataset_test_data.test_dataset_subscriber_id
         )
 
         for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
             assert received_messages[0][key] == value
-
-        dataset_pubsub_helper.delete_subscriber(dataset_test_data.test_dataset_subscriber_id)
 
     def test_different_period_and_survey_id(self):
         """

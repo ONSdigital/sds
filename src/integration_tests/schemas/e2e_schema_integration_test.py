@@ -37,7 +37,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
 
-        received_messages = schema_pubsub_helper.pull_messages(
+        received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
             test_schema_subscriber_id
         )
 
