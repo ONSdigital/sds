@@ -52,7 +52,9 @@ class PubSubHelper:
             config.PROJECT_ID, subscriber_id
         )
 
+        print('hello 1?')
         if not self._subscription_exists(subscriber_id):
+            print('hello 2?')
             self.subscriber_client.create_subscription(
                 request={
                     "name": subscription_path,
