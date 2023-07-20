@@ -75,7 +75,7 @@ class PubSubHelper:
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
-            timeout=2.0,  #
+            timeout=5.0,
         )
 
         messages = []
