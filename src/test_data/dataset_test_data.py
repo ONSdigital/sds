@@ -211,7 +211,7 @@ missing_keys_dataset_metadata = {
     "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
-test_dataset_subscriber_id = "test_dataset_subscriber_id"
+
 nonrandom_pubsub_dataset_metadata = {
     "survey_id": survey_id,
     "period_id": period_id,

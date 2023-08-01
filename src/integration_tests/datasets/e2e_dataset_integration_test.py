@@ -84,7 +84,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 assert "form_types" in dataset_metadata
 
         received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
-            dataset_test_data.test_dataset_subscriber_id
+            test_dataset_subscriber_id
         )
 
         for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
