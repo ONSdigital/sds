@@ -33,6 +33,7 @@ start-docker-dev:
 	export PYTHONPATH=${PYTHONPATH} && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
+	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
 	export DATASET_BUCKET_NAME=my-dataset-bucket && \
 	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
@@ -78,8 +79,8 @@ unit-test:
 integration-test-local:
 	export CONF=int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=mock-dataset-bucket-name && \
-    export SCHEMA_BUCKET_NAME=mock-schema-bucket-name && \
+    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset && \
+    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
@@ -101,7 +102,7 @@ integration-test-sandbox:
 	export PROJECT_ID=$(PROJECT_ID) && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export API_URL=https://34.110.210.165.nip.io && \
+	export API_URL=https://34.36.238.222.nip.io && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
