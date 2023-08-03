@@ -21,14 +21,39 @@ test_post_schema_metadata_updated_version_response: SchemaMetadata = {
     "survey_id": test_survey_id,
 }
 
-
-test_post_schema_metadata_body = {
+test_post_schema_body = {
     "$schema": "test-schema",
     "$id": "test-id",
     "survey_id": test_survey_id,
     "title": "test title",
     "schema_version": "v1.0.0",
     "properties": {},
+}
+
+test_post_schema_body_missing_fields = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
+}
+
+test_post_schema_body_empty_properties = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
+    "properties": "",
+}
+
+test_post_schema_body_invalid_properties_type = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
+    "properties": [],
 }
 
 test_schema_bucket_metadata_response: SchemaMetadataWithoutGuid = {

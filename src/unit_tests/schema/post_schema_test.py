@@ -51,7 +51,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -82,7 +82,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -99,17 +99,40 @@ class PostSchemaTest(TestCase):
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
             schema_test_data.test_post_schema_metadata_updated_version_response,
-            schema_test_data.test_post_schema_metadata_body,
+            schema_test_data.test_post_schema_body,
             schema_test_data.test_filename,
         )
 
-    def test_post_bad_schema_400_response(self):
+    def test_post_missing_fields_schema_400_response(self):
         """
         Checks that fastAPI returns a 400 error with appropriate
-        message if the schema is badly formatted.
+        message if the schema is missing mandatory fields.
         """
         response = self.test_client.post(
-            "/v1/schema", json={"schema": "is missing some fields"}
+            "/v1/schema", json=schema_test_data.test_post_schema_body_missing_fields
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_empty_fields_schema_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema mandatory fields have null value
+        """
+        response = self.test_client.post(
+            "/v1/schema", json=schema_test_data.test_post_schema_body_empty_properties
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_invalid_type_fields_schema_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema required fields are not an object
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_invalid_properties_type,
         )
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -130,7 +153,7 @@ class PostSchemaTest(TestCase):
         )
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 500
@@ -159,7 +182,7 @@ class PostSchemaTest(TestCase):
 
         with self.assertLogs(level="ERROR") as lm:
             response = self.test_client.post(
-                "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+                "/v1/schema", json=schema_test_data.test_post_schema_body
             )
 
         assert response.status_code == 500
