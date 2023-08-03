@@ -3,7 +3,7 @@ import uuid
 import exception.exceptions as exceptions
 from config.config_factory import config
 from logging_config import logging
-from models.schema_models import Schema, SchemaMetadata
+from models.schema_models import SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
@@ -18,7 +18,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema(self, schema: Schema) -> SchemaMetadata:
+    def process_raw_schema(self, schema: dict) -> SchemaMetadata:
         """
         Processes incoming schema.
 
@@ -27,7 +27,7 @@ class SchemaProcessorService:
         """
 
         schema_id = str(uuid.uuid4())
-        stored_schema_filename = f"{schema.survey_id}/{schema_id}.json"
+        stored_schema_filename = f"{schema['survey_id']}/{schema_id}.json"
 
         next_version_schema_metadata = self.build_next_version_schema_metadata(
             schema_id, stored_schema_filename, schema
@@ -45,7 +45,7 @@ class SchemaProcessorService:
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
-        schema: Schema,
+        schema: dict,
         stored_schema_filename: str,
     ):
         """
@@ -75,7 +75,7 @@ class SchemaProcessorService:
         self,
         schema_id: str,
         stored_schema_filename: str,
-        schema: Schema,
+        schema: dict,
     ) -> SchemaMetadata:
         """
         Builds the next version of schema metadata being processed.
@@ -89,14 +89,14 @@ class SchemaProcessorService:
             "guid": schema_id,
             "schema_location": stored_schema_filename,
             "sds_schema_version": self.calculate_next_schema_version(schema),
-            "survey_id": schema.survey_id,
+            "survey_id": schema["survey_id"],
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
         }
         return next_version_schema_metadata
 
-    def calculate_next_schema_version(self, schema: Schema):
+    def calculate_next_schema_version(self, schema: dict):
         """
         Calculates the next schema version for the metadata being built.
 
@@ -105,8 +105,8 @@ class SchemaProcessorService:
         """
 
         current_version_metadata = (
-            self.schema_firebase_repository.get_latest_schema_with_survey_id(
-                schema.survey_id
+            self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
+                schema["survey_id"]
             )
         )
 

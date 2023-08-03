@@ -391,129 +391,167 @@ definitions:
         example: https://json-schema.org/draft/2020-12/schema
       $id: 
         type: string
-        example: https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json
+        example: roofing_tiles_and_slate.json
       survey_id: 
         type: string
         example: 068
       title: 
         type: string
-        example: Roofing Tiles
-      description: 
-        type: string
-        example: Roofing Tiles
+        example: SDS schema for the Roofing Tiles + Slate survey
       schema_version: 
         type: string
         example: v2.0.1
-      sample_unit_key_field: 
-        type: string
-        example: identifier
-      properties: 
-        type: array
-        items: 
-          type: object
-          properties: 
-            type: 
-              type: string
-              example: object
-            required: 
-              type: array
-              items: 
+      properties:
+        type: object
+        properties:
+          schema_version:
+            type: object
+            properties:
+              const: 
                 type: string
-                example: identifier
+                example: v1
+              description: 
+                type: string
+                example: Version of the schema spec
+          identifier:
+            type: object
+            properties:
+              type:
+                type: string
+                example: string
+              description:
+                type: string
+                example: The unique top-level identifier. This is the reporting unit reference without the check letter appended
+              minLength:
+                type: integer
+                example: 11
+              pattern:
+                type: string
+                example: ^[a-zA-Z0-9]+$
+              examples:
+                type: array
+                items:
+                  type: string
+                  example: ["34942807969"]
+          items: 
+            type: object
             properties: 
-              type: object
-              properties: 
-                identifier: 
-                  type: object
-                  properties: 
-                    type: 
-                      type: string
-                      example: string
-                runame: 
-                  type: object
-                  properties: 
-                    type: 
-                      type: string
-                      example: string
-                    Description: 
-                      type: string
-                      example: The reporting unit name.
-                ruaddr: 
-                  type: object
-                  properties: 
-                    type: 
-                      type: string
-                      example: List
-                    Description: 
-                      type: string
-                      example: This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr
-                repeats: 
-                  type: object
-                  properties: 
-                    type: 
-                      type: string
-                      example: array
-                    required: 
-                      type: array
-                      items: 
-                        type: string
-                        example: identifier
-                    properties: 
-                      type: object
-                      properties: 
-                        key_field: 
-                          type: string
-                          example: identifier
-                        identifier: 
-                          type: object
-                          properties: 
-                            type: 
-                              type: string
-                              example: string
-                        luname: 
-                          type: object
-                          properties: 
-                            type: 
-                              type: string
-                              example: string
-                        luaddr: 
-                          type: object
-                          properties: 
-                            type: 
-                              type: string
-                              example: List
-                            Description: 
-                              type: string
-                              example: This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr
-      examples: 
-        type: array
-        items: 
-          type: object
-          properties: 
-            identifier: 
-              type: string
-              example: 43532
-            runame: 
-              type: string
-              example: Pipes and Maps Ltd
-            ruaddr: 
-              type: array
-              items:
+              type: 
                 type: string
-                example: "111 Under Hill"
-            local_unit: 
-              type: array
-              items: 
+                example: object
+              properties: 
                 type: object
-                properties: 
-                  identifier: 
-                    type: string
-                    example: 2012763A
-                  luname: 
-                    type: string
-                    example: Maps Factory
-                  luaddr: 
-                    type: array
-                    items: 
-                      type: string
-                      example: 1 Bag End
+                properties:
+                  local_units:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: array
+                      description:
+                        type: string
+                        example: The data about each item
+                      minItems:
+                        type: integer
+                        example: 1
+                      uniqueItems:
+                        type: boolean
+                        example: true
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: object
+                          properties:
+                            type: object
+                            properties:
+                              identifier: 
+                                type: object
+                                properties: 
+                                  type: 
+                                    type: string
+                                    example: string
+                                  minLength:
+                                    type: integer
+                                    example: 1
+                                  description:
+                                    type: string
+                                    example: The unique identifier for the items. This is the local unit reference.
+                                  examples:
+                                    type: array
+                                    items:
+                                      type: string
+                                      example: ["3340224"]
+                              lu_name: 
+                                type: object
+                                properties: 
+                                  type: 
+                                    type: string
+                                    example: string
+                                  minLength:
+                                    type: integer
+                                    example: 1
+                                  description: 
+                                    type: string
+                                    example: Name of the local unit
+                                  examples:
+                                    type: array
+                                    items:
+                                      type: string
+                                      example: ["STUBBS BUILDING PRODUCTS LTD"]
+                              lu_address: 
+                                type: object
+                                properties: 
+                                  type: 
+                                    type: string
+                                    example: array
+                                  description: 
+                                    type: string
+                                    example: The fields of the address for the local unit
+                                  items:
+                                    type: object
+                                    properties:
+                                      type:
+                                        type: string
+                                        example: string
+                                      minLength:
+                                        type: integer
+                                        example: 1
+                                  minItems:
+                                    type: integer
+                                    example: 1
+                                  uniqueItems:
+                                    type: boolean
+                                    example: true
+                                  examples:
+                                    type: array
+                                    items:
+                                      type: array
+                                      items:
+                                        type: string
+                                        example: ["WELLINGTON ROAD", "LOCHMABEN", "SWINDON", "BEDS", "GLOS", "DE41 2WA"]
+                          additionalProperties:
+                            type: boolean
+                            example: false
+                          required:
+                            type: array
+                            items:
+                              type: string
+                              example: ["identifier", "lu_name", "lu_address"]
+              additionalProperties:
+                type: boolean
+                example: false
+              required:
+                type: array
+                items:
+                  type: string
+                  example: ["local_units"]
+      additionalProperties:
+        type: boolean
+        example: false
+      required:
+        type: array
+        items:
+          type: string
+          example: ["schema_version", "identifier", "items"]

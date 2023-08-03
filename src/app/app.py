@@ -36,6 +36,10 @@ app.add_exception_handler(
     exceptions.GlobalException,
     ExceptionInterceptor.throw_500_global_exception,
 )
+app.add_exception_handler(
+    exceptions.ValidationException,
+    ExceptionInterceptor.throw_400_validation_exception,
+)
 
 
 @app.exception_handler(500)

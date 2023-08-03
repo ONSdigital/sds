@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
-from models.schema_models import Schema
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.publisher_service import PublisherService
@@ -18,8 +17,8 @@ class PostSchemaTest(TestCase):
 
     def setUp(self):
         self.store_schema_json_stash = SchemaBucketRepository.store_schema_json
-        self.get_latest_schema_with_survey_id_stash = (
-            SchemaFirebaseRepository.get_latest_schema_with_survey_id
+        self.get_latest_schema_metadata_with_survey_id_stash = (
+            SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id
         )
         self.perform_new_schema_transaction_stash = (
             SchemaFirebaseRepository.perform_new_schema_transaction
@@ -28,8 +27,8 @@ class PostSchemaTest(TestCase):
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = (
-            self.get_latest_schema_with_survey_id_stash
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = (
+            self.get_latest_schema_metadata_with_survey_id_stash
         )
         SchemaFirebaseRepository.perform_new_schema_transaction = (
             self.perform_new_schema_transaction_stash
@@ -42,7 +41,7 @@ class PostSchemaTest(TestCase):
         """
         SchemaBucketRepository.store_schema_json = MagicMock(return_value=None)
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock(
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock(
             return_value=None
         )
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock(
@@ -70,8 +69,8 @@ class PostSchemaTest(TestCase):
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
@@ -100,7 +99,7 @@ class PostSchemaTest(TestCase):
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
             schema_test_data.test_post_schema_metadata_updated_version_response,
-            Schema(**schema_test_data.test_post_schema_metadata_body),
+            schema_test_data.test_post_schema_metadata_body,
             schema_test_data.test_filename,
         )
 
@@ -121,8 +120,8 @@ class PostSchemaTest(TestCase):
         with appropriate error message if an exception is found in new
         schema transaction
         """
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
@@ -146,8 +145,8 @@ class PostSchemaTest(TestCase):
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
