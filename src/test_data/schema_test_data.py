@@ -1,4 +1,4 @@
-from models.schema_models import Schema, SchemaMetadata, SchemaMetadataWithoutGuid
+from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 
 test_guid = "test_guid"
 test_survey_id = "test_survey_id"
@@ -21,17 +21,39 @@ test_post_schema_metadata_updated_version_response: SchemaMetadata = {
     "survey_id": test_survey_id,
 }
 
-
-test_post_schema_metadata_body: Schema = {
+test_post_schema_body = {
     "$schema": "test-schema",
     "$id": "test-id",
     "survey_id": test_survey_id,
     "title": "test title",
-    "description": "test description",
     "schema_version": "v1.0.0",
-    "sample_unit_key_field": "test_ref",
+    "properties": {},
+}
+
+test_post_schema_body_missing_fields = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
+}
+
+test_post_schema_body_empty_properties = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
+    "properties": "",
+}
+
+test_post_schema_body_invalid_properties_type = {
+    "$schema": "test-schema",
+    "$id": "test-id",
+    "survey_id": test_survey_id,
+    "title": "test title",
+    "schema_version": "v1.0.0",
     "properties": [],
-    "examples": [],
 }
 
 test_schema_bucket_metadata_response: SchemaMetadataWithoutGuid = {
@@ -41,16 +63,13 @@ test_schema_bucket_metadata_response: SchemaMetadataWithoutGuid = {
     "sds_published_at": "test_published_at_2",
 }
 
-test_schema_response: Schema = {
+test_schema_response = {
     "survey_id": test_survey_id,
-    "title": "Roofing Tiles",
-    "description": "Roofing Tiles",
-    "schema_version": "v2.1.0",
-    "sample_unit_key_field": "identifier",
-    "properties": [],
-    "examples": [],
+    "title": "SDS schema for the Roofing Tiles + Slate survey",
+    "schema_version": "v1.0.0",
+    "properties": {},
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json",
+    "$id": "roofing_tiles_and_slate.json",
 }
 
 test_schema_metadata_collection: list[SchemaMetadata] = [

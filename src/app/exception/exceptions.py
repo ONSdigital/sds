@@ -31,3 +31,7 @@ class ExceptionNoUnitData(Exception):
 
 class GlobalException(Exception):
     pass
+
+
+class ValidationException(Exception):
+    pass

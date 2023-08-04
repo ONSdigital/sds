@@ -1,12 +1,13 @@
 import exception.exceptions as exceptions
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
-from models.schema_models import Schema, SchemaMetadata
+from models.schema_models import SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from services.schema.schema_processor_service import SchemaProcessorService
 from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
 )
+from services.validators.schema_validator_service import SchemaValidatorService
 
 router = APIRouter()
 
@@ -15,18 +16,20 @@ logger = logging.getLogger(__name__)
 
 @router.post("/v1/schema", response_model=SchemaMetadata)
 async def post_schema(
-    schema: Schema = Body(...),
+    schema: dict = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> SchemaMetadata:
     """
     Posts the schema metadata to be processed.
 
     Parameters:
-    schema (Schema): schema to be processed.
+    schema (dict): schema to be processed in JSON format.
     schema_processor_service (SchemaProcessorService): injected processor service for processing the schema.
     """
     logger.info("Posting schema metadata...")
     logger.debug(f"Input body: {{{schema}}}")
+
+    SchemaValidatorService.validate_schema(schema)
 
     posted_schema_metadata = schema_processor_service.process_raw_schema(schema)
 
@@ -42,7 +45,7 @@ async def get_schema_from_bucket(
     version: str = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
     schema_processor_service: SchemaProcessorService = Depends(),
-) -> Schema:
+) -> dict:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
     with specific survey id and version from the bucket. Latest version schema will be retrieved

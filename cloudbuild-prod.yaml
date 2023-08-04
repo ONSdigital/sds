@@ -10,7 +10,7 @@ steps:
 
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${TAG_NAME}',  '.' ]
+    args: ['build', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}',  '.' ]
 
   # Docker push to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -22,7 +22,7 @@ steps:
 
   # Docker push version tag to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push',  'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${TAG_NAME}' ]
+    args: [ 'push',  'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
 
   # Runs the Docker image pushed
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -56,5 +56,5 @@ options:
 # Store images in Google Artifact Registry
 images:
   - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}
   - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest

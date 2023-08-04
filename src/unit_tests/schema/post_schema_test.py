@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
-from models.schema_models import Schema
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.publisher_service import PublisherService
@@ -18,8 +17,8 @@ class PostSchemaTest(TestCase):
 
     def setUp(self):
         self.store_schema_json_stash = SchemaBucketRepository.store_schema_json
-        self.get_latest_schema_with_survey_id_stash = (
-            SchemaFirebaseRepository.get_latest_schema_with_survey_id
+        self.get_latest_schema_metadata_with_survey_id_stash = (
+            SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id
         )
         self.perform_new_schema_transaction_stash = (
             SchemaFirebaseRepository.perform_new_schema_transaction
@@ -28,8 +27,8 @@ class PostSchemaTest(TestCase):
 
     def tearDown(self):
         SchemaBucketRepository.store_schema_json = self.store_schema_json_stash
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = (
-            self.get_latest_schema_with_survey_id_stash
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = (
+            self.get_latest_schema_metadata_with_survey_id_stash
         )
         SchemaFirebaseRepository.perform_new_schema_transaction = (
             self.perform_new_schema_transaction_stash
@@ -42,7 +41,7 @@ class PostSchemaTest(TestCase):
         """
         SchemaBucketRepository.store_schema_json = MagicMock(return_value=None)
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock(
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock(
             return_value=None
         )
         SchemaFirebaseRepository.perform_new_schema_transaction = MagicMock(
@@ -52,7 +51,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -70,8 +69,8 @@ class PostSchemaTest(TestCase):
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
@@ -83,7 +82,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -100,17 +99,40 @@ class PostSchemaTest(TestCase):
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
             schema_test_data.test_post_schema_metadata_updated_version_response,
-            Schema(**schema_test_data.test_post_schema_metadata_body),
+            schema_test_data.test_post_schema_body,
             schema_test_data.test_filename,
         )
 
-    def test_post_bad_schema_400_response(self):
+    def test_post_missing_fields_schema_400_response(self):
         """
         Checks that fastAPI returns a 400 error with appropriate
-        message if the schema is badly formatted.
+        message if the schema is missing mandatory fields.
         """
         response = self.test_client.post(
-            "/v1/schema", json={"schema": "is missing some fields"}
+            "/v1/schema", json=schema_test_data.test_post_schema_body_missing_fields
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_empty_fields_schema_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema mandatory fields have null value
+        """
+        response = self.test_client.post(
+            "/v1/schema", json=schema_test_data.test_post_schema_body_empty_properties
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_invalid_type_fields_schema_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema required fields are not an object
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_invalid_properties_type,
         )
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -121,8 +143,8 @@ class PostSchemaTest(TestCase):
         with appropriate error message if an exception is found in new
         schema transaction
         """
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
@@ -131,7 +153,7 @@ class PostSchemaTest(TestCase):
         )
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+            "/v1/schema", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 500
@@ -146,8 +168,8 @@ class PostSchemaTest(TestCase):
         SchemaBucketRepository.store_schema_json = MagicMock()
         SchemaBucketRepository.store_schema_json.return_value = None
 
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id = MagicMock()
-        SchemaFirebaseRepository.get_latest_schema_with_survey_id.return_value = (
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
+        SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
         )
 
@@ -160,7 +182,7 @@ class PostSchemaTest(TestCase):
 
         with self.assertLogs(level="ERROR") as lm:
             response = self.test_client.post(
-                "/v1/schema", json=schema_test_data.test_post_schema_metadata_body
+                "/v1/schema", json=schema_test_data.test_post_schema_body
             )
 
         assert response.status_code == 500
