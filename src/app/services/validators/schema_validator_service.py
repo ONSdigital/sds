@@ -2,6 +2,15 @@ from exception.exceptions import ValidationException
 
 
 class SchemaValidatorService:
+    """
+    Schema received contains optional unspecified fields at root level
+    Pydantic model is not ideal to handle as optional fields are default
+    with null value and fields unspecified in model are loss when read
+    Therefore, Dict is used instead to allow flexibility in structure while
+    this validator class ensures the integrity of the fields that have
+    impact on SDS operation
+    """
+
     @staticmethod
     def validate_schema(schema: dict) -> None:
         """
