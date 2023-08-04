@@ -17,8 +17,8 @@ PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
 start-cloud-dev:
 	export CONF=cloud-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
-	export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
+	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
+	export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
@@ -33,6 +33,7 @@ start-docker-dev:
 	export PYTHONPATH=${PYTHONPATH} && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
 	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
+	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
 	export DATASET_BUCKET_NAME=my-dataset-bucket && \
 	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
@@ -78,8 +79,8 @@ unit-test:
 integration-test-local:
 	export CONF=int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
-    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset && \
+    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
@@ -93,8 +94,8 @@ integration-test-local:
 integration-test-sandbox:
 	export CONF=int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-dataset-892a && \
-    export SCHEMA_BUCKET_NAME=ons-sds-sandbox-01-europe-west2-schema-892a && \
+    export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
+    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \

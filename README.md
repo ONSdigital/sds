@@ -148,7 +148,7 @@ can be reached by going to the following URLs (once running):
 ## new_dataset cloud Function
 
 `new_dataset` runs as a Cloud Function. It is Triggered by uploading a new dataset file to the dataset storage bucket.
-To deploy the Cloud Function, run the following locally, but set the DATASET_BUCKET environment variables first:
+To deploy the Cloud Function, run the following locally, but set the PROJECT_NAME environment variables first:
 
 ```bash
 gcloud auth login
@@ -164,8 +164,8 @@ gcloud functions deploy new-dataset-function \
 --source=. \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
---trigger-event-filters="bucket=$DATASET_BUCKET" \
---set-env-vars="DATASET_BUCKET_NAME=$DATASET_BUCKET,SCHEMA_BUCKET_NAME=$SCHEMA_BUCKET_NAME,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,SCHEMA_TOPIC_ID=ons-sds-schema-events,DATASET_TOPIC_ID=ons-sds-dataset-events"
+--trigger-event-filters="bucket=$PROJECT_NAME-europe-west2-dataset" \
+--set-env-vars="DATASET_BUCKET_NAME=$PROJECT_NAME-europe-west2-dataset,SCHEMA_BUCKET_NAME=$PROJECT_NAME-europe-west2-schema,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema,PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset"
 ```
 
 ## Running the integration tests
