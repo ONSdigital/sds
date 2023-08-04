@@ -23,7 +23,7 @@ class SchemaProcessorService:
         Processes incoming schema.
 
         Parameters:
-        schema (Schema): incoming schema.
+        schema (dict): incoming schema.
         """
 
         schema_id = str(uuid.uuid4())
@@ -55,7 +55,7 @@ class SchemaProcessorService:
         Parameters:
         schema_id (str): The unique id of the new schema.
         next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
-        schema (Schema): The schema being stored.
+        schema (dict): The schema being stored.
         stored_schema_filename (str): Filename of uploaded json schema.
         """
         try:
@@ -83,7 +83,7 @@ class SchemaProcessorService:
         Parameters:
         schema_id (str): the schema id of the metadata.
         stored_schema_filename (str): the filename of schema when it is stored.
-        schema_metadata (SchemaMetadata): schema metadata being processed.
+        schema (dict): schema being processed.
         """
         next_version_schema_metadata = {
             "guid": schema_id,
@@ -101,7 +101,7 @@ class SchemaProcessorService:
         Calculates the next schema version for the metadata being built.
 
         Parameters:
-        schema_metadata (SchemaMetadata): schema metadata being processed.
+        schema (dict): schema being processed.
         """
 
         current_version_metadata = (
@@ -134,6 +134,10 @@ class SchemaProcessorService:
         """
         Gets the filename of the schema in bucket. If version is omitted,
         the latest schema filename is retrieved
+
+        Parameters:
+        survey_id (str): the survey id of the schema
+        version (str): the sds schema version of the schema
         """
         if version is None:
             return self.schema_firebase_repository.get_latest_schema_bucket_filename(
@@ -147,6 +151,12 @@ class SchemaProcessorService:
     def try_publish_schema_metadata_to_topic(
         self, next_version_schema_metadata: SchemaMetadata
     ) -> None:
+        """
+        Publish schema metadata to pubsub topic
+
+        Parameters:
+        next_version_schema_metadata (SchemaMetadata): the schema metadata of the newly published schema
+        """
         try:
             logger.info("Publishing schema metadata to topic...")
             publisher_service.publish_data_to_topic(

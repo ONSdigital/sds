@@ -27,7 +27,12 @@ class SchemaBucketRepository(BucketRepository):
         )
 
     def get_schema_file_as_json(self, filename: str) -> dict:
-        """Get the SDS schema from the schema bucket using the filename provided."""
+        """
+        Get the SDS schema from the schema bucket using the filename provided.
+
+        Parameters:
+        filename (str): filename of the retreived json schema
+        """
         try:
             return self.get_bucket_file_as_json(filename)
         except Exception:

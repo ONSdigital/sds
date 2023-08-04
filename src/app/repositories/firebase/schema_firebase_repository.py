@@ -47,7 +47,7 @@ class SchemaFirebaseRepository:
         Parameters:
         schema_id (str): The unique id of the new schema.
         next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
-        schema (Schema): The schema being stored.
+        schema (dict): The schema being stored.
         stored_schema_filename (str): Filename of uploaded json schema.
         """
 
