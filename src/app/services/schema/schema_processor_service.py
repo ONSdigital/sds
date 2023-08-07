@@ -93,10 +93,11 @@ class SchemaProcessorService:
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
+            "schema_version": self.get_schema_version_from_properties(schema),
         }
         return next_version_schema_metadata
 
-    def calculate_next_schema_version(self, schema: dict):
+    def calculate_next_schema_version(self, schema: dict) -> int:
         """
         Calculates the next schema version for the metadata being built.
 
@@ -113,6 +114,32 @@ class SchemaProcessorService:
         return DocumentVersionService.calculate_survey_version(
             current_version_metadata, "sds_schema_version"
         )
+
+    def get_schema_version_from_properties(self, schema: dict) -> str:
+        """
+        Get schema version from the properties object of the schema.
+
+        Parameters:
+        schema (dict); schema being processed.
+        """
+
+        level_keys = ["properties", "schema_version", "const"]
+        return self.get_child_property(schema, level_keys)
+
+    def get_child_property(self, nested_dict: dict, keys: list):
+        """
+        Get a child property from a nested dictionary
+
+        Paramenters:
+        nested_dict (dict): A nested dictionary that is being fetched
+        keys (list): A list of keys within the nested dictionary that lead to the child property
+        """
+        field = nested_dict
+
+        for key in keys:
+            field = field[key]
+
+        return field
 
     def get_schema_metadata_collection_with_guid(
         self, survey_id: str

@@ -3,7 +3,6 @@
   "$id": "roofing_tiles_and_slate.json",
   "survey_id": "test_survey_id",
   "title": "SDS schema for the Roofing Tiles + Slate survey",
-  "schema_version": "v1.0.0",
   "type": "object",
   "properties": {
     "schema_version": {

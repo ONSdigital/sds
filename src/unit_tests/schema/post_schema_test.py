@@ -137,6 +137,54 @@ class PostSchemaTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
+    def test_post_missing_schema_version_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if schema version is missing
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_missing_schema_version,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_invalid_schema_version_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if schema version is not an object
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_invalid_schema_version,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_invalid_schema_version_const_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if schema version const is not a string
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_invalid_schema_version_const,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_empty_schema_version_const_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if schema version const is empty
+        """
+        response = self.test_client.post(
+            "/v1/schema",
+            json=schema_test_data.test_post_schema_body_empty_schema_version_const,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
     def test_post_schema_transaction_exception_500_response(self):
         """
         Test the post schema transaction. A 500 response will be received

@@ -343,6 +343,9 @@ definitions:
       sds_published_at:
         type: string
         example: 2023-05-05T08:18:07Z
+      schema_version:
+        type: string
+        example: v1
   sds_dataset_metadata:
     type: array
     items: 
@@ -398,9 +401,6 @@ definitions:
       title: 
         type: string
         example: SDS schema for the Roofing Tiles + Slate survey
-      schema_version: 
-        type: string
-        example: v2.0.1
       properties:
         type: object
         properties:
