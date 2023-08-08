@@ -33,7 +33,9 @@ async def post_schema(
     QueryParameterValidatorService.validate_survey_id_from_post_schema(survey_id)
     SchemaValidatorService.validate_schema(schema)
 
-    posted_schema_metadata = schema_processor_service.process_raw_schema(schema, survey_id)
+    posted_schema_metadata = schema_processor_service.process_raw_schema(
+        schema, survey_id
+    )
 
     logger.info("Schema successfully posted.")
     logger.debug(f"Schema metadata: {posted_schema_metadata}")

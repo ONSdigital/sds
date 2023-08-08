@@ -17,7 +17,7 @@ class QueryParameterValidatorService:
         if survey_id in (None, ""):
             logger.error("Survey ID not set when posting schema")
             raise exceptions.ValidationException
-    
+
     @staticmethod
     def validate_schema_version_parses(version: str) -> None:
         """

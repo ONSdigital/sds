@@ -10,8 +10,8 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_session,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
-from src.test_data.shared_test_data import test_schema_subscriber_id
 from src.test_data.schema_test_data import test_survey_id
+from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
