@@ -126,7 +126,7 @@ class SchemaProcessorService:
         level_keys = ["properties", "schema_version", "const"]
         return self.get_child_property(schema, level_keys)
 
-    def get_child_property(self, nested_dict: dict, keys: list):
+    def get_child_property(self, nested_dict: dict, keys: list) -> str:
         """
         Get a child property from a nested dictionary
 
@@ -138,8 +138,10 @@ class SchemaProcessorService:
 
         for key in keys:
             field = field[key]
+        else:
+            result = field
 
-        return field
+        return result
 
     def get_schema_metadata_collection_with_guid(
         self, survey_id: str
