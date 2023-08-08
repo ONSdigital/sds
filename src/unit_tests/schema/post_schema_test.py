@@ -111,7 +111,7 @@ class PostSchemaTest(TestCase):
         message if the schema is missing mandatory fields.
         """
         response = self.test_client.post(
-            f"/v1/schema?survey_id=",
+            "/v1/schema?survey_id=",
             json=schema_test_data.test_post_schema_body_missing_fields,
         )
         assert response.status_code == 400
