@@ -51,7 +51,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_body
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -82,7 +82,7 @@ class PostSchemaTest(TestCase):
         PublisherService.publish_data_to_topic = MagicMock()
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_body
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 200
@@ -103,13 +103,25 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_filename,
         )
 
+    def test_post_schema_with_missing_survey_id_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema is missing mandatory fields.
+        """
+        response = self.test_client.post(
+            f"/v1/schema?survey_id=", json=schema_test_data.test_post_schema_body_missing_fields
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+
     def test_post_missing_fields_schema_400_response(self):
         """
         Checks that fastAPI returns a 400 error with appropriate
         message if the schema is missing mandatory fields.
         """
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_body_missing_fields
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body_missing_fields
         )
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -120,7 +132,7 @@ class PostSchemaTest(TestCase):
         message if the schema mandatory fields have null value
         """
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_body_empty_properties
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body_empty_properties
         )
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -131,7 +143,7 @@ class PostSchemaTest(TestCase):
         message if the schema required fields are not an object
         """
         response = self.test_client.post(
-            "/v1/schema",
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body_invalid_properties_type,
         )
         assert response.status_code == 400
@@ -143,7 +155,7 @@ class PostSchemaTest(TestCase):
         message if schema version is missing
         """
         response = self.test_client.post(
-            "/v1/schema",
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body_missing_schema_version,
         )
         assert response.status_code == 400
@@ -155,7 +167,7 @@ class PostSchemaTest(TestCase):
         message if schema version is not an object
         """
         response = self.test_client.post(
-            "/v1/schema",
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body_invalid_schema_version,
         )
         assert response.status_code == 400
@@ -167,7 +179,7 @@ class PostSchemaTest(TestCase):
         message if schema version const is not a string
         """
         response = self.test_client.post(
-            "/v1/schema",
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body_invalid_schema_version_const,
         )
         assert response.status_code == 400
@@ -179,7 +191,7 @@ class PostSchemaTest(TestCase):
         message if schema version const is empty
         """
         response = self.test_client.post(
-            "/v1/schema",
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body_empty_schema_version_const,
         )
         assert response.status_code == 400
@@ -201,7 +213,7 @@ class PostSchemaTest(TestCase):
         )
 
         response = self.test_client.post(
-            "/v1/schema", json=schema_test_data.test_post_schema_body
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body
         )
 
         assert response.status_code == 500
@@ -230,7 +242,7 @@ class PostSchemaTest(TestCase):
 
         with self.assertLogs(level="ERROR") as lm:
             response = self.test_client.post(
-                "/v1/schema", json=schema_test_data.test_post_schema_body
+                f"/v1/schema?survey_id={schema_test_data.test_survey_id}", json=schema_test_data.test_post_schema_body
             )
 
         assert response.status_code == 500

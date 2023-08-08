@@ -1,4 +1,7 @@
 from exception.exceptions import ValidationException
+from logging_config import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SchemaValidatorService:
@@ -34,13 +37,15 @@ class SchemaValidatorService:
         Parameters:
         schema (dict): schema to be validated
         """
-        mandatory_keys = ["survey_id", "properties"]
+        mandatory_keys = ["properties"]
 
         for mandatory_key in mandatory_keys:
             if mandatory_key not in schema:
+                logger.error(f"Mandatory key {mandatory_key} is not found in schema")
                 raise ValidationException
 
             if schema[mandatory_key] in (None, ""):
+                logger.error(f"Mandatory key {mandatory_key} has no value in schema")
                 raise ValidationException
 
     @staticmethod
@@ -55,6 +60,7 @@ class SchemaValidatorService:
 
         for object_key in object_keys:
             if type(schema[object_key]) != dict:
+                logger.error(f"Key {object_key} is not an object")
                 raise ValidationException
 
     @staticmethod
@@ -70,16 +76,20 @@ class SchemaValidatorService:
 
         for index, level_key in enumerate(level_keys):
             if level_key not in field:
+                logger.error(f"Required key {level_key} has is not found in schema")
                 raise ValidationException
 
             if index != len(level_keys) - 1:
                 if type(field[level_key]) != dict:
+                    logger.error(f"Key {level_key} is not an object")
                     raise ValidationException
 
                 field = field[level_key]
             else:
                 if type(field[level_key]) != str:
+                    logger.error(f"Key {level_key} is not a string field")
                     raise ValidationException
 
                 if field[level_key] in (None, ""):
+                    logger.error(f"Key {level_key} has not value in schema")
                     raise ValidationException

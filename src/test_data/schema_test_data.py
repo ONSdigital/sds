@@ -27,7 +27,6 @@ test_post_schema_metadata_updated_version_response: SchemaMetadata = {
 test_post_schema_body = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": {
         "schema_version": {
@@ -40,14 +39,12 @@ test_post_schema_body = {
 test_post_schema_body_missing_fields = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
 }
 
 test_post_schema_body_empty_properties = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": "",
 }
@@ -55,7 +52,6 @@ test_post_schema_body_empty_properties = {
 test_post_schema_body_invalid_properties_type = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": [],
 }
@@ -63,7 +59,6 @@ test_post_schema_body_invalid_properties_type = {
 test_post_schema_body_missing_schema_version = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": {
         "schema_version": {},
@@ -73,7 +68,6 @@ test_post_schema_body_missing_schema_version = {
 test_post_schema_body_invalid_schema_version = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": {
         "schema_version": [],
@@ -83,7 +77,6 @@ test_post_schema_body_invalid_schema_version = {
 test_post_schema_body_invalid_schema_version_const = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": {
         "schema_version": {
@@ -95,7 +88,6 @@ test_post_schema_body_invalid_schema_version_const = {
 test_post_schema_body_empty_schema_version_const = {
     "$schema": "test-schema",
     "$id": "test-id",
-    "survey_id": test_survey_id,
     "title": "test title",
     "properties": {
         "schema_version": {
@@ -112,7 +104,6 @@ test_schema_bucket_metadata_response: SchemaMetadataWithoutGuid = {
 }
 
 test_schema_response = {
-    "survey_id": test_survey_id,
     "title": "SDS schema for the Roofing Tiles + Slate survey",
     "properties": {
         "schema_version": {

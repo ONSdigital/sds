@@ -11,6 +11,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.shared_test_data import test_schema_subscriber_id
+from src.test_data.schema_test_data import test_survey_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -33,7 +34,7 @@ class E2ESchemaIntegrationTest(TestCase):
         test_schema = load_json(config.TEST_SCHEMA_PATH)
 
         schema_post_response = session.post(
-            f"{config.API_URL}/v1/schema",
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             json=test_schema,
             headers=headers,
         )
@@ -49,7 +50,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert received_messages_json == schema_post_response.json()
 
         test_schema_get_response = session.get(
-            f"{config.API_URL}/v1/schema_metadata?survey_id={test_schema['survey_id']}",
+            f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
             headers=headers,
         )
 
@@ -61,8 +62,8 @@ class E2ESchemaIntegrationTest(TestCase):
         for schema in response_as_json:
             assert schema == {
                 "guid": schema["guid"],
-                "survey_id": test_schema["survey_id"],
-                "schema_location": f"{test_schema['survey_id']}/{schema['guid']}.json",
+                "survey_id": test_survey_id,
+                "schema_location": f"{test_survey_id}/{schema['guid']}.json",
                 "sds_schema_version": schema["sds_schema_version"],
                 "sds_published_at": schema["sds_published_at"],
                 "schema_version": test_schema["properties"]["schema_version"]["const"],

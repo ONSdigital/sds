@@ -18,7 +18,7 @@ class SchemaProcessorService:
         self.schema_firebase_repository = SchemaFirebaseRepository()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def process_raw_schema(self, schema: dict) -> SchemaMetadata:
+    def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:
         """
         Processes incoming schema.
 
@@ -27,10 +27,10 @@ class SchemaProcessorService:
         """
 
         schema_id = str(uuid.uuid4())
-        stored_schema_filename = f"{schema['survey_id']}/{schema_id}.json"
+        stored_schema_filename = f"{survey_id}/{schema_id}.json"
 
         next_version_schema_metadata = self.build_next_version_schema_metadata(
-            schema_id, stored_schema_filename, schema
+            schema_id, stored_schema_filename, schema, survey_id
         )
 
         self.process_raw_schema_in_transaction(
@@ -76,20 +76,22 @@ class SchemaProcessorService:
         schema_id: str,
         stored_schema_filename: str,
         schema: dict,
+        survey_id: str,
     ) -> SchemaMetadata:
         """
         Builds the next version of schema metadata being processed.
 
         Parameters:
-        schema_id (str): the schema id of the metadata.
+        schema_id (str): the guid of the metadata.
         stored_schema_filename (str): the filename of schema when it is stored.
         schema (dict): schema being processed.
+        survey_id (str): the survey id of the schema.
         """
         next_version_schema_metadata = {
             "guid": schema_id,
             "schema_location": stored_schema_filename,
-            "sds_schema_version": self.calculate_next_schema_version(schema),
-            "survey_id": schema["survey_id"],
+            "sds_schema_version": self.calculate_next_schema_version(survey_id),
+            "survey_id": survey_id,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
@@ -97,17 +99,17 @@ class SchemaProcessorService:
         }
         return next_version_schema_metadata
 
-    def calculate_next_schema_version(self, schema: dict) -> int:
+    def calculate_next_schema_version(self, survey_id: str) -> int:
         """
         Calculates the next schema version for the metadata being built.
 
         Parameters:
-        schema (dict): schema being processed.
+        survey_id (str): the survey id of the schema.
         """
 
         current_version_metadata = (
             self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
-                schema["survey_id"]
+                survey_id
             )
         )
 

@@ -1,7 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "roofing_tiles_and_slate.json",
-  "survey_id": "test_survey_id",
   "title": "SDS schema for the Roofing Tiles + Slate survey",
   "type": "object",
   "properties": {
