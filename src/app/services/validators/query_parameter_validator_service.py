@@ -7,6 +7,18 @@ logger = logging.getLogger(__name__)
 
 class QueryParameterValidatorService:
     @staticmethod
+    def validate_survey_id_from_post_schema(survey_id: str) -> None:
+        """
+        Validates the present of survey id when posting schema
+
+        Parameters:
+        survey_id (str): survey id of the schema
+        """
+        if survey_id in (None, ""):
+            logger.error("Survey ID not set when posting schema")
+            raise exceptions.ValidationException
+
+    @staticmethod
     def validate_schema_version_parses(version: str) -> None:
         """
         Validates the schema version parses to an integer

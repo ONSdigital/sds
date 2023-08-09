@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 @router.post("/v1/schema", response_model=SchemaMetadata)
 async def post_schema(
+    survey_id: str,
     schema: dict = Body(...),
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> SchemaMetadata:
@@ -29,9 +30,12 @@ async def post_schema(
     logger.info("Posting schema metadata...")
     logger.debug(f"Input body: {{{schema}}}")
 
+    QueryParameterValidatorService.validate_survey_id_from_post_schema(survey_id)
     SchemaValidatorService.validate_schema(schema)
 
-    posted_schema_metadata = schema_processor_service.process_raw_schema(schema)
+    posted_schema_metadata = schema_processor_service.process_raw_schema(
+        schema, survey_id
+    )
 
     logger.info("Schema successfully posted.")
     logger.debug(f"Schema metadata: {posted_schema_metadata}")

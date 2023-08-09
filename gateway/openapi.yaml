@@ -117,6 +117,11 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/sds_schema"
+        - name: survey_id
+          in: query
+          required: true
+          type: string
+          x-example: "068"
       responses:
         200:
           description: Successfuly submitted schema
@@ -395,9 +400,6 @@ definitions:
       $id: 
         type: string
         example: roofing_tiles_and_slate.json
-      survey_id: 
-        type: string
-        example: 068
       title: 
         type: string
         example: SDS schema for the Roofing Tiles + Slate survey
@@ -432,7 +434,7 @@ definitions:
                 type: array
                 items:
                   type: string
-                  example: ["34942807969"]
+                example: ["34942807969"]
           items: 
             type: object
             properties: 
@@ -482,7 +484,7 @@ definitions:
                                     type: array
                                     items:
                                       type: string
-                                      example: ["3340224"]
+                                    example: ["3340224"]
                               lu_name: 
                                 type: object
                                 properties: 
@@ -499,7 +501,7 @@ definitions:
                                     type: array
                                     items:
                                       type: string
-                                      example: ["STUBBS BUILDING PRODUCTS LTD"]
+                                    example: ["STUBBS BUILDING PRODUCTS LTD"]
                               lu_address: 
                                 type: object
                                 properties: 
@@ -530,7 +532,7 @@ definitions:
                                       type: array
                                       items:
                                         type: string
-                                        example: ["WELLINGTON ROAD", "LOCHMABEN", "SWINDON", "BEDS", "GLOS", "DE41 2WA"]
+                                      example: ["WELLINGTON ROAD", "LOCHMABEN", "SWINDON", "BEDS", "GLOS", "DE41 2WA"]
                           additionalProperties:
                             type: boolean
                             example: false
@@ -538,7 +540,7 @@ definitions:
                             type: array
                             items:
                               type: string
-                              example: ["identifier", "lu_name", "lu_address"]
+                            example: ["identifier", "lu_name", "lu_address"]
               additionalProperties:
                 type: boolean
                 example: false
@@ -546,7 +548,7 @@ definitions:
                 type: array
                 items:
                   type: string
-                  example: ["local_units"]
+                example: ["local_units"]
       additionalProperties:
         type: boolean
         example: false
@@ -554,4 +556,4 @@ definitions:
         type: array
         items:
           type: string
-          example: ["schema_version", "identifier", "items"]
+        example: ["schema_version", "identifier", "items"]
