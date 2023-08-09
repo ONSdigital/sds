@@ -10,9 +10,11 @@ def test_get_schema_from_bucket_200_response(test_client):
     """
     When the schema is retrieved successfully from the bucket there should be a 200 status code and expected response.
     """
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename
     SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
     SchemaFirebaseRepository.get_schema_bucket_filename.return_value = "test_location"
 
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
     SchemaBucketRepository.get_schema_file_as_json = MagicMock()
     SchemaBucketRepository.get_schema_file_as_json.return_value = (
         schema_test_data.test_schema_response
@@ -22,6 +24,9 @@ def test_get_schema_from_bucket_200_response(test_client):
 
     assert response.status_code == 200
     assert response.json() == schema_test_data.test_schema_response
+
+    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
 
 
 def test_get_latest_schema_from_bucket_without_version(test_client):
@@ -54,9 +59,11 @@ def test_get_schema_from_bucket_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
     """
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename
     SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
     SchemaFirebaseRepository.get_schema_bucket_filename.return_value = None
 
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
     SchemaBucketRepository.get_schema_file_as_json = MagicMock()
     SchemaBucketRepository.get_schema_file_as_json.return_value = (
         schema_test_data.test_schema_bucket_metadata_response
@@ -66,6 +73,9 @@ def test_get_schema_from_bucket_404_response(test_client):
 
     assert response.status_code == 404
     assert response.json()["message"] == "No schema found"
+
+    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
 
 
 def test_get_latest_schema_from_bucket_without_version_404_response(test_client):
@@ -93,6 +103,7 @@ def test_global_error(test_client_no_server_exception):
     Fixture client_no_server_exception is used to avoid exiting
     the test at exception so that the response can be validated
     """
+    tmp_storage = SchemaFirebaseRepository.get_schema_bucket_filename
     SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock(
         side_effect=Exception
     )
@@ -102,6 +113,8 @@ def test_global_error(test_client_no_server_exception):
     )
     assert response.status_code == 500
     assert response.json()["message"] == "Unable to process request"
+
+    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage
 
 
 def test_get_schema_with_invalid_version_error(test_client):
@@ -134,6 +147,7 @@ def test_get_schema_metadata_with_not_found_error(test_client):
     when schema metadata is not found at get_schemas_metadata
     endpoint
     """
+    tmp_storage = SchemaFirebaseRepository.get_schema_metadata_collection
     SchemaFirebaseRepository.get_schema_metadata_collection = MagicMock()
     SchemaFirebaseRepository.get_schema_metadata_collection.return_value = {}
 
@@ -141,3 +155,5 @@ def test_get_schema_metadata_with_not_found_error(test_client):
 
     assert response.status_code == 404
     assert response.json()["message"] == "No results found"
+
+    SchemaFirebaseRepository.get_schema_metadata_collection = tmp_storage

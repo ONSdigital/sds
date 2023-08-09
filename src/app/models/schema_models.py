@@ -7,6 +7,7 @@ class SchemaMetadataWithoutGuid:
     schema_location: str
     sds_schema_version: int
     sds_published_at: str
+    schema_version: str
 
 
 @dataclass
