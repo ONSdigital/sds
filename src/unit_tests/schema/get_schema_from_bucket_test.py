@@ -193,7 +193,7 @@ def test_get_schema_with_missing_guid_error(test_client):
     response = test_client.get("/v2/schema")
 
     assert response.status_code == 400
-    assert response.json()["message"] == "Invalid search provided"
+    assert response.json()["message"] == "Invalid parameter provided"
 
 
 def test_get_schema_metadata_with_incorrect_key(test_client):
