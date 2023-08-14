@@ -45,7 +45,7 @@ async def post_schema(
 
 @router.get("/v1/schema")
 async def get_schema_from_bucket(
-    survey_id: str,
+    survey_id: str = None,
     version: str = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
     schema_processor_service: SchemaProcessorService = Depends(),
@@ -60,11 +60,14 @@ async def get_schema_from_bucket(
     version (str) (optional): version of the survey.
     schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
         interacting with the schema collection in firestore.
+    schema_processor_service (SchemaProcessorService): injected dependency for
+        interacting with the schema collection in firestore.
     """
     logger.info("Getting bucket schema metadata...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
-    QueryParameterValidatorService.validate_schema_version_parses(version)
+    QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
+    QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
 
     bucket_schema_filename = schema_processor_service.get_schema_bucket_filename(
         survey_id, version
@@ -74,9 +77,51 @@ async def get_schema_from_bucket(
         logger.error("Schema metadata not found")
         raise exceptions.ExceptionNoSchemaFound
 
-    logger.info("Bucket schema metadata location successfully retrieved.")
-    logger.debug(f"Bucket schema metadata location: {bucket_schema_filename}")
-    logger.info("Getting schema metadata...")
+    logger.info("Bucket schema location successfully retrieved.")
+    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
+    logger.info("Getting schema...")
+
+    schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
+
+    logger.info("Schema successfully retrieved.")
+    logger.debug(f"Schema: {schema}")
+
+    return schema
+
+
+@router.get("/v2/schema")
+async def get_schema_from_bucket(
+    guid: str = None,
+    schema_bucket_repository: SchemaBucketRepository = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(),
+) -> dict:
+    """
+    Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
+    with specific guid from the bucket
+
+    Parameters:
+    guid (str): GUID of the schema.
+    schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
+        interacting with the schema collection in firestore.
+    schema_processor_service (SchemaProcessorService): injected dependency for
+        interacting with the schema collection in firestore.
+    """
+    logger.info("Getting bucket schema metadata...")
+    logger.debug(f"Input data: guid={guid}")
+
+    QueryParameterValidatorService.validate_guid_from_get_schema(guid)
+
+    bucket_schema_filename = (
+        schema_processor_service.get_schema_bucket_filename_from_guid(guid)
+    )
+
+    if not bucket_schema_filename:
+        logger.error("Schema metadata not found")
+        raise exceptions.ExceptionNoSchemaFound
+
+    logger.info("Bucket schema location successfully retrieved.")
+    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
+    logger.info("Getting schema...")
 
     schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 

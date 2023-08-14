@@ -9,6 +9,10 @@ class ExceptionIncorrectSchemaKey(Exception):
     pass
 
 
+class ExceptionIncorrectSchemaV2Key(Exception):
+    pass
+
+
 class ExceptionNoSchemaMetadataCollection(Exception):
     pass
 

@@ -55,6 +55,32 @@ def test_get_latest_schema_from_bucket_without_version(test_client):
     SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
 
 
+def test_get_schema_from_bucket_with_guid(test_client):
+    """
+    When the schema is queried without version no, the schema of latest version
+    should be returned with a 200 status code
+    """
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename_with_guid
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid.return_value = (
+        "test_location"
+    )
+
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+        schema_test_data.test_schema_response
+    )
+
+    response = test_client.get("/v2/schema?guid=test_guid")
+
+    assert response.status_code == 200
+    assert response.json() == schema_test_data.test_schema_response
+
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+
+
 def test_get_schema_from_bucket_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
@@ -65,9 +91,7 @@ def test_get_schema_from_bucket_404_response(test_client):
 
     tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
     SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = (
-        schema_test_data.test_schema_bucket_metadata_response
-    )
+    SchemaBucketRepository.get_schema_file_as_json.return_value = None
 
     response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
 
@@ -93,6 +117,27 @@ def test_get_latest_schema_from_bucket_without_version_404_response(test_client)
     assert response.json()["message"] == "No schema found"
 
     SchemaFirebaseRepository.get_latest_schema_bucket_filename = tmp_storage
+
+
+def test_get_schema_from_bucket_with_guid_404_response(test_client):
+    """
+    When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
+    """
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename_with_guid
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid.return_value = None
+
+    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
+    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
+    SchemaBucketRepository.get_schema_file_as_json.return_value = None
+
+    response = test_client.get("/v2/schema?guid=test_guid")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = tmp_storage_1
+    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
 
 
 def test_global_error(test_client_no_server_exception):
@@ -126,7 +171,29 @@ def test_get_schema_with_invalid_version_error(test_client):
     response = test_client.get("/v1/schema?survey_id=076&version=xyz")
 
     assert response.status_code == 400
-    assert response.json()["message"] == "Validation has failed"
+    assert response.json()["message"] == "Invalid search provided"
+
+
+def test_get_schema_with_missing_survey_id_error(test_client):
+    """
+    Checks that fastAPI return 400 error with appropriate msg
+    when survey id is missing when querying schema at get schema endpoint
+    """
+    response = test_client.get("/v1/schema")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search provided"
+
+
+def test_get_schema_with_missing_guid_error(test_client):
+    """
+    Checks that fastAPI return 400 error with appropriate msg
+    when guid is missing when querying schema at get schema v2 endpoint
+    """
+    response = test_client.get("/v2/schema")
+
+    assert response.status_code == 400
+    assert response.json()["message"] == "Invalid search provided"
 
 
 def test_get_schema_metadata_with_incorrect_key(test_client):

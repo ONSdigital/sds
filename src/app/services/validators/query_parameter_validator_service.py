@@ -19,9 +19,9 @@ class QueryParameterValidatorService:
             raise exceptions.ValidationException
 
     @staticmethod
-    def validate_schema_version_parses(version: str) -> None:
+    def validate_schema_version_from_get_schema(version: str) -> None:
         """
-        Validates the schema version parses to an integer
+        Validates the version from get schema v1 endpoint
 
         Parameters:
         version: version of the schema metadata
@@ -31,7 +31,31 @@ class QueryParameterValidatorService:
                 version = int(version)
             except ValueError:
                 logger.error("Invalid version")
-                raise RequestValidationError(errors=ValueError)
+                raise exceptions.ExceptionIncorrectSchemaKey
+
+    @staticmethod
+    def validate_survey_id_from_get_schema(survey_id: str) -> None:
+        """
+        Validates the survey id from get schema v1 endpoint
+
+        Parameters:
+        survey_id: survey id of the schema
+        """
+        if survey_id is None:
+            logger.error("Survey ID not set")
+            raise exceptions.ExceptionIncorrectSchemaKey
+
+    @staticmethod
+    def validate_guid_from_get_schema(guid: str) -> None:
+        """
+        Validates the guid from get schema v2 endpoint
+
+        Parameters:
+        guid: guid of the schema
+        """
+        if guid is None:
+            logger.error("GUID not set")
+            raise exceptions.ExceptionIncorrectSchemaV2Key
 
     @staticmethod
     def validate_survey_id_from_schema_metadata(survey_id: str) -> None:

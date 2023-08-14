@@ -13,6 +13,10 @@ app.add_exception_handler(
     ExceptionInterceptor.throw_400_incorrect_schema_key_exception,
 )
 app.add_exception_handler(
+    exceptions.ExceptionIncorrectSchemaV2Key,
+    ExceptionInterceptor.throw_400_incorrect_schema_v2_key_exception,
+)
+app.add_exception_handler(
     exceptions.ExceptionNoSchemaMetadataCollection,
     ExceptionInterceptor.throw_404_no_schemas_metadata_exception,
 )

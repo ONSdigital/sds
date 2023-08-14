@@ -121,6 +121,19 @@ class SchemaFirebaseRepository:
         for schema in schemas_result:
             return schema.to_dict()["schema_location"]
 
+    def get_schema_bucket_filename_with_guid(self, guid: str) -> str:
+        """
+        Gets the filename of the schema of a specific guid. Should only ever return one entry.
+
+        Parameters:
+        guid (str): The guid of the survey being queried.
+        """
+
+        schemas_result = self.schemas_collection.where("guid", "==", guid).stream()
+
+        for schema in schemas_result:
+            return schema.to_dict()["schema_location"]
+
     def get_schema_metadata_collection(self, survey_id: str) -> list[SchemaMetadata]:
         """
         Gets the collection of schema metadata with a specific survey id.
