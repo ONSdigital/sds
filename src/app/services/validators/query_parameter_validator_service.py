@@ -1,5 +1,4 @@
 import exception.exceptions as exceptions
-from fastapi.exceptions import RequestValidationError
 from logging_config import logging
 
 logger = logging.getLogger(__name__)
