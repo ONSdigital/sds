@@ -90,7 +90,7 @@ async def get_schema_from_bucket(
 
 
 @router.get("/v2/schema")
-async def get_schema_from_bucket(
+async def get_schema_from_bucket_with_guid(
     guid: str = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
     schema_processor_service: SchemaProcessorService = Depends(),
