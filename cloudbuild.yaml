@@ -39,7 +39,7 @@ steps:
 #        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
 #        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
 #        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
-  - name: 'sds'
+  - name: 'onsdigital/sds'
     id: "Run image"
     entrypoint: gcloud
     args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:latest',
