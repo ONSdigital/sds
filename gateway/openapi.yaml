@@ -171,7 +171,7 @@ paths:
           schema:
             $ref: "#/definitions/sds_schema"
         400:
-          description: Invalid version provided
+          description: Incorrect key
           schema:
             type: object
             properties:
@@ -180,7 +180,7 @@ paths:
                 example: 400
               message:
                 type: string
-                example: Validation has failed
+                example: Invalid search provided
             required:
               - status
               - message
@@ -212,7 +212,63 @@ paths:
             required:
               - status
               - message
-
+              
+  /v2/schema:
+    get:
+      description: GET method that returns the schema corresponding to the given guid.
+      parameters:
+        - name: guid
+          in: query
+          type: string
+          required: true
+      responses:
+        200:
+          description: Succesfully retrieved schema
+          schema:
+            $ref: "#/definitions/sds_schema"
+        400:
+          description: Incorrect key
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 400
+              message:
+                type: string
+                example: Invalid parameter provided
+            required:
+              - status
+              - message
+        404:
+          description: No schema found
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 404
+              message:
+                type: string
+                example: No schema found
+            required:
+              - status
+              - message
+        500:
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: Unable to process request
+            required:
+              - status
+              - message
+              
   /v1/schema_metadata:
     get:
       description: GET method that returns the schema metadata corresponding to the given survey_id.
@@ -236,7 +292,7 @@ paths:
                 example: 400
               message:
                 type: string
-                example: Validation has failed
+                example: Invalid search provided
             required:
               - status
               - message
@@ -296,7 +352,7 @@ paths:
                 example: 400
               message:
                 type: string
-                example: Validation has failed
+                example: Invalid search parameters provided
             required:
               - status
               - message

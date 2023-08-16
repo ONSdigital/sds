@@ -28,10 +28,21 @@ class ExceptionInterceptor:
         request: Request, exc: Exception
     ) -> JSONResponse:
         """
-        When wrong search parameters are supplied for schema metadata query and a 400 HTTP response is returned.
+        When wrong search parameters are supplied for schema or schema metadata query and a 400 HTTP response is returned.
         """
         er = ExceptionResponder(
             status.HTTP_400_BAD_REQUEST, "error", "Invalid search provided"
+        )
+        return er.throw_er_with_json()
+
+    def throw_400_incorrect_schema_v2_key_exception(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
+        """
+        When wrong search parameters are supplied for schema v2 query and a 400 HTTP response is returned.
+        """
+        er = ExceptionResponder(
+            status.HTTP_400_BAD_REQUEST, "error", "Invalid parameter provided"
         )
         return er.throw_er_with_json()
 

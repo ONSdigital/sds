@@ -175,30 +175,16 @@ and SDS cloud function. The following sections describe a number of combinations
 
 ### Everything running in the cloud
 
-In this configuration, the SDS API service is running in Cloud Run and the new-dataset-function is deployed
-to Cloud Functions on your test/dev GCP project. These services both talk to Firestore and Cloud Storage running
-on the same project. This test configuration is also what is run at the end of the Cloud Build deployment.
-
-Run them like this (replacing `https://sds-blahblah.a.run.app` with the actual cloud run endpoint and
-`a-place-for-datasets` with the real dataset bucket):
+In this configuration, the integration test uses the SDS API service running in Cloud Run and the new-dataset-function
+on Cloud Functions of your test/dev GCP project. Please note that the SDS and cloud function are not the updated version unless
+run after creating a PR and gone through the pipeline. These services both talk to Firestore and Cloud Storage running on the same project. 
+This test configuration is also what is run at the end of the Cloud Build deployment.
 
 ```bash
 gcloud auth login
 gcloud config set project $PROJECT_NAME
  
-make cloud-test
-```
-
-### SDS API service is local
-
-This configuration allows you to debug the SDS API locally but talk to real Google services. Run them like this
-(replacing `my-schema-bucket` with the real schema bucket and `a-place-for-datasets` with the real dataset bucket):
-
-```bash
-gcloud auth login
-gcloud config set project $PROJECT_NAME
-
-make localSDS-test
+make integration-test-sandbox
 ```
 
 ### Running integration tests locally
@@ -209,7 +195,7 @@ is emulated by the test itself, or can be run manually by running the `SDX Simul
 ```bash
 docker-compose up
 
-make docker-test
+make integration-test-local
 ```
 
 # Contact

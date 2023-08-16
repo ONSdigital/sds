@@ -179,6 +179,17 @@ class SchemaProcessorService:
                 survey_id, version
             )
 
+    def get_schema_bucket_filename_from_guid(self, guid: str) -> str:
+        """
+        Gets the filename of the schema in bucket from guid
+
+        Parameters:
+        guid (str): the guid of the schema
+        """
+        return self.schema_firebase_repository.get_schema_bucket_filename_with_guid(
+            guid
+        )
+
     def try_publish_schema_metadata_to_topic(
         self, next_version_schema_metadata: SchemaMetadata
     ) -> None:

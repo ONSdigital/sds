@@ -105,6 +105,18 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_filename,
         )
 
+    def test_post_schema_with_invalid_dict(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if the schema is not a valid dictionary.
+        """
+        response = self.test_client.post(
+            "/v1/schema?survey_id=",
+            json="invalid_json",
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
     def test_post_schema_with_missing_survey_id_400_response(self):
         """
         Checks that fastAPI returns a 400 error with appropriate

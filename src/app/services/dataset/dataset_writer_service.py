@@ -45,9 +45,10 @@ class DatasetWriterService:
                 unit_data_collection_with_metadata,
                 extracted_unit_data_identifiers,
             )
-            logger.info("Dataset transaction committed successfully.")
+            logger.info(
+                "Dataset transaction committed successfully. Publishing dataset metadata to topic..."
+            )
 
-            logger.info("Publishing dataset metadata to topic.")
             return {
                 **dataset_metadata_without_id,
                 "dataset_id": dataset_id,
