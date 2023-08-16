@@ -46,7 +46,8 @@ steps:
       - '-c'
       - |
         curl https://sdk.cloud.google.com | bash
-        exec -l $SHELL
+        source $HOME/google-cloud-sdk/path.bash.inc
+        gcloud run deploy sds --image onsdigital/sds:latest --region europe-west2 --allow-unauthenticated --ingress internal-and-cloud-load-balancing
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
