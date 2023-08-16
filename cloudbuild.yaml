@@ -41,9 +41,13 @@ steps:
 #        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
   - name: 'onsdigital/sds'
     id: "Run image"
-    entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:latest',
-            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        curl https://sdk.cloud.google.com | bash
+        exec -l $SHELL
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
     entrypoint: sh
