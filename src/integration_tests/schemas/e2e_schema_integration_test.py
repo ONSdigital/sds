@@ -87,7 +87,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert latest_version_schema_response.json() == test_schema
 
             set_guid_schema_response = session.get(
-                f"{config.API_URL}/v2/schema?" f"guid={schema['guid']}",
+                f"{config.API_URL}/v2/schema?guid={schema['guid']}",
                 headers=headers,
             )
 

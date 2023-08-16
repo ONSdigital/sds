@@ -24,6 +24,7 @@ async def post_schema(
     Posts the schema metadata to be processed.
 
     Parameters:
+    survey_id (str): survey_id of the schema
     schema (dict): schema to be processed in JSON format.
     schema_processor_service (SchemaProcessorService): injected processor service for processing the schema.
     """
@@ -77,9 +78,8 @@ async def get_schema_from_bucket(
         logger.error("Schema metadata not found")
         raise exceptions.ExceptionNoSchemaFound
 
-    logger.info("Bucket schema location successfully retrieved.")
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
-    logger.info("Getting schema...")
+    logger.info("Bucket schema location successfully retrieved. Getting schema...")
 
     schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
@@ -119,9 +119,8 @@ async def get_schema_from_bucket_with_guid(
         logger.error("Schema metadata not found")
         raise exceptions.ExceptionNoSchemaFound
 
-    logger.info("Bucket schema location successfully retrieved.")
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
-    logger.info("Getting schema...")
+    logger.info("Bucket schema location successfully retrieved. Getting schema...")
 
     schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
