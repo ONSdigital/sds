@@ -21,7 +21,7 @@ steps:
     args:
       - '-c'
       - |
-        make setup 
+        make setup
         make unit-test
   - name: python
     id: "Audit packages"
@@ -30,19 +30,19 @@ steps:
       - '-c'
       - |
         make audit
-  - name: docker
-    id: build_and_push
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#  - name: docker
+#    id: build_and_push
+#    entrypoint: sh
+#    args:
+#      - '-c'
+#      - |
+#        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
+#        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
+#        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
+  - name: 'sds'
     id: "Run image"
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
+    args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:latest',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
