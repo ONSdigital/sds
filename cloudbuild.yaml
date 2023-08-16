@@ -41,12 +41,14 @@ steps:
 #        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
   - name: 'onsdigital/sds'
     id: "Run image"
-    entrypoint: /bin/sh
+    entrypoint: /bin/bash
+    env:
+      - 'GCLOUD_HOME=$HOME/google-cloud-sdk'
     args:
       - '-c'
       - |
         curl https://sdk.cloud.google.com | bash
-        source $HOME/google-cloud-sdk/path.bash.inc
+        source $GCLOUD_HOME/path.bash.inc
         gcloud run deploy sds --image onsdigital/sds:latest --region europe-west2 --allow-unauthenticated --ingress internal-and-cloud-load-balancing
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
