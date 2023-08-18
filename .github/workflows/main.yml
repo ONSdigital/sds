@@ -3,7 +3,7 @@ name: Main
 on:
   push:
     branches:
-      - SDSS-195-Push-To-Dockerhub
+      - main
 
 jobs:
   docker-push:
