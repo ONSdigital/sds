@@ -136,6 +136,5 @@ lint-fix:
 	black .
 	isort . --profile black
 
-
 setup: requirements.txt
 	pip install -r requirements.txt
