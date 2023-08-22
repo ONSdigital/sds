@@ -138,3 +138,6 @@ lint-fix:
 
 setup: requirements.txt
 	pip install -r requirements.txt
+
+generate-spec:
+	python -m scripts.generate_openapi

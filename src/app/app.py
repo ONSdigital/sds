@@ -8,6 +8,11 @@ from routers import dataset_router, schema_router
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
+app.description = "Open api schema for SDS"
+# app.openapi_version = "2.0.0"
+app.title = "Supplementary Data Service"
+app.version = "1.0.0"
+
 app.add_exception_handler(
     exceptions.ExceptionIncorrectSchemaKey,
     ExceptionInterceptor.throw_400_incorrect_schema_key_exception,
