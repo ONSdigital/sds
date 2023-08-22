@@ -8,27 +8,25 @@ steps:
     - |
       gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-  # Docker Build
+  # Docker Pull Image from dockerhub, tag, push and deploy to cloudrun
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest', '-t', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}',  '.' ]
-
-  # Docker push to Google Artifact Registry
+    id: 'Pull image from dockerhub'
+    args: [ 'pull', 'onsdigital/sds' ]
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push',  'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}' ]
-
-  # Docker push latest tag to Google Artifact Registry
+    id: 'Tag the image with SHA'
+    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push',  'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest' ]
-
-  # Docker push version tag to Google Artifact Registry
+    id: 'Push image to GCR'
+    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push',  'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
-
-  # Runs the Docker image pushed
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: "Run image"
-    entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
+    id: 'Tag the image with Version'
+    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push image to GCR'
+    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Deploy the image to cloudrun'
+    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
