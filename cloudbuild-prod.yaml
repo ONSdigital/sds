@@ -18,12 +18,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push SHA Tagged Image to GCR'
     args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with Version'
-    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push Version Tagged Image to GCR'
-    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}' ]
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the image to cloudrun'
     args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
