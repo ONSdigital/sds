@@ -11,6 +11,7 @@ OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --
         --limit=1)
 OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
 LOCAL_URL:=http://localhost:3000
+SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
 
@@ -102,7 +103,7 @@ integration-test-sandbox:
 	export PROJECT_ID=$(PROJECT_ID) && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export API_URL=https://34.36.238.222.nip.io && \
+	export API_URL=https://${SANDBOX_IP_ADDRESS}.nip.io && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
