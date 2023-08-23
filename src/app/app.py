@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 app.description = "Open api schema for SDS"
-# app.openapi_version = "2.0.0"
 app.title = "Supplementary Data Service"
 app.version = "1.0.0"
 

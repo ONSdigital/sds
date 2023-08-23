@@ -5,7 +5,7 @@ from fastapi.openapi.utils import get_openapi
 
 from src.app.app import app
 
-OUTPUT_PATH = os.path.join(os.getcwd(), "generate_openapi", "openapi.yaml")
+OUTPUT_PATH = os.path.join(os.getcwd(), "gateway", "openapi.yaml")
 
 
 if __name__ == "__main__":
@@ -18,6 +18,7 @@ if __name__ == "__main__":
                 openapi_version=app.openapi_version,
                 description=app.description,
                 routes=app.routes,
+                sort_keys=False
             ),
             f,
         )
