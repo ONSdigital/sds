@@ -1,24 +1,32 @@
-import os
-
+import argparse
 import yaml
+from uvicorn.importer import import_from_string
 from fastapi.openapi.utils import get_openapi
 
-from src.app.app import app
-
-OUTPUT_PATH = os.path.join(os.getcwd(), "gateway", "openapi.yaml")
-
+parser = argparse.ArgumentParser(prog="generate_openapi.py")
+parser.add_argument("app",       help='App import string. Eg. "src.app.app:app"', default="src.app.app:app")
+parser.add_argument("--out",     help="Output file ending in .yaml", default="generate_openapi/openapi.yaml")
 
 if __name__ == "__main__":
-    # Writes the FastApi schema to an output yaml file
-    with open(OUTPUT_PATH, "w+") as f:
-        yaml.dump(
-            get_openapi(
+    args = parser.parse_args()
+
+    print(f"importing app from {args.app}")
+    app = import_from_string(args.app)
+    openapi = get_openapi(
                 title=app.title,
                 version=app.version,
-                openapi_version=app.openapi_version,
                 description=app.description,
                 routes=app.routes,
-            ),
-            f,
-            sort_keys=False,
-        )
+            )
+    version = openapi.get("openapi", "unknown version")
+
+    print(f"writing openapi spec v{version}")
+
+    if not args.out.endswith(".yaml"):
+        print(f"Error, only yaml file is accepted")
+        quit()
+    
+    with open(args.out, "w") as f:
+        yaml.dump(openapi, f, sort_keys=False)
+
+    print(f"spec written to {args.out}")

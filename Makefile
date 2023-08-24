@@ -124,6 +124,16 @@ integration-test-cloudbuild:
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
+	export CONF=cloud-dev && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
+	export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
+	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
+	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
+	export LOG_LEVEL=${LOG_LEVEL} && \
+	export PROJECT_ID=${PROJECT_ID} && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	python -m scripts.generate_openapi src.app.app:app --out generate_openapi/openapi.yaml
 
 lint:

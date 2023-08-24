@@ -159,6 +159,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaMetadata'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Validation has failed
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
         '422':
           description: Validation Error
           content:
@@ -281,6 +299,19 @@ components:
           type: string
         dataset_id:
           title: Dataset Id
+          type: string
+    ExceptionResponseModel:
+      title: ExceptionResponseModel
+      required:
+      - status
+      - message
+      type: object
+      properties:
+        status:
+          title: Status
+          type: string
+        message:
+          title: Message
           type: string
     HTTPValidationError:
       title: HTTPValidationError
