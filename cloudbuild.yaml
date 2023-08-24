@@ -35,10 +35,10 @@ steps:
     id: 'Pull image from dockerhub'
     args: ['pull', 'onsdigital/sds']
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image'
+    id: 'Tag the image with SHA'
     args: ['tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push image to GCR'
+    id: 'Push SHA Tagged Image to GCR'
     args: ['push', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the image to cloudrun'
