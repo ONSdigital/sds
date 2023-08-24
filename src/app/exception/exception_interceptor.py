@@ -1,5 +1,5 @@
-from exception.exception_responder import ExceptionResponder
 import exception.exception_response_models as erm
+from exception.exception_responder import ExceptionResponder
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
@@ -10,8 +10,7 @@ class ExceptionInterceptor:
         When an exception is raised and a global error 500 HTTP response is returned.
         """
         er = ExceptionResponder(
-            status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            erm.erm_500_global_exception
+            status.HTTP_500_INTERNAL_SERVER_ERROR, erm.erm_500_global_exception
         )
         return er.throw_er_with_json()
 
@@ -22,8 +21,7 @@ class ExceptionInterceptor:
         When a validation fails and a 400 HTTP response is returned.
         """
         er = ExceptionResponder(
-            status.HTTP_400_BAD_REQUEST, 
-            erm.erm_400_validation_exception
+            status.HTTP_400_BAD_REQUEST, erm.erm_400_validation_exception
         )
         return er.throw_er_with_json()
 
@@ -96,5 +94,6 @@ class ExceptionInterceptor:
             status.HTTP_404_NOT_FOUND, "error", "No unit data found"
         )
         return er.throw_er_with_json()
+
 
 exception_interceptor = ExceptionInterceptor()

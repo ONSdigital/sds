@@ -1,5 +1,6 @@
-from fastapi.responses import JSONResponse
 from exception.exception_response_models import ExceptionResponseModel
+from fastapi.responses import JSONResponse
+
 
 class ExceptionResponder:
     status_code: int
