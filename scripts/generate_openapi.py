@@ -20,4 +20,5 @@ if __name__ == "__main__":
                 routes=app.routes,
             ),
             f,
+            sort_keys=False,
         )
