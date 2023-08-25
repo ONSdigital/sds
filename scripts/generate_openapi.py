@@ -1,7 +1,6 @@
 import argparse
 
 import yaml
-from fastapi.openapi.utils import get_openapi
 from uvicorn.importer import import_from_string
 
 parser = argparse.ArgumentParser(prog="generate_openapi.py")
@@ -18,9 +17,6 @@ if __name__ == "__main__":
     print(f"importing app from {args.app}")
     app = import_from_string(args.app)
     openapi = app.openapi()
-    # version = openapi.get("openapi", "unknown version")
-
-    # print(f"writing openapi spec v{version}")
 
     if not args.out.endswith(".yaml"):
         print(f"Error, only yaml file is accepted")
