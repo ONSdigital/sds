@@ -61,7 +61,27 @@ async def post_schema(
     return posted_schema_metadata
 
 
-@router.get("/v1/schema")
+@router.get(
+    "/v1/schema",
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_invalid_search_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_schema_exception}
+            },
+        },
+    },
+)
 async def get_schema_from_bucket(
     survey_id: str = None,
     version: str = None,
@@ -106,7 +126,27 @@ async def get_schema_from_bucket(
     return schema
 
 
-@router.get("/v2/schema")
+@router.get(
+    "/v2/schema",
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_invalid_parameter_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_schema_exception}
+            },
+        },
+    },
+)
 async def get_schema_from_bucket_with_guid(
     guid: str = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
@@ -147,7 +187,28 @@ async def get_schema_from_bucket_with_guid(
     return schema
 
 
-@router.get("/v1/schema_metadata", response_model=list[SchemaMetadata])
+@router.get(
+    "/v1/schema_metadata",
+    response_model=list[SchemaMetadata],
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_invalid_search_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_results_exception}
+            },
+        },
+    },
+)
 async def get_schema_metadata_collection(
     survey_id: str = None, schema_processor_service: SchemaProcessorService = Depends()
 ) -> list[SchemaMetadata]:

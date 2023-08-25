@@ -32,7 +32,7 @@ class ExceptionInterceptor:
         When wrong search parameters are supplied for schema or schema metadata query and a 400 HTTP response is returned.
         """
         er = ExceptionResponder(
-            status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_schema_key_exception
+            status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_search_exception
         )
         return er.throw_er_with_json()
 
@@ -43,7 +43,7 @@ class ExceptionInterceptor:
         When wrong search parameters are supplied for schema v2 query and a 400 HTTP response is returned.
         """
         er = ExceptionResponder(
-            status.HTTP_400_BAD_REQUEST, erm.erm_400_incorrect_schema_v2_key_exception
+            status.HTTP_400_BAD_REQUEST, erm.erm_400_invalid_parameter_exception
         )
         return er.throw_er_with_json()
 
@@ -54,7 +54,7 @@ class ExceptionInterceptor:
         When there is no schema metadata and a 404 HTTP response is returned.
         """
         er = ExceptionResponder(
-            status.HTTP_404_NOT_FOUND, erm.erm_404_no_schemas_metadata_exception
+            status.HTTP_404_NOT_FOUND, erm.erm_404_no_results_exception
         )
         return er.throw_er_with_json()
 
@@ -85,7 +85,7 @@ class ExceptionInterceptor:
         When there is no dataset metadata endpoint and a 404 HTTP response is returned
         """
         er = ExceptionResponder(
-            status.HTTP_404_NOT_FOUND, erm.erm_404_no_result_exception
+            status.HTTP_404_NOT_FOUND, erm.erm_404_no_datasets_exception
         )
         return er.throw_er_with_json()
 
@@ -97,7 +97,7 @@ class ExceptionInterceptor:
         HTTP response
         """
         er = ExceptionResponder(
-            status.HTTP_404_NOT_FOUND, erm.erm_404_unit_data_no_response_exception
+            status.HTTP_404_NOT_FOUND, erm.erm_404_no_unit_data_exception
         )
         return er.throw_er_with_json()
 

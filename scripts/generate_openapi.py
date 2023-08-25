@@ -9,7 +9,7 @@ parser.add_argument(
     "app", help='App import string. Eg. "src.app.app:app"', default="src.app.app:app"
 )
 parser.add_argument(
-    "--out", help="Output file ending in .yaml", default="generate_openapi/openapi.yaml"
+    "--out", help="Output file ending in .yaml", default="gateway/openapi.yaml"
 )
 
 if __name__ == "__main__":
