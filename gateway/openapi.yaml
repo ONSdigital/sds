@@ -168,15 +168,6 @@ paths:
               example:
                 status: error
                 message: Validation has failed
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: Server could not find resource
         '500':
           description: Internal Server Error
           content:

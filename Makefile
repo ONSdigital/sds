@@ -134,7 +134,7 @@ generate-spec:
 	export PROJECT_ID=${PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	python -m scripts.generate_openapi src.app.app:app --out generate_openapi/openapi.yaml
+	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:
 	black . --check
