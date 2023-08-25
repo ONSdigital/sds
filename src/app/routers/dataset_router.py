@@ -1,4 +1,6 @@
+import exception.exception_response_models as erm
 import exception.exceptions as exceptions
+from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
@@ -13,7 +15,27 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/v1/unit_data")
+@router.get(
+    "/v1/unit_data",
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_validation_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_unit_data_exception}
+            },
+        },
+    },
+)
 async def get_unit_supplementary_data(
     dataset_id: str,
     unit_id: str,
@@ -43,7 +65,30 @@ async def get_unit_supplementary_data(
     return unit_supplementary_data
 
 
-@router.get("/v1/dataset_metadata", response_model=list[DatasetMetadata])
+@router.get(
+    "/v1/dataset_metadata",
+    response_model=list[DatasetMetadata],
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {
+                    "example": erm.erm_400_incorrect_key_names_exception
+                }
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_datasets_exception}
+            },
+        },
+    },
+)
 async def get_dataset_metadata_collection(
     survey_id: str = None,
     period_id: str = None,

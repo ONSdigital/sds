@@ -1,615 +1,473 @@
-swagger: '2.0'
+openapi: 3.0.2
 info:
+  title: Supplementary Data Service
+  description: Open api schema for SDS
   version: 1.0.0
-  title: Supplementary Data Service (SDS)
-  description: API gateway for SDS
-schemes:
-  - https
-securityDefinitions:
-  UserSecurity:
-    type: basic
-security:
-  - UserSecurity: []
 paths:
   /v1/unit_data:
     get:
-      description: GET method that returns the unit supplementary data corresponding to the given dataset_id and unit_id.
-      parameters:
-        - name: dataset_id
-          in: query
-          required: true
-          type: string
-          x-example: 5eb3a2a9-9d07-47a9-9df7-0425ed289060
-        - name: unit_id
-          in: query
-          required: true
-          type: string
-          x-example: 43552 
-      responses:
-        200:
-          description: Succesfully retrieved unit supplementary data
-          schema:
-            type: object
-            properties:
-              survey_id:
-                type: string
-                example: NRX
-              data:
-                type: object
-                properties:
-                  local_unit:
-                    type: object
-                    properties:
-                      luname:
-                        type: string
-                        example: Maps Factory
-                      identifier:
-                        type: string
-                        example: 20127364B
-                  identifier:
-                    type: string
-                    example: 43532
-                  runame:
-                    type: string
-                    example: Pipes and Maps Ltd
-              period_id:
-                type: string
-                example: ttt
-              dataset_id:
-                type: string
-                example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
-              schema_version:
-                type: string
-                example: v1.0.0
-              form_types:
-                type: array
-                items:
-                  type: string
-                example: ["klk", "xyz", "tzr"]
-        400:
-          description: Bad request
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Validation has failed
-            required:
-              - status
-              - message
-        404:
-          description: Item not found
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 404
-              message:
-                type: string
-                example: No unit data found
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message
-  /v1/schema:
-    post:
-      description: POST endpoint to create a schema
-      parameters:
-        - name: schema
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/sds_schema"
-        - name: survey_id
-          in: query
-          required: true
-          type: string
-          x-example: "068"
-      responses:
-        200:
-          description: Successfuly submitted schema
-          schema:
-            $ref: "#/definitions/sds_schema_metadata"
-        400:
-          description: Schema validation failed
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Validation has failed
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message
-    get:
-      description: GET method that returns the schema corresponding to the given survey_id and version. The schema of latest version is returned if version is omitted.
-      parameters:
-        - name: survey_id
-          in: query
-          type: string
-          required: true
-        - name: version
-          in: query
-          type: string
-      responses:
-        200:
-          description: Succesfully retrieved schema
-          schema:
-            $ref: "#/definitions/sds_schema"
-        400:
-          description: Incorrect key
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Invalid search provided
-            required:
-              - status
-              - message
-        404:
-          description: No schema found
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 404
-              message:
-                type: string
-                example: No schema found
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message
-              
-  /v2/schema:
-    get:
-      description: GET method that returns the schema corresponding to the given guid.
-      parameters:
-        - name: guid
-          in: query
-          type: string
-          required: true
-      responses:
-        200:
-          description: Succesfully retrieved schema
-          schema:
-            $ref: "#/definitions/sds_schema"
-        400:
-          description: Incorrect key
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Invalid parameter provided
-            required:
-              - status
-              - message
-        404:
-          description: No schema found
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 404
-              message:
-                type: string
-                example: No schema found
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message
-              
-  /v1/schema_metadata:
-    get:
-      description: GET method that returns the schema metadata corresponding to the given survey_id.
-      parameters:
-        - name: survey_id
-          in: query
-          type: string
-          required: true
-      responses:
-        200:
-          description: Sucessfully retrieved schema metadata
-          schema:
-            $ref: "#/definitions/sds_schema_metadata"
-        400:
-          description: Incorrect key 
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Invalid search provided
-            required:
-              - status
-              - message
-        404:
-          description: No results found 
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 404
-              message:
-                type: string
-                example: No results found
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message
+      summary: Get Unit Supplementary Data
+      description: 'Retrieve supplementary data for a particular unit given the dataset
+        id and unit id, return 404 if no data is returned.
 
+
+        Parameters:
+
+        dataset_id (str): The unique id of the dataset being queried.
+
+        unit_id (str): The unit id of the particular unit on the data being queried.'
+      operationId: get_unit_supplementary_data_v1_unit_data_get
+      parameters:
+      - required: true
+        schema:
+          title: Dataset Id
+          type: string
+        name: dataset_id
+        in: query
+      - required: true
+        schema:
+          title: Unit Id
+          type: string
+        name: unit_id
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Validation has failed
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No unit data found
   /v1/dataset_metadata:
     get:
-      description: GET method that returns the dataset metadata corresponding to the given survey_id and period_id.
-      parameters:
-        - name: survey_id
-          in: query
-          type: string
-          required: true
-        - name: period_id
-          in: query
-          type: string
-          required: true
-      responses:
-        200:
-          description: Successfully retrieved dataset metadata
-          schema:
-            $ref: "#/definitions/sds_dataset_metadata"
-        400:
-          description: Incorrect key names
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 400
-              message:
-                type: string
-                example: Invalid search parameters provided
-            required:
-              - status
-              - message
-        404:
-          description: No dataset found
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 404
-              message:
-                type: string
-                example: No dataset found
-            required:
-              - status
-              - message
-        500:
-          description: Internal error
-          schema:
-            type: object
-            properties:
-              status:
-                type: string
-                example: 500
-              message:
-                type: string
-                example: Unable to process request
-            required:
-              - status
-              - message"
+      summary: Get Dataset Metadata Collection
+      description: 'Retrieve the matching dataset metadata, given the survey_id and
+        period_id.
 
-definitions:
-  sds_schema_metadata:
-    type: object
-    properties:
-      guid:
-        type: string
-        example: 9e1222b0-63a1-4bdf-bdf5-922327ff3198
-      survey_id:
-        type: string
-        example: 068
-      schema_location:
-        type: string
-        example: 068/9e1222b0-63a1-4bdf-bdf5-922327ff3198.json
-      sds_schema_version:
-        type: string
-        example: 1
-      sds_published_at:
-        type: string
-        example: 2023-05-05T08:18:07Z
-      schema_version:
-        type: string
-        example: v1
-  sds_dataset_metadata:
-    type: array
-    items: 
+
+        Parameters:
+
+        survey_id (str): The survey id of the dataset being queried.
+
+        period_id (str): The period id of the dataset being queried.'
+      operationId: get_dataset_metadata_collection_v1_dataset_metadata_get
+      parameters:
+      - required: false
+        schema:
+          title: Survey Id
+          type: string
+        name: survey_id
+        in: query
+      - required: false
+        schema:
+          title: Period Id
+          type: string
+        name: period_id
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Dataset Metadata Collection V1 Dataset Metadata
+                  Get
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetMetadata'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Invalid search parameters provided
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No datasets found
+  /v1/schema:
+    get:
+      summary: Get Schema From Bucket
+      description: "Gets the filename of the bucket schema metadata and uses that\
+        \ to retrieve the schema metadata\nwith specific survey id and version from\
+        \ the bucket. Latest version schema will be retrieved\nif version is omitted\n\
+        \nParameters:\nsurvey_id (str): survey id of the schema metadata.\nversion\
+        \ (str) (optional): version of the survey.\nschema_firebase_repository (SchemaFirebaseRepository):\
+        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
+        schema_processor_service (SchemaProcessorService): injected dependency for\n\
+        \    interacting with the schema collection in firestore."
+      operationId: get_schema_from_bucket_v1_schema_get
+      parameters:
+      - required: false
+        schema:
+          title: Survey Id
+          type: string
+        name: survey_id
+        in: query
+      - required: false
+        schema:
+          title: Version
+          type: string
+        name: version
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Schema From Bucket V1 Schema Get
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Invalid search provided
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No schema found
+    post:
+      summary: Post Schema
+      description: 'Posts the schema metadata to be processed.
+
+
+        Parameters:
+
+        survey_id (str): survey_id of the schema
+
+        schema (dict): schema to be processed in JSON format.
+
+        schema_processor_service (SchemaProcessorService): injected processor service
+        for processing the schema.'
+      operationId: post_schema_v1_schema_post
+      parameters:
+      - required: true
+        schema:
+          title: Survey Id
+          type: string
+        name: survey_id
+        in: query
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: Schema
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMetadata'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Validation has failed
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+  /v2/schema:
+    get:
+      summary: Get Schema From Bucket With Guid
+      description: "Gets the filename of the bucket schema metadata and uses that\
+        \ to retrieve the schema metadata\nwith specific guid from the bucket\n\n\
+        Parameters:\nguid (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
+        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
+        schema_processor_service (SchemaProcessorService): injected dependency for\n\
+        \    interacting with the schema collection in firestore."
+      operationId: get_schema_from_bucket_with_guid_v2_schema_get
+      parameters:
+      - required: false
+        schema:
+          title: Guid
+          type: string
+        name: guid
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Schema From Bucket With Guid V2 Schema Get
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Invalid parameter provided
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No schema found
+  /v1/schema_metadata:
+    get:
+      summary: Get Schema Metadata Collection
+      description: 'Get all schema metadata associated with a specific survey id.
+
+
+        Parameters:
+
+        survey_id (str): survey id of the collection
+
+        schema_processor_service (SchemaProcessorService): injected dependency for
+        processing the metadata collection.'
+      operationId: get_schema_metadata_collection_v1_schema_metadata_get
+      parameters:
+      - required: false
+        schema:
+          title: Survey Id
+          type: string
+        name: survey_id
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get Schema Metadata Collection V1 Schema Metadata
+                  Get
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaMetadata'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Invalid search provided
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No results found
+components:
+  schemas:
+    DatasetMetadata:
+      title: DatasetMetadata
+      required:
+      - survey_id
+      - period_id
+      - form_types
+      - title
+      - sds_published_at
+      - total_reporting_units
+      - schema_version
+      - sds_dataset_version
+      - filename
+      - dataset_id
       type: object
-      properties: 
-        survey_id: 
+      properties:
+        survey_id:
+          title: Survey Id
           type: string
-          example: NRX
-        period_id: 
+        period_id:
+          title: Period Id
           type: string
-          example: ttt
         form_types:
+          title: Form Types
           type: array
           items:
             type: string
-          example: ["klk", "xyz", "tzr"]
-        title: 
+        title:
+          title: Title
           type: string
-          example: Which side was better?
-        sds_published_at: 
+        sds_published_at:
+          title: Sds Published At
           type: string
-          format: date-time
-          example: 2023-05-04T14:35:05Z
-        total_reporting_units: 
+        total_reporting_units:
+          title: Total Reporting Units
           type: integer
-          format: int32
-          example: 2
-        schema_version: 
+        schema_version:
+          title: Schema Version
           type: string
-          example: v1.0.0
-        sds_dataset_version: 
+        sds_dataset_version:
+          title: Sds Dataset Version
           type: integer
-          format: int32
-          example: 1
-        filename: 
+        filename:
+          title: Filename
           type: string
-          example: 0d5adee0-c91b-4aeb-9e1c-bfa3b1cdf0a6.json
-        dataset_id: 
+        dataset_id:
+          title: Dataset Id
           type: string
-          example: 4e7626f5-afa6-4d3f-8310-8c0444dd1a9e
-  sds_schema:
-    type: object
-    properties:
-      $schema:
-        type: string
-        example: https://json-schema.org/draft/2020-12/schema
-      $id: 
-        type: string
-        example: roofing_tiles_and_slate.json
-      title: 
-        type: string
-        example: SDS schema for the Roofing Tiles + Slate survey
-      properties:
-        type: object
-        properties:
-          schema_version:
-            type: object
-            properties:
-              const: 
-                type: string
-                example: v1
-              description: 
-                type: string
-                example: Version of the schema spec
-          identifier:
-            type: object
-            properties:
-              type:
-                type: string
-                example: string
-              description:
-                type: string
-                example: The unique top-level identifier. This is the reporting unit reference without the check letter appended
-              minLength:
-                type: integer
-                example: 11
-              pattern:
-                type: string
-                example: ^[a-zA-Z0-9]+$
-              examples:
-                type: array
-                items:
-                  type: string
-                example: ["34942807969"]
-          items: 
-            type: object
-            properties: 
-              type: 
-                type: string
-                example: object
-              properties: 
-                type: object
-                properties:
-                  local_units:
-                    type: object
-                    properties:
-                      type:
-                        type: string
-                        example: array
-                      description:
-                        type: string
-                        example: The data about each item
-                      minItems:
-                        type: integer
-                        example: 1
-                      uniqueItems:
-                        type: boolean
-                        example: true
-                      items:
-                        type: object
-                        properties:
-                          type:
-                            type: string
-                            example: object
-                          properties:
-                            type: object
-                            properties:
-                              identifier: 
-                                type: object
-                                properties: 
-                                  type: 
-                                    type: string
-                                    example: string
-                                  minLength:
-                                    type: integer
-                                    example: 1
-                                  description:
-                                    type: string
-                                    example: The unique identifier for the items. This is the local unit reference.
-                                  examples:
-                                    type: array
-                                    items:
-                                      type: string
-                                    example: ["3340224"]
-                              lu_name: 
-                                type: object
-                                properties: 
-                                  type: 
-                                    type: string
-                                    example: string
-                                  minLength:
-                                    type: integer
-                                    example: 1
-                                  description: 
-                                    type: string
-                                    example: Name of the local unit
-                                  examples:
-                                    type: array
-                                    items:
-                                      type: string
-                                    example: ["STUBBS BUILDING PRODUCTS LTD"]
-                              lu_address: 
-                                type: object
-                                properties: 
-                                  type: 
-                                    type: string
-                                    example: array
-                                  description: 
-                                    type: string
-                                    example: The fields of the address for the local unit
-                                  items:
-                                    type: object
-                                    properties:
-                                      type:
-                                        type: string
-                                        example: string
-                                      minLength:
-                                        type: integer
-                                        example: 1
-                                  minItems:
-                                    type: integer
-                                    example: 1
-                                  uniqueItems:
-                                    type: boolean
-                                    example: true
-                                  examples:
-                                    type: array
-                                    items:
-                                      type: array
-                                      items:
-                                        type: string
-                                      example: ["WELLINGTON ROAD", "LOCHMABEN", "SWINDON", "BEDS", "GLOS", "DE41 2WA"]
-                          additionalProperties:
-                            type: boolean
-                            example: false
-                          required:
-                            type: array
-                            items:
-                              type: string
-                            example: ["identifier", "lu_name", "lu_address"]
-              additionalProperties:
-                type: boolean
-                example: false
-              required:
-                type: array
-                items:
-                  type: string
-                example: ["local_units"]
-      additionalProperties:
-        type: boolean
-        example: false
+    ExceptionResponseModel:
+      title: ExceptionResponseModel
       required:
-        type: array
-        items:
+      - status
+      - message
+      type: object
+      properties:
+        status:
+          title: Status
           type: string
-        example: ["schema_version", "identifier", "items"]
+        message:
+          title: Message
+          type: string
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    SchemaMetadata:
+      title: SchemaMetadata
+      required:
+      - survey_id
+      - schema_location
+      - sds_schema_version
+      - sds_published_at
+      - schema_version
+      - guid
+      type: object
+      properties:
+        survey_id:
+          title: Survey Id
+          type: string
+        schema_location:
+          title: Schema Location
+          type: string
+        sds_schema_version:
+          title: Sds Schema Version
+          type: integer
+        sds_published_at:
+          title: Sds Published At
+          type: string
+        schema_version:
+          title: Schema Version
+          type: string
+        guid:
+          title: Guid
+          type: string
+    ValidationError:
+      title: ValidationError
+      required:
+      - loc
+      - msg
+      - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string
