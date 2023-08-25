@@ -1,6 +1,7 @@
 import exception.exceptions as exceptions
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
+from fastapi.openapi.utils import get_openapi
 from fastapi.exceptions import RequestValidationError
 from logging_config import logging
 from routers import dataset_router, schema_router
@@ -11,6 +12,28 @@ app = FastAPI()
 app.description = "Open api schema for SDS"
 app.title = "Supplementary Data Service"
 app.version = "1.0.0"
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+                title=app.title,
+                version=app.version,
+                description=app.description,
+                routes=app.routes,
+            )
+        
+    for _, method_item in openapi_schema.get('paths').items():
+            for _, param in method_item.items():
+                responses = param.get('responses')
+                # remove 422 response, also can remove other status code
+                if '422' in responses:
+                    del responses['422']
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+app.openapi = custom_openapi
 
 app.add_exception_handler(
     exceptions.ExceptionIncorrectSchemaKey,

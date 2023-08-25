@@ -17,15 +17,10 @@ if __name__ == "__main__":
 
     print(f"importing app from {args.app}")
     app = import_from_string(args.app)
-    openapi = get_openapi(
-        title=app.title,
-        version=app.version,
-        description=app.description,
-        routes=app.routes,
-    )
-    version = openapi.get("openapi", "unknown version")
+    openapi = app.openapi()
+    #version = openapi.get("openapi", "unknown version")
 
-    print(f"writing openapi spec v{version}")
+    #print(f"writing openapi spec v{version}")
 
     if not args.out.endswith(".yaml"):
         print(f"Error, only yaml file is accepted")

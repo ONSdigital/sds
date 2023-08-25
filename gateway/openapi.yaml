@@ -63,12 +63,6 @@ paths:
               example:
                 status: error
                 message: No unit data found
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /v1/dataset_metadata:
     get:
       summary: Get Dataset Metadata Collection
@@ -133,12 +127,6 @@ paths:
               example:
                 status: error
                 message: No datasets found
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /v1/schema:
     get:
       summary: Get Schema From Bucket
@@ -199,12 +187,6 @@ paths:
               example:
                 status: error
                 message: No schema found
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
     post:
       summary: Post Schema
       description: 'Posts the schema metadata to be processed.
@@ -258,12 +240,6 @@ paths:
               example:
                 status: error
                 message: Unable to process request
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /v2/schema:
     get:
       summary: Get Schema From Bucket With Guid
@@ -316,12 +292,6 @@ paths:
               example:
                 status: error
                 message: No schema found
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
   /v1/schema_metadata:
     get:
       summary: Get Schema Metadata Collection
@@ -380,12 +350,6 @@ paths:
               example:
                 status: error
                 message: No results found
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     DatasetMetadata:
