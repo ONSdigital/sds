@@ -3,7 +3,7 @@ name: Main
 on:
   push:
     branches:
-      - "SDSS-177*"
+      - main
 
 jobs:
   docker-push:
