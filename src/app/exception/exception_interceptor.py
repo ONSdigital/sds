@@ -2,6 +2,8 @@ from exception.exception_responder import ExceptionResponder
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
+import Slack_posts
+
 
 class ExceptionInterceptor:
     def throw_500_global_exception(request: Request, exc: Exception) -> JSONResponse:
@@ -11,6 +13,7 @@ class ExceptionInterceptor:
         er = ExceptionResponder(
             status.HTTP_500_INTERNAL_SERVER_ERROR, "error", "Unable to process request"
         )
+        Slack_posts.send_slack_notification("An error has occured in the application")
         return er.throw_er_with_json()
 
     def throw_400_validation_exception(
@@ -22,6 +25,7 @@ class ExceptionInterceptor:
         er = ExceptionResponder(
             status.HTTP_400_BAD_REQUEST, "error", "Validation has failed"
         )
+        Slack_posts.send_slack_notification("An error has occured in the application")
         return er.throw_er_with_json()
 
     def throw_400_incorrect_schema_key_exception(
