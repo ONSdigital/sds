@@ -149,9 +149,5 @@ lint-fix:
 	black .
 	isort . --profile black
 
-audit:
- 	python -m pip_audit
-
-
 setup: requirements.txt
 	pip install -r requirements.txt
