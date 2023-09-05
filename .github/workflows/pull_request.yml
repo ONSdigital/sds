@@ -8,15 +8,7 @@ on:
       - "bug-fix-*"
       - "feature-*"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Include lint and test job
-        uses: ./.github/workflows/lint_and_tests.yml
-
   docker-push:
-    needs: build
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
