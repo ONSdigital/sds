@@ -31,18 +31,9 @@ steps:
       - |
         make audit
 
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull image from dockerhub'
-    args: ['pull', 'onsdigital/sds']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with SHA'
-    args: ['tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA Tagged Image to GCR'
-    args: ['push', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
+    args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:latest',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'

@@ -3,7 +3,7 @@ name: Main
 on:
   push:
     branches:
-      - main
+      - "testing-docker-build-and-pull-image"
 
 jobs:
   docker-push:
