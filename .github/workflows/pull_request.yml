@@ -9,17 +9,8 @@ on:
       - "feature-*"
 
 jobs:
-
-  lint-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Include lint and test job
-      - uses: .github/workflows/lint_and_test.yml
-
   docker-push:
-    needs: lint-test
     runs-on: ubuntu-22.04
-
     steps:
       - uses: actions/checkout@v3
       - name: Write app version
