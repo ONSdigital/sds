@@ -29,9 +29,10 @@ class ConfigFactoryTest(TestCase):
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
         os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
+        os.environ["PUBSUB_EMULATOR_HOST"] = testConfigVars.pubsub_emulator_host
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["API_URL"] = testConfigVars.api_url
-        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
+        os.environ["OAUTH_CLIENT_ID"] = testConfigVars.oauth_client_id
 
     def tearDown(self):
         os.environ["CONF"] = INITIAL_CONF
@@ -43,7 +44,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["STORAGE_EMULATOR_HOST"] = ""
         os.environ["SCHEMA_BUCKET_NAME"] = ""
         os.environ["API_URL"] = ""
-        os.environ["ACCESS_TOKEN"] = ""
+        os.environ["OAUTH_CLIENT_ID"] = ""
 
     def test_docker_dev_factory(self):
         os.environ["CONF"] = "docker-dev"

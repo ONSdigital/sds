@@ -1,18 +1,27 @@
 import json
-import os
-import shutil
 import time
-from pathlib import Path
+from datetime import datetime
 
-import google.auth.transport.requests
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
-from firebase_admin import firestore
+from google.cloud import storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
+
+from src.integration_tests.helpers.bucket_helpers import (
+    delete_blobs,
+    delete_local_bucket_data,
+)
+from src.integration_tests.helpers.firestore_helpers import (
+    delete_local_firestore_data,
+    perform_delete_transaction,
+)
+from src.integration_tests.helpers.pubsub_helper import PubSubHelper
+
+storage_client = storage.Client()
 
 
 def setup_session() -> requests.Session:
@@ -45,12 +54,16 @@ def generate_headers() -> dict[str, str]:
         dict[str, str]: the headers required for remote authentication.
     """
     headers = {}
-    auth_token = os.environ.get("ACCESS_TOKEN")
-    if auth_token is None:
-        auth_req = google.auth.transport.requests.Request()
-        auth_token = google.oauth2.id_token.fetch_id_token(auth_req, config.API_URL)
 
-    headers = {"Authorization": f"Bearer {auth_token}"}
+    auth_req = google.auth.transport.requests.Request()
+    auth_token = google.oauth2.id_token.fetch_id_token(
+        auth_req, audience=config.OAUTH_CLIENT_ID
+    )
+
+    headers = {
+        "Authorization": f"Bearer {auth_token}",
+        "Content-Type": "application/json",
+    }
 
     return headers
 
@@ -69,6 +82,16 @@ def load_json(filepath: str) -> dict:
         return json.load(f)
 
 
+def create_filepath(file_prefix: str):
+    """
+    Creates a filepath for uploading a dataset file to a bucket
+
+    Parameters:
+        file_prefix: prefix to identify the file being uploaded
+    """
+    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
+
+
 def create_dataset(
     filename: str, dataset: dict, session: requests.Session, headers: dict[str, str]
 ) -> int | None:
@@ -84,7 +107,7 @@ def create_dataset(
     Returns:
         int | None: status code for local function and no return for remote.
     """
-    if config.API_URL.__contains__("local"):
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers)
@@ -121,7 +144,7 @@ def _create_remote_dataset(
     Returns:
         None
     """
-    bucket = bucket_loader.get_dataset_bucket()
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
@@ -179,93 +202,32 @@ def cleanup() -> None:
     Returns:
         None
     """
-    if config.API_URL.__contains__("local"):
-        _delete_local_firestore_data()
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
+        delete_local_firestore_data()
 
-        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
-
-        _delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
+        delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
+        delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        _delete_blobs(bucket_loader.get_dataset_bucket())
+        delete_blobs(bucket_loader.get_dataset_bucket())
+        delete_blobs(bucket_loader.get_schema_bucket())
 
-        _delete_blobs(bucket_loader.get_schema_bucket())
+        client = firebase_loader.get_client()
 
-        _delete_collection(firebase_loader.get_datasets_collection())
-
-        _delete_collection(firebase_loader.get_schemas_collection())
-
-
-def _delete_local_firestore_data():
-    """
-    Method to cleanup local test data in the emulated firestore instance.
-
-    Parameters:
-        None
-
-    Returns:
-        None
-    """
-    requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
-    )
+        perform_delete_transaction(
+            client.transaction(),
+            firebase_loader.get_datasets_collection(),
+        )
+        perform_delete_transaction(
+            client.transaction(),
+            firebase_loader.get_schemas_collection(),
+        )
 
 
-def _delete_local_bucket_data(filepath: str):
-    """
-    Method to cleanup local test data in the bucket instance.
-
-    Parameters:
-        filepath: the filepath for the bucket instance to be deleted
-
-    Returns:
-        None
-    """
-    path_instance = Path(filepath)
-    if Path.is_dir(path_instance):
-        shutil.rmtree(path_instance)
+def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+    """Creates any subscribers that may be used in tests"""
+    pubsub_helper.try_create_subscriber(subscriber_id)
 
 
-def _delete_blobs(bucket) -> None:
-    """
-    Method to delete all blobs in the specified bucket.
-
-    Parameters:
-        bucket: the bucket to clean
-
-    Returns:
-        None
-    """
-    blobs = bucket.list_blobs()
-
-    for blob in blobs:
-        blob.delete()
-
-
-def _delete_collection(collection_ref: firestore.CollectionReference) -> None:
-    """
-    Recursively deletes the collection and its subcollections.
-    Parameters:
-    collection_ref (firestore.CollectionReference): the reference of the collection being deleted.
-    """
-    doc_collection = collection_ref.stream()
-
-    for doc in doc_collection:
-        _recursively_delete_document_and_sub_collections(doc.reference)
-
-
-def _recursively_delete_document_and_sub_collections(
-    doc_ref: firestore.DocumentReference,
-) -> None:
-    """
-    Loops through each collection in a document and deletes the collection.
-    Parameters:
-    doc_ref (firestore.DocumentReference): the reference of the document being deleted.
-    """
-    for collection_ref in doc_ref.collections():
-        _delete_collection(collection_ref)
-
-    doc_ref.delete()
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
+def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
+    """Deletes subscribers that may have been used in tests"""
+    pubsub_helper.try_delete_subscriber(subscriber_id)

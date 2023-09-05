@@ -14,13 +14,13 @@ steps:
     args: [ 'pull', 'onsdigital/sds' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Tag the image with SHA'
-    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA' ]
+    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push SHA Tagged Image to GCR'
-    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA' ]
+    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA',
+    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -47,6 +47,6 @@ options:
 
 # Store images in Google Artifact Registry
 images:
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${SHORT_SHA}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${TAG_NAME}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:latest
+  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}
+  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest

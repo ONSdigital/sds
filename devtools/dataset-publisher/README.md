@@ -13,19 +13,23 @@ curl -X POST localhost:3006 \
 -d '{ "survey_id": "NRX",
   "period_id": "ttt",
   "title": "Which side was better?",
-  "sds_schema_version": 4,
   "schema_version": "v1.0.0",
+  "form_types": [
+    "klk",
+    "xyz",
+    "tzr"
+  ],
   "data": [
     {
-      "ruref": "43532",
+      "identifier": "43532",
       "runame": "Pipes and Maps Ltd",
       "local_unit": [
         {
-          "luref": "2012763A",
+          "identifier": "2012763A",
           "luname": "Maps Factory"
         },
         {
-          "luref": "20127364B",
+          "identifier": "20127364B",
           "luname": "Pipes R Us Subsidiary"
         }
       ]

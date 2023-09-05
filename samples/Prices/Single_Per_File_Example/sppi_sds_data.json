@@ -1,9 +1,9 @@
 {
   "reporting_unit": {
-    "ruref": "12345678901A",
+    "identifier": "12345678901A",
     "service": [
       {
-        "ruref": "12345678901A",
+        "identifier": "12345678901A",
         "item_no": "2211200001",
         "service_name": "SERVICE: PIPE REPAIRS",
         "description_1": "DESCRIPTION: REPAIRING PREVIOUSLY SOLD PIPES",
@@ -16,7 +16,7 @@
         "previous_item_date1": "01/03/2022"
       },
       {
-        "ruref": "12345678901A",
+        "identifier": "12345678901A",
         "item_no": "2211200002",
         "service_name": "SERVICE: FIELD MAPPING",
         "description_1": "DESCRIPTION: JOURNEYS IN MIDDLE EARTH TO CREATE MAPS",

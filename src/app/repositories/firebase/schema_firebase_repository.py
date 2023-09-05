@@ -1,10 +1,6 @@
-from dataclasses import asdict
-from typing import Generator
-
 from firebase_admin import firestore
 from google.cloud.firestore import Transaction
-from google.cloud.firestore_v1.document import DocumentSnapshot
-from models.schema_models import Schema, SchemaMetadata
+from models.schema_models import SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.firebase_loader import firebase_loader
 
@@ -15,28 +11,34 @@ class SchemaFirebaseRepository:
         self.schemas_collection = firebase_loader.get_schemas_collection()
         self.schema_bucket_repository = SchemaBucketRepository()
 
-    def get_latest_schema_with_survey_id(
+    def get_latest_schema_metadata_with_survey_id(
         self, survey_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    ) -> SchemaMetadata | None:
         """
-        Gets a stream of the most up to date schema in firestore with a specific survey id.
+        Gets a stream of the most up to date schema metadata in firestore with a specific survey id.
 
         Parameters:
         survey_id (str): The survey id of the dataset.
         """
 
-        return (
+        latest_schema = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
             .limit(1)
             .stream()
         )
 
+        schema_metadata: SchemaMetadata = None
+        for returned_schema in latest_schema:
+            schema_metadata: SchemaMetadata = {**returned_schema.to_dict()}
+
+        return schema_metadata
+
     def perform_new_schema_transaction(
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
-        schema: Schema,
+        schema: dict,
         stored_schema_filename: str,
     ) -> None:
         """
@@ -45,7 +47,7 @@ class SchemaFirebaseRepository:
         Parameters:
         schema_id (str): The unique id of the new schema.
         next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
-        schema (Schema): The schema being stored.
+        schema (dict): The schema being stored.
         stored_schema_filename (str): Filename of uploaded json schema.
         """
 
@@ -79,7 +81,7 @@ class SchemaFirebaseRepository:
 
         transaction.set(
             self.schemas_collection.document(schema_id),
-            asdict(schema_metadata),
+            schema_metadata,
             merge=True,
         )
 
@@ -119,9 +121,20 @@ class SchemaFirebaseRepository:
         for schema in schemas_result:
             return schema.to_dict()["schema_location"]
 
-    def get_schema_metadata_collection(
-        self, survey_id: str
-    ) -> Generator[DocumentSnapshot, None, None]:
+    def get_schema_bucket_filename_with_guid(self, guid: str) -> str:
+        """
+        Gets the filename of the schema of a specific guid. Should only ever return one entry.
+
+        Parameters:
+        guid (str): The guid of the survey being queried.
+        """
+
+        schemas_result = self.schemas_collection.where("guid", "==", guid).stream()
+
+        for schema in schemas_result:
+            return schema.to_dict()["schema_location"]
+
+    def get_schema_metadata_collection(self, survey_id: str) -> list[SchemaMetadata]:
         """
         Gets the collection of schema metadata with a specific survey id.
 
@@ -129,4 +142,15 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the schema metadata being collected.
         """
 
-        return self.schemas_collection.where("survey_id", "==", survey_id).stream()
+        returned_schema_metadata = (
+            self.schemas_collection.where("survey_id", "==", survey_id)
+            .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+            .stream()
+        )
+
+        schema_metadata_list: list[SchemaMetadata] = []
+        for schema_metadata in returned_schema_metadata:
+            metadata: SchemaMetadata = {**(schema_metadata.to_dict())}
+            schema_metadata_list.append(metadata)
+
+        return schema_metadata_list

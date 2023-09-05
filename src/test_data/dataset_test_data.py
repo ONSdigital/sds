@@ -25,88 +25,89 @@ cloud_event_invalid_filename_data = {
 
 unit_id = "test_unit_id"
 survey_id = "test_survey_id"
-early_dataset_version = 1
-new_dataset_version = 2
+period_id = "test_period_id"
+
+first_dataset_version = 1
+updated_dataset_version = 2
 
 
-dataset_metadata: DatasetMetadata = {
+dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
-    "sds_schema_version": 4,
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 1,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": early_dataset_version,
+    "sds_dataset_version": first_dataset_version,
     "filename": "test_filename.json",
 }
 
-dataset_metadata_collection_no_id: list[DatasetMetadataWithoutId] = [
+dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{survey_id}_1",
-        "period_id": "abc",
+        "period_id": period_id,
+        "form_types": ["123", "456", "789"],
         "title": "Which side was better?",
-        "sds_schema_version": 4,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": early_dataset_version,
+        "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
+        "dataset_id": "0",
     },
     {
         "survey_id": f"{survey_id}_2",
-        "period_id": "abc",
+        "period_id": period_id,
+        "form_types": ["abc", "def", "hij"],
         "title": "Which side was better 2?",
-        "sds_schema_version": 4,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,
         "schema_version": "v1.0.0",
-        "sds_dataset_version": new_dataset_version,
+        "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
+        "dataset_id": "1",
     },
 ]
 
-existing_dataset_unit_data_collection: list[UnitDataset] = [
-    {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
-        "schema_version": "v1.0.0",
-        "data": {"test": "data", "ruref": "12345"},
-    },
-    {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
-        "schema_version": "v1.0.0",
-        "data": {"hello": "world", "ruref": "56789"},
-    },
-]
-
-
-updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
-    "period_id": "abc",
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
-    "sds_schema_version": 4,
     "sds_published_at": "2023-04-20T12:00:00Z",
     "total_reporting_units": 2,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": new_dataset_version,
+    "sds_dataset_version": first_dataset_version,
     "filename": "test_filename.json",
+}
+
+updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+    "survey_id": survey_id,
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
+    "title": "Which side was better?",
+    "sds_published_at": "2023-04-20T12:00:00Z",
+    "total_reporting_units": 2,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": updated_dataset_version,
+    "filename": "test_filename.json",
+}
+
+updated_dataset_metadata: DatasetMetadata = {
+    **updated_dataset_metadata_without_id,
+    "dataset_id": shared_test_data.test_guid,
 }
 
 unit_supplementary_data: UnitDataset = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
-    "period_id": "abc",
-    "sds_schema_version": 4,
+    "period_id": period_id,
     "schema_version": "v1.0.0",
+    "form_types": ["klk", "xyz", "tzr"],
     "data": {
-        "ruref": unit_id,
+        "identifier": unit_id,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",
@@ -116,7 +117,7 @@ unit_supplementary_data: UnitDataset = {
         "busdesc": "Provision of equipment for hobbit adventures",
         "local_unit": [
             {
-                "luref": "2012763A",
+                "identifier": "2012763A",
                 "luname": "Maps Factory",
                 "luaddr1": "1 Bag End",
                 "luaddr2": "Underhill",
@@ -126,7 +127,7 @@ unit_supplementary_data: UnitDataset = {
                 "busdesc": "Creates old fashioned looking paper maps",
             },
             {
-                "luref": "20127364B",
+                "identifier": "20127364B",
                 "luname": "Pipes R Us Subsidiary",
                 "luaddr1": "12 The Farmstead",
                 "luaddr2": "Maggotsville",
@@ -143,19 +144,19 @@ dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
+        "period_id": period_id,
         "schema_version": "v1.0.0",
+        "form_types": ["klk", "xyz", "tzr"],
         "data": "<encrypted data>",
     },
     {
         "dataset_id": shared_test_data.test_guid,
         "survey_id": survey_id,
-        "period_id": "abc",
-        "sds_schema_version": 4,
+        "period_id": period_id,
         "schema_version": "v1.0.0",
+        "form_types": ["klk", "xyz", "tzr"],
         "data": {
-            "ruref": "65871",
+            "identifier": "65871",
             "runame": "Boats and Floats Ltd",
             "ruaddr1": "111 Upper Hill",
             "ruaddr2": "Mordor",
@@ -164,7 +165,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
             "busdesc": "Provision of equipment for the bad guys.",
             "local_unit": [
                 {
-                    "luref": "2012763A",
+                    "identifier": "2012763A",
                     "luname": "Arms Factory",
                     "luaddr1": "1 Bag End",
                     "luaddr2": "Underhill",
@@ -174,7 +175,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "busdesc": "Creates old fashioned looking paper maps",
                 },
                 {
-                    "luref": "20127364B",
+                    "identifier": "20127364B",
                     "luname": "Swords Subsidiary",
                     "luaddr1": "12 The Farmstead",
                     "luaddr2": "Maggotsville",
@@ -184,7 +185,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
                     "buslref": "pipe123",
                 },
                 {
-                    "luref": "20127365C",
+                    "identifier": "20127365C",
                     "luname": "Armor N Things",
                     "luaddr1": "5 Barrow Lane",
                     "luaddr2": "Striderton",
@@ -197,11 +198,34 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_unit_data_ruref: list[str] = ["43532", "65871"]
+dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 
 missing_keys_dataset_metadata = {
-    "period_id": "test_period_id",
-    "sds_schema_version": "test_sds_schema_version",
+    "period_id": period_id,
     "schema_version": 1,
-    "data": [{"unit_data": "test_data", "ruref": "12345"}],
+    "form_types": [
+        "abc",
+        "def",
+        "ghi",
+    ],
+    "data": [{"unit_data": "test_data", "identifier": "12345"}],
+}
+
+
+nonrandom_pubsub_dataset_metadata = {
+    "survey_id": survey_id,
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
+    "title": "Which side was better?",
+    "total_reporting_units": 2,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": 1,
+}
+
+unit_response = {
+    "schema_version": "v1.0.0",
+    "survey_id": survey_id,
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
+    "data": "<encrypted data>",
 }

@@ -1,18 +1,17 @@
+from exception.exception_response_models import ExceptionResponseModel
 from fastapi.responses import JSONResponse
 
 
 class ExceptionResponder:
     status_code: int
-    status: str
-    message: str
+    response: ExceptionResponseModel
 
-    def __init__(self, status_code: int, status: str, message: str):
+    def __init__(self, status_code: int, response: ExceptionResponseModel) -> None:
         self.status_code = status_code
-        self.status = status
-        self.message = message
+        self.response = response
 
     def throw_er_with_json(self) -> JSONResponse:
         return JSONResponse(
             status_code=self.status_code,
-            content={"status": self.status, "message": self.message},
+            content=self.response.__dict__,
         )

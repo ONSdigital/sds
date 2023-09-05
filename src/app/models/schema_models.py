@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from pydantic import BaseModel, Field
-
 
 @dataclass
 class SchemaMetadataWithoutGuid:
@@ -9,20 +7,9 @@ class SchemaMetadataWithoutGuid:
     schema_location: str
     sds_schema_version: int
     sds_published_at: str
+    schema_version: str
 
 
 @dataclass
 class SchemaMetadata(SchemaMetadataWithoutGuid):
     guid: str
-
-
-class Schema(BaseModel):
-    survey_id: str
-    title: str
-    description: str
-    schema_version: str
-    sample_unit_key_field: str
-    properties: list
-    examples: list
-    d_schema: str = Field(alias="$schema")
-    d_id: str = Field(alias="$id")

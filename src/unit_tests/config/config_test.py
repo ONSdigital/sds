@@ -8,13 +8,14 @@ class testConfigVars:
     conf = "unit"
     datset_bucket_name = "test_dataset_bucket"
     schema_bucket_name = "test_schema_bucket_name"
-    firestore_host = "test_firestore_emulatorHost"
-    storage_host = "test_storage_emulatorHost"
+    firestore_host = "test_firestore_emulator_host"
+    storage_host = "test_storage_emulator_host"
+    pubsub_emulator_host = "test_pubsub_emulator_host"
     app_credentials = "test_app_credentials"
     dataset_path = "test_dataset_path"
     schema_path = "test_schema_path"
-    api_url = "test_API_url"
-    access_token = "test_access_token"
+    api_url = "test_api_url"
+    oauth_client_id = "test_oauth_client_id"
 
 
 class ConfigTest(TestCase):
@@ -195,7 +196,6 @@ class ConfigTest(TestCase):
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
-        os.environ["ACCESS_TOKEN"] = testConfigVars.access_token
 
         testConfig = config.IntegrationTestCloudbuildConfig()
 
@@ -206,5 +206,4 @@ class ConfigTest(TestCase):
             and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
             and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
             and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
-            and testConfig.ACCESS_TOKEN == testConfigVars.access_token
         )

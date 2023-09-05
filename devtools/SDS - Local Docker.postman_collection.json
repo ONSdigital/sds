@@ -1,152 +1,230 @@
 {
-  "info": {
-    "_postman_id": "bd31fce8-e47c-489d-9563-b3e031b09e16",
-    "name": "SDS - Local Docker",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Publish Schema",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"https://ons.gov.uk/roofing_tiles_schema_for_data.schema.json\",\n  \"survey_id\": \"068\",\n  \"title\": \"Roofing Tiles\",\n  \"description\": \"Roofing Tiles\",\n  \"schema_version\": \"v2.1.0\",\n  \"sample_unit_key_field\": \"ruref\",\n  \"properties\": [\n    {\n      \"type\": \"object\",\n      \"required\": [\n        \"ruref\"\n      ],\n      \"properties\": {\n        \"ruref\": {\n          \"type\": \"string\"\n        },\n        \"runame\": {\n          \"type\": \"string\",\n          \"Description\": \"The reporting unit name.\"\n        },\n        \"ruaddr\": {\n          \"type\": \"List\",\n          \"Description\": \"This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr\"\n        },\n        \"repeats\": {\n          \"type\": \"array\",\n          \"required\": [\n            \"luref\"\n          ],\n          \"properties\": {\n            \"key_field\": \"luref\",\n            \"luref\": {\n              \"type\": \"string\"\n            },\n            \"luname\": {\n              \"type\": \"string\"\n            },\n            \"luaddr\": {\n              \"type\": \"List\",\n              \"Description\": \"This will be a list of lines building up the address. eg, 1 hereilive place, london, ln1 1nr\"\n            }\n          }\n        }\n      }\n    }\n  ],\n  \"examples\": [\n    {\n      \"ruref\": \"43532\",\n      \"runame\": \"Pipes and Maps Ltd\",\n      \"ruaddr\": [\n        \"111 Under Hill\",\n        \"Hobbitton\",\n        \"The Shire\",\n        \"HO1 1AA\"\n      ],\n      \"local_unit\": [\n        {\n          \"luref\": \"2012763A\",\n          \"luname\": \"Maps Factory\",\n          \"luaddr\": [\n            \"1 Bag End\",\n            \"Underhill\",\n            \"Hobbiton\",\n            \"HO1 1AA\"\n          ]\n        },\n        {\n          \"luref\": \"20127364B\",\n          \"luname\": \"Pipes R Us Subsidiary\",\n          \"luaddr\": [\n            \"12 The Farmstead\",\n            \"Maggotsville\",\n            \"Hobbiton\",\n            \"HO1 1AB\"\n          ]\n        },\n        {\n          \"luref\": \"20127365C\",\n          \"luname\": \"Rings N Things\",\n          \"luaddr\": [\n            \"5 Barrow Lane\",\n            \"Striderton\",\n            \"Bree\",\n            \"BR1 1AC\"\n          ]\n        },\n        {\n          \"luref\": \"20127366D\",\n          \"luname\": \"Tobacco Sales Inc\",\n          \"luaddr\": [\n            \"23 Rosie Avenue\",\n            \"Buckhampton\",\n            \"BU55 9ZZ\"\n          ]\n        }\n      ]\n    }\n  ]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://127.0.0.1:3000/v1/schema",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3000",
-          "path": ["v1", "schema"]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Schema Metadata",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:3000/v1/schema_metadata?survey_id=068",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3000",
-          "path": ["v1", "schema_metadata"],
-          "query": [
-            {
-              "key": "survey_id",
-              "value": "068"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Schema",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:3000/v1/schema?survey_id=068&version=1",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3000",
-          "path": ["v1", "schema"],
-          "query": [
-            {
-              "key": "survey_id",
-              "value": "068"
-            },
-            {
-              "key": "version",
-              "value": "1"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Simulate SDX Dataset Publish",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"survey_id\": \"NRX\",\n    \"period_id\": \"ttt\",\n    \"title\": \"Which side was better?\",\n    \"sds_schema_version\": 4,\n    \"schema_version\": \"v1.0.0\",\n    \"data\": [\n        {\n            \"ruref\": \"43532\",\n            \"unit_data\": {\n                \"ruref\": \"43532\",\n                \"runame\": \"Pipes and Maps Ltd\",\n                \"local_unit\": [\n                    {\n                        \"luref\": \"2012763A\",\n                        \"luname\": \"Maps Factory\"\n                    },\n                    {\n                        \"luref\": \"20127364B\",\n                        \"luname\": \"Pipes R Us Subsidiary\"\n                    }\n                ]\n            }\n        },\n        {\n            \"ruref\": \"65871\",\n            \"unit_data\": {\n                \"ruref\": \"65871\",\n                \"runame\": \"Boats and Floats Ltd\",\n                \"local_unit\": [\n                    {\n                        \"luref\": \"2012763A\",\n                        \"luname\": \"Arms Factory\"\n                    },\n                    {\n                        \"luref\": \"20127364B\",\n                        \"luname\": \"Swords Subsidiary\"\n                    },\n                    {\n                        \"luref\": \"20127365C\",\n                        \"luname\": \"Armor N Things\"\n                    }\n                ]\n            }\n        }\n    ]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:3006",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3006"
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Dataset Metadata",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:3000/v1/dataset_metadata?survey_id=NRX&period_id=ttt",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3000",
-          "path": ["v1", "dataset_metadata"],
-          "query": [
-            {
-              "key": "survey_id",
-              "value": "NRX"
-            },
-            {
-              "key": "period_id",
-              "value": "ttt"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Dataset Unit Data",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://127.0.0.1:3000/v1/unit_data?dataset_id=2485372e-f2ac-4fb7-9c08-588b8ed26b53&unit_id=43532",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3000",
-          "path": ["v1", "unit_data"],
-          "query": [
-            {
-              "key": "dataset_id",
-              "value": "2485372e-f2ac-4fb7-9c08-588b8ed26b53"
-            },
-            {
-              "key": "unit_id",
-              "value": "43532"
-            }
-          ]
-        }
-      },
-      "response": []
-    }
-  ]
+	"info": {
+		"_postman_id": "e572364b-9f1e-48dc-b0b3-f4984c073a3b",
+		"name": "SDS - Local Docker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27074658"
+	},
+	"item": [
+		{
+			"name": "Publish Schema",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n  \"$id\": \"roofing_tiles_and_slate.json\",\n  \"title\": \"SDS schema for the Roofing Tiles + Slate survey\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"schema_version\": {\n      \"const\": \"v1\",\n      \"description\": \"Version of the schema spec\"\n    },\n    \"identifier\": {\n      \"type\": \"string\",\n      \"description\": \"The unique top-level identifier. This is the reporting unit reference without the check letter appended\",\n      \"minLength\": 11,\n      \"pattern\": \"^[a-zA-Z0-9]+$\",\n      \"examples\": [\"34942807969\"]\n    },\n    \"items\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"local_units\": {\n          \"type\": \"array\",\n          \"description\": \"The data about each item\",\n          \"minItems\": 1,\n          \"uniqueItems\": true,\n          \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"identifier\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"description\": \"The unique identifier for the items. This is the local unit reference.\",\n                \"examples\": [\"3340224\"]\n              },\n              \"lu_name\": {\n                \"type\": \"string\",\n                \"minLength\": 1,\n                \"description\": \"Name of the local unit\",\n                \"examples\": [\"STUBBS BUILDING PRODUCTS LTD\"]\n              },\n              \"lu_address\": {\n                \"type\": \"array\",\n                \"description\": \"The fields of the address for the local unit\",\n                \"items\": {\n                  \"type\": \"string\",\n                  \"minLength\": 1\n                },\n                \"minItems\": 1,\n                \"uniqueItems\": true,\n                \"examples\": [\n                  [\n                    \"WELLINGTON ROAD\",\n                    \"LOCHMABEN\",\n                    \"SWINDON\",\n                    \"BEDS\",\n                    \"GLOS\",\n                    \"DE41 2WA\"\n                  ]\n                ]\n              }\n            },\n            \"additionalProperties\": false,\n            \"required\": [\"identifier\", \"lu_name\", \"lu_address\"]\n          }\n        }\n      },\n      \"additionalProperties\": false,\n      \"required\": [\"local_units\"]\n    }\n  },\n  \"additionalProperties\": false,\n  \"required\": [\"schema_version\", \"identifier\", \"items\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/v1/schema?survey_id=068",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"schema"
+					],
+					"query": [
+						{
+							"key": "survey_id",
+							"value": "068"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Schema Metadata",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/v1/schema_metadata?survey_id=068",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"schema_metadata"
+					],
+					"query": [
+						{
+							"key": "survey_id",
+							"value": "068"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Schema",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/v1/schema?survey_id=068&version=1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"schema"
+					],
+					"query": [
+						{
+							"key": "survey_id",
+							"value": "068"
+						},
+						{
+							"key": "version",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "v2 Schema",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/v2/schema?guid=a51a2d0f-8398-4b73-a4e7-528edd918a7f",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v2",
+						"schema"
+					],
+					"query": [
+						{
+							"key": "guid",
+							"value": "a51a2d0f-8398-4b73-a4e7-528edd918a7f"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Simulate SDX Dataset Publish",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"survey_id\": \"NRX\",\n    \"period_id\": \"ttt\",\n    \"form_types\": [\n    \"klk\",\n    \"xyz\",\n    \"tzr\"\n    ],\n    \"title\": \"Which side was better?\",\n    \"schema_version\": \"v1.0.0\",\n    \"data\": [\n        {\n            \"identifier\": \"43532\",\n            \"unit_data\": {\n                \"identifier\": \"43532\",\n                \"runame\": \"Pipes and Maps Ltd\",\n                \"local_unit\": [\n                    {\n                        \"identifier\": \"2012763A\",\n                        \"luname\": \"Maps Factory\"\n                    },\n                    {\n                        \"identifier\": \"20127364B\",\n                        \"luname\": \"Pipes R Us Subsidiary\"\n                    }\n                ]\n            }\n        },\n        {\n            \"identifier\": \"65871\",\n            \"unit_data\": {\n                \"identifier\": \"65871\",\n                \"runame\": \"Boats and Floats Ltd\",\n                \"local_unit\": [\n                    {\n                        \"identifier\": \"2012763A\",\n                        \"luname\": \"Arms Factory\"\n                    },\n                    {\n                        \"identifier\": \"20127364B\",\n                        \"luname\": \"Swords Subsidiary\"\n                    },\n                    {\n                        \"identifier\": \"20127365C\",\n                        \"luname\": \"Armor N Things\"\n                    }\n                ]\n            }\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3006",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3006"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dataset Metadata",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/v1/dataset_metadata?survey_id=NRX&period_id=ttt",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"dataset_metadata"
+					],
+					"query": [
+						{
+							"key": "survey_id",
+							"value": "NRX"
+						},
+						{
+							"key": "period_id",
+							"value": "ttt"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dataset Unit Data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:3000/v1/unit_data?dataset_id=2485372e-f2ac-4fb7-9c08-588b8ed26b53&unit_id=43532",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"unit_data"
+					],
+					"query": [
+						{
+							"key": "dataset_id",
+							"value": "2485372e-f2ac-4fb7-9c08-588b8ed26b53"
+						},
+						{
+							"key": "unit_id",
+							"value": "43532"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
 }

@@ -15,6 +15,8 @@ class Config(BaseSettings):
         )
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
+        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -22,6 +24,8 @@ class Config(BaseSettings):
     AUTODELETE_DATASET_BUCKET_FILE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
+    PUBLISH_SCHEMA_TOPIC_ID: str
+    PUBLISH_DATASET_TOPIC_ID: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -29,7 +33,6 @@ class IntegrationTestConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.API_URL = get_value_from_env("API_URL", "localhost")
         self.DATASET_BUCKET_NAME = get_value_from_env(
             "DATASET_BUCKET_NAME", "test_dataset_bucket"
         )
@@ -37,15 +40,19 @@ class IntegrationTestConfig(BaseSettings):
             "SCHEMA_BUCKET_NAME", "test_schema_bucket"
         )
         self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/dataset.json"
+            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
         self.TEST_SCHEMA_PATH = get_value_from_env(
-            "TEST_SCHEMA_PATH", "src/test_data/schema.json"
+            "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
         )
         self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
             "GOOGLE_APPLICATION_CREDENTIALS"
         )
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
+        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -53,9 +60,12 @@ class IntegrationTestConfig(BaseSettings):
     SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
-    API_URL: str
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
+    PUBLISH_SCHEMA_TOPIC_ID: str
+    PUBLISH_DATASET_TOPIC_ID: str
+    API_URL: str
+    OAUTH_CLIENT_ID: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -63,7 +73,6 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.API_URL = get_value_from_env("API_URL", "localhost")
         self.DATASET_BUCKET_NAME = get_value_from_env(
             "DATASET_BUCKET_NAME", "testDatasetBucket"
         )
@@ -71,13 +80,16 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
             "SCHEMA_BUCKET_NAME", "testSchemaBucket"
         )
         self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/dataset.json"
+            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
         self.TEST_SCHEMA_PATH = get_value_from_env(
-            "TEST_SCHEMA_PATH", "src/test_data/schema.json"
+            "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
         )
-        self.ACCESS_TOKEN = get_value_from_env("ACCESS_TOKEN")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
+        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -85,9 +97,11 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     SCHEMA_BUCKET_NAME: str
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
-    API_URL: str
-    ACCESS_TOKEN: str
     PROJECT_ID: str
+    PUBLISH_SCHEMA_TOPIC_ID: str
+    PUBLISH_DATASET_TOPIC_ID: str
+    API_URL: str
+    OAUTH_CLIENT_ID: str
 
 
 class CloudBuildConfig(BaseSettings):
@@ -102,6 +116,8 @@ class CloudBuildConfig(BaseSettings):
         )
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
+        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -110,6 +126,8 @@ class CloudBuildConfig(BaseSettings):
     AUTODELETE_DATASET_BUCKET_FILE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
+    PUBLISH_SCHEMA_TOPIC_ID: str
+    PUBLISH_DATASET_TOPIC_ID: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):
@@ -118,10 +136,12 @@ class ServiceEmulatorDevelopmentConfig(Config):
         self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
         self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
+        self.PUBSUB_EMULATOR_HOST = get_value_from_env("PUBSUB_EMULATOR_HOST")
 
     SCHEMA_BUCKET_NAME: str
     FIRESTORE_EMULATOR_HOST: str
     STORAGE_EMULATOR_HOST: str
+    PUBSUB_EMULATOR_HOST: str
 
 
 class CloudDevelopmentConfig(Config):

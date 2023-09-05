@@ -1,23 +1,25 @@
-from typing import Generator
+from typing import Literal
 
-from google.cloud.firestore_v1.document import DocumentSnapshot
+from models.dataset_models import DatasetMetadataWithoutId
 
 
 class DocumentVersionService:
     @staticmethod
     def calculate_survey_version(
-        document_current_version: Generator[DocumentSnapshot, None, None],
-        version_key: str,
+        document_current_version: dict | DatasetMetadataWithoutId,
+        version_key: Literal["sds_dataset_version", "sds_schema_version"],
     ) -> int:
         """
         Calculates the next version number of a document based on a version key, returning 1 by default if no document exists.
 
         Parameters:
-        version_key (str): the key being accessed to find out the document version.
+        document_current_version: document that the version is being calculated form
+        version_key: the key being accessed to find out the document version.
         """
-        try:
-            latest_version = next(document_current_version).to_dict()[version_key] + 1
-        except StopIteration:
-            latest_version = 1
+        if document_current_version is None:
+            return 1
 
-        return latest_version
+        if version_key not in document_current_version:
+            raise RuntimeError("Document must contain version key")
+
+        return document_current_version[version_key] + 1
