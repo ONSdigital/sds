@@ -1,6 +1,8 @@
 name: Lint and tests
 
-on: [ push ]
+on:
+  workflow_dispatch:
+    [ push ]
 
 jobs:
   build:

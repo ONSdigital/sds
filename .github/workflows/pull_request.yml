@@ -10,7 +10,12 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/lint_and_tests.yml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Include lint and tests job
+        uses: ./.github/workflows/lint_and_tests.yml
+        with:
+          workflow: "lint-and-tests-workflow"
 
   docker-push:
     needs: build
