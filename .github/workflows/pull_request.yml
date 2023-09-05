@@ -1,4 +1,4 @@
-name: Pull Request
+ame: Pull Request
 
 on:
   pull_request:
@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Include lint and test job
-      - uses: lint_and_tests.yml
-
+        uses: ./.github/workflows/lint_and_tests.yml
 
   docker-push:
     needs: lint-test
@@ -26,7 +25,7 @@ jobs:
       - name: Set Image Tag
         id: set-tag
         run: |
-          CLEAN_TAG=$(echo "${{ github.event.pull_request.head.ref  }}"  | tr / -)
+          CLEAN_TAG=$(echo "${{ github.event.pull_request.head.ref }}"  | tr / -)
           echo "TAG=$CLEAN_TAG" >> $GITHUB_ENV
       - name: Build
         run: >
