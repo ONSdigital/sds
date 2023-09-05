@@ -1,6 +1,9 @@
 name: Pull Request
 
 on:
+  workflow_run:
+    workflows: ["Lint and tests"]
+    types: [completed]
   pull_request:
     branches:
       - "main"
@@ -9,12 +12,10 @@ on:
       - "feature-*"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  docker-push:
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - name: Include lint and tests job
-        uses: ./.github/workflows/lint_and_tests.yml
       - name: Write app version
         run: printf "$GITHUB_SHA" > .application-version
       - name: Set Image Tag
