@@ -2,7 +2,9 @@ name: Lint and tests
 
 on:
   workflow_dispatch:
-    [ push ]
+  push:
+    branches:
+      - main
 
 jobs:
   build:
