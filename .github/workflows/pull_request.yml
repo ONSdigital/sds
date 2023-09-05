@@ -14,13 +14,6 @@ jobs:
     steps:
       - name: Include lint and tests job
         uses: ./.github/workflows/lint_and_tests.yml
-        with:
-          workflow: "lint-and-tests-workflow"
-
-  docker-push:
-    needs: build
-    runs-on: ubuntu-22.04
-    steps:
       - uses: actions/checkout@v3
       - name: Write app version
         run: printf "$GITHUB_SHA" > .application-version
