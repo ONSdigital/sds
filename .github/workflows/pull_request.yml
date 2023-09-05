@@ -9,8 +9,14 @@ on:
       - "feature-*"
 
 jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Include lint and test job
+      - uses: ./.github/workflows/lint_and_tests.yml
+
   docker-push:
-    needs: [build]
+    needs: lint-test
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
