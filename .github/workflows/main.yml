@@ -3,8 +3,7 @@ name: Main
 on:
   push:
     branches:
-      - "testing-docker-build-and-pull-image"
-
+      - main
 jobs:
   docker-push:
       runs-on: ubuntu-22.04
