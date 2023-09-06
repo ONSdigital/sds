@@ -7,7 +7,6 @@ on:
   pull_request:
     branches:
       - "main"
-      - "SDSS-196-Push-image-to-docker-hub-Github-workflow-build-on-defined-branch-names"
       - "bug-fix-*"
       - "feature-*"
 
