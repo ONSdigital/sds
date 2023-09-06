@@ -32,7 +32,7 @@ steps:
         make audit
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:branch_name',
+    args: [ 'run', 'deploy', 'sds', '--image', 'onsdigital/sds:{BRANCH_NAME}',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
