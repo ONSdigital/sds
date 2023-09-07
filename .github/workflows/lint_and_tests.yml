@@ -32,7 +32,6 @@ jobs:
           echo "Pushing with tag [$TAG]"
           docker push onsdigital/sds:$TAG
   build:
-    if: ${{ github.event.push }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
