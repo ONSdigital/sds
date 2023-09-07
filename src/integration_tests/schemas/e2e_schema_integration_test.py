@@ -59,20 +59,20 @@ class E2ESchemaIntegrationTest(TestCase):
         response_as_json = test_schema_get_response.json()
         assert len(response_as_json) > 0
 
-        for schema in response_as_json:
-            assert schema == {
-                "guid": schema["guid"],
+        for schema_metadata in response_as_json:
+            assert schema_metadata == {
+                "guid": schema_metadata["guid"],
                 "survey_id": test_survey_id,
-                "schema_location": f"{test_survey_id}/{schema['guid']}.json",
-                "sds_schema_version": schema["sds_schema_version"],
-                "sds_published_at": schema["sds_published_at"],
+                "schema_location": f"{test_survey_id}/{schema_metadata['guid']}.json",
+                "sds_schema_version": schema_metadata["sds_schema_version"],
+                "sds_published_at": schema_metadata["sds_published_at"],
                 "schema_version": test_schema["properties"]["schema_version"]["const"],
                 "title": test_schema["title"],
             }
 
             set_version_schema_response = session.get(
                 f"{config.API_URL}/v1/schema?"
-                f"survey_id={schema['survey_id']}&version={schema['sds_schema_version']}",
+                f"survey_id={schema_metadata['survey_id']}&version={schema_metadata['sds_schema_version']}",
                 headers=headers,
             )
 
@@ -80,7 +80,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_version_schema_response.json() == test_schema
 
             latest_version_schema_response = session.get(
-                f"{config.API_URL}/v1/schema?survey_id={schema['survey_id']}",
+                f"{config.API_URL}/v1/schema?survey_id={schema_metadata['survey_id']}",
                 headers=headers,
             )
 
@@ -88,7 +88,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert latest_version_schema_response.json() == test_schema
 
             set_guid_schema_response = session.get(
-                f"{config.API_URL}/v2/schema?guid={schema['guid']}",
+                f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
                 headers=headers,
             )
 
