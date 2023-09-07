@@ -1,9 +1,6 @@
 name: Pull Request
 
 on:
-  workflow_run:
-    workflows: ["Lint and tests"]
-    types: [completed]
   pull_request:
     branches:
       - "main"

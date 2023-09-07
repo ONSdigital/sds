@@ -1,6 +1,11 @@
 name: Lint and tests
 
-on: [ push ]
+on:
+  workflow_run:
+    workflows: [ "Pull Request" ]
+    types: [ completed ]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
