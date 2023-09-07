@@ -3,7 +3,7 @@ name: Lint and tests
 on:
   push:
     branches:
-    - '**'
+    - 'SDSS-196-Push-image-to-docker-hub-Github-workflow-build-on-defined-branch-names'
   pull_request:
     branches:
       - "main"
