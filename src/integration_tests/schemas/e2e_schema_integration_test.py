@@ -67,6 +67,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 "sds_schema_version": schema["sds_schema_version"],
                 "sds_published_at": schema["sds_published_at"],
                 "schema_version": test_schema["properties"]["schema_version"]["const"],
+                "title": test_schema["title"]
             }
 
             set_version_schema_response = session.get(

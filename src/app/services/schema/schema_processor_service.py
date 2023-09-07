@@ -96,6 +96,7 @@ class SchemaProcessorService:
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "schema_version": self.get_schema_version_from_properties(schema),
+            "title": schema["title"],
         }
         return next_version_schema_metadata
 
