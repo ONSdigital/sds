@@ -29,13 +29,10 @@ class SchemaValidatorService:
         # Means the field (properties > schema_version > const) must be a String
         # Finally, the field value will be validated that it is not a null value
         keys_definition_list = [
+            {"key_hierarchy": ["title"], "key_type": str},
             {
-                "key_hierarchy": ["title"], 
-                "key_type": str
-            },
-            {
-                "key_hierarchy": ["properties", "schema_version", "const"], 
-                "key_type": str
+                "key_hierarchy": ["properties", "schema_version", "const"],
+                "key_type": str,
             },
         ]
 
@@ -50,7 +47,7 @@ class SchemaValidatorService:
         schema (dict): schema to be validated
         keys_definition_list (list): a list of keys definition to validate schema
         """
-        
+
         for key_definition in keys_definition_list:
             rolling_field = schema
             key_hierarchy = key_definition["key_hierarchy"]
@@ -61,7 +58,7 @@ class SchemaValidatorService:
                 if key not in rolling_field:
                     logger.error(f"Required key '{key}' is not found in schema")
                     raise ValidationException
-                
+
                 # If not the last hierarchy, check the key is an object
                 if index != len(key_hierarchy) - 1:
                     if type(rolling_field[key]) != dict:
@@ -70,13 +67,14 @@ class SchemaValidatorService:
 
                     rolling_field = rolling_field[key]
                 else:
-                # If at the last hierarchy, check the key type matches definition
+                    # If at the last hierarchy, check the key type matches definition
                     if type(rolling_field[key]) != key_type:
-                        logger.error(f"Key '{key}' must be in type {key_type}, but it is now {type(rolling_field[key])}")
+                        logger.error(
+                            f"Key '{key}' must be in type {key_type}, but it is now {type(rolling_field[key])}"
+                        )
                         raise ValidationException
-                    
-                # Check the key field is not null
+
+                    # Check the key field is not null
                     if rolling_field[key] in (None, ""):
                         logger.error(f"Key '{key}' has no value in schema")
                         raise ValidationException
-            
