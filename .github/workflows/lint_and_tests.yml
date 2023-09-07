@@ -12,7 +12,7 @@ on:
 
 jobs:
   docker-push:
-    if: ${{ github.event.issue.pull_request }}
+    if: ${{ github.event.pull_request }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
           echo "Pushing with tag [$TAG]"
           docker push onsdigital/sds:$TAG
   build:
-    if: ${{ github.event.issue.push }}
+    if: ${{ github.event.push }}
     needs: [docker-push]
     runs-on: ubuntu-latest
     strategy:
