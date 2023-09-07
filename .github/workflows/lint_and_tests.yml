@@ -33,7 +33,6 @@ jobs:
           docker push onsdigital/sds:$TAG
   build:
     if: ${{ github.event.push }}
-    needs: [docker-push]
     runs-on: ubuntu-latest
     strategy:
       matrix:
