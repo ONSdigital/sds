@@ -5,7 +5,7 @@ on:
     workflows: [ "Pull Request" ]
     types: [ completed ]
   push:
-    branches: [ main ]
+    branches: [ * ]
 
 jobs:
   build:
