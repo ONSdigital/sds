@@ -32,6 +32,7 @@ jobs:
           echo "Pushing with tag [$TAG]"
           docker push onsdigital/sds:$TAG
   build:
+    needs: [docker-push]
     runs-on: ubuntu-latest
     strategy:
       matrix:
