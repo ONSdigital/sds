@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import MagicMock
 
 from config.config_factory import config
 from pytest import raises
