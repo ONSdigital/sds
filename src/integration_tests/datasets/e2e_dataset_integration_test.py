@@ -48,9 +48,14 @@ class E2EDatasetIntegrationTest(TestCase):
 
         first_dataset_filename = create_filepath("integration-test-first-file")
 
-        create_dataset_response_for_first_dataset = create_dataset(first_dataset_filename, first_dataset, session, headers)
+        create_dataset_response_for_first_dataset = create_dataset(
+            first_dataset_filename, first_dataset, session, headers
+        )
 
-        if create_dataset_response_for_first_dataset is not None and create_dataset_response_for_first_dataset != 200:
+        if (
+            create_dataset_response_for_first_dataset is not None
+            and create_dataset_response_for_first_dataset != 200
+        ):
             assert False, "Unsuccessful request to create dataset"
 
         if config.AUTODELETE_DATASET_BUCKET_FILE == True:
@@ -65,9 +70,14 @@ class E2EDatasetIntegrationTest(TestCase):
 
         second_dataset_filename = create_filepath("integration-test-second-file")
 
-        create_dataset_response_for_second_dataset = create_dataset(second_dataset_filename, second_dataset, session, headers)
+        create_dataset_response_for_second_dataset = create_dataset(
+            second_dataset_filename, second_dataset, session, headers
+        )
 
-        if create_dataset_response_for_second_dataset is not None and create_dataset_response_for_second_dataset != 200:
+        if (
+            create_dataset_response_for_second_dataset is not None
+            and create_dataset_response_for_second_dataset != 200
+        ):
             assert False, "Unsuccessful request to create dataset"
 
         if config.AUTODELETE_DATASET_BUCKET_FILE == True:
@@ -138,10 +148,16 @@ class E2EDatasetIntegrationTest(TestCase):
             test_dataset_subscriber_id
         )
 
-        for key, value in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
             assert received_messages[0][key] == value
 
-        for key, value in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
             assert received_messages[1][key] == value
 
     def test_different_period_and_survey_id(self):

@@ -14,9 +14,7 @@ class Config(BaseSettings):
         self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
             "AUTODELETE_DATASET_BUCKET_FILE"
         )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env(
-            "RETAIN_DATASET_FIRESTORE"
-        )
+        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
@@ -48,9 +46,7 @@ class IntegrationTestConfig(BaseSettings):
         self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
             "AUTODELETE_DATASET_BUCKET_FILE"
         )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env(
-            "RETAIN_DATASET_FIRESTORE"
-        )
+        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.TEST_DATASET_PATH = get_value_from_env(
             "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
@@ -96,9 +92,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
             "AUTODELETE_DATASET_BUCKET_FILE"
         )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env(
-            "RETAIN_DATASET_FIRESTORE"
-        )
+        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.TEST_DATASET_PATH = get_value_from_env(
             "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
@@ -136,9 +130,7 @@ class CloudBuildConfig(BaseSettings):
         self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
             "AUTODELETE_DATASET_BUCKET_FILE"
         )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env(
-            "RETAIN_DATASET_FIRESTORE"
-        )
+        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")

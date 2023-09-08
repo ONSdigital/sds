@@ -1,6 +1,7 @@
 from unittest import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
+from config.config_factory import config
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
@@ -9,9 +10,6 @@ from services.shared.publisher_service import PublisherService
 
 from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper
-
-from config.config_factory import config
-from unittest.mock import patch
 
 
 class ProcessDatasetTest(TestCase):
@@ -183,7 +181,9 @@ class ProcessDatasetTest(TestCase):
         ):
             TestHelper.new_dataset_mock(cloud_event)
 
-    def test_skip_perform_delete_previous_version_dataset_when_retention_flag_is_on(self):
+    def test_skip_perform_delete_previous_version_dataset_when_retention_flag_is_on(
+        self,
+    ):
         """
         Tests the deletion process is skipped when retention flag is on
         """
@@ -211,7 +211,9 @@ class ProcessDatasetTest(TestCase):
 
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
 
-    def test_skip_perform_delete_previous_version_dataset_when_dataset_upload_failed(self):
+    def test_skip_perform_delete_previous_version_dataset_when_dataset_upload_failed(
+        self,
+    ):
         """
         Tests the deletion process is skipped when dataset upload is failed
         """
@@ -238,4 +240,3 @@ class ProcessDatasetTest(TestCase):
         TestHelper.new_dataset_mock(cloud_event)
 
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
-

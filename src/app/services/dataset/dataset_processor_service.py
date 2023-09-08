@@ -244,7 +244,7 @@ class DatasetProcessorService:
         """
         logger.info("Determining whether to delete previous version of dataset...")
 
-        #Defensively set retention flag to True unless config explicitly stated as False
+        # Defensively set retention flag to True unless config explicitly stated as False
         retention_flag = True
         if config.RETAIN_DATASET_FIRESTORE == False:
             retention_flag = False
