@@ -58,7 +58,7 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        if config.AUTODELETE_DATASET_BUCKET_FILE == True:
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
             assert (
                 not storage.Client()
                 .bucket(config.DATASET_BUCKET_NAME)
@@ -80,7 +80,7 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        if config.AUTODELETE_DATASET_BUCKET_FILE == True:
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
             assert (
                 not storage.Client()
                 .bucket(config.DATASET_BUCKET_NAME)
@@ -95,7 +95,7 @@ class E2EDatasetIntegrationTest(TestCase):
         )
         assert dataset_metadata_response.status_code == 200
 
-        if config.RETAIN_DATASET_FIRESTORE == True:
+        if config.RETAIN_DATASET_FIRESTORE is True:
             assert len(dataset_metadata_response.json()) == 2
         else:
             assert len(dataset_metadata_response.json()) == 1
