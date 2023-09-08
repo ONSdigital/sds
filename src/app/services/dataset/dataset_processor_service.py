@@ -246,7 +246,7 @@ class DatasetProcessorService:
 
         # Defensively set retention flag to True unless config explicitly stated as False
         retention_flag = True
-        if config.RETAIN_DATASET_FIRESTORE == False:
+        if not config.RETAIN_DATASET_FIRESTORE:
             retention_flag = False
 
         if retention_flag is True:
