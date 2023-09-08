@@ -228,11 +228,28 @@ class DatasetProcessorService:
         current_dataset_period_id: str,
         current_dataset_version: int,
     ) -> None:
-        """ """
+        """
+        Determine whether to delete the previous version of dataset.
+        Retention flag either retain all datasets (True) or delete only the latest previous dataset (False).
+        This flow should be present until an updated data retention policy is formulated (Card SDSS-207).
+        Deletion of previous version of dataset happens when:
+        1. Retention flag is off (False)
+        2. The current version of dataset is > 1
+        3. The current dataset is successfully added to FireStore
+
+        Parameters:
+        current_dataset_survey_id (str): Survey id of current processing dataset
+        current_dataset_period_id (str): Period id of current processing dataset
+        current_dataset_version (int): Version of current processing dataset
+        """
         logger.info("Determining whether to delete previous version of dataset...")
 
-        dummy = False  # Retention flag
-        if dummy is True:
+        #Defensively set retention flag to True unless config explicitly stated as False
+        retention_flag = True
+        if config.RETAIN_DATASET_FIRESTORE == False:
+            retention_flag = False
+
+        if retention_flag is True:
             logger.info("Retention flag is on. Process is skipped")
             return None
 

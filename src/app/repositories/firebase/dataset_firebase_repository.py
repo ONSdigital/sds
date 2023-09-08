@@ -102,6 +102,7 @@ class DatasetFirebaseRepository:
         returned_dataset_metadata = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
+            .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .stream()
         )
 

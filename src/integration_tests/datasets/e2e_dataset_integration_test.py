@@ -29,42 +29,93 @@ class E2EDatasetIntegrationTest(TestCase):
 
     def test_dataset_e2e(self):
         """
-        Test that we can upload a dataset and then retrieve the data. This checks the cloud function worked.
+        Test that we can upload 2 datasets and then retrieve the data. This checks the cloud function worked
+        and the datasets are retained.
 
         * We load the sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
         * We then check the uploaded file has been deleted from the bucket
-        * We then use the API to get some unit data back using the dataset_id and a known ru_ref
+        * We repeat the steps for the second dataset
+        * We check the count and respective dataset version using dataset_metadata endpoint
+        * We then use the unit_data endpoint to get some unit data back using the dataset_id and a known unit identifier
         * The dataset id an auto generated GUID
+        * We check the pubsub messages
         """
         session = setup_session()
         headers = generate_headers()
 
-        dataset = load_json(config.TEST_DATASET_PATH)
+        first_dataset = load_json(config.TEST_DATASET_PATH)
 
-        filename = create_filepath("integration-test")
+        first_dataset_filename = create_filepath("integration-test-first-file")
 
-        create_dataset_response = create_dataset(filename, dataset, session, headers)
+        create_dataset_response_for_first_dataset = create_dataset(first_dataset_filename, first_dataset, session, headers)
 
-        if create_dataset_response is not None and create_dataset_response != 200:
+        if create_dataset_response_for_first_dataset is not None and create_dataset_response_for_first_dataset != 200:
             assert False, "Unsuccessful request to create dataset"
 
-        assert (
-            not storage.Client()
-            .bucket(config.DATASET_BUCKET_NAME)
-            .blob(filename)
-            .exists()
-        )
+        if config.AUTODELETE_DATASET_BUCKET_FILE == True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+
+        second_dataset = load_json(config.TEST_DATASET_PATH)
+
+        second_dataset_filename = create_filepath("integration-test-second-file")
+
+        create_dataset_response_for_second_dataset = create_dataset(second_dataset_filename, second_dataset, session, headers)
+
+        if create_dataset_response_for_second_dataset is not None and create_dataset_response_for_second_dataset != 200:
+            assert False, "Unsuccessful request to create dataset"
+
+        if config.AUTODELETE_DATASET_BUCKET_FILE == True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(second_dataset_filename)
+                .exists()
+            )
 
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset['survey_id']}&period_id={dataset['period_id']}",
+            f"survey_id={first_dataset['survey_id']}&period_id={first_dataset['period_id']}",
             headers=headers,
         )
         assert dataset_metadata_response.status_code == 200
 
-        for dataset_metadata in dataset_metadata_response.json():
-            if dataset_metadata["filename"] == filename:
+        if config.RETAIN_DATASET_FIRESTORE == True:
+            assert len(dataset_metadata_response.json()) == 2
+        else:
+            assert len(dataset_metadata_response.json()) == 1
+
+        # Dataset metadata is in descending order of sds_dataset_version
+        for count, dataset_metadata in enumerate(dataset_metadata_response.json()):
+            if count == 0:
+                assert dataset_metadata["sds_dataset_version"] == 2
+
+                dataset_id = dataset_metadata["dataset_id"]
+                response = session.get(
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+                    headers=headers,
+                )
+
+                assert response.status_code == 200
+
+                json_response = response.json()
+                assert json_response["dataset_id"] is not None
+
+                json_response.pop("dataset_id")
+                assert dataset_test_data.unit_response.items() == json_response.items()
+
+                assert "sds_dataset_version" in dataset_metadata
+                assert "filename" in dataset_metadata
+                assert "form_types" in dataset_metadata
+
+            if count == 1:
+                assert dataset_metadata["sds_dataset_version"] == 1
+
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
                     f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
@@ -87,8 +138,11 @@ class E2EDatasetIntegrationTest(TestCase):
             test_dataset_subscriber_id
         )
 
-        for key, value in dataset_test_data.nonrandom_pubsub_dataset_metadata.items():
+        for key, value in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
             assert received_messages[0][key] == value
+
+        for key, value in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
+            assert received_messages[1][key] == value
 
     def test_different_period_and_survey_id(self):
         """
