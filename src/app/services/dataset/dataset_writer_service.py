@@ -95,7 +95,9 @@ class DatasetWriterService:
         survey_id: survey id of the dataset.
         previous_version: previous version of the dataset.
         """
-        logger.info(f"Deleting a previous version dataset. Version no: {previous_version}...")
+        logger.info(
+            f"Deleting a previous version dataset. Version no: {previous_version}..."
+        )
         try:
             self.dataset_firebase_repository.perform_delete_previous_version_dataset_transaction(
                 survey_id, period_id, previous_version

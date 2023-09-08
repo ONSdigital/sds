@@ -23,7 +23,7 @@ class DocumentVersionService:
             raise RuntimeError("Document must contain version key")
 
         return document_current_version[version_key] + 1
-    
+
     def calculate_previous_version(
         document_current_version: DatasetMetadataWithoutId,
         version_key: Literal["sds_dataset_version"],
@@ -37,9 +37,13 @@ class DocumentVersionService:
         version_key: the key being accessed to find out the document version.
         """
         if document_current_version is None:
-            raise RuntimeError("Current version document is not found in calculate previous version service")
+            raise RuntimeError(
+                "Current version document is not found in calculate previous version service"
+            )
 
         if version_key not in document_current_version:
-            raise RuntimeError("Document must contain version key to calculate previous version")
+            raise RuntimeError(
+                "Document must contain version key to calculate previous version"
+            )
 
         return document_current_version[version_key] - 1

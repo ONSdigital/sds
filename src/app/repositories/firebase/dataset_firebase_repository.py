@@ -117,8 +117,8 @@ class DatasetFirebaseRepository:
         self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
-        Queries firestore for a previous version of a dataset associated with a survey id,
-        iterates to delete it and their subcollections recursively. The
+        Queries firestore for a previous version of a dataset associated with a survey id
+        and period id, iterates to delete it and their subcollections recursively. The
         recursion is needed because you cannot delete subcollections of a document in firestore
         just by deleting the document, it does not cascade.
 
