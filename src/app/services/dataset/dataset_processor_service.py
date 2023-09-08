@@ -58,10 +58,25 @@ class DatasetProcessorService:
             dataset_publish_response
         )
 
-        self.dataset_writer_service.try_perform_delete_previous_versions_datasets_transaction(
+        self._determine_deletion_of_previous_version_dataset(
             dataset_metadata_without_id["survey_id"],
             dataset_metadata_without_id["period_id"],
             dataset_metadata_without_id["sds_dataset_version"],
+        )
+
+    def get_dataset_metadata_collection(
+        self, survey_id: str, period_id: str
+    ) -> list[DatasetMetadata]:
+        """
+        Gets the collection of dataset metadata associated with a specific survey and period id.
+
+        Parameters:
+        survey_id (str): survey id of the collection.
+        period_id (str): period id of the collection.
+        """
+
+        return self.dataset_repository.get_dataset_metadata_collection(
+            survey_id, period_id
         )
 
     def _add_metadata_to_new_dataset(
@@ -113,7 +128,25 @@ class DatasetProcessorService:
         return DocumentVersionService.calculate_survey_version(
             datasets_result, "sds_dataset_version"
         )
+    
+    def _calculate_previous_dataset_version_from_firestore(self, survey_id:str, period_id: str) -> int:
+        """
+        Calculates the previous sds_dataset_version from a single dataset from firestore with a specific survey_id.
 
+        Parameters:
+        survey_id: survey_id of the specified dataset.
+        period_id: period_id of the specified dataset.
+        """
+        datasets_result = (
+            self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(
+                survey_id, period_id
+            )
+        )
+
+        return DocumentVersionService.calculate_previous_version(
+            datasets_result, "sds_dataset_version"
+        )
+    
     def _add_metadata_to_unit_data_collection(
         self,
         dataset_id: str,
@@ -167,21 +200,6 @@ class DatasetProcessorService:
             "data": unit_data_item["unit_data"],
         }
 
-    def get_dataset_metadata_collection(
-        self, survey_id: str, period_id: str
-    ) -> list[DatasetMetadata]:
-        """
-        Gets the collection of dataset metadata associated with a specific survey and period id.
-
-        Parameters:
-        survey_id (str): survey id of the collection.
-        period_id (str): period id of the collection.
-        """
-
-        return self.dataset_repository.get_dataset_metadata_collection(
-            survey_id, period_id
-        )
-
     def _extract_identifiers_from_unit_data(
         self, raw_dataset_unit_data_collection: list[object]
     ) -> list:
@@ -201,3 +219,36 @@ class DatasetProcessorService:
         logger.debug(f"Extracted identifiers: {extracted_unit_data_identifiers}")
 
         return extracted_unit_data_identifiers
+    
+    def _determine_deletion_of_previous_version_dataset(
+        self, current_dataset_survey_id: str, current_dataset_period_id: str, current_dataset_version: int
+    ) -> None:
+        """
+        """
+        logger.info("Determining whether to delete previous version of dataset...")
+
+        dummy = '' #Retention flag
+        if dummy is True:
+            logger.info("Retention flag is on. Process is skipped")
+            return None
+        
+        previous_dataset_version = self._calculate_previous_dataset_version_from_firestore(
+            current_dataset_survey_id, current_dataset_period_id
+        )
+
+        if previous_dataset_version < 1:
+            logger.info("Previous dataset version deletion is not required. Process is skipped")
+            return None
+        
+        if previous_dataset_version != current_dataset_version - 1:
+            logger.error(f"Previous dataset version calculated from firestore does not match."
+                         f" Expected version: '{current_dataset_version - 1}' Actual version: '{previous_dataset_version}'."
+                         f" New dataset may not have been successfully saved. Process is skipped")
+            return None
+        
+        self.dataset_writer_service.try_perform_delete_previous_version_dataset_transaction(
+            current_dataset_survey_id,
+            current_dataset_period_id,
+            previous_dataset_version,
+        )
+

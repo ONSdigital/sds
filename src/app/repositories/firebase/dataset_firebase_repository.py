@@ -113,19 +113,19 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata_list
 
-    def perform_delete_previous_versions_datasets_transaction(
-        self, survey_id: str, period_id: str, latest_version: int
+    def perform_delete_previous_version_dataset_transaction(
+        self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
-        Queries firestore for older versions of a dataset associated with a survey id,
-        iterates through them and deletes them and their subcollections recursively. The
+        Queries firestore for a previous version of a dataset associated with a survey id,
+        iterates to delete it and their subcollections recursively. The
         recursion is needed because you cannot delete subcollections of a document in firestore
         just by deleting the document, it does not cascade.
 
         Parameters:
         survey_id: survey id of the dataset.
         period_id: period id of the dataset.
-        latest_version: latest version of the dataset.
+        previous_version: previous version of the dataset to delete.
         """
 
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
@@ -133,13 +133,13 @@ class DatasetFirebaseRepository:
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
         @firestore.transactional
         def delete_collection_transaction(transaction: firestore.Transaction):
-            previous_versions_datasets = (
+            previous_version_dataset = (
                 self.datasets_collection.where("survey_id", "==", survey_id)
                 .where("period_id", "==", period_id)
-                .where("sds_dataset_version", "!=", latest_version)
+                .where("sds_dataset_version", "==", previous_version)
             )
 
-            self._delete_collection(transaction, previous_versions_datasets)
+            self._delete_collection(transaction, previous_version_dataset)
 
         delete_collection_transaction(self.client.transaction())
 
