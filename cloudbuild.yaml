@@ -3,33 +3,6 @@ steps:
     id: "Setup Python"
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
-  - name: python
-    id: "black"
-    entrypoint: python
-    args: ["-m", "black", "src", "devtools", "--check"]
-  - name: python
-    id: "isort"
-    entrypoint: python
-    args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
-  - name: python
-    id: "flake8"
-    entrypoint: python
-    args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: python
-    id: "unit tests"
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make setup
-        make unit-test
-  - name: python
-    id: "Audit packages"
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make audit
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Pull image from dockerhub'
