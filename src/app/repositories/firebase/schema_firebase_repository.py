@@ -154,3 +154,14 @@ class SchemaFirebaseRepository:
             schema_metadata_list.append(metadata)
 
         return schema_metadata_list
+
+    def get_list_survey_id(self) -> list[str]:
+        list_survey_id = []
+        returned_schema = self.schemas_collection.order_by(
+            "survey_id", direction=firestore.Query.ASCENDING
+        ).stream()
+        for schema in returned_schema:
+            survey_id = schema.to_dict()["survey_id"]
+            if survey_id not in list_survey_id:
+                list_survey_id.append(survey_id)
+        return list_survey_id
