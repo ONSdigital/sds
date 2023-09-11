@@ -29,7 +29,7 @@ class DocumentVersionService:
         version_key: Literal["sds_dataset_version"],
     ) -> int:
         """
-        Calculates the previous version number of a document based on a version key, returning -1 if current version is 1.
+        Calculates the previous version number of a document based on a version key
         Any return of < 1 value indicates an invalid previous version number and should block subsequent process
 
         Parameters:

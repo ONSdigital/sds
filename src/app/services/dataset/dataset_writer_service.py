@@ -89,11 +89,11 @@ class DatasetWriterService:
         self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
-        Tries to delete the previous version of a dataset, if this fails an error is raised.
+        Tries to delete the latest previous version of a dataset, if this fails an error is raised.
 
         Parameters:
         survey_id: survey id of the dataset.
-        previous_version: previous version of the dataset.
+        previous_version: latest previous version of the dataset.
         """
         logger.info(
             f"Deleting a previous version dataset. Version no: {previous_version}..."

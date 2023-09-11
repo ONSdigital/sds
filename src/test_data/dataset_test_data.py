@@ -38,9 +38,22 @@ dataset_metadata_first_version: DatasetMetadata = {
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
-    "total_reporting_units": 1,
+    "total_reporting_units": 2,
     "schema_version": "v1.0.0",
     "sds_dataset_version": first_dataset_version,
+    "filename": "test_filename.json",
+}
+
+dataset_metadata_updated_version: DatasetMetadata = {
+    "dataset_id": shared_test_data.test_guid,
+    "survey_id": survey_id,
+    "period_id": period_id,
+    "form_types": ["klk", "xyz", "tzr"],
+    "title": "Which side was better?",
+    "sds_published_at": "2023-04-20T12:00:00Z",
+    "total_reporting_units": 2,
+    "schema_version": "v1.0.0",
+    "sds_dataset_version": updated_dataset_version,
     "filename": "test_filename.json",
 }
 
@@ -219,7 +232,7 @@ nonrandom_pubsub_first_dataset_metadata = {
     "title": "Which side was better?",
     "total_reporting_units": 2,
     "schema_version": "v1.0.0",
-    "sds_dataset_version": 1,
+    "sds_dataset_version": first_dataset_version,
 }
 
 nonrandom_pubsub_second_dataset_metadata = {
@@ -229,7 +242,7 @@ nonrandom_pubsub_second_dataset_metadata = {
     "title": "Which side was better? - Amended",
     "total_reporting_units": 3,
     "schema_version": "v2.0.0",
-    "sds_dataset_version": 2,
+    "sds_dataset_version": updated_dataset_version,
 }
 
 unit_response = {

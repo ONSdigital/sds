@@ -232,7 +232,7 @@ class DatasetProcessorService:
         Determine whether to delete the previous version of dataset.
         Retention flag either retain all datasets (True) or delete only the latest previous dataset (False).
         This flow should be present until an updated data retention policy is formulated (Card SDSS-207).
-        Deletion of previous version of dataset happens when:
+        Deletion of previous version of dataset happens when all of the following criteria are satisfied:
         1. Retention flag is off (False)
         2. The current version of dataset is > 1
         3. The current dataset is successfully added to FireStore
