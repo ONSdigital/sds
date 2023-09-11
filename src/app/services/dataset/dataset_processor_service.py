@@ -250,7 +250,7 @@ class DatasetProcessorService:
             retention_flag = False
 
         if retention_flag is True:
-            logger.info("Retention flag is on. Process is skipped")
+            logger.info("Retention flag is on. Process is skipped.")
             return None
 
         previous_dataset_version_from_firestore = (
@@ -261,15 +261,16 @@ class DatasetProcessorService:
 
         if previous_dataset_version_from_firestore < 1:
             logger.info(
-                "Previous dataset version deletion is not required. Process is skipped"
+                "Previous dataset version deletion is not required. Process is skipped."
             )
             return None
 
         if previous_dataset_version_from_firestore != current_dataset_version - 1:
             logger.error(
                 f"Previous dataset version calculated from firestore does not match."
-                f" Expected version: '{current_dataset_version - 1}' Actual version in FireStore: '{previous_dataset_version_from_firestore}'."
-                f" New dataset may not have been successfully saved. Process is skipped"
+                f" Expected version: '{current_dataset_version - 1}' Actual version in FireStore:"
+                f" '{previous_dataset_version_from_firestore}'."
+                f" New dataset may have not been saved properly. Process is skipped."
             )
             return None
 
