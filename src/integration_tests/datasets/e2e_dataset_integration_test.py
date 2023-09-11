@@ -15,7 +15,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import dataset_pubsub_helper
 from src.test_data import dataset_test_data
-from src.test_data.shared_test_data import test_dataset_subscriber_id, unit_id
+from src.test_data.shared_test_data import identifier, test_dataset_subscriber_id
 
 
 class E2EDatasetIntegrationTest(TestCase):
@@ -67,7 +67,7 @@ class E2EDatasetIntegrationTest(TestCase):
             if dataset_metadata["filename"] == filename:
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
                     headers=headers,
                 )
 

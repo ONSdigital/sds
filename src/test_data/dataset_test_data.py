@@ -23,7 +23,7 @@ cloud_event_invalid_filename_data = {
 }
 
 
-unit_id = "test_unit_id"
+identifier = "test_identifier"
 survey_id = "test_survey_id"
 period_id = "test_period_id"
 
@@ -107,7 +107,7 @@ unit_supplementary_data: UnitDataset = {
     "schema_version": "v1.0.0",
     "form_types": ["klk", "xyz", "tzr"],
     "data": {
-        "identifier": unit_id,
+        "identifier": identifier,
         "runame": "Pipes and Maps Ltd",
         "ruaddr1": "111 Under Hill",
         "ruaddr2": "Hobbitton",

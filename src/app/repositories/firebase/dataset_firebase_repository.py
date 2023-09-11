@@ -73,18 +73,20 @@ class DatasetFirebaseRepository:
 
         dataset_transaction(self.client.transaction())
 
-    def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
+    def get_unit_supplementary_data(
+        self, dataset_id: str, identifier: str
+    ) -> UnitDataset:
         """
         Get the unit supplementary data of a specified unit from a dataset collection
 
         Parameters:
         dataset_id (str): The unique id of the dataset
-        unit_id (str): The id of the unit on the dataset
+        identifier (str): The id of the unit on the dataset
         """
         return (
             self.datasets_collection.document(dataset_id)
             .collection("units")
-            .document(unit_id)
+            .document(identifier)
             .get()
             .to_dict()
         )

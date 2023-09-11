@@ -199,7 +199,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:3000/v1/unit_data?dataset_id=2485372e-f2ac-4fb7-9c08-588b8ed26b53&unit_id=43532",
+					"raw": "http://127.0.0.1:3000/v1/unit_data?dataset_id=2485372e-f2ac-4fb7-9c08-588b8ed26b53&identifier=43532",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -218,7 +218,7 @@
 							"value": "2485372e-f2ac-4fb7-9c08-588b8ed26b53"
 						},
 						{
-							"key": "unit_id",
+							"key": "identifier",
 							"value": "43532"
 						}
 					]
