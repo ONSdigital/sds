@@ -241,12 +241,6 @@ async def get_schema_metadata_collection(
     "/v1/survey_list",
     response_model=list[str],
     responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_400_invalid_search_exception}
-            },
-        },
         500: {
             "model": ExceptionResponseModel,
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
@@ -254,7 +248,7 @@ async def get_schema_metadata_collection(
         404: {
             "model": ExceptionResponseModel,
             "content": {
-                "application/json": {"example": erm.erm_404_no_results_exception}
+                "application/json": {"example": erm.erm_404_no_survey_id_exception}
             },
         },
     },
@@ -263,4 +257,8 @@ async def get_list_survey_id(
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> list[str]:
     list_survey_id = schema_processor_service.get_list_survey_id()
+
+    if not list_survey_id:
+        logger.error("No Survey IDs found")
+        raise exceptions.ExceptionNoSurveyIDs
     return list_survey_id
