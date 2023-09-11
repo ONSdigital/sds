@@ -133,3 +133,5 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
         "guid": "id_1",
     },
 ]
+
+test_list_survey_id = ["123", "456"]

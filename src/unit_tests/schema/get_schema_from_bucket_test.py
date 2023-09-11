@@ -224,3 +224,23 @@ def test_get_schema_metadata_with_not_found_error(test_client):
     assert response.json()["message"] == "No results found"
 
     SchemaFirebaseRepository.get_schema_metadata_collection = tmp_storage
+
+
+def test_get_list_survey_id_200_response(test_client):
+    """ """
+    SchemaFirebaseRepository.get_list_survey_id = MagicMock()
+    SchemaFirebaseRepository.get_list_survey_id.return_value = ["123", "456"]
+    response = test_client.get("/v1/survey_list")
+
+    assert response.status_code == 200
+    assert response.json() == schema_test_data.test_list_survey_id
+
+
+def test_get_list_survey_id_404_response(test_client):
+    """ """
+    SchemaFirebaseRepository.get_list_survey_id = MagicMock()
+    SchemaFirebaseRepository.get_list_survey_id.return_value = []
+    response = test_client.get("/v1/survey_list")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No Survey IDs found"
