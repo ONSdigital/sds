@@ -29,22 +29,24 @@ class E2EDatasetIntegrationTest(TestCase):
 
     def test_dataset_e2e(self):
         """
-        Test that we can upload 2 datasets and then retrieve the data. This checks the cloud function worked
-        and the datasets are retained.
+        Test that we can upload 2 datasets of same survey id and period and then retrieve the data. 
+        This checks the cloud function worked and the datasets are retained according to the retain flag.
 
-        * We load the sample dataset json file
+        * We load the first sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
         * We then check the uploaded file has been deleted from the bucket
         * We repeat the steps for the second dataset
         * We check the count and respective dataset version using dataset_metadata endpoint
+        * We check the dataset metadata accuracy
         * We then use the unit_data endpoint to get some unit data back using the dataset_id and a known unit identifier
-        * The dataset id an auto generated GUID
+        * We check the unit data response
         * We check the pubsub messages
         """
         session = setup_session()
         headers = generate_headers()
 
-        first_dataset = load_json(config.TEST_DATASET_PATH)
+        # First dataset
+        first_dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset.json")
 
         first_dataset_filename = create_filepath("integration-test-first-file")
 
@@ -66,7 +68,8 @@ class E2EDatasetIntegrationTest(TestCase):
                 .exists()
             )
 
-        second_dataset = load_json(config.TEST_DATASET_PATH)
+        # Second dataset
+        second_dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset_amended.json")
 
         second_dataset_filename = create_filepath("integration-test-second-file")
 
@@ -88,6 +91,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 .exists()
             )
 
+        # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
             f"survey_id={first_dataset['survey_id']}&period_id={first_dataset['period_id']}",
@@ -101,10 +105,25 @@ class E2EDatasetIntegrationTest(TestCase):
             assert len(dataset_metadata_response.json()) == 1
 
         # Dataset metadata is in descending order of sds_dataset_version
+        # 0 => second dataset
+        # 1 => first dataset (if retain flag is on)
         for count, dataset_metadata in enumerate(dataset_metadata_response.json()):
             if count == 0:
-                assert dataset_metadata["sds_dataset_version"] == 2
+                dataset_metadata_second_dataset = {
+                    "dataset_id": dataset_metadata["dataset_id"],
+                    "filename": second_dataset_filename,
+                    "sds_dataset_version": 2,
+                    "schema_version": second_dataset["schema_version"],
+                    "total_reporting_units": len(second_dataset["data"]),
+                    "sds_published_at": dataset_metadata["sds_published_at"],
+                    "title": second_dataset["title"],
+                    "form_types": second_dataset["form_types"],
+                    "period_id": second_dataset["period_id"],
+                    "survey_id": second_dataset["survey_id"]
+                }
+                assert dataset_metadata == dataset_metadata_second_dataset
 
+                # Check against unit_data endpoint for second dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
                     f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
@@ -117,15 +136,24 @@ class E2EDatasetIntegrationTest(TestCase):
                 assert json_response["dataset_id"] is not None
 
                 json_response.pop("dataset_id")
-                assert dataset_test_data.unit_response.items() == json_response.items()
-
-                assert "sds_dataset_version" in dataset_metadata
-                assert "filename" in dataset_metadata
-                assert "form_types" in dataset_metadata
+                assert dataset_test_data.unit_response_amended.items() == json_response.items()
 
             if count == 1:
-                assert dataset_metadata["sds_dataset_version"] == 1
+                dataset_metadata_first_dataset = {
+                    "dataset_id": dataset_metadata["dataset_id"],
+                    "filename": first_dataset_filename,
+                    "sds_dataset_version": 1,
+                    "schema_version": first_dataset["schema_version"],
+                    "total_reporting_units": len(first_dataset["data"]),
+                    "sds_published_at": dataset_metadata["sds_published_at"],
+                    "title": first_dataset["title"],
+                    "form_types": first_dataset["form_types"],
+                    "period_id": first_dataset["period_id"],
+                    "survey_id": first_dataset["survey_id"]
+                }
+                assert dataset_metadata == dataset_metadata_first_dataset
 
+                # Check against unit_data endpoint for first dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
                     f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
@@ -140,10 +168,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 json_response.pop("dataset_id")
                 assert dataset_test_data.unit_response.items() == json_response.items()
 
-                assert "sds_dataset_version" in dataset_metadata
-                assert "filename" in dataset_metadata
-                assert "form_types" in dataset_metadata
-
+        # Check pubsub messages
         received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
             test_dataset_subscriber_id
         )
@@ -172,12 +197,12 @@ class E2EDatasetIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        dataset = load_json(config.TEST_DATASET_PATH)
+        dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset.json")
         dataset_different_survey_id = load_json(
-            "src/test_data/json/dataset_different_survey_id.json"
+            f"{config.TEST_DATASET_PATH}/dataset_different_survey_id.json"
         )
         dataset_different_period_id = load_json(
-            "src/test_data/json/dataset_different_period_id.json"
+            f"{config.TEST_DATASET_PATH}/dataset_different_period_id.json"
         )
 
         filename = create_filepath("integration-test")

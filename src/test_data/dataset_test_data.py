@@ -225,10 +225,10 @@ nonrandom_pubsub_first_dataset_metadata = {
 nonrandom_pubsub_second_dataset_metadata = {
     "survey_id": survey_id,
     "period_id": period_id,
-    "form_types": ["klk", "xyz", "tzr"],
-    "title": "Which side was better?",
-    "total_reporting_units": 2,
-    "schema_version": "v1.0.0",
+    "form_types": ["abc", "fgg", "ynm"],
+    "title": "Which side was better? - Amended",
+    "total_reporting_units": 3,
+    "schema_version": "v2.0.0",
     "sds_dataset_version": 2,
 }
 
@@ -237,5 +237,13 @@ unit_response = {
     "survey_id": survey_id,
     "period_id": period_id,
     "form_types": ["klk", "xyz", "tzr"],
+    "data": "<encrypted data>",
+}
+
+unit_response_amended = {
+    "schema_version": "v2.0.0",
+    "survey_id": survey_id,
+    "period_id": period_id,
+    "form_types": ["abc", "fgg", "ynm"],
     "data": "<encrypted data>",
 }

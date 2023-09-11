@@ -31,7 +31,7 @@ class E2ESchemaIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        test_schema = load_json(config.TEST_SCHEMA_PATH)
+        test_schema = load_json(f"{config.TEST_SCHEMA_PATH}/schema.json")
 
         schema_post_response = session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",

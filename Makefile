@@ -1,7 +1,7 @@
 # Global Variables
 PYTHONPATH=src/app
-TEST_DATASET_PATH=src/test_data/json/dataset.json
-TEST_SCHEMA_PATH=src/test_data/json/schema.json
+TEST_DATASET_PATH=src/test_data/json
+TEST_SCHEMA_PATH=src/test_data/json
 GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 AUTODELETE_DATASET_BUCKET_FILE=True
 RETAIN_DATASET_FIRESTORE=True
