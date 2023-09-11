@@ -33,3 +33,6 @@ erm_404_no_datasets_exception = ExceptionResponseModel(
 erm_404_no_unit_data_exception = ExceptionResponseModel(
     status="error", message="No unit data found"
 )
+erm_404_no_survey_id_exception = ExceptionResponseModel(
+    status="error", message="No Survey IDs found"
+)
