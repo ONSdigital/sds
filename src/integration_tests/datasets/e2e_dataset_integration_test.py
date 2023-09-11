@@ -29,7 +29,7 @@ class E2EDatasetIntegrationTest(TestCase):
 
     def test_dataset_e2e(self):
         """
-        Test that we can upload 2 datasets of same survey id and period and then retrieve the data. 
+        Test that we can upload 2 datasets of same survey id and period and then retrieve the data.
         This checks the cloud function worked and the datasets are retained according to the retain flag.
 
         * We load the first sample dataset json file
@@ -119,7 +119,7 @@ class E2EDatasetIntegrationTest(TestCase):
                     "title": second_dataset["title"],
                     "form_types": second_dataset["form_types"],
                     "period_id": second_dataset["period_id"],
-                    "survey_id": second_dataset["survey_id"]
+                    "survey_id": second_dataset["survey_id"],
                 }
                 assert dataset_metadata == dataset_metadata_second_dataset
 
@@ -136,7 +136,10 @@ class E2EDatasetIntegrationTest(TestCase):
                 assert json_response["dataset_id"] is not None
 
                 json_response.pop("dataset_id")
-                assert dataset_test_data.unit_response_amended.items() == json_response.items()
+                assert (
+                    dataset_test_data.unit_response_amended.items()
+                    == json_response.items()
+                )
 
             if count == 1:
                 dataset_metadata_first_dataset = {
@@ -149,7 +152,7 @@ class E2EDatasetIntegrationTest(TestCase):
                     "title": first_dataset["title"],
                     "form_types": first_dataset["form_types"],
                     "period_id": first_dataset["period_id"],
-                    "survey_id": first_dataset["survey_id"]
+                    "survey_id": first_dataset["survey_id"],
                 }
                 assert dataset_metadata == dataset_metadata_first_dataset
 

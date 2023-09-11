@@ -113,7 +113,9 @@ def create_dataset(
         _create_remote_dataset(session, filename, dataset, headers)
 
 
-def _create_local_dataset(session: requests.Session, filename: str, dataset: dict) -> int:
+def _create_local_dataset(
+    session: requests.Session, filename: str, dataset: dict
+) -> int:
     """
     Method to create a local dataset.
 
@@ -124,7 +126,9 @@ def _create_local_dataset(session: requests.Session, filename: str, dataset: dic
     Returns:
         int: status code for local function.
     """
-    simulate_post_dataset_request = session.post(f"http://localhost:3006?filename={filename}", json=dataset)
+    simulate_post_dataset_request = session.post(
+        f"http://localhost:3006?filename={filename}", json=dataset
+    )
 
     return simulate_post_dataset_request.status_code
 
