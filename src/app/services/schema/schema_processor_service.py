@@ -216,3 +216,9 @@ class SchemaProcessorService:
             )
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException
+
+    def get_list_survey_id(self) -> list[str]:
+        """ """
+        list_survey_id = self.schema_firebase_repository.get_list_survey_id()
+
+        return list_survey_id
