@@ -235,3 +235,32 @@ async def get_schema_metadata_collection(
     logger.debug(f"Schemas metadata: {schema_metadata_collection}")
 
     return schema_metadata_collection
+
+
+@router.get(
+    "/v1/survey_list",
+    response_model=list[str],
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_invalid_search_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_results_exception}
+            },
+        },
+    },
+)
+async def get_list_survey_id(
+    schema_processor_service: SchemaProcessorService = Depends(),
+) -> list[str]:
+    list_survey_id = schema_processor_service.get_list_survey_id()
+    return list_survey_id
