@@ -227,7 +227,9 @@ def test_get_schema_metadata_with_not_found_error(test_client):
 
 
 def test_get_list_survey_id_200_response(test_client):
-    """ """
+    """
+    When the list of Survey IDs is fetched successfully, the API must return the correct response with 200 status code
+    """
     SchemaFirebaseRepository.get_list_survey_id = MagicMock()
     SchemaFirebaseRepository.get_list_survey_id.return_value = ["123", "456"]
     response = test_client.get("/v1/survey_list")
@@ -237,7 +239,9 @@ def test_get_list_survey_id_200_response(test_client):
 
 
 def test_get_list_survey_id_404_response(test_client):
-    """ """
+    """
+    When the list of Survey IDs is empty, the API must return the error response with 404 status code
+    """
     SchemaFirebaseRepository.get_list_survey_id = MagicMock()
     SchemaFirebaseRepository.get_list_survey_id.return_value = []
     response = test_client.get("/v1/survey_list")
