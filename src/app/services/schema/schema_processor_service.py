@@ -224,12 +224,12 @@ class SchemaProcessorService:
         """
 
         try:
-            logger.info("Fetching the list of survey IDs")
+            logger.info("Fetching the list of Survey IDs")
             list_survey_id = self.schema_firebase_repository.get_list_survey_id()
-            logger.info("Fetched the list of survey IDs")
+            logger.info("Fetched the list of Survey IDs")
 
         except Exception as e:
-            logger.error(f"Error while fetching the list of survey IDs: {e}")
+            logger.error(f"Error while fetching the list of Survey IDs: {e}")
             raise exceptions.GlobalException
 
         return list_survey_id

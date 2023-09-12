@@ -159,12 +159,15 @@ class SchemaFirebaseRepository:
         """
         Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
         """
+
         list_survey_id = []
         returned_schema = self.schemas_collection.order_by(
             "survey_id", direction=firestore.Query.ASCENDING
         ).stream()
+
         for schema in returned_schema:
             survey_id = schema.to_dict()["survey_id"]
             if survey_id not in list_survey_id:
                 list_survey_id.append(survey_id)
+
         return list_survey_id
