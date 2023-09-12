@@ -218,7 +218,9 @@ class SchemaProcessorService:
             raise exceptions.GlobalException
 
     def get_list_survey_id(self) -> list[str]:
-        """ """
+        """
+        Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
+        """
         list_survey_id = self.schema_firebase_repository.get_list_survey_id()
 
         return list_survey_id

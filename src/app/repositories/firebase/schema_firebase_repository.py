@@ -156,6 +156,9 @@ class SchemaFirebaseRepository:
         return schema_metadata_list
 
     def get_list_survey_id(self) -> list[str]:
+        """
+        Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
+        """
         list_survey_id = []
         returned_schema = self.schemas_collection.order_by(
             "survey_id", direction=firestore.Query.ASCENDING
