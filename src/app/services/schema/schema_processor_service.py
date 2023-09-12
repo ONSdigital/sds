@@ -220,7 +220,16 @@ class SchemaProcessorService:
     def get_list_survey_id(self) -> list[str]:
         """
         Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
+        The Survey IDs are being returned as an array of strings.
         """
-        list_survey_id = self.schema_firebase_repository.get_list_survey_id()
+
+        try:
+            logger.info("Fetching the list of survey IDs")
+            list_survey_id = self.schema_firebase_repository.get_list_survey_id()
+            logger.info("Fetched the list of survey IDs")
+
+        except Exception as e:
+            logger.error(f"Error while fetching the list of survey IDs: {e}")
+            raise exceptions.GlobalException
 
         return list_survey_id
