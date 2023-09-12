@@ -231,7 +231,9 @@ def test_get_list_survey_id_200_response(test_client):
     When the list of Survey IDs is fetched successfully, the API must return the correct response with 200 status code
     """
     SchemaFirebaseRepository.get_list_survey_id = MagicMock()
-    SchemaFirebaseRepository.get_list_survey_id.return_value = ["123", "456"]
+    SchemaFirebaseRepository.get_list_survey_id.return_value = (
+        schema_test_data.test_list_survey_id
+    )
     response = test_client.get("/v1/survey_list")
 
     assert response.status_code == 200
@@ -248,3 +250,16 @@ def test_get_list_survey_id_404_response(test_client):
 
     assert response.status_code == 404
     assert response.json()["message"] == "No Survey IDs found"
+
+
+def test_get_list_survey_id_500_response(test_client_no_server_exception):
+    """
+    If the app encounters a global exception, the API must return the error response with 500 status code
+    """
+
+    SchemaFirebaseRepository.get_list_survey_id = MagicMock(side_effect=Exception)
+
+    response = test_client_no_server_exception.get("/v1/survey_list")
+
+    assert response.status_code == 500
+    assert response.json()["message"] == "Unable to process request"
