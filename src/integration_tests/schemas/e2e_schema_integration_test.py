@@ -59,7 +59,7 @@ class E2ESchemaIntegrationTest(TestCase):
         response_as_json = test_schema_get_response.json()
         assert len(response_as_json) > 0
 
-        """     
+        """
         set_list_survey_id_response = session.get(
             f"{config.API_URL}/v1/survey_list",
             headers=headers,
