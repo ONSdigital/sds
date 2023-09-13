@@ -23,9 +23,7 @@ class DatasetValidatorService:
         raw_dataset (RawDataset): dataset being validated.
         """
 
-        DatasetValidatorService._validate_dataset_exists_in_bucket(
-            raw_dataset
-        )
+        DatasetValidatorService._validate_dataset_exists_in_bucket(raw_dataset)
         DatasetValidatorService._validate_dataset_keys(raw_dataset)
 
     @staticmethod
@@ -52,9 +50,7 @@ class DatasetValidatorService:
         raw_dataset (RawDataset): dataset being validated.
         """
 
-        isValid, message = DatasetValidatorService._check_for_missing_keys(
-            raw_dataset
-        )
+        isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")

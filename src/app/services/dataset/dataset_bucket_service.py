@@ -20,9 +20,7 @@ class DatasetBucketService:
         """
         DatasetValidatorService.validate_file_is_json(filename)
 
-        raw_dataset = (
-            self.dataset_bucket_repository.get_dataset_file_as_json(filename)
-        )
+        raw_dataset = self.dataset_bucket_repository.get_dataset_file_as_json(filename)
 
         DatasetValidatorService.validate_raw_dataset(raw_dataset)
 
