@@ -83,6 +83,8 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
         if config.AUTODELETE_DATASET_BUCKET_FILE is True:
             assert (
                 not storage.Client()
@@ -99,6 +101,8 @@ class E2EDatasetIntegrationTest(TestCase):
         )
         assert dataset_metadata_response.status_code == 200
 
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
         if config.RETAIN_DATASET_FIRESTORE is True:
             assert len(dataset_metadata_response.json()) == 2
         else:
