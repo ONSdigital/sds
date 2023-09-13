@@ -6,7 +6,8 @@ from models.dataset_models import (
     DatasetMetadata,
     DatasetMetadataWithoutId,
     UnitDataset,
-    UnitDatasetWithoutData,
+    RawDataset,
+    RawDatasetWithoutData,
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_writer_service import DatasetWriterService
@@ -21,7 +22,7 @@ class DatasetProcessorService:
         self.dataset_repository = DatasetFirebaseRepository()
         self.dataset_writer_service = DatasetWriterService(self.dataset_repository)
 
-    def process_raw_dataset(self, filename: str, raw_dataset: UnitDataset) -> None:
+    def process_raw_dataset(self, filename: str, raw_dataset: RawDataset) -> None:
         """
         Processes the incoming dataset.
 
@@ -66,7 +67,7 @@ class DatasetProcessorService:
 
     def _add_metadata_to_new_dataset(
         self,
-        raw_dataset_metadata: UnitDatasetWithoutData,
+        raw_dataset: RawDatasetWithoutData,
         filename: str,
         dataset_unit_data_collection: list[object],
     ) -> DatasetMetadataWithoutId:
@@ -74,21 +75,21 @@ class DatasetProcessorService:
         Returns a copy of the dataset with added metadata.
 
         Parameters:
-        raw_dataset_metadata (RawDatasetMetadata): the original dataset.
+        raw_dataset (RawDatasetWithoutData): the original dataset without the data object.
         filename (str): the filename of the json containing the dataset data
         dataset_unit_data_collection (list[object]): collection of unit data in the new dataset
         """
         logger.info("Adding metadata to new dataset...")
 
         dataset_metadata_without_id = {
-            **raw_dataset_metadata,
+            **raw_dataset,
             "filename": filename,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
-                raw_dataset_metadata["survey_id"], raw_dataset_metadata["period_id"]
+                raw_dataset["survey_id"], raw_dataset["period_id"]
             ),
         }
 

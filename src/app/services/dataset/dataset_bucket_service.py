@@ -1,6 +1,6 @@
 from config.config_factory import config
 from logging_config import logging
-from models.dataset_models import UnitDataset
+from models.dataset_models import RawDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.validators.dataset_validator_service import DatasetValidatorService
 
@@ -11,7 +11,7 @@ class DatasetBucketService:
     def __init__(self):
         self.dataset_bucket_repository = DatasetBucketRepository()
 
-    def get_and_validate_dataset(self, filename: str) -> UnitDataset:
+    def get_and_validate_dataset(self, filename: str) -> RawDataset:
         """
         Validates and retrieves dataset from bucket
 
@@ -20,16 +20,16 @@ class DatasetBucketService:
         """
         DatasetValidatorService.validate_file_is_json(filename)
 
-        raw_dataset_with_metadata = (
+        raw_dataset = (
             self.dataset_bucket_repository.get_dataset_file_as_json(filename)
         )
 
-        DatasetValidatorService.validate_raw_dataset(raw_dataset_with_metadata)
+        DatasetValidatorService.validate_raw_dataset(raw_dataset)
 
         if config.AUTODELETE_DATASET_BUCKET_FILE is True:
             self._try_delete_bucket_file(filename)
 
-        return raw_dataset_with_metadata
+        return raw_dataset
 
     def _try_delete_bucket_file(self, filename) -> None:
         """
