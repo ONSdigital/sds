@@ -120,7 +120,10 @@ class ProcessDatasetTest(TestCase):
 
     def test_perform_delete_previous_version_dataset_transaction_success(self):
         """
-        Tests the previous version of dataset are deleted when a new dataset version is uploaded to firestore
+        Tests the previous version of dataset are deleted when a new dataset version is uploaded to firestore.
+
+        This test simulates a successful dataset upload process when retain flag is off. It assert
+        the deletion process will be run with appropriate arguments
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -153,6 +156,9 @@ class ProcessDatasetTest(TestCase):
     def test_perform_delete_previous_version_dataset_transaction_failure(self):
         """
         Tests an exception is raised if there is an issue deleting previous dataset versions from firestore.
+
+        This test simulates an exception raising in the dataset deletion process. It assert
+        the appropriate runtime error will be prompted when it happens to ensure the rollback process.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -185,7 +191,10 @@ class ProcessDatasetTest(TestCase):
         self,
     ):
         """
-        Tests the deletion process is skipped when retention flag is on
+        Tests the deletion process is skipped when retention flag is on.
+
+        This test simulates the upload of an updated version of datset when retain flag is on. 
+        The test assert that no deletion process will be attempted.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -215,7 +224,10 @@ class ProcessDatasetTest(TestCase):
         self,
     ):
         """
-        Tests the deletion process is skipped when a dataset is uploaded the first time
+        Tests the deletion process is skipped when a dataset is uploaded the first time.
+
+        This test simulates the upload of the first version of dataset and assert that
+        no deletion process will be attempted even when retain flag is off.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -245,7 +257,12 @@ class ProcessDatasetTest(TestCase):
         self,
     ):
         """
-        Tests the deletion process is skipped when dataset upload is failed
+        Tests the deletion process is skipped when new uploaded dataset is not found in database.
+        
+        This test simulates the upload of dataset while a version 2 of the dataset exists
+        After the upload process, the calculation of previous dataset version is mocked to return 
+        a non-incremented version (1 instead of 2) simulating a failed upload in transaction
+        The test then assert the data deletion process will not run even when retain flag is off.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -268,5 +285,41 @@ class ProcessDatasetTest(TestCase):
         DocumentVersionService.calculate_previous_version.return_value = 1
 
         TestHelper.new_dataset_mock(cloud_event)
+
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
+
+    def test_runtime_error_in_calculate_previous_version_of_dataset_when_dataset_not_found(
+        self,
+    ):
+        """
+        Tests appropriate runtime error will be promted when dataset is not found during 
+        previous version calculation.
+
+        This test turn off the retain flag and mock the return of latest dataset to None 
+        to simulate a dataset not found situation. The test then assert the runtime error
+        and check the deletion is not processed.
+        """
+        cloud_event = MagicMock()
+        cloud_event.data = dataset_test_data.cloud_event_data
+        config.RETAIN_DATASET_FIRESTORE = False
+
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=None)
+        )
+
+        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+
+        PublisherService.publish_data_to_topic = MagicMock()
+
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+            MagicMock()
+        )
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+
+        with raises(
+            RuntimeError,
+            match="Current version document is not found in calculate previous version service",
+        ):
+            TestHelper.new_dataset_mock(cloud_event)
 
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()

@@ -46,7 +46,7 @@ class E2EDatasetIntegrationTest(TestCase):
         headers = generate_headers()
 
         # First dataset
-        first_dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset.json")
+        first_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset.json")
 
         first_dataset_filename = create_filepath("integration-test-first-file")
 
@@ -69,7 +69,7 @@ class E2EDatasetIntegrationTest(TestCase):
             )
 
         # Second dataset
-        second_dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset_amended.json")
+        second_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset_amended.json")
 
         second_dataset_filename = create_filepath("integration-test-second-file")
 
@@ -204,12 +204,12 @@ class E2EDatasetIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        dataset = load_json(f"{config.TEST_DATASET_PATH}/dataset.json")
+        dataset = load_json(f"{config.TEST_DATASET_PATH}dataset.json")
         dataset_different_survey_id = load_json(
-            f"{config.TEST_DATASET_PATH}/dataset_different_survey_id.json"
+            f"{config.TEST_DATASET_PATH}dataset_different_survey_id.json"
         )
         dataset_different_period_id = load_json(
-            f"{config.TEST_DATASET_PATH}/dataset_different_period_id.json"
+            f"{config.TEST_DATASET_PATH}dataset_different_period_id.json"
         )
 
         filename = create_filepath("integration-test")
