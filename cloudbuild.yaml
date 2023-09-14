@@ -3,6 +3,53 @@ steps:
     id: "Setup Python"
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
+  - name: python
+    id: "Audit packages"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make audit
+  - name: python
+    id: "black"
+    entrypoint: python
+    args: [ "-m", "black", "src", "devtools", "--check" ]
+  - name: python
+    id: "isort"
+    entrypoint: python
+    args: [ "-m", "isort", "src", "devtools", "--check-only",  "--profile", "black" ]
+  - name: python
+    id: "flake8"
+    entrypoint: python
+    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127" ]
+  - name: python
+    id: "unit tests"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make setup
+        make unit-test
+
+
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [ '-c', 'docker login --username=$$USERNAME --password=$$PASSWORD' ]
+    secretEnv: [ 'USERNAME', 'PASSWORD' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [ '-c', 'docker build -t $$USERNAME/onsdigital/sds:$BRANCH_NAME .' ]
+    secretEnv: [ 'USERNAME' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: [ '-c', 'docker push $$USERNAME/onsdigital/sds:$BRANCH_NAME' ]
+    secretEnv: [ 'USERNAME' ]
+    availableSecrets:
+      secretManager:
+        - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-password/versions/1
+          env: 'PASSWORD'
+        - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-username/versions/1
+          env: 'USERNAME'
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Pull image from dockerhub'
