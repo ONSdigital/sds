@@ -39,7 +39,7 @@ steps:
     secretEnv: [ 'USERNAME', 'PASSWORD' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Image'
-    args: [ 'build', '-t', '$$USERNAME/onsdigital/sds:$BRANCH_NAME', '.' ]
+    args: [ 'build', '-t', 'onsdigital/sds:$BRANCH_NAME', '.' ]
     secretEnv: [ 'USERNAME' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push to dockerhub'
