@@ -44,12 +44,6 @@ steps:
     entrypoint: 'bash'
     args: [ '-c', 'docker push $$USERNAME/onsdigital/sds:$BRANCH_NAME' ]
     secretEnv: [ 'USERNAME' ]
-    availableSecrets:
-      secretManager:
-        - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-password/versions/1
-          env: 'PASSWORD'
-        - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-username/versions/1
-          env: 'USERNAME'
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Pull image from dockerhub'
@@ -84,7 +78,6 @@ steps:
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
         --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Get api gateway hostname'
     id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
     entrypoint: sh
     args:
@@ -118,5 +111,13 @@ steps:
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         make integration-test-cloudbuild
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-password/versions/1
+      env: 'PASSWORD'
+    - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-username/versions/1
+      env: 'USERNAME'
+
 options:
   logging: CLOUD_LOGGING_ONLY
