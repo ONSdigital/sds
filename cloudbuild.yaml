@@ -39,7 +39,7 @@ steps:
     secretEnv: [ 'USERNAME', 'PASSWORD' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Image'
-    args: [ 'build', -t $$USERNAME/onsdigital/sds:$BRANCH_NAME .' ]
+    args: [ 'build', '-t', '$$USERNAME/onsdigital/sds:$BRANCH_NAME', '.' ]
     secretEnv: [ 'USERNAME' ]
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push to dockerhub'
@@ -116,9 +116,9 @@ steps:
 
 availableSecrets:
   secretManager:
-    - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-password/versions/1
+    - versionName: projects/ons-sds-dns/secrets/dockerhub-password/versions/1
       env: 'PASSWORD'
-    - versionName: projects/${_PROJECT_ID}/secrets/dockerhub-username/versions/1
+    - versionName: projects/ons-sds-dns/secrets/dockerhub-username/versions/1
       env: 'USERNAME'
 
 options:
