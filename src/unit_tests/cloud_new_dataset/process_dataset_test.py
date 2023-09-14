@@ -193,7 +193,7 @@ class ProcessDatasetTest(TestCase):
         """
         Tests the deletion process is skipped when retention flag is on.
 
-        This test simulates the upload of an updated version of datset when retain flag is on. 
+        This test simulates the upload of an updated version of datset when retain flag is on.
         The test assert that no deletion process will be attempted.
         """
         cloud_event = MagicMock()
@@ -258,9 +258,9 @@ class ProcessDatasetTest(TestCase):
     ):
         """
         Tests the deletion process is skipped when new uploaded dataset is not found in database.
-        
+
         This test simulates the upload of dataset while a version 2 of the dataset exists
-        After the upload process, the calculation of previous dataset version is mocked to return 
+        After the upload process, the calculation of previous dataset version is mocked to return
         a non-incremented version (1 instead of 2) simulating a failed upload in transaction
         The test then assert the data deletion process will not run even when retain flag is off.
         """
@@ -292,10 +292,10 @@ class ProcessDatasetTest(TestCase):
         self,
     ):
         """
-        Tests appropriate runtime error will be promted when dataset is not found during 
+        Tests appropriate runtime error will be promted when dataset is not found during
         previous version calculation.
 
-        This test turn off the retain flag and mock the return of latest dataset to None 
+        This test turn off the retain flag and mock the return of latest dataset to None
         to simulate a dataset not found situation. The test then assert the runtime error
         and check the deletion is not processed.
         """
