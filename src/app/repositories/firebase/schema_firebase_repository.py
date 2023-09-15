@@ -155,7 +155,7 @@ class SchemaFirebaseRepository:
 
         return schema_metadata_list
 
-    def get_list_survey_id(self) -> list[str]:
+    def get_list_unique_survey_id(self) -> list[str]:
         """
         Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
         """
@@ -167,7 +167,6 @@ class SchemaFirebaseRepository:
 
         for schema in returned_schema:
             survey_id = schema.to_dict()["survey_id"]
-            if survey_id not in list_survey_id:
+            if not list_survey_id or survey_id != list_survey_id[-1]:
                 list_survey_id.append(survey_id)
-
         return list_survey_id

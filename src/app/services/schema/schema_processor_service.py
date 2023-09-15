@@ -217,7 +217,7 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_list_survey_id(self) -> list[str]:
+    def get_list_unique_survey_id(self) -> list[str]:
         """
         Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
         The Survey IDs are being returned as an array of strings.
@@ -225,7 +225,7 @@ class SchemaProcessorService:
 
         try:
             logger.info("Fetching the list of Survey IDs")
-            list_survey_id = self.schema_firebase_repository.get_list_survey_id()
+            list_survey_id = self.schema_firebase_repository.get_list_unique_survey_id()
             logger.info("Fetched the list of Survey IDs")
 
         except Exception as e:

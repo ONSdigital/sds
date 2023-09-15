@@ -253,7 +253,7 @@ async def get_schema_metadata_collection(
         },
     },
 )
-async def get_list_survey_id(
+async def get_list_unique_survey_id(
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> list[str]:
     """
@@ -261,7 +261,7 @@ async def get_list_survey_id(
     Parameters:
     schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
     """
-    list_survey_id = schema_processor_service.get_list_survey_id()
+    list_survey_id = schema_processor_service.get_list_unique_survey_id()
 
     if not list_survey_id:
         logger.error("No Survey IDs found")

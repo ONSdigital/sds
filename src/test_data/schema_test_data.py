@@ -134,4 +134,4 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
     },
 ]
 
-test_list_survey_id = ["123", "456"]
+test_list_survey_id = ["test-survey-id-1", "test-survey-id-2"]
