@@ -31,28 +31,12 @@ steps:
         make setup
         make unit-test
 
-
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Login to dockerhub'
-    entrypoint: 'bash'
-    args: [ '-c', 'docker login --username=$$USERNAME --password=$$PASSWORD' ]
-    secretEnv: [ 'USERNAME', 'PASSWORD' ]
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Build Image'
-    args: [ 'build', '-t', 'onsdigital/sds:$BRANCH_NAME', '.' ]
-    secretEnv: [ 'USERNAME' ]
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push to dockerhub'
-    entrypoint: 'bash'
-    args: [ '-c', 'docker push onsdigital/sds:$BRANCH_NAME' ]
-    secretEnv: [ 'USERNAME' ]
-
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Pull image from dockerhub'
-    args: ['pull', 'onsdigital/sds:$BRANCH_NAME']
+    args: ['pull', 'onsdigital/sds']
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Tag the image with SHA'
-    args: ['tag', 'onsdigital/sds:$BRANCH_NAME', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
+    args: ['tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push SHA Tagged Image to GCR'
     args: ['push', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
@@ -113,13 +97,6 @@ steps:
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         make integration-test-cloudbuild
-
-availableSecrets:
-  secretManager:
-    - versionName: projects/ons-sds-dns/secrets/dockerhub-password/versions/1
-      env: 'PASSWORD'
-    - versionName: projects/ons-sds-dns/secrets/dockerhub-username/versions/1
-      env: 'USERNAME'
 
 options:
   logging: CLOUD_LOGGING_ONLY
