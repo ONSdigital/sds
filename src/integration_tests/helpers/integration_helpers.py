@@ -108,12 +108,14 @@ def create_dataset(
         int | None: status code for local function and no return for remote.
     """
     if config.OAUTH_CLIENT_ID.__contains__("local"):
-        return _create_local_dataset(session, dataset)
+        return _create_local_dataset(session, filename, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers)
 
 
-def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
+def _create_local_dataset(
+    session: requests.Session, filename: str, dataset: dict
+) -> int:
     """
     Method to create a local dataset.
 
@@ -124,7 +126,9 @@ def _create_local_dataset(session: requests.Session, dataset: dict) -> int:
     Returns:
         int: status code for local function.
     """
-    simulate_post_dataset_request = session.post("http://localhost:3006", json=dataset)
+    simulate_post_dataset_request = session.post(
+        f"http://localhost:3006?filename={filename}", json=dataset
+    )
 
     return simulate_post_dataset_request.status_code
 
