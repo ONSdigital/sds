@@ -353,6 +353,13 @@ paths:
   /v1/survey_list:
     get:
       summary: Get List Survey Id
+      description: 'Gets the list of unique Survey IDs from the ''schemas'' collection
+        in Firestore.
+
+        Parameters:
+
+        schema_processor_service (SchemaProcessorService): injected dependency for
+        processing the metadata collection.'
       operationId: get_list_survey_id_v1_survey_list_get
       responses:
         '200':
