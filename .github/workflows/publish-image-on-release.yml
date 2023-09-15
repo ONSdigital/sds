@@ -23,6 +23,7 @@ jobs:
         - name: Get Release Tag
           id: get_release_tag
           run: echo "Release Tag ${{ github.ref }}"
+          if: steps.is_release.outputs.result == 'success'
 
         - name: Extract Tag Name
           id: extract_tag_name
