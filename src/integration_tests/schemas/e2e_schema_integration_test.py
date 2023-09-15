@@ -60,14 +60,11 @@ class E2ESchemaIntegrationTest(TestCase):
         assert len(response_as_json) > 0
 
         for survey_id in test_list_survey_id:
-            i = 1
-            while i <= 2:
-                schema_post_response = session.post(
-                    f"{config.API_URL}/v1/schema?survey_id={survey_id}",
-                    json=test_schema,
-                    headers=headers,
-                )
-            i += 1
+            schema_post_response = session.post(
+                f"{config.API_URL}/v1/schema?survey_id={survey_id}",
+                json=test_schema,
+                headers=headers,
+            )
 
         list_unique_survey_id = test_list_survey_id
         list_unique_survey_id.insert(0, {test_survey_id})
