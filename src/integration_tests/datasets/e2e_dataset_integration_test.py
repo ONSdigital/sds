@@ -192,14 +192,18 @@ class E2EDatasetIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        dataset_without_title = load_json(f"{config.TEST_DATASET_PATH}dataset_without_title.json")
+        dataset_without_title = load_json(
+            f"{config.TEST_DATASET_PATH}dataset_without_title.json"
+        )
 
-        dataset_without_title_filename = create_filepath("integration-test-file-without-title")
+        dataset_without_title_filename = create_filepath(
+            "integration-test-file-without-title"
+        )
 
         create_dataset_response = create_dataset(
             dataset_without_title_filename, dataset_without_title, session, headers
         )
-        
+
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
