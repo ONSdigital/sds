@@ -352,7 +352,7 @@ paths:
                 message: No results found
   /v1/survey_list:
     get:
-      summary: Get List Survey Id
+      summary: Get List Unique Survey Id
       description: 'Gets the list of unique Survey IDs from the ''schemas'' collection
         in Firestore.
 
@@ -360,14 +360,14 @@ paths:
 
         schema_processor_service (SchemaProcessorService): injected dependency for
         processing the metadata collection.'
-      operationId: get_list_survey_id_v1_survey_list_get
+      operationId: get_list_unique_survey_id_v1_survey_list_get
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                title: Response Get List Survey Id V1 Survey List Get
+                title: Response Get List Unique Survey Id V1 Survey List Get
                 type: array
                 items:
                   type: string
