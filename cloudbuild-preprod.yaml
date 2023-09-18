@@ -8,25 +8,26 @@ steps:
     - |
       gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-      # Docker Build
-    - name: 'gcr.io/cloud-builders/docker'
-      args: [ 'build', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}',  '.' ]
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}',  '.' ]
 
-      # Docker push latest tag to Google Artifact Registry of ons-sds-dns project
-    - name: 'gcr.io/cloud-builders/docker'
-      args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest' ]
+  # Docker push latest tag to Google Artifact Registry of ons-sds-dns project
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest' ]
 
-      # Docker push version tag to Google Artifact Registry of ons-sds-dns project
-    - name: 'gcr.io/cloud-builders/docker'
-      args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}' ]
+  # Docker push version tag to Google Artifact Registry of ons-sds-dns project
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}' ]
 
-      # Runs the Docker image pushed
-    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-      id: "Run image"
-      entrypoint: gcloud
-      args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest',
-              '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+  # Runs the Docker image pushed
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
+  # Deploy cloud function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
     entrypoint: sh
