@@ -6,14 +6,28 @@ on:
       #- 'v*' #Match tags starting with 'v' (PreProd)
       #- 'release-v*' #Match tags starting with 'release-v' (Prod)
       - 'testing-v*' #For testing
-    branches:
-      - 'SDSS-196*'
 
 jobs:
   docker-push:
       runs-on: ubuntu-22.04
       steps:
         - uses: actions/checkout@v3
+
+        - name: Check If It's on Main
+          id: is_main
+          run: |
+            onProtectedBranch=false
+            branches=$(git branch -r --contains tags/${{GITHUB_REF_NAME}})
+            for branch in $branches; do
+              if [[$branch == "origin/SDSS-196-Push-image-to-docker-hub-Github-workflow-build-on-defined-branch-names"]]; then
+                onProtectedBranch=true
+              fi
+            done
+            if ["$onProtectedBranch" == false]; then
+              echo "Tag is not on Main. Abort build."
+              exit 1
+            fi
+          if: startsWith(github.ref, 'refs/tags/')
 
         - name: Check If It's a Release
           id: is_release
