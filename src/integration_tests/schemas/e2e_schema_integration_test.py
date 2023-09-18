@@ -94,37 +94,36 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_guid_schema_response.status_code == 200
             assert set_guid_schema_response.json() == test_schema
 
+    def test_list_unique_survey_id(self):
+        """
+        Post schemas using the /schema api endpoint with multiple survey IDs and check that the /survey_list endpoint returns
+        the list of unique survey IDs.
+        """
+        session = setup_session()
+        headers = generate_headers()
 
-def test_list_unique_survey_id(self):
-    """
-    Post schemas using the /schema api endpoint with multiple survey IDs and check that the /survey_list endpoint returns
-    the list of unique survey IDs.
-    """
-    session = setup_session()
-    headers = generate_headers()
+        test_schema = load_json(config.TEST_SCHEMA_PATH)
 
-    test_schema = load_json(config.TEST_SCHEMA_PATH)
-
-    schema_post_response = session.post(
-        f"{config.API_URL}/v1/schema?survey_id={test_list_survey_id[0]}",
-        json=test_schema,
-        headers=headers,
-    )
-
-    assert schema_post_response.status_code == 200
-
-    for survey_id in test_list_survey_id:
         schema_post_response = session.post(
-            f"{config.API_URL}/v1/schema?survey_id={survey_id}",
+            f"{config.API_URL}/v1/schema?survey_id={test_list_survey_id[0]}",
             json=test_schema,
             headers=headers,
         )
+
         assert schema_post_response.status_code == 200
 
-    set_list_unique_survey_id_response = session.get(
-        f"{config.API_URL}/v1/survey_list",
-        headers=headers,
-    )
+        for survey_id in test_list_survey_id:
+            schema_post_response = session.post(
+                f"{config.API_URL}/v1/schema?survey_id={survey_id}",
+                json=test_schema,
+                headers=headers,
+            )
+            assert schema_post_response.status_code == 200
 
-    assert set_list_unique_survey_id_response.status_code == 200
-    assert set_list_unique_survey_id_response.json() == test_list_survey_id
+        set_list_unique_survey_id_response = session.get(
+            f"{config.API_URL}/v1/survey_list",
+            headers=headers,
+        )
+
+        assert set_list_unique_survey_id_response.status_code == 200
+        assert set_list_unique_survey_id_response.json() == test_list_survey_id
