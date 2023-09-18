@@ -13,7 +13,7 @@ jobs:
         - name: Check the tags
           id: is_proper_tags
           run: |
-            if [[ "${{github.ref_name }}" != release-v* && "${{github.ref_name }}" != testing-v* ]]; then
+            if [[ "${{github.ref_name }}" != release-v* && "${{github.ref_name }}" != v* ]]; then
             echo "Unknown tags used. DockerHub build is aborted."
             exit 1
             fi
