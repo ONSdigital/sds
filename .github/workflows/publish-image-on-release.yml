@@ -22,20 +22,9 @@ jobs:
             fi
           if: startsWith(github.ref, 'refs/tags/')
 
-        - name: Get Release Tag
-          id: get_release_tag
-          run: echo "Release Tag ${{ github.ref }}"
-          if: steps.is_release.outcome == 'success'
-
-        - name: Extract Tag Name
-          id: extract_tag_name
-          run: echo "Tag Name ${GITHUB_REF##*/}" #This extracts tag name from the full reference.
-          shell: bash
-          if: steps.is_release.outcome == 'success'
-
         - name: Set Tag Name variable
           run: |
-            TAG_NAME="${{ steps.extract_tag_name.outputs.stdout }}"
+            TAG_NAME="${{ github.ref_name }}"
           if: steps.is_release.outcome == 'success'
 
         - name: Write app version
