@@ -26,28 +26,28 @@ jobs:
         - name: Get Release Tag
           id: get_release_tag
           run: echo "Release Tag ${{ github.ref }}"
-          if: steps.is_release.outputs.result == 'success'
+          if: steps.is_release.outcome == 'success'
 
         - name: Extract Tag Name
           id: extract_tag_name
           run: echo "Tag Name ${GITHUB_REF##*/}" #This extracts tag name from the full reference.
           shell: bash
-          if: steps.is_release.outputs.result == 'success'
+          if: steps.is_release.outcome == 'success'
 
         - name: Set Tag Name variable
           run: |
             TAG_NAME="${{ steps.extract_tag_name.outputs.stdout }}"
-          if: steps.is_release.outputs.result == 'success'
+          if: steps.is_release.outcome == 'success'
 
         - name: Write app version
           run: printf "$GITHUB_SHA" > .application-version
         - name: Build
           run: >
             docker build -t onsdigital/sds:$TAG_NAME .
-          if: steps.is_release.outputs.result == 'success'
+          if: steps.is_release.outcome == 'success'
         - name: Push to Docker Hub
           run: |
             echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
             echo "Pushing with tag [$TAG_NAME]"
             docker push onsdigital/sds:$TAG_NAME
-          if: steps.is_release.outputs.result == 'success'
+          if: steps.is_release.outcome == 'success'
