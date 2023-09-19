@@ -59,10 +59,25 @@ class DatasetProcessorService:
             dataset_publish_response
         )
 
-        self.dataset_writer_service.try_perform_delete_previous_versions_datasets_transaction(
+        self._determine_deletion_of_previous_version_dataset(
             dataset_metadata_without_id["survey_id"],
             dataset_metadata_without_id["period_id"],
             dataset_metadata_without_id["sds_dataset_version"],
+        )
+
+    def get_dataset_metadata_collection(
+        self, survey_id: str, period_id: str
+    ) -> list[DatasetMetadata]:
+        """
+        Gets the collection of dataset metadata associated with a specific survey and period id.
+
+        Parameters:
+        survey_id (str): survey id of the collection.
+        period_id (str): period id of the collection.
+        """
+
+        return self.dataset_repository.get_dataset_metadata_collection(
+            survey_id, period_id
         )
 
     def _add_metadata_to_new_dataset(
@@ -112,6 +127,26 @@ class DatasetProcessorService:
         )
 
         return DocumentVersionService.calculate_survey_version(
+            datasets_result, "sds_dataset_version"
+        )
+
+    def _calculate_previous_dataset_version_from_firestore(
+        self, survey_id: str, period_id: str
+    ) -> int:
+        """
+        Calculates the previous sds_dataset_version from a single dataset from firestore with a specific survey_id.
+
+        Parameters:
+        survey_id: survey_id of the specified dataset.
+        period_id: period_id of the specified dataset.
+        """
+        datasets_result = (
+            self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(
+                survey_id, period_id
+            )
+        )
+
+        return DocumentVersionService.calculate_previous_version(
             datasets_result, "sds_dataset_version"
         )
 
@@ -168,21 +203,6 @@ class DatasetProcessorService:
             "data": unit_data_item["unit_data"],
         }
 
-    def get_dataset_metadata_collection(
-        self, survey_id: str, period_id: str
-    ) -> list[DatasetMetadata]:
-        """
-        Gets the collection of dataset metadata associated with a specific survey and period id.
-
-        Parameters:
-        survey_id (str): survey id of the collection.
-        period_id (str): period id of the collection.
-        """
-
-        return self.dataset_repository.get_dataset_metadata_collection(
-            survey_id, period_id
-        )
-
     def _extract_identifiers_from_unit_data(
         self, raw_dataset_unit_data_collection: list[object]
     ) -> list:
@@ -202,3 +222,61 @@ class DatasetProcessorService:
         logger.debug(f"Extracted identifiers: {extracted_unit_data_identifiers}")
 
         return extracted_unit_data_identifiers
+
+    def _determine_deletion_of_previous_version_dataset(
+        self,
+        current_dataset_survey_id: str,
+        current_dataset_period_id: str,
+        current_dataset_version: int,
+    ) -> None:
+        """
+        Determine whether to delete the previous version of dataset.
+        Retention flag either retain all datasets (True) or delete only the latest previous dataset (False).
+        This flow should be present until an updated data retention policy is formulated (Card SDSS-207).
+        Deletion of previous version of dataset happens when all of the following criteria are satisfied:
+        1. Retention flag is off (False)
+        2. The current version of dataset is > 1
+        3. The current dataset is successfully added to FireStore
+
+        Parameters:
+        current_dataset_survey_id (str): Survey id of current processing dataset
+        current_dataset_period_id (str): Period id of current processing dataset
+        current_dataset_version (int): Version of current processing dataset
+        """
+        logger.info("Determining whether to delete previous version of dataset...")
+
+        # Defensively set retention flag to True unless config explicitly stated as False
+        retention_flag = True
+        if not config.RETAIN_DATASET_FIRESTORE:
+            retention_flag = False
+
+        if retention_flag is True:
+            logger.info("Retention flag is on. Process is skipped.")
+            return None
+
+        previous_dataset_version_from_firestore = (
+            self._calculate_previous_dataset_version_from_firestore(
+                current_dataset_survey_id, current_dataset_period_id
+            )
+        )
+
+        if previous_dataset_version_from_firestore < 1:
+            logger.info(
+                "Previous dataset version deletion is not required. Process is skipped."
+            )
+            return None
+
+        if previous_dataset_version_from_firestore != current_dataset_version - 1:
+            logger.error(
+                f"Previous dataset version calculated from firestore does not match."
+                f" Expected version: '{current_dataset_version - 1}' Actual version in FireStore:"
+                f" '{previous_dataset_version_from_firestore}'."
+                f" New dataset may have not been saved properly. Process is skipped."
+            )
+            return None
+
+        self.dataset_writer_service.try_perform_delete_previous_version_dataset_transaction(
+            current_dataset_survey_id,
+            current_dataset_period_id,
+            previous_dataset_version_from_firestore,
+        )

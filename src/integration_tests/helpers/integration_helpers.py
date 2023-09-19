@@ -76,7 +76,7 @@ def load_json(filepath: str) -> dict:
         filepath: string specifiing the location of the file to be loaded.
 
     Returns:
-        dict: the json object from the specifiede file.
+        dict: the json object from the specified file.
     """
     with open(filepath) as f:
         return json.load(f)
@@ -154,13 +154,14 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
     wait_until_dataset_ready(
-        dataset["survey_id"], dataset["period_id"], session, headers
+        dataset["survey_id"], dataset["period_id"], filename, session, headers
     )
 
 
 def wait_until_dataset_ready(
     survey_id: str,
     period_id: str,
+    filename: str,
     session: requests.Session,
     headers: dict[str, str],
     attempts: int = 5,
@@ -168,6 +169,8 @@ def wait_until_dataset_ready(
 ) -> None:
     """
     Method to wait until the specified dataset has been created. Includes exponential back off with adjustable defaults.
+    Check according to survey_id, period_id, and filename. In order to let it function correctly, filename of each upload
+    has to be unique
 
     Parameters:
         survey_id: the survey id of the desired dataset metadata
@@ -188,11 +191,13 @@ def wait_until_dataset_ready(
         )
 
         if test_response.status_code == 200:
-            return
-        else:
-            attempts -= 1
-            time.sleep(backoff)
-            backoff += backoff
+            for dataset_metadata in test_response.json():
+                if dataset_metadata["filename"] == filename:
+                    return
+
+        attempts -= 1
+        time.sleep(backoff)
+        backoff += backoff
 
 
 def cleanup() -> None:

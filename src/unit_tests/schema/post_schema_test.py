@@ -213,6 +213,30 @@ class PostSchemaTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
+    def test_post_missing_title_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if title is missing
+        """
+        response = self.test_client.post(
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
+            json=schema_test_data.test_post_schema_body_missing_title,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    def test_post_empty_title_400_response(self):
+        """
+        Checks that fastAPI returns a 400 error with appropriate
+        message if title is empty
+        """
+        response = self.test_client.post(
+            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
+            json=schema_test_data.test_post_schema_body_empty_title,
+        )
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
     def test_post_schema_transaction_exception_500_response(self):
         """
         Test the post schema transaction. A 500 response will be received
