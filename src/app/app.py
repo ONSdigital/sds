@@ -73,6 +73,10 @@ app.add_exception_handler(
     exceptions.ValidationException,
     ExceptionInterceptor.throw_400_validation_exception,
 )
+app.add_exception_handler(
+    exceptions.ExceptionNoSurveyIDs,
+    ExceptionInterceptor.throw_404_no_survey_id_exception,
+)
 
 
 @app.exception_handler(500)

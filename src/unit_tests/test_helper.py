@@ -21,7 +21,7 @@ class TestHelper:
         """
         Mocks the application's google bucket boundaries.
         """
-        with open(config.TEST_DATASET_PATH) as f:
+        with open(f"{config.TEST_DATASET_PATH}/dataset.json") as f:
             dataset_with_metadata: UnitDataset = json.load(f)
 
         DatasetBucketRepository.get_dataset_file_as_json = MagicMock()

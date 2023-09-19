@@ -351,6 +351,45 @@ paths:
               example:
                 status: error
                 message: No results found
+  /v1/survey_list:
+    get:
+      summary: Get List Unique Survey Id
+      description: 'Gets the list of unique Survey IDs from the ''schemas'' collection
+        in Firestore.
+
+        Parameters:
+
+        schema_processor_service (SchemaProcessorService): injected dependency for
+        processing the metadata collection.'
+      operationId: get_list_unique_survey_id_v1_survey_list_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Get List Unique Survey Id V1 Survey List Get
+                type: array
+                items:
+                  type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No Survey IDs found
 components:
   schemas:
     DatasetMetadata:
@@ -430,6 +469,7 @@ components:
       - sds_schema_version
       - sds_published_at
       - schema_version
+      - title
       - guid
       type: object
       properties:
@@ -447,6 +487,9 @@ components:
           type: string
         schema_version:
           title: Schema Version
+          type: string
+        title:
+          title: Title
           type: string
         guid:
           title: Guid

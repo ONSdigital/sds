@@ -235,3 +235,35 @@ async def get_schema_metadata_collection(
     logger.debug(f"Schemas metadata: {schema_metadata_collection}")
 
     return schema_metadata_collection
+
+
+@router.get(
+    "/v1/survey_list",
+    response_model=list[str],
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_survey_id_exception}
+            },
+        },
+    },
+)
+async def get_list_unique_survey_id(
+    schema_processor_service: SchemaProcessorService = Depends(),
+) -> list[str]:
+    """
+    Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
+    Parameters:
+    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
+    """
+    list_survey_id = schema_processor_service.get_list_unique_survey_id()
+
+    if not list_survey_id:
+        logger.error("No Survey IDs found")
+        raise exceptions.ExceptionNoSurveyIDs
+    return list_survey_id

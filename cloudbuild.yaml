@@ -4,17 +4,24 @@ steps:
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
   - name: python
+    id: "Audit packages"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make audit
+  - name: python
     id: "black"
     entrypoint: python
-    args: ["-m", "black", "src", "devtools", "--check"]
+    args: [ "-m", "black", "src", "devtools", "--check" ]
   - name: python
     id: "isort"
     entrypoint: python
-    args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
+    args: [ "-m", "isort", "src", "devtools", "--check-only",  "--profile", "black" ]
   - name: python
     id: "flake8"
     entrypoint: python
-    args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
+    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127" ]
   - name: python
     id: "unit tests"
     entrypoint: sh
@@ -23,26 +30,20 @@ steps:
       - |
         make setup
         make unit-test
-  - name: python
-    id: "Audit packages"
+
+  - name: docker
+    id: build_and_push
     entrypoint: sh
     args:
       - '-c'
       - |
-        make audit
-
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull image from dockerhub'
-    args: ['pull', 'onsdigital/sds']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with SHA'
-    args: ['tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA Tagged Image to GCR'
-    args: ['push', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA']
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
+        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
+        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
+        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -62,9 +63,8 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
+        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
   - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Get api gateway hostname'
     id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
     entrypoint: sh
     args:
@@ -89,6 +89,7 @@ steps:
       - |
         export INT_DATASET_BUCKET_NAME=$_DATASET_BUCKET_NAME
         export INT_AUTODELETE_DATASET_BUCKET_FILE=$_AUTODELETE_DATASET_BUCKET_FILE
+        export INT_RETAIN_DATASET_FIRESTORE=$_RETAIN_DATASET_FIRESTORE
         export INT_LOG_LEVEL=$_LOG_LEVEL
         export INT_PROJECT_ID=$_PROJECT_ID
         export INT_SCHEMA_BUCKET_NAME=$_SCHEMA_BUCKET_NAME
@@ -98,5 +99,6 @@ steps:
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         make integration-test-cloudbuild
+
 options:
   logging: CLOUD_LOGGING_ONLY
