@@ -12,7 +12,7 @@ config = ConfigFactory.get_config()
 
 
 @app.post("/")
-async def dev_simulate_publish_dataset(request: Request):
+async def dev_simulate_publish_dataset(request: Request, filename: str = None):
     """
     Used to simulate SDX populating the bucket to manually fire the cloud event trigger
     """
@@ -23,8 +23,9 @@ async def dev_simulate_publish_dataset(request: Request):
     # Supporting to ensure schema bucket is created for docker enviroment.
     setup_local_storage(config.SCHEMA_BUCKET_NAME, storage_client)
 
-    # Create a guid as the filename before we publish it
-    filename = f"{str(uuid.uuid4())}.json"
+    # If filename is not provided, create a guid as the filename before we publish it
+    if filename in (None, ""):
+        filename = f"{str(uuid.uuid4())}.json"
 
     # Save the dataset to the bucket
     blob = dataset_bucket.blob(filename)

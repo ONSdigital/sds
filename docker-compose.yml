@@ -28,6 +28,7 @@ services:
       - API_URL=http://cloudfunction-new_dataset:8080
       - LOG_LEVEL=DEBUG
       - AUTODELETE_DATASET_BUCKET_FILE=True
+      - RETAIN_DATASET_FIRESTORE=True
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
@@ -69,6 +70,7 @@ services:
       - PUBSUB_PROJECT_ID=mock-project-id
       - DATASET_BUCKET_NAME=dataset_bucket
       - AUTODELETE_DATASET_BUCKET_FILE=True
+      - RETAIN_DATASET_FIRESTORE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
@@ -90,6 +92,7 @@ services:
       - DATASET_BUCKET_NAME=dataset_bucket
       - SCHEMA_BUCKET_NAME=schema_bucket
       - AUTODELETE_DATASET_BUCKET_FILE=True
+      - RETAIN_DATASET_FIRESTORE=True
       - LOG_LEVEL=DEBUG
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
