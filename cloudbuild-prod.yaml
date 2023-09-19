@@ -8,21 +8,26 @@ steps:
     - |
       gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-  # Docker Pull Image from dockerhub, tag, push and deploy to cloudrun
+  # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull image from dockerhub'
-    args: [ 'pull', 'onsdigital/sds' ]
+    args: [ 'build', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:latest', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:${TAG_NAME}',  '.' ]
+
+  # Docker push latest tag to Google Artifact Registry of ons-sds-dns project
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with SHA'
-    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:latest' ]
+
+  # Docker push version tag to Google Artifact Registry of ons-sds-dns project
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA Tagged Image to GCR'
-    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA' ]
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:${TAG_NAME}' ]
+
+  # Runs the Docker image from ons-sds-dns GAR
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:latest',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
+  # Deploy cloud function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
     entrypoint: sh
@@ -47,6 +52,5 @@ options:
 
 # Store images in Google Artifact Registry
 images:
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${SHORT_SHA}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:${TAG_NAME}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-prod:latest
+  - europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-prod:latest

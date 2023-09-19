@@ -39,3 +39,7 @@ class GlobalException(Exception):
 
 class ValidationException(Exception):
     pass
+
+
+class ExceptionNoSurveyIDs(Exception):
+    pass
