@@ -468,6 +468,7 @@ components:
       - sds_schema_version
       - sds_published_at
       - schema_version
+      - title
       - guid
       type: object
       properties:
@@ -485,6 +486,9 @@ components:
           type: string
         schema_version:
           title: Schema Version
+          type: string
+        title:
+          title: Title
           type: string
         guid:
           title: Guid
