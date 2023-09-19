@@ -75,7 +75,6 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
