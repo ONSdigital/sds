@@ -35,17 +35,17 @@ class E2EDatasetIntegrationTest(TestCase):
         * We load the first sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
         * We then check the uploaded file has been deleted from the bucket
+        * We check and ack the pubsub message for first dataset
         * We repeat the steps for the second dataset
         * We check the count and respective dataset version using dataset_metadata endpoint
         * We check the dataset metadata accuracy
         * We then use the unit_data endpoint to get some unit data back using the dataset_id and a known unit identifier
         * We check the unit data response
-        * We check the pubsub messages
         """
         session = setup_session()
         headers = generate_headers()
 
-        # First dataset
+        ### Upload first dataset ###
         first_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset.json")
 
         first_dataset_filename = create_filepath("integration-test-first-file")
@@ -60,7 +60,29 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        # Second dataset
+        # Check file is removed from bucket
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+
+        # Check pubsub messages and ack
+        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
+            test_dataset_subscriber_id
+        )
+
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
+            assert received_messages[0][key] == value
+
+        ### Upload second dataset ###
         second_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset_amended.json")
 
         second_dataset_filename = create_filepath("integration-test-second-file")
@@ -74,6 +96,30 @@ class E2EDatasetIntegrationTest(TestCase):
             and create_dataset_response_for_second_dataset != 200
         ):
             assert False, "Unsuccessful request to create dataset"
+
+        # Check file is removed from bucket
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+
+        # Check pubsub messages and ack
+        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
+            test_dataset_subscriber_id
+        )
+
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
+            assert received_messages[1][key] == value
+
+        ### Check result from endpoints ###
 
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
@@ -156,39 +202,6 @@ class E2EDatasetIntegrationTest(TestCase):
 
                 json_response.pop("dataset_id")
                 assert dataset_test_data.unit_response.items() == json_response.items()
-
-        # Check pubsub messages
-        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
-            test_dataset_subscriber_id
-        )
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
-            assert received_messages[0][key] == value
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
-            assert received_messages[1][key] == value
-
-        # This config is within the integration test environment and has to match with
-        # the actual running environment to pass the test
-        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(first_dataset_filename)
-                .exists()
-            )
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(second_dataset_filename)
-                .exists()
-            )
 
     def test_different_period_and_survey_id(self):
         """
