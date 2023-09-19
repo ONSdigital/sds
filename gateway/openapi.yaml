@@ -8,14 +8,15 @@ paths:
     get:
       summary: Get Unit Supplementary Data
       description: 'Retrieve supplementary data for a particular unit given the dataset
-        id and unit id, return 404 if no data is returned.
+        id and identifier, return 404 if no data is returned.
 
 
         Parameters:
 
         dataset_id (str): The unique id of the dataset being queried.
 
-        unit_id (str): The unit id of the particular unit on the data being queried.'
+        identifier (str): The identifier of the particular unit on the data being
+        queried.'
       operationId: get_unit_supplementary_data_v1_unit_data_get
       parameters:
       - required: true
@@ -26,9 +27,9 @@ paths:
         in: query
       - required: true
         schema:
-          title: Unit Id
+          title: Identifier
           type: string
-        name: unit_id
+        name: identifier
         in: query
       responses:
         '200':
