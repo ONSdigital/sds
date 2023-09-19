@@ -45,7 +45,7 @@ class E2EDatasetIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        ### Upload first dataset ###
+        # Upload first dataset
         first_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset.json")
 
         first_dataset_filename = create_filepath("integration-test-first-file")
@@ -82,7 +82,7 @@ class E2EDatasetIntegrationTest(TestCase):
         ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
             assert received_messages[0][key] == value
 
-        ### Upload second dataset ###
+        # Upload second dataset
         second_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset_amended.json")
 
         second_dataset_filename = create_filepath("integration-test-second-file")
@@ -119,7 +119,7 @@ class E2EDatasetIntegrationTest(TestCase):
         ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
             assert received_messages[1][key] == value
 
-        ### Check result from endpoints ###
+        # Check result from endpoints
 
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
