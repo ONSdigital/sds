@@ -1,4 +1,4 @@
-from models.dataset_models import UnitDataset
+from models.dataset_models import RawDataset
 
 
 class DatasetValidatorService:
@@ -15,61 +15,57 @@ class DatasetValidatorService:
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
-    def validate_raw_dataset(raw_dataset_with_metadata: UnitDataset) -> None:
+    def validate_raw_dataset(raw_dataset: RawDataset) -> None:
         """
         Validates the raw dataset.
 
         Parameters:
-        raw_dataset_with_metadata (RawDatasetWithMetadata): dataset being validated.
+        raw_dataset (RawDataset): dataset being validated.
         """
 
-        DatasetValidatorService._validate_dataset_exists_in_bucket(
-            raw_dataset_with_metadata
-        )
-        DatasetValidatorService._validate_dataset_keys(raw_dataset_with_metadata)
+        DatasetValidatorService._validate_dataset_exists_in_bucket(raw_dataset)
+        DatasetValidatorService._validate_dataset_keys(raw_dataset)
 
     @staticmethod
     def _validate_dataset_exists_in_bucket(
-        raw_dataset_with_metadata: UnitDataset,
+        raw_dataset: RawDataset,
     ) -> None:
         """
         Validates the dataset returned from the bucket is not empty, raising a runtime error if not.
 
         Parameters:
-        raw_dataset_with_metadata (RawDatasetWithMetadata): dataset being validated.
+        raw_dataset (RawDataset): dataset being validated.
         """
-        if raw_dataset_with_metadata is None:
+        if raw_dataset is None:
             raise RuntimeError("No corresponding dataset found in bucket")
 
     @staticmethod
     def _validate_dataset_keys(
-        raw_dataset_with_metadata: UnitDataset,
+        raw_dataset: RawDataset,
     ) -> None:
         """
         Validates the dataset has no mandatory keys missing from it, raising a runtime error if there are.
 
         Parameters:
-        raw_dataset_with_metadata (RawDatasetWithMetadata): dataset being validated.
+        raw_dataset (RawDataset): dataset being validated.
         """
 
-        isValid, message = DatasetValidatorService._check_for_missing_keys(
-            raw_dataset_with_metadata
-        )
+        isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
-        return raw_dataset_with_metadata
+        return raw_dataset
 
     @staticmethod
     def _check_for_missing_keys(
-        raw_dataset_with_metadata: UnitDataset,
+        raw_dataset: RawDataset,
     ) -> tuple[bool, str]:
         """
         Returns a boolean and message depending on if there are keys missing from the data.
 
         Parameters:
-        raw_dataset_with_metadata (RawDatasetWithMetadata): dataset being validated.
+        raw_dataset (RawDataset): dataset being validated.
         """
         mandatory_keys = [
             "survey_id",
@@ -80,7 +76,7 @@ class DatasetValidatorService:
         ]
 
         missing_keys = DatasetValidatorService._collect_missing_keys_from_dataset(
-            mandatory_keys, raw_dataset_with_metadata
+            mandatory_keys, raw_dataset
         )
 
         return DatasetValidatorService._determine_missing_key_check_response(
@@ -89,20 +85,20 @@ class DatasetValidatorService:
 
     @staticmethod
     def _collect_missing_keys_from_dataset(
-        mandatory_keys: list[str], dataset: UnitDataset
+        mandatory_keys: list[str], raw_dataset: RawDataset
     ) -> list[str]:
         """
         Gets a list of any mandatory keys missing from the raw dataset.
 
         Parameters:
         mandatory_keys (list[str]): mandatory keys referenced.
-        raw_dataset_with_metadata (RawDatasetWithMetadata): dataset being validated.
+        raw_dataset (RawDataset): dataset being validated.
         """
 
         return [
             mandatory_key
             for mandatory_key in mandatory_keys
-            if mandatory_key not in dataset.keys()
+            if mandatory_key not in raw_dataset.keys()
         ]
 
     @staticmethod

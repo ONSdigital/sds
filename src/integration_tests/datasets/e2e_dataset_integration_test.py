@@ -35,17 +35,17 @@ class E2EDatasetIntegrationTest(TestCase):
         * We load the first sample dataset json file
         * Upload the dataset file to the dataset bucket with the dataset_id as the name
         * We then check the uploaded file has been deleted from the bucket
+        * We check and ack the pubsub message for first dataset
         * We repeat the steps for the second dataset
         * We check the count and respective dataset version using dataset_metadata endpoint
         * We check the dataset metadata accuracy
         * We then use the unit_data endpoint to get some unit data back using the dataset_id and a known unit identifier
         * We check the unit data response
-        * We check the pubsub messages
         """
         session = setup_session()
         headers = generate_headers()
 
-        # First dataset
+        # Upload first dataset
         first_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset.json")
 
         first_dataset_filename = create_filepath("integration-test-first-file")
@@ -60,7 +60,29 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        # Second dataset
+        # Check file is removed from bucket
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+
+        # Check pubsub messages and ack
+        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
+            test_dataset_subscriber_id
+        )
+
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
+            assert received_messages[0][key] == value
+
+        # Upload second dataset
         second_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset_amended.json")
 
         second_dataset_filename = create_filepath("integration-test-second-file")
@@ -74,6 +96,30 @@ class E2EDatasetIntegrationTest(TestCase):
             and create_dataset_response_for_second_dataset != 200
         ):
             assert False, "Unsuccessful request to create dataset"
+
+        # Check file is removed from bucket
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+
+        # Check pubsub messages and ack
+        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
+            test_dataset_subscriber_id
+        )
+
+        for (
+            key,
+            value,
+        ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
+            assert received_messages[0][key] == value
+
+        # Check result from endpoints
 
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
@@ -156,39 +202,6 @@ class E2EDatasetIntegrationTest(TestCase):
 
                 json_response.pop("dataset_id")
                 assert dataset_test_data.unit_response.items() == json_response.items()
-
-        # Check pubsub messages
-        received_messages = dataset_pubsub_helper.pull_and_acknowledge_messages(
-            test_dataset_subscriber_id
-        )
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.nonrandom_pubsub_first_dataset_metadata.items():
-            assert received_messages[0][key] == value
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
-            assert received_messages[1][key] == value
-
-        # This config is within the integration test environment and has to match with
-        # the actual running environment to pass the test
-        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(first_dataset_filename)
-                .exists()
-            )
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(second_dataset_filename)
-                .exists()
-            )
 
     def test_different_period_and_survey_id(self):
         """
@@ -278,3 +291,66 @@ class E2EDatasetIntegrationTest(TestCase):
         assert (
             dataset_different_period_id_json["period_id"] == "test_different_period_id"
         )
+
+    def test_dataset_without_title(self):
+        """
+        Test that we can upload a dataset without a title and then retrieve the metadata with title = None.
+        This checks the dataset metadata endpoint work even without title to handle the bug (Bug Card SDSS-179)
+
+        * We load the dataset json file that is without title
+        * Use the API to get the metadata back using the survey and period id
+        * Check the process is successful and title = None
+        * Use the API to get unit data and check the process is successful
+        """
+        session = setup_session()
+        headers = generate_headers()
+
+        dataset_without_title = load_json(
+            f"{config.TEST_DATASET_PATH}dataset_without_title.json"
+        )
+
+        dataset_without_title_filename = create_filepath(
+            "integration-test-file-without-title"
+        )
+
+        create_dataset_response = create_dataset(
+            dataset_without_title_filename, dataset_without_title, session, headers
+        )
+
+        if create_dataset_response is not None and create_dataset_response != 200:
+            assert False, "Unsuccessful request to create dataset"
+
+        # Check against dataset_metadata endpoint
+        dataset_metadata_response = session.get(
+            f"{config.API_URL}/v1/dataset_metadata?"
+            f"survey_id={dataset_without_title['survey_id']}&period_id={dataset_without_title['period_id']}",
+            headers=headers,
+        )
+        assert dataset_metadata_response.status_code == 200
+
+        for dataset_metadata in dataset_metadata_response.json():
+            assert dataset_metadata == {
+                "dataset_id": dataset_metadata["dataset_id"],
+                "filename": dataset_without_title_filename,
+                "sds_dataset_version": 1,
+                "schema_version": dataset_without_title["schema_version"],
+                "total_reporting_units": len(dataset_without_title["data"]),
+                "sds_published_at": dataset_metadata["sds_published_at"],
+                "title": None,
+                "form_types": dataset_without_title["form_types"],
+                "period_id": dataset_without_title["period_id"],
+                "survey_id": dataset_without_title["survey_id"],
+            }
+
+            # Check against unit_data endpoint
+            dataset_id = dataset_metadata["dataset_id"]
+            unit_data_response = session.get(
+                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                headers=headers,
+            )
+            assert unit_data_response.status_code == 200
+            json_response = unit_data_response.json()
+            assert json_response["dataset_id"] is not None
+
+            json_response.pop("dataset_id")
+            assert dataset_test_data.unit_response.items() == json_response.items()

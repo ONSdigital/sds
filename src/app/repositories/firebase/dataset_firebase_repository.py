@@ -15,10 +15,11 @@ class DatasetFirebaseRepository:
         self, survey_id: str, period_id: str
     ) -> DatasetMetadataWithoutId | None:
         """
-        Gets the latest dataset from firestore with a specific survey_id.
+        Gets the latest dataset metadata from firestore with a specific survey_id and period_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
+        period_id (str): period_id of the specified dataset.
         """
         latest_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
@@ -28,11 +29,11 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        unit_dataset: DatasetMetadataWithoutId = None
+        dataset_metadata: DatasetMetadataWithoutId = None
         for dataset in latest_dataset:
-            unit_dataset: DatasetMetadataWithoutId = {**(dataset.to_dict())}
+            dataset_metadata: DatasetMetadataWithoutId = {**(dataset.to_dict())}
 
-        return unit_dataset
+        return dataset_metadata
 
     def perform_new_dataset_transaction(
         self,
