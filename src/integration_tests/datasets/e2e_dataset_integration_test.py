@@ -60,14 +60,6 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(first_dataset_filename)
-                .exists()
-            )
-
         # Second dataset
         second_dataset = load_json(f"{config.TEST_DATASET_PATH}dataset_amended.json")
 
@@ -83,16 +75,7 @@ class E2EDatasetIntegrationTest(TestCase):
         ):
             assert False, "Unsuccessful request to create dataset"
 
-        # This config is within the integration test environment and has to match with
-        # the actual running environment to pass the test
-        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
-            assert (
-                not storage.Client()
-                .bucket(config.DATASET_BUCKET_NAME)
-                .blob(second_dataset_filename)
-                .exists()
-            )
-
+        
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
@@ -191,6 +174,22 @@ class E2EDatasetIntegrationTest(TestCase):
             value,
         ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
             assert received_messages[1][key] == value
+
+        # This config is within the integration test environment and has to match with
+        # the actual running environment to pass the test
+        if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(first_dataset_filename)
+                .exists()
+            )
+            assert (
+                not storage.Client()
+                .bucket(config.DATASET_BUCKET_NAME)
+                .blob(second_dataset_filename)
+                .exists()
+            )
 
     def test_different_period_and_survey_id(self):
         """
