@@ -117,7 +117,7 @@ class E2EDatasetIntegrationTest(TestCase):
             key,
             value,
         ) in dataset_test_data.nonrandom_pubsub_second_dataset_metadata.items():
-            assert received_messages[1][key] == value
+            assert received_messages[0][key] == value
 
         # Check result from endpoints
 
@@ -345,7 +345,7 @@ class E2EDatasetIntegrationTest(TestCase):
             # Check against unit_data endpoint
             dataset_id = dataset_metadata["dataset_id"]
             unit_data_response = session.get(
-                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
                 headers=headers,
             )
             assert unit_data_response.status_code == 200
