@@ -112,7 +112,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 # Check against unit_data endpoint for second dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&unit_id={unit_id}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
                     headers=headers,
                 )
 
