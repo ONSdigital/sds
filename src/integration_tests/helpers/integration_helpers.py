@@ -194,7 +194,7 @@ def wait_until_dataset_ready(
             for dataset_metadata in test_response.json():
                 if dataset_metadata["filename"] == filename:
                     return
-                
+
         attempts -= 1
         time.sleep(backoff)
         backoff += backoff
