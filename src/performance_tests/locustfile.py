@@ -4,6 +4,7 @@ import json
 from urllib.parse import urlencode
 
 from locust import HttpUser, task
+import google.oauth2.id_token
 
 
 def get_value_from_env(env_value, default_value="") -> str:
@@ -30,22 +31,32 @@ def get_value_from_env(env_value, default_value="") -> str:
 
 
 class Config:
-    AUTH_TOKEN = get_value_from_env("AUTH_TOKEN", "only required for integration tests")
-    SDS_ENDPOINT = "http://127.0.0.1:3000"
     SDS_FIRESTORE_COLLECTION_NAME = "schemas"
     SDS_STORAGE_BUCKET_NAME = get_value_from_env(
         "SCHEMA_BUCKET_NAME", "ons-sds-sandbox-01-europe-west2-schema"
     )
-    DEFAULT_HOSTNAME = get_value_from_env("DEFAULT_HOSTNAME", "localhost")
+    BASE_URL = get_value_from_env("BASE_URL", "http://127.0.0.1:3000")
     FIRESTORE_EMULATOR_HOST = "0.0.0.0:8200"
     PROJECT_ID = get_value_from_env("PROJECT_ID", "ons-sds-sandbox-01")
     STORAGE_EMULATOR_HOST = "http://localhost:9023"
-    TEST_SCHEMA_FILE = "src/test_data/json/schema.json"
+    TEST_SCHEMA_FILE = "schema.json"
+    # OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+    OAUTH_CLIENT_ID = get_value_from_env(
+        "OAUTH_CLIENT_ID",
+        "293516424663-6ebeaknvn4b3s6lplvo6v12trahghfsc.apps.googleusercontent.com",
+    )
+    OAUTH_TOKEN = get_value_from_env("OAUTH_TOKEN", "localhost")
 
 
 config = Config()
-BASE_URL = "http://127.0.0.1:3000"
-HEADERS = {"Authorization": f"bearer {config.AUTH_TOKEN}"}
+BASE_URL = config.BASE_URL
+# auth_req = google.auth.transport.requests.Request()
+# auth_token = google.oauth2.id_token.fetch_id_token(
+#     auth_req, audience=config.OAUTH_CLIENT_ID
+# )
+auth_token = config.OAUTH_TOKEN
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
+HEADERS = {"Authorization": f"bearer {auth_token}"}
 
 
 def delete_docs(survey_id):
@@ -94,7 +105,7 @@ def load_json(filepath: str) -> dict:
 
 
 class PerformanceTests(HttpUser):
-    host = f"https://{config.DEFAULT_HOSTNAME}"
+    host = config.BASE_URL
 
     def __init__(self, *args, **kwargs):
         """Override default init to save some additional class attributes"""
@@ -104,7 +115,7 @@ class PerformanceTests(HttpUser):
         # self.language = "welsh"
         # self.survey_id = "3456"
         self.post_sds_schema_payload = load_json(config.TEST_SCHEMA_FILE)
-        self.request_headers = {"Authorization": f"bearer {config.AUTH_TOKEN}"}
+        self.request_headers = HEADERS
 
     def on_start(self):
         """Create a ci to find"""
