@@ -239,6 +239,7 @@ class E2EDatasetIntegrationTest(TestCase):
             filename_different_period_id, dataset_different_period_id, session, headers
         )
 
+        # Define a function to get dataset metadata using survey and period IDs
         get_dataset_metadata = lambda survey_id, period_id: (  # noqa: E731
             session.get(
                 f"{config.API_URL}/v1/dataset_metadata?"
@@ -247,6 +248,7 @@ class E2EDatasetIntegrationTest(TestCase):
             )
         )
 
+        # Retrieve dataset metadata for different combinations of IDs
         dataset_metadata_response = get_dataset_metadata(
             dataset["survey_id"], dataset["period_id"]
         )
@@ -263,6 +265,7 @@ class E2EDatasetIntegrationTest(TestCase):
         assert dataset_metadata_different_survey_id_response.status_code == 200
         assert dataset_metadata_different_period_id_response.status_code == 200
 
+        # Verify that each response contains a single dataset entry
         assert len(dataset_metadata_response.json()) == 1
         assert len(dataset_metadata_different_survey_id_response.json()) == 1
         assert len(dataset_metadata_different_period_id_response.json()) == 1
@@ -275,6 +278,7 @@ class E2EDatasetIntegrationTest(TestCase):
             dataset_metadata_different_period_id_response.json()[0]
         )
 
+        # Verify that the dataset versions are not incremented
         assert dataset_json["sds_dataset_version"] == 1
         assert dataset_different_survey_id_json["sds_dataset_version"] == 1
         assert dataset_different_period_id_json["sds_dataset_version"] == 1

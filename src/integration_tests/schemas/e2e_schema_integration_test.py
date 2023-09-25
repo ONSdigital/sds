@@ -33,6 +33,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
         test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
 
+        # Post the schema and check the response
         schema_post_response = session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             json=test_schema,
@@ -46,9 +47,11 @@ class E2ESchemaIntegrationTest(TestCase):
             test_schema_subscriber_id
         )
 
+        # Retrieve and verify received messages from Pub/Sub
         received_messages_json = received_messages[0]
         assert received_messages_json == schema_post_response.json()
 
+        # Retrieve and verify schema metadata
         test_schema_get_response = session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
             headers=headers,
@@ -70,6 +73,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 "title": test_schema["title"],
             }
 
+            # Verify schema retrieval by version
             set_version_schema_response = session.get(
                 f"{config.API_URL}/v1/schema?"
                 f"survey_id={schema_metadata['survey_id']}&version={schema_metadata['sds_schema_version']}",
@@ -79,6 +83,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_version_schema_response.status_code == 200
             assert set_version_schema_response.json() == test_schema
 
+            # Verify schema retrieval by the latest version
             latest_version_schema_response = session.get(
                 f"{config.API_URL}/v1/schema?survey_id={schema_metadata['survey_id']}",
                 headers=headers,
@@ -87,6 +92,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert latest_version_schema_response.status_code == 200
             assert latest_version_schema_response.json() == test_schema
 
+            # Verify schema retrieval by GUID
             set_guid_schema_response = session.get(
                 f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
                 headers=headers,
@@ -98,13 +104,14 @@ class E2ESchemaIntegrationTest(TestCase):
     def test_list_unique_survey_id(self):
         """
         Post schemas using the /schema api endpoint with multiple survey IDs and check that the /survey_list endpoint returns
-        the list of unique survey IDs.
+        the list of unique survey IDs and verifies that the retrieved list matches the expected list of survey IDs.
         """
         session = setup_session()
         headers = generate_headers()
 
         test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
 
+        # Post schemas for multiple survey IDs
         schema_post_response = session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_list_survey_id[0]}",
             json=test_schema,
@@ -121,6 +128,7 @@ class E2ESchemaIntegrationTest(TestCase):
             )
             assert schema_post_response.status_code == 200
 
+        # Retrieve and verify the list of unique survey IDs
         set_list_unique_survey_id_response = session.get(
             f"{config.API_URL}/v1/survey_list",
             headers=headers,
