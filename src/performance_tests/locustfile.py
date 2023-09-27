@@ -1,10 +1,10 @@
-import os
-import requests
 import json
+import os
 from urllib.parse import urlencode
 
-from locust import HttpUser, task
 import google.oauth2.id_token
+import requests
+from locust import HttpUser, task
 from logging_config import logging
 
 logger = logging.getLogger(__name__)
