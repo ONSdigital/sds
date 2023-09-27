@@ -5,6 +5,9 @@ from urllib.parse import urlencode
 
 from locust import HttpUser, task
 import google.oauth2.id_token
+from logging_config import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_value_from_env(env_value, default_value="") -> str:
@@ -31,32 +34,29 @@ def get_value_from_env(env_value, default_value="") -> str:
 
 
 class Config:
-    SDS_FIRESTORE_COLLECTION_NAME = "schemas"
-    SDS_STORAGE_BUCKET_NAME = get_value_from_env(
-        "SCHEMA_BUCKET_NAME", "ons-sds-sandbox-01-europe-west2-schema"
-    )
     BASE_URL = get_value_from_env("BASE_URL", "http://127.0.0.1:3000")
     FIRESTORE_EMULATOR_HOST = "0.0.0.0:8200"
     PROJECT_ID = get_value_from_env("PROJECT_ID", "ons-sds-sandbox-01")
     STORAGE_EMULATOR_HOST = "http://localhost:9023"
     TEST_SCHEMA_FILE = "schema.json"
-    # OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
     OAUTH_CLIENT_ID = get_value_from_env(
         "OAUTH_CLIENT_ID",
         "293516424663-6ebeaknvn4b3s6lplvo6v12trahghfsc.apps.googleusercontent.com",
     )
-    OAUTH_TOKEN = get_value_from_env("OAUTH_TOKEN", "localhost")
 
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
 
 config = Config()
 BASE_URL = config.BASE_URL
-# auth_req = google.auth.transport.requests.Request()
-# auth_token = google.oauth2.id_token.fetch_id_token(
-#     auth_req, audience=config.OAUTH_CLIENT_ID
-# )
-auth_token = config.OAUTH_TOKEN
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
-HEADERS = {"Authorization": f"bearer {auth_token}"}
+auth_req = google.auth.transport.requests.Request()
+auth_token = google.oauth2.id_token.fetch_id_token(
+    auth_req, audience=config.OAUTH_CLIENT_ID
+)
+logger.info("Authorization token.....")
+logger.info(auth_token)
+logger.info(config.OAUTH_CLIENT_ID)
+HEADERS = {"Authorization": f"Bearer {auth_token}"}
 
 
 def delete_docs(survey_id):
@@ -111,9 +111,6 @@ class PerformanceTests(HttpUser):
         """Override default init to save some additional class attributes"""
         super().__init__(*args, **kwargs)
 
-        # self.form_type = "business"
-        # self.language = "welsh"
-        # self.survey_id = "3456"
         self.post_sds_schema_payload = load_json(config.TEST_SCHEMA_FILE)
         self.request_headers = HEADERS
 

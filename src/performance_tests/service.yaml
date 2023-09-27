@@ -22,16 +22,12 @@ spec:
       containerConcurrency: 80
       containers:
         - env:
-            - name: SDS_STORAGE_BUCKET_NAME
-              value: ons-sds-sandbox-01
             - name: BASE_URL
               value: https://34.149.110.167.nip.io
             - name: PROJECT_ID
               value: ons-sds-sandbox-01
             - name: OAUTH_CLIENT_ID
-              value: 34.149.110.167.nip.io
-            - name: OAUTH_TOKEN
-              value: eyJhbGciOiJSUzI1NiIsImtpZCI6IjZmNzI1NDEwMWY1NmU0MWNmMzVjOTkyNmRlODRhMmQ1NTJiNGM2ZjEiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiIyOTM1MTY0MjQ2NjMtNmViZWFrbnZuNGIzczZscGx2bzZ2MTJ0cmFoZ2hmc2MuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhenAiOiJ0ZXN0LTM0M0BvbnMtc2RzLXNhbmRib3gtMDEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJlbWFpbCI6InRlc3QtMzQzQG9ucy1zZHMtc2FuZGJveC0wMS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJleHAiOjE2OTU2NTExNzcsImlhdCI6MTY5NTY0NzU3NywiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwic3ViIjoiMTE0NTYzNTMwMTQ0Mjk4NTc2NTE4In0.D40sUPJzFJ1LxvLd_m4Ia7rHsCX1Hlh_hju0CMjuzom8ekA8PyLKvTItw03ur2eBV_ITTjbqA6FnkuvtxPNMzzD6TZ6J_5cR4r-uWAzDW7oXwq_hWvtVHNqe5cxi6bRUdi7yccv1U0EsT9WdahMcivxrLlbsXiW92AHr7ktXqBNmwLBAJERTluOp_Civuz3_iLMGLKaplg9I5WBwdvFfMSHL7KaBQRt-K6a0VRvSe8jWyJ9uYjMLX1qT7pHZAms_IZtXyp3PDEi0DESQdWWE7uOE2WAl1nmVIsf2znEfsAFuAvyR2dn81PgAp-teUuzSrY98hgU8YmUkFtqYL3x-NA
+              value: 293516424663-6ebeaknvn4b3s6lplvo6v12trahghfsc.apps.googleusercontent.com
           image: gcr.io/ons-sds-sandbox-01/locust-tasks:latest
           ports:
             - containerPort: 8089
