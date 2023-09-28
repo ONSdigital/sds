@@ -27,6 +27,12 @@ class E2ESchemaIntegrationTest(TestCase):
         """
         Post a schema using the /schema api endpoint and check the metadata
         can be retrieved. Also check that schema can be retrieved directly from storage.
+
+        * We post the schema and check the response
+        * We retrieve and verify received messages from Pub/Sub
+        * We retrieve and verify schema metadata
+        * We verify schema retrieval by version
+        * We verify schema retrieval by GUID
         """
         session = setup_session()
         headers = generate_headers()
@@ -105,6 +111,9 @@ class E2ESchemaIntegrationTest(TestCase):
         """
         Post schemas using the /schema api endpoint with multiple survey IDs and check that the /survey_list endpoint returns
         the list of unique survey IDs and verifies that the retrieved list matches the expected list of survey IDs.
+
+        * We post schemas for multiple survey IDs
+        # We retrieve and verify the list of unique survey IDs
         """
         session = setup_session()
         headers = generate_headers()
