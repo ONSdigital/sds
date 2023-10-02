@@ -5,9 +5,7 @@ from urllib.parse import urlencode
 import google.oauth2.id_token
 import requests
 from locust import HttpUser, task
-from logging_config import logging
-
-logger = logging.getLogger(__name__)
+from locust_test import locust_test_id
 
 
 def get_value_from_env(env_value, default_value="") -> str:
@@ -35,9 +33,7 @@ def get_value_from_env(env_value, default_value="") -> str:
 
 class Config:
     BASE_URL = get_value_from_env("BASE_URL", "http://127.0.0.1:3000")
-    FIRESTORE_EMULATOR_HOST = "0.0.0.0:8200"
     PROJECT_ID = get_value_from_env("PROJECT_ID", "ons-sds-sandbox-01")
-    STORAGE_EMULATOR_HOST = "http://localhost:9023"
     TEST_SCHEMA_FILE = "schema.json"
     OAUTH_CLIENT_ID = get_value_from_env(
         "OAUTH_CLIENT_ID",
@@ -45,7 +41,7 @@ class Config:
     )
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
 
 config = Config()
 BASE_URL = config.BASE_URL
@@ -53,9 +49,6 @@ auth_req = google.auth.transport.requests.Request()
 auth_token = google.oauth2.id_token.fetch_id_token(
     auth_req, audience=config.OAUTH_CLIENT_ID
 )
-logger.info("Authorization token.....")
-logger.info(auth_token)
-logger.info(config.OAUTH_CLIENT_ID)
 HEADERS = {"Authorization": f"Bearer {auth_token}"}
 
 
@@ -128,7 +121,7 @@ class PerformanceTests(HttpUser):
     def http_post_sds_v1(self):
         """Performance test task for the `http_post_sds_v1` function"""
         self.client.post(
-            f"{BASE_URL}/v1/schema?survey_id=123",
+            f"{BASE_URL}/v1/schema?survey_id={locust_test_id}",
             json=self.post_sds_schema_payload,
             headers=HEADERS,
         )
@@ -137,7 +130,7 @@ class PerformanceTests(HttpUser):
     def http_get_sds_schema_metadata_v1(self):
         """Performance test task for the `http_get_sds_schema_metadata_v1` function"""
         querystring_params = {
-            "survey_id": "123",
+            "survey_id": {locust_test_id},
         }
         self.client.get(
             f"{BASE_URL}/v1/schema_metadata?{urlencode(querystring_params)}",
