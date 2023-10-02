@@ -129,10 +129,7 @@ class PerformanceTests(HttpUser):
     @task
     def http_get_sds_schema_metadata_v1(self):
         """Performance test task for the `http_get_sds_schema_metadata_v1` function"""
-        querystring_params = {
-            "survey_id": {locust_test_id},
-        }
         self.client.get(
-            f"{BASE_URL}/v1/schema_metadata?{urlencode(querystring_params)}",
+            f"{BASE_URL}/v1/schema_metadata?survey_id={locust_test_id}",
             headers=HEADERS,
         )
