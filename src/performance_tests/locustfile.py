@@ -1,6 +1,5 @@
 import json
 import os
-from urllib.parse import urlencode
 
 import google.oauth2.id_token
 import requests
@@ -41,8 +40,6 @@ class Config:
     )
 
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "sandbox-key.json"
-
 config = Config()
 BASE_URL = config.BASE_URL
 auth_req = google.auth.transport.requests.Request()
@@ -52,18 +49,13 @@ auth_token = google.oauth2.id_token.fetch_id_token(
 HEADERS = {"Authorization": f"Bearer {auth_token}"}
 
 
+# To be done - delete the documents created in the 'schemas' collection during the performance testing
 def delete_docs(survey_id):
     """
     Deletes firestore documents
     Args:
-        survey_id (str) endpoint to be added to DELETE_CI_PATH
-
-    Returns:
-        obj: response object
+        survey_id (str)
     """
-    return requests.delete(
-        f"{BASE_URL}/v1/dev/teardown/{survey_id}", headers=HEADERS, timeout=60
-    )
 
 
 def post_sds_v1(payload):
@@ -88,7 +80,7 @@ def load_json(filepath: str) -> dict:
     Method to load json from a file.
 
     Parameters:
-        filepath: string specifiing the location of the file to be loaded.
+        filepath: string specifying the location of the file to be loaded.
 
     Returns:
         dict: the json object from the specified file.
@@ -108,12 +100,12 @@ class PerformanceTests(HttpUser):
         self.request_headers = HEADERS
 
     def on_start(self):
-        """Create a ci to find"""
+        """Create a schema to find"""
         super().on_start()
         post_sds_v1(self.post_sds_schema_payload)
 
     def on_stop(self):
-        """Delete any cis we've created"""
+        """Delete any schemas we've created"""
         super().on_stop()
         # delete_docs(self.survey_id)
 
