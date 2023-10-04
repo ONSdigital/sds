@@ -53,6 +53,7 @@ HEADERS = {"Authorization": f"Bearer {auth_token}"}
 def delete_docs(survey_id):
     """
     Deletes firestore documents
+
     Args:
         survey_id (str)
     """
