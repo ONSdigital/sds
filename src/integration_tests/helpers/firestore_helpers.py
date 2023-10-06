@@ -50,5 +50,5 @@ def delete_local_firestore_data():
         None
     """
     requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"  # noqa: E231
+        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
     )
