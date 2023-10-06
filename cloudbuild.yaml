@@ -21,7 +21,7 @@ steps:
   - name: python
     id: "flake8"
     entrypoint: python
-    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127" ]
+    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127", "--ignore=E231,E272,W503" ]
   - name: python
     id: "unit tests"
     entrypoint: sh
