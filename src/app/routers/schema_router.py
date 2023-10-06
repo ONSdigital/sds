@@ -1,5 +1,8 @@
+import json
+
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
+import requests
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
@@ -10,9 +13,6 @@ from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
 )
 from services.validators.schema_validator_service import SchemaValidatorService
-import json
-from urllib.request import urlopen
-import requests
 
 router = APIRouter()
 
