@@ -89,7 +89,7 @@ def create_filepath(file_prefix: str):
     Parameters:
         file_prefix: prefix to identify the file being uploaded
     """
-    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
+    return f"{file_prefix}-{str(datetime.now()).replace(' ', '-')}.json"
 
 
 def create_dataset(
@@ -127,7 +127,7 @@ def _create_local_dataset(
         int: status code for local function.
     """
     simulate_post_dataset_request = session.post(
-        f"http://localhost:3006?filename={filename}", json=dataset
+        f"http://localhost:3006?filename={filename}", json=dataset # noqa: E231
     )
 
     return simulate_post_dataset_request.status_code

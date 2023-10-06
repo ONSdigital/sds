@@ -105,8 +105,8 @@ class DatasetWriterService:
             logger.info("Previous version of dataset deleted succesfully.")
         except Exception as e:
             logger.debug(
-                f"Failed to delete previous version of dataset with survey id: {survey_id} \
-                and version number: {previous_version}, message: {e}"
+                f"Failed to delete previous version of dataset with survey id: {survey_id}"
+                f"and version number: {previous_version}, message: {e}"
             )
             raise RuntimeError(
                 "Failed to delete previous version of dataset from firestore. Rolling back..."
