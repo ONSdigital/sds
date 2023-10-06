@@ -78,7 +78,6 @@ unit-test:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
 
