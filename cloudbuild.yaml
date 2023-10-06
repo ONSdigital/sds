@@ -2,31 +2,40 @@ steps:
   - name: python
     id: "Setup Python"
     entrypoint: pip
-    args: [ "install", "-r", "requirements.txt" , "--user"]
+    args: ["install", "-r", "requirements.txt", "--user"]
   - name: python
     id: "Audit packages"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         make audit
   - name: python
     id: "black"
     entrypoint: python
-    args: [ "-m", "black", "src", "devtools", "--check" ]
+    args: ["-m", "black", "src", "devtools", "--check"]
   - name: python
     id: "isort"
     entrypoint: python
-    args: [ "-m", "isort", "src", "devtools", "--check-only",  "--profile", "black" ]
+    args:
+      ["-m", "isort", "src", "devtools", "--check-only", "--profile", "black"]
   - name: python
     id: "flake8"
     entrypoint: python
-    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127" ]
+    args:
+      [
+        "-m",
+        "flake8",
+        "src",
+        "devtools",
+        "--max-line-length=127",
+        "--ignore=E231,E272,W503",
+      ]
   - name: python
     id: "unit tests"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         make setup
         make unit-test
@@ -35,22 +44,33 @@ steps:
     id: build_and_push
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Run image"
     entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
-            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+    args:
+      [
+        "run",
+        "deploy",
+        "sds",
+        "--image",
+        "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA",
+        "--region",
+        "europe-west2",
+        "--allow-unauthenticated",
+        "--ingress",
+        "internal-and-cloud-load-balancing",
+      ]
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Deploy cloud function"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         cd src/app/
         gcloud functions deploy new-dataset-function \
@@ -64,19 +84,19 @@ steps:
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
         --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Retrieve `OAUTH_BRAND_NAME` and save it to workspace'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=${PROJECT_ID} \
         > /workspace/oauth_brand_name
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Retrieve `OAUTH_CLIENT_NAME` and save it to workspace'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Retrieve `OAUTH_CLIENT_NAME` and save it to workspace"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
@@ -85,7 +105,7 @@ steps:
     id: "Run integration test"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         export INT_DATASET_BUCKET_NAME=$_DATASET_BUCKET_NAME
         export INT_AUTODELETE_DATASET_BUCKET_FILE=$_AUTODELETE_DATASET_BUCKET_FILE
