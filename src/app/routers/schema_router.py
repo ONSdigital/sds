@@ -10,6 +10,9 @@ from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
 )
 from services.validators.schema_validator_service import SchemaValidatorService
+import json
+from urllib.request import urlopen
+import requests
 
 router = APIRouter()
 
@@ -261,6 +264,22 @@ async def get_list_unique_survey_id(
     Parameters:
     schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
     """
+    url = "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json"
+    # response = urlopen(url)
+    # print(response.read())
+    # if response.getcode() == 200:
+    #     survey_map = json.loads(response.read().decode("utf-8"))
+    #     print(survey_map)
+    response = requests.get(url)
+    print(response.json()["payload"]["blob"]["rawLines"])
+    x = response.json()["payload"]["blob"]["rawLines"]
+    json_value = ""
+    for line in x:
+        json_value = json_value + line
+    print(json_value)
+    y = json.loads(json_value)
+    logger.info(f"Dictionary is {y}")
+    # return y
     list_survey_id = schema_processor_service.get_list_unique_survey_id()
 
     if not list_survey_id:
