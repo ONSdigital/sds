@@ -1,25 +1,25 @@
 steps:
-  - name: python
+  - name: python:3.11
     id: "Setup Python"
     entrypoint: pip
     args: ["install", "-r", "requirements.txt", "--user"]
-  - name: python
+  - name: python:3.11
     id: "Audit packages"
     entrypoint: sh
     args:
       - "-c"
       - |
         make audit
-  - name: python
+  - name: python:3.11
     id: "black"
     entrypoint: python
     args: ["-m", "black", "src", "devtools", "--check"]
-  - name: python
+  - name: python:3.11
     id: "isort"
     entrypoint: python
     args:
       ["-m", "isort", "src", "devtools", "--check-only", "--profile", "black"]
-  - name: python
+  - name: python:3.11
     id: "flake8"
     entrypoint: python
     args:
@@ -28,10 +28,9 @@ steps:
         "flake8",
         "src",
         "devtools",
-        "--max-line-length=127",
-        "--ignore=E231,E272,W503",
+        "--max-line-length=127"
       ]
-  - name: python
+  - name: python:3.11
     id: "unit tests"
     entrypoint: sh
     args:
@@ -101,7 +100,7 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
-  - name: python
+  - name: python:3.11
     id: "Run integration test"
     entrypoint: sh
     args:
