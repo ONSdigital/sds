@@ -29,7 +29,7 @@ steps:
         "src",
         "devtools",
         "--max-line-length=127",
-        "--ignore=E231,E272",
+        "--ignore=E231,E272,W503",
       ]
   - name: python
     id: "unit tests"
