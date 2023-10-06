@@ -257,6 +257,7 @@ async def get_list_unique_survey_id(
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> list[str]:
     """
+    Test build error
     Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
     Parameters:
     schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
