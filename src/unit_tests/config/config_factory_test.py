@@ -33,6 +33,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["API_URL"] = testConfigVars.api_url
         os.environ["OAUTH_CLIENT_ID"] = testConfigVars.oauth_client_id
+        os.environ["SURVEY_MAP_URL"] = testConfigVars.survey_map_url
 
     def tearDown(self):
         os.environ["CONF"] = INITIAL_CONF
@@ -45,6 +46,7 @@ class ConfigFactoryTest(TestCase):
         os.environ["SCHEMA_BUCKET_NAME"] = ""
         os.environ["API_URL"] = ""
         os.environ["OAUTH_CLIENT_ID"] = ""
+        os.environ["SURVEY_MAP_URL"] = ""
 
     def test_docker_dev_factory(self):
         os.environ["CONF"] = "docker-dev"
