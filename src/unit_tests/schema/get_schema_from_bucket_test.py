@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
+from services.schema.schema_processor_service import SchemaProcessorService
 
 from src.test_data import schema_test_data
 
@@ -244,8 +245,8 @@ def test_get_list_unique_survey_id_404_response(test_client):
     """
     When the list of Survey IDs is empty, the API must return the error response with 404 status code
     """
-    SchemaFirebaseRepository.get_list_unique_survey_id = MagicMock()
-    SchemaFirebaseRepository.get_list_unique_survey_id.return_value = []
+    SchemaProcessorService.get_list_unique_survey_id = MagicMock()
+    SchemaProcessorService.get_list_unique_survey_id.return_value = []
     response = test_client.get("/v1/survey_list")
 
     assert response.status_code == 404
@@ -257,9 +258,7 @@ def test_get_list_unique_survey_id_500_response(test_client_no_server_exception)
     If the app encounters a global exception, the API must return the error response with 500 status code
     """
 
-    SchemaFirebaseRepository.get_list_unique_survey_id = MagicMock(
-        side_effect=Exception
-    )
+    SchemaProcessorService.get_list_unique_survey_id = MagicMock(side_effect=Exception)
 
     response = test_client_no_server_exception.get("/v1/survey_list")
 
