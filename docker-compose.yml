@@ -32,6 +32,7 @@ services:
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
+      - SURVEY_MAP_URL=https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json      
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
