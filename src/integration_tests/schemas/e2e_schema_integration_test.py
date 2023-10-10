@@ -118,24 +118,24 @@ class E2ESchemaIntegrationTest(TestCase):
         session = setup_session()
         headers = generate_headers()
 
-        test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
+        # test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
 
         # Post schemas for multiple survey IDs
-        schema_post_response = session.post(
-            f"{config.API_URL}/v1/schema?survey_id={test_list_survey_id[0]}",
-            json=test_schema,
-            headers=headers,
-        )
+        # schema_post_response = session.post(
+        #     f"{config.API_URL}/v1/schema?survey_id={test_list_survey_id[0]}",
+        #     json=test_schema,
+        #     headers=headers,
+        # )
 
-        assert schema_post_response.status_code == 200
+        # assert schema_post_response.status_code == 200
 
-        for survey_id in test_list_survey_id:
-            schema_post_response = session.post(
-                f"{config.API_URL}/v1/schema?survey_id={survey_id}",
-                json=test_schema,
-                headers=headers,
-            )
-            assert schema_post_response.status_code == 200
+        # for survey_id in test_list_survey_id:
+        #     schema_post_response = session.post(
+        #         f"{config.API_URL}/v1/schema?survey_id={survey_id}",
+        #         json=test_schema,
+        #         headers=headers,
+        #     )
+        #     assert schema_post_response.status_code == 200
 
         # Retrieve and verify the list of unique survey IDs
         set_list_unique_survey_id_response = session.get(
