@@ -147,7 +147,10 @@ class CloudBuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+        )
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
