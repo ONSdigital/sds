@@ -1,6 +1,8 @@
+import json
 import uuid
 
 import exception.exceptions as exceptions
+import requests
 from config.config_factory import config
 from logging_config import logging
 from models.schema_models import SchemaMetadata
@@ -9,7 +11,6 @@ from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepos
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
 from services.shared.publisher_service import publisher_service
-import json, requests
 
 logger = logging.getLogger(__name__)
 
