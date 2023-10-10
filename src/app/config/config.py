@@ -19,6 +19,7 @@ class Config(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -30,6 +31,7 @@ class Config(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    SURVEY_MAP_URL: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -61,6 +63,10 @@ class IntegrationTestConfig(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+        )
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -76,6 +82,7 @@ class IntegrationTestConfig(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
+    SURVEY_MAP_URL: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -104,6 +111,10 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+        )
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -118,6 +129,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
+    SURVEY_MAP_URL: str
 
 
 class CloudBuildConfig(BaseSettings):
@@ -135,6 +147,10 @@ class CloudBuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+        )
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -146,6 +162,7 @@ class CloudBuildConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    SURVEY_MAP_URL: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):
@@ -175,6 +192,8 @@ class UnitTestingConfig(Config):
         super().__init__()
         self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
+        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
 
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
+    SURVEY_MAP_URL: str
