@@ -9,6 +9,7 @@ from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepos
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
 from services.shared.publisher_service import publisher_service
+import json, requests
 
 logger = logging.getLogger(__name__)
 
@@ -226,7 +227,18 @@ class SchemaProcessorService:
 
         try:
             logger.info("Fetching the list of Survey IDs")
-            list_survey_id = self.schema_firebase_repository.get_list_unique_survey_id()
+            # list_survey_id = self.schema_firebase_repository.get_list_unique_survey_id()
+            url = config.SURVEY_MAP_URL
+            print(f"URL is {url}")
+            response = requests.get(url)
+            print(response.json()["payload"]["blob"]["rawLines"])
+            x = response.json()["payload"]["blob"]["rawLines"]
+            json_value = ""
+            for line in x:
+                json_value = json_value + line
+            print(json_value)
+            list_survey_id = json.loads(json_value)
+            logger.info(f"Dictionary is {list_survey_id}")
             logger.info("Fetched the list of Survey IDs")
 
         except Exception as e:
