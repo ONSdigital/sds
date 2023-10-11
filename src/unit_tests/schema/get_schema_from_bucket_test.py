@@ -231,8 +231,8 @@ def test_get_survey_id_map_200_response(test_client):
     """
     When the list of Survey IDs is fetched successfully, the API must return the correct response with 200 status code
     """
-    SchemaFirebaseRepository.survey_id_map = MagicMock()
-    SchemaFirebaseRepository.get_survey_id_map.return_value = (
+    SchemaProcessorService.survey_id_map = MagicMock()
+    SchemaProcessorService.get_survey_id_map.return_value = (
         schema_test_data.test_survey_id_map
     )
     response = test_client.get("/v1/survey_list")
