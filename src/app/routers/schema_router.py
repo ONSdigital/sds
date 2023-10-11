@@ -259,7 +259,7 @@ async def get_survey_id_map(
     """
     Gets the Survey mapping data from the survey_map.json file in GitHub repository.
     Parameters:
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the survey_map.json file in GitHub repository.
+    schema_processor_service (SchemaProcessorService): injected dependency for processing the survey_map.json file.
     """
 
     survey_id_map = schema_processor_service.get_survey_id_map()
