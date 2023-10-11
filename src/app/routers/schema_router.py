@@ -253,26 +253,18 @@ async def get_schema_metadata_collection(
         },
     },
 )
-async def get_list_unique_survey_id(
+async def get_survey_id_map(
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> list[dict]:
     """
-    Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
+    Gets the Survey mapping data from the survey_map.json file in GitHub repository.
     Parameters:
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
+    schema_processor_service (SchemaProcessorService): injected dependency for processing the survey_map.json file in GitHub repository.
     """
-    # url = get_value_from_env("SURVEY_MAP_URL")
-    # url = "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json"
-    # response = urlopen(url)
-    # print(response.read())
-    # if response.getcode() == 200:
-    #     survey_map = json.loads(response.read().decode("utf-8"))
-    #     print(survey_map)
 
-    # return y
-    list_survey_id = schema_processor_service.get_list_unique_survey_id()
+    survey_id_map = schema_processor_service.get_survey_id_map()
 
-    if not list_survey_id:
+    if not survey_id_map:
         logger.error("No Survey IDs found")
         raise exceptions.ExceptionNoSurveyIDs
-    return list_survey_id
+    return survey_id_map

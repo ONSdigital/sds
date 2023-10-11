@@ -220,30 +220,29 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_list_unique_survey_id(self) -> list[str]:
+    def get_survey_id_map(self) -> list[str]:
         """
-        Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
-        The Survey IDs are being returned as an array of strings.
+        Gets the Survey mapping data from the survey_map.json file in GitHub repository.
         """
 
         try:
-            logger.info("Fetching the list of Survey IDs")
-            # list_survey_id = self.schema_firebase_repository.get_list_unique_survey_id()
+            logger.info("Fetching the survey mapping data")
+
             url = config.SURVEY_MAP_URL
-            print(f"URL is {url}")
             response = requests.get(url)
-            print(response.json()["payload"]["blob"]["rawLines"])
-            x = response.json()["payload"]["blob"]["rawLines"]
-            json_value = ""
-            for line in x:
-                json_value = json_value + line
-            print(json_value)
-            list_survey_id = json.loads(json_value)
-            logger.info(f"Dictionary is {list_survey_id}")
-            logger.info("Fetched the list of Survey IDs")
+            survey_map_file = response.json()["payload"]["blob"]["rawLines"]
+
+            survey_map_json = ""
+            for line in survey_map_file:
+                survey_map_json = survey_map_json + line
+
+            survey_map_dict = json.loads(survey_map_json)
+
+            logger.debug(f"Survey map data is {survey_map_dict}")
+            logger.info("Fetched the survey mapping data")
 
         except Exception as e:
-            logger.error(f"Error while fetching the list of Survey IDs: {e}")
+            logger.error(f"Error while fetching the survey mapping data: {e}")
             raise exceptions.GlobalException
 
-        return list_survey_id
+        return survey_map_dict

@@ -163,7 +163,7 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
     },
 ]
 
-test_list_survey_id = [
+test_survey_id_map = [
     {"survey_id": "014", "survey_name": "Prodcom"},
     {"survey_id": "132", "survey_name": "PPI"},
 ]
