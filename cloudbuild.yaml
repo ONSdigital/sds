@@ -90,7 +90,7 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
-  - name: python
+  - name: python:3.11
     id: "Run integration test"
     entrypoint: sh
     args:
