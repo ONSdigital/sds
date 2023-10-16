@@ -1,21 +1,21 @@
 steps:
-  - name: python
+  - name: python:3.11
     id: "Setup Python"
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
-  - name: python
+  - name: python:3.11
     id: "black"
     entrypoint: python
     args: ["-m", "black", "src", "devtools", "--check"]
-  - name: python
+  - name: python:3.11
     id: "isort"
     entrypoint: python
     args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
-  - name: python
+  - name: python:3.11
     id: "flake8"
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: python
+  - name: python:3.11
     id: "unit tests"
     entrypoint: sh
     args:
@@ -23,7 +23,7 @@ steps:
       - |
         make setup
         make unit-test
-  - name: python
+  - name: python:3.11
     id: "Audit packages"
     entrypoint: sh
     args:
