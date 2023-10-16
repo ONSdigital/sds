@@ -23,6 +23,15 @@ steps:
     args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-prod:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Show image vulnerabilities'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud alpha container images describe gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA \
+        --show-package-vulnerability
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
     entrypoint: sh
