@@ -51,7 +51,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud alpha container images describe gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA \
+        gcloud alpha container images describe gcr.io/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
         --show-package-vulnerability
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
