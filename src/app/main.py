@@ -23,13 +23,11 @@ def new_dataset(cloud_event):
 
     DatasetValidatorService.validate_file_is_json(filename)
 
-    raw_dataset_with_metadata = DatasetBucketService().get_and_validate_dataset(
-        filename
-    )
+    raw_dataset = DatasetBucketService().get_and_validate_dataset(filename)
 
     logger.info("Dataset obtained from bucket successfully.")
-    logger.debug(f"Dataset: {raw_dataset_with_metadata}")
+    logger.debug(f"Dataset: {raw_dataset}")
 
-    DatasetProcessorService().process_raw_dataset(filename, raw_dataset_with_metadata)
+    DatasetProcessorService().process_raw_dataset(filename, raw_dataset)
 
     logger.info("Dataset uploaded successfully.")

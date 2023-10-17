@@ -101,5 +101,16 @@ class ExceptionInterceptor:
         )
         return er.throw_er_with_json()
 
+    def throw_404_no_survey_id_exception(
+        request: Request, exc: Exception
+    ) -> JSONResponse:
+        """
+        When there are no survey IDs and a 404 HTTP response is returned
+        """
+        er = ExceptionResponder(
+            status.HTTP_404_NOT_FOUND, erm.erm_404_no_survey_id_exception
+        )
+        return er.throw_er_with_json()
+
 
 exception_interceptor = ExceptionInterceptor()

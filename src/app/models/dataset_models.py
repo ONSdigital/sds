@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -6,27 +7,46 @@ class DatasetMetadataWithoutId:
     survey_id: str
     period_id: str
     form_types: list[str]
-    title: str
     sds_published_at: str
     total_reporting_units: int
     schema_version: str
     sds_dataset_version: int
     filename: str
+    title: Optional[str] = None
 
 
 @dataclass
-class DatasetMetadata(DatasetMetadataWithoutId):
+class DatasetMetadata:
+    survey_id: str
+    period_id: str
+    form_types: list[str]
+    sds_published_at: str
+    total_reporting_units: int
+    schema_version: str
+    sds_dataset_version: int
+    filename: str
     dataset_id: str
+    title: Optional[str] = None
 
 
 @dataclass
-class UnitDatasetWithoutData:
+class RawDatasetWithoutData:
     dataset_id: str
     survey_id: str
     period_id: str
     form_types: list[str]
-    title: str
     schema_version: str
+    title: Optional[str] = None
+
+
+class RawDataset:
+    dataset_id: str
+    survey_id: str
+    period_id: str
+    form_types: list[str]
+    schema_version: str
+    data: object
+    title: Optional[str] = None
 
 
 @dataclass
@@ -34,8 +54,8 @@ class UnitDataset:
     dataset_id: str
     survey_id: str
     period_id: str
-    schema_version: str
     form_types: list[str]
+    schema_version: str
     data: object
 
 

@@ -8,19 +8,23 @@ steps:
     - |
       gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-  # Docker Pull Image from dockerhub, tag, push and deploy to cloudrun
+  # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Pull image from dockerhub'
-    args: [ 'pull', 'onsdigital/sds' ]
+    args: [ 'build', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest', '-t', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}',  '.' ]
+
+  # Docker push latest tag to Google Artifact Registry of ons-sds-dns project
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Tag the image with SHA'
-    args: [ 'tag', 'onsdigital/sds:latest', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA' ]
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest' ]
+
+  # Docker push version tag to Google Artifact Registry of ons-sds-dns project
   - name: 'gcr.io/cloud-builders/docker'
-    id: 'Push SHA Tagged Image to GCR'
-    args: [ 'push', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA' ]
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Deploy the image to cloudrun'
-    args: [ 'run', 'deploy', 'sds', '--image', 'gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA',
+    args: [ 'push',  'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}' ]
+
+  # Runs the Docker image pushed
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -31,6 +35,8 @@ steps:
       - |
         gcloud alpha container images describe gcr.io/${_PROJECT_ID}/sds/sds-preprod:$SHORT_SHA \
         --show-package-vulnerability
+
+  # Deploy cloud function
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
@@ -49,13 +55,12 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
+        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${_PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
 # Store images in Google Artifact Registry
 images:
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${SHORT_SHA}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:${TAG_NAME}
-  - europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds-preprod:latest
+  - europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:${TAG_NAME}
+  - europe-west2-docker.pkg.dev/ons-sds-dns/sds/sds-preprod:latest

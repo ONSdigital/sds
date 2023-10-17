@@ -38,21 +38,21 @@ logger = logging.getLogger(__name__)
 )
 async def get_unit_supplementary_data(
     dataset_id: str,
-    unit_id: str,
+    identifier: str,
     dataset_repository: DatasetFirebaseRepository = Depends(),
 ):
     """
-    Retrieve supplementary data for a particular unit given the dataset id and unit id, return 404 if no data is returned.
+    Retrieve supplementary data for a particular unit given the dataset id and identifier, return 404 if no data is returned.
 
     Parameters:
     dataset_id (str): The unique id of the dataset being queried.
-    unit_id (str): The unit id of the particular unit on the data being queried.
+    identifier (str): The identifier of the particular unit on the data being queried.
     """
     logger.info("Getting unit supplementary data...")
-    logger.debug(f"Input data: dataset_id={dataset_id}, unit_id={unit_id}")
+    logger.debug(f"Input data: dataset_id={dataset_id}, identifier={identifier}")
 
     unit_supplementary_data = dataset_repository.get_unit_supplementary_data(
-        dataset_id, unit_id
+        dataset_id, identifier
     )
 
     if not unit_supplementary_data:

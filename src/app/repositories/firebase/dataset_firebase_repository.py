@@ -15,10 +15,11 @@ class DatasetFirebaseRepository:
         self, survey_id: str, period_id: str
     ) -> DatasetMetadataWithoutId | None:
         """
-        Gets the latest dataset from firestore with a specific survey_id.
+        Gets the latest dataset metadata from firestore with a specific survey_id and period_id.
 
         Parameters:
         survey_id (str): survey_id of the specified dataset.
+        period_id (str): period_id of the specified dataset.
         """
         latest_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
@@ -28,11 +29,11 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        unit_dataset: DatasetMetadataWithoutId = None
+        dataset_metadata: DatasetMetadataWithoutId = None
         for dataset in latest_dataset:
-            unit_dataset: DatasetMetadataWithoutId = {**(dataset.to_dict())}
+            dataset_metadata: DatasetMetadataWithoutId = {**(dataset.to_dict())}
 
-        return unit_dataset
+        return dataset_metadata
 
     def perform_new_dataset_transaction(
         self,
@@ -73,18 +74,20 @@ class DatasetFirebaseRepository:
 
         dataset_transaction(self.client.transaction())
 
-    def get_unit_supplementary_data(self, dataset_id: str, unit_id: str) -> UnitDataset:
+    def get_unit_supplementary_data(
+        self, dataset_id: str, identifier: str
+    ) -> UnitDataset:
         """
         Get the unit supplementary data of a specified unit from a dataset collection
 
         Parameters:
         dataset_id (str): The unique id of the dataset
-        unit_id (str): The id of the unit on the dataset
+        identifier (str): The id of the unit on the dataset
         """
         return (
             self.datasets_collection.document(dataset_id)
             .collection("units")
-            .document(unit_id)
+            .document(identifier)
             .get()
             .to_dict()
         )
@@ -102,6 +105,7 @@ class DatasetFirebaseRepository:
         returned_dataset_metadata = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
+            .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
             .stream()
         )
 
@@ -113,19 +117,19 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata_list
 
-    def perform_delete_previous_versions_datasets_transaction(
-        self, survey_id: str, period_id: str, latest_version: int
+    def perform_delete_previous_version_dataset_transaction(
+        self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
-        Queries firestore for older versions of a dataset associated with a survey id,
-        iterates through them and deletes them and their subcollections recursively. The
+        Queries firestore for a previous version of a dataset associated with a survey id
+        and period id, iterates to delete it and their subcollections recursively. The
         recursion is needed because you cannot delete subcollections of a document in firestore
         just by deleting the document, it does not cascade.
 
         Parameters:
         survey_id: survey id of the dataset.
         period_id: period id of the dataset.
-        latest_version: latest version of the dataset.
+        previous_version: previous version of the dataset to delete.
         """
 
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
@@ -133,13 +137,13 @@ class DatasetFirebaseRepository:
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
         @firestore.transactional
         def delete_collection_transaction(transaction: firestore.Transaction):
-            previous_versions_datasets = (
+            previous_version_dataset = (
                 self.datasets_collection.where("survey_id", "==", survey_id)
                 .where("period_id", "==", period_id)
-                .where("sds_dataset_version", "!=", latest_version)
+                .where("sds_dataset_version", "==", previous_version)
             )
 
-            self._delete_collection(transaction, previous_versions_datasets)
+            self._delete_collection(transaction, previous_version_dataset)
 
         delete_collection_transaction(self.client.transaction())
 

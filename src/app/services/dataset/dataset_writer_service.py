@@ -85,27 +85,29 @@ class DatasetWriterService:
             )
             raise RuntimeError("Error publishing dataset response to the topic.")
 
-    def try_perform_delete_previous_versions_datasets_transaction(
-        self, survey_id: str, period_id: str, latest_version: int
+    def try_perform_delete_previous_version_dataset_transaction(
+        self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
-        Tries to delete all versions of a dataset except the latest version, if this fails an error is raised.
+        Tries to delete the latest previous version of a dataset, if this fails an error is raised.
 
         Parameters:
         survey_id: survey id of the dataset.
-        latest_version: latest version of the dataset.
+        previous_version: latest previous version of the dataset.
         """
-        logger.info("Deleting previous dataset versions...")
+        logger.info(
+            f"Deleting a previous version dataset. Version nnumber: {previous_version}..."
+        )
         try:
-            self.dataset_firebase_repository.perform_delete_previous_versions_datasets_transaction(
-                survey_id, period_id, latest_version
+            self.dataset_firebase_repository.perform_delete_previous_version_dataset_transaction(
+                survey_id, period_id, previous_version
             )
-            logger.info("Previous versions deleted succesfully.")
+            logger.info("Previous version of dataset deleted succesfully.")
         except Exception as e:
             logger.debug(
-                f"Failed to delete previous versions of dataset with survey id {survey_id} \
-                and latest version {latest_version}, message: {e}"
+                f"Failed to delete previous version of dataset with survey id: {survey_id} \
+                and version number: {previous_version}, message: {e}"
             )
             raise RuntimeError(
-                "Failed to delete previous dataset versions from firestore. Rolling back..."
+                "Failed to delete previous version of dataset from firestore. Rolling back..."
             )
