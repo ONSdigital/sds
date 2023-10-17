@@ -49,7 +49,7 @@ steps:
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
         --show-package-vulnerability
-        if grep -q HIGH vulnerability_report.txt; then
+        if grep -q "HIGH"; then
           echo "Critical vulnerabilities found. Exiting with an error."
           exit 1
         fi
