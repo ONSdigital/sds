@@ -37,7 +37,6 @@ steps:
         --show-package-vulnerability
 
   # Deploy cloud function
-
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
     entrypoint: sh

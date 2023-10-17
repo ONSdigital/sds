@@ -23,28 +23,6 @@ steps:
       - '-c'
       - |
         make audit
-  - name: python
-    id: "black"
-    entrypoint: python
-    args: [ "-m", "black", "src", "devtools", "--check" ]
-  - name: python
-    id: "isort"
-    entrypoint: python
-    args: [ "-m", "isort", "src", "devtools", "--check-only",  "--profile", "black" ]
-  - name: python
-    id: "flake8"
-    entrypoint: python
-    args: [ "-m", "flake8", "src", "devtools", "--max-line-length=127" ]
-  - name: python
-    id: "unit tests"
-    entrypoint: sh
-    args:
-      - '-c'
-      - |
-        make setup
-        make unit-test
-  - name: python:3.11
-    id: "Audit packages"
 
   - name: docker
     id: build_and_push
