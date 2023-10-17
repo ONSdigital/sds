@@ -4,6 +4,13 @@ steps:
     entrypoint: pip
     args: [ "install", "-r", "requirements.txt" , "--user"]
   - name: python:3.11
+    id: "Audit packages"
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        make audit
+  - name: python:3.11
     id: "black"
     entrypoint: python
     args: ["-m", "black", "src", "devtools", "--check"]
@@ -16,12 +23,13 @@ steps:
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
   - name: python:3.11
-    id: "Audit packages"
+    id: "unit tests"
     entrypoint: sh
     args:
       - '-c'
       - |
-        make audit
+        make setup
+        make unit-test
 
   - name: docker
     id: build_and_push
