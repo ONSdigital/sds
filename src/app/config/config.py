@@ -65,7 +65,7 @@ class IntegrationTestConfig(BaseSettings):
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
             "SURVEY_MAP_URL",
-            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+            "https://github.com/ONSdigital/sds-schema-definitions/blob/main/mapping/survey_map.json",
         )
 
     CONF: str
@@ -113,7 +113,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
             "SURVEY_MAP_URL",
-            "https://github.com/ONSdigital/sds/blob/SDSS-229-mapping-table-survey-list/src/mapping/survey_map.json",
+            "https://github.com/ONSdigital/sds-schema-definitions/blob/main/mapping/survey_map.json",
         )
 
     CONF: str
