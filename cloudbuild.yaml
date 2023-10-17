@@ -40,11 +40,6 @@ steps:
         docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: "Run image"
-    entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
-            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Show image vulnerabilities'
@@ -54,10 +49,16 @@ steps:
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
         --show-package-vulnerability
-        if echo "$?" | grep -q "kind: VULNERABILITY"; then
+        if grep -q HIGH vulnerability_report.txt; then
           echo "Critical vulnerabilities found. Exiting with an error."
           exit 1
         fi
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
