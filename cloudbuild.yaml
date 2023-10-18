@@ -54,10 +54,10 @@ steps:
       - '-c'
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
-        --show-package-vulnerability > vulnerability_report.txt
+        --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
 
-        if grep -q "kind: VULNERABILITY" vulnerability_report.txt; then
-          echo "Critical vulnerabilities found. Exiting with an error."
+        if jq -e '.vulnerabilityDetails.vulnerabilities[] | select(.severity == "HIGH" and .kind == "VULNERABILITY")' vulnerability_report.json > /dev/null; then
+          echo "Error: Critical vulnerability found"
           exit 1
         fi
 
