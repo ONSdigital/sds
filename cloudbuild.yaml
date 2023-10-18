@@ -47,14 +47,6 @@ steps:
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
-  - name: 'ubuntu'
-    id: 'Install jq'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        apt-get update && apt-get install -y jq
-
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Show image vulnerabilities'
     entrypoint: sh
@@ -63,9 +55,15 @@ steps:
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
         --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
-
+  - name: 'alpine'
+    id: 'Check for critical vulnerabilities'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        apk add jq
         if jq -e '.vulnerabilityDetails.vulnerabilities[] | select(.severity == "HIGH" and .kind == "VULNERABILITY")' vulnerability_report.json > /dev/null; then
-          echo "Error: Critical vulnerability found"
+          echo "Error: Critical vulnerability found" >&2
           exit 1
         fi
 
