@@ -49,6 +49,7 @@ steps:
 
   - name: 'gcr.io/cloud-builders/apt'
     args: ['install', '-y', 'jq']
+    entrypoint: bash
 
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Show image vulnerabilities'
