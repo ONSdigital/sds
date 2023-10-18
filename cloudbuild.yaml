@@ -53,10 +53,10 @@ steps:
     args:
       - '-c'
       - |
-        vulnerabilities = $(gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest \
-        --show-package-vulnerability)
-        echo $vulnerabilities
-        if echo "$vulnerabilities" | grep -q "kind: VULNERABILITY" && echo "$vulnerabilities" | grep -q "severity: HIGH"; then
+        gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
+        --show-package-vulnerability > vulnerability_report.txt
+
+        if grep -q "kind: VULNERABILITY" vulnerability_report.txt; then
           echo "Critical vulnerabilities found. Exiting with an error."
           exit 1
         fi
