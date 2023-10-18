@@ -54,7 +54,7 @@ steps:
       - '-c'
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA \
-        --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
+        --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.json
   - name: 'alpine'
     id: 'Check for critical vulnerabilities'
     entrypoint: sh
