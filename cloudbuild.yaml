@@ -62,7 +62,7 @@ steps:
       - '-c'
       - |
         apk add jq
-        if jq -e 'select(.vulnerabilityDetails and vulnerabilityDetails.vulnerabilities) | .vulnerabilityDetails.vulnerabilities[] | select(.severity == "HIGH" and .kind == "VULNERABILITY")' vulnerability_report.txt > /dev/null; then
+        if jq -e 'select(.package_vulnerability_summary and package_vulnerability_summary.vulnerabilities) | .package_vulnerability_summary.vulnerabilities[] | select(.severity == "HIGH" and .kind == "VULNERABILITY")' vulnerability_report.txt > /dev/null; then
           echo "Error: Critical vulnerability found" >&2
           exit 1
         fi
