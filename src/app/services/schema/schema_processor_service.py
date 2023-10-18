@@ -230,7 +230,10 @@ class SchemaProcessorService:
 
             url = config.SURVEY_MAP_URL
             response = requests.get(url)
+            logger.debug(f"Response is {response}")
+
             survey_map_file = response.json()["payload"]["blob"]["rawLines"]
+            logger.debug(f"Mapping data is {survey_map_file}")
 
             survey_map_json = ""
             for line in survey_map_file:
