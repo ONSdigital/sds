@@ -41,12 +41,6 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: "Run image"
-    entrypoint: gcloud
-    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
-            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
-
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'Show image vulnerabilities'
     entrypoint: sh
@@ -64,9 +58,16 @@ steps:
       - |
         apk add jq
         if jq -e '.package_vulnerability_summary.vulnerabilities.HIGH[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "HIGH")' vulnerability_report.txt > /dev/null; then
-          echo "Error: Critical vulnerability found" >&2
+          echo "Error: Critical vulnerability found with image" >&2
           exit 1
         fi
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Run image"
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:$SHORT_SHA',
+            '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
+
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
