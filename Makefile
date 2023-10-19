@@ -28,7 +28,7 @@ start-cloud-dev:
 	export PROJECT_ID=${PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	python -m uvicorn src.app.app:app --reload --port 3000
+	python -m uvicorn src.app.app:app --reload --port 3033
 
 
 start-docker-dev:
@@ -45,7 +45,7 @@ start-docker-dev:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	python -m uvicorn src.app.app:app --reload --port 3000
+	python -m uvicorn src.app.app:app --reload --port 3033
 
 lint-and-unit-test:
 	black .
