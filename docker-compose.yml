@@ -44,7 +44,7 @@ services:
     image: spine3/firebase-emulator
     ports:
       - 8080:8080
-      - 4001:4000
+      - 4001:4001
       - 8085:8085
     environment:
       - GCP_PROJECT=mock-project-id
