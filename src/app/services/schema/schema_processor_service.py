@@ -1,4 +1,3 @@
-import base64
 import json
 import uuid
 
@@ -229,21 +228,20 @@ class SchemaProcessorService:
         try:
             logger.info("Fetching the survey mapping data")
 
-            headers = {"Accept": "application/vnd.github.v4+raw"}
-
             url = config.SURVEY_MAP_URL
-
-            response = requests.get(url, headers=headers)
+            response = requests.get(url)
             logger.debug(f"Response is {response}")
 
-            if response and response.status_code == 200:
-                binary_content = base64.b64decode(response.json()["content"])
-                survey_map_json = binary_content.decode("utf-8")
-                logger.debug(f"Mapping data is {survey_map_json}")
+            survey_map_file = response.json()["payload"]["blob"]["rawLines"]
+            logger.debug(f"Mapping data is {survey_map_file}")
+
+            survey_map_json = ""
+            for line in survey_map_file:
+                survey_map_json = survey_map_json + line
 
             survey_map_dict = json.loads(survey_map_json)
 
-            logger.debug(f"Survey map dictionary is {survey_map_dict}")
+            logger.debug(f"Survey map data is {survey_map_dict}")
             logger.info("Fetched the survey mapping data")
 
         except Exception as e:

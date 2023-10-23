@@ -15,7 +15,7 @@ LOCAL_URL=http://localhost:3033
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
-SURVEY_MAP_URL=https://api.github.com/repos/ONSdigital/sds-schema-definitions/contents/mapping/survey_map.json
+SURVEY_MAP_URL=https://github.com/ONSdigital/sds-schema-definitions/blob/main/mapping/survey_map.json
 
 start-cloud-dev:
 	export CONF=cloud-dev && \

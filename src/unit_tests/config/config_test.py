@@ -16,7 +16,7 @@ class testConfigVars:
     schema_path = "test_schema_path"
     api_url = "test_api_url"
     oauth_client_id = "test_oauth_client_id"
-    survey_map_url = "https://api.github.com/repos/ONSdigital/sds-schema-definitions/contents/mapping/survey_map.json"
+    survey_map_url = "https://github.com/ONSdigital/sds-schema-definitions/blob/main/mapping/survey_map.json"
 
 
 class ConfigTest(TestCase):
