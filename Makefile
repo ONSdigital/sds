@@ -32,7 +32,6 @@ start-cloud-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	python -m uvicorn src.app.app:app --reload --port 3000
 
-
 start-docker-dev:
 	export CONF=docker-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \

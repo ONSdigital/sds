@@ -15,9 +15,9 @@ services:
       context: .
       dockerfile: Dockerfile.develop
     ports:
-      - 3000:3000
+      - 3033:3033
     environment:
-      - PORT=3000
+      - PORT=3033
       - CONF=docker-dev
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
@@ -45,7 +45,7 @@ services:
     image: spine3/firebase-emulator
     ports:
       - 8080:8080
-      - 4000:4000
+      - 4001:4001
       - 8085:8085
     environment:
       - GCP_PROJECT=mock-project-id
