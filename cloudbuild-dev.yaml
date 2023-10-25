@@ -57,7 +57,6 @@ steps:
         "--ingress",
         "internal-and-cloud-load-balancing",
       ]
-
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Deploy cloud function"
     entrypoint: sh
@@ -111,6 +110,5 @@ steps:
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
         make integration-test-cloudbuild
-
 options:
   logging: CLOUD_LOGGING_ONLY
