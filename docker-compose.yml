@@ -32,7 +32,7 @@ services:
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
-      - SURVEY_MAP_URL=https://api.github.com/repos/ONSdigital/sds-schema-definitions/contents/mapping/survey_map.json
+      - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -76,7 +76,7 @@ services:
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
-      - SURVEY_MAP_URL=https://api.github.com/repos/ONSdigital/sds-schema-definitions/contents/mapping/survey_map.json
+      - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -99,7 +99,7 @@ services:
       - PROJECT_ID=mock-project-id
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
-      - SURVEY_MAP_URL=https://api.github.com/repos/ONSdigital/sds-schema-definitions/contents/mapping/survey_map.json
+      - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds

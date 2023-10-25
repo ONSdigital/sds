@@ -1,4 +1,3 @@
-import json
 import uuid
 
 import exception.exceptions as exceptions
@@ -232,14 +231,7 @@ class SchemaProcessorService:
             response = requests.get(url)
             logger.debug(f"Response is {response}")
 
-            survey_map_file = response.json()["payload"]["blob"]["rawLines"]
-            logger.debug(f"Mapping data is {survey_map_file}")
-
-            survey_map_json = ""
-            for line in survey_map_file:
-                survey_map_json = survey_map_json + line
-
-            survey_map_dict = json.loads(survey_map_json)
+            survey_map_dict = response.json()
 
             logger.debug(f"Survey map data is {survey_map_dict}")
             logger.info("Fetched the survey mapping data")
