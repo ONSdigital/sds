@@ -32,7 +32,9 @@ class FirebaseLoader:
         """
         if config.CONF == "unit":
             return None
-        return firestore.Client(project=config.PROJECT_ID)
+        return firestore.Client(
+            project=config.PROJECT_ID, database=f"{config.PROJECT_ID}-sds"
+        )
 
     def _set_collection(self, collection) -> firestore.CollectionReference:
         """
