@@ -4,10 +4,10 @@ COPY src/app src
 COPY requirements.txt requirements.txt
 
 # Install Python and pip
-RUN apk add --no-cache python3 && \
-    python3 -m ensurepip && \
-    python3 -m pip install --upgrade pip && \
-    ln -s /usr/bin/python3 /usr/bin/python \
+RUN apk add --no-cache python3
+RUN python3 -m ensurepip
+RUN python3 -m pip install --upgrade pip
+RUN ln -s /usr/bin/python3 /usr/bin/python
 
 RUN pip install -r requirements.txt
 ENV PYTHONPATH=src
