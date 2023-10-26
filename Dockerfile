@@ -1,4 +1,5 @@
-FROM python:3.11
+FROM alpine:latest
+ARG PYTHON_VERSION=3.12.0
 COPY src/app src
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
