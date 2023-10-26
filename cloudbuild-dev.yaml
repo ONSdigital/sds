@@ -39,10 +39,9 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest" .
-        echo "PROJECT ID: ${_PROJECT_ID}"
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:${SHORT_SHA}"
-        docker push "europe-west2-docker.pkg.dev/${_PROJECT_ID}/sds/sds:latest"
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     id: "Run image"
