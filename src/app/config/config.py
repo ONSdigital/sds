@@ -20,6 +20,7 @@ class Config(BaseSettings):
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
+        self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -32,6 +33,7 @@ class Config(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     SURVEY_MAP_URL: str
+    FIRESTORE_DB_NAME: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -67,6 +69,7 @@ class IntegrationTestConfig(BaseSettings):
             "SURVEY_MAP_URL",
             "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
         )
+        self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -83,6 +86,7 @@ class IntegrationTestConfig(BaseSettings):
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
+    FIRESTORE_DB_NAME: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -115,6 +119,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
             "SURVEY_MAP_URL",
             "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
         )
+        self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -130,6 +135,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
+    FIRESTORE_DB_NAME: str
 
 
 class CloudBuildConfig(BaseSettings):
@@ -148,6 +154,7 @@ class CloudBuildConfig(BaseSettings):
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
+        self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -160,6 +167,7 @@ class CloudBuildConfig(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     SURVEY_MAP_URL: str
+    FIRESTORE_DB_NAME: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):

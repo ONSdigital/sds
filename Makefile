@@ -82,6 +82,7 @@ unit-test:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
@@ -122,7 +123,7 @@ integration-test-sandbox:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
-#For use only by automated cloudbuild, is not intended to work locally. 
+#For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
 	export CONF=int-test-cloudbuild && \
 	export PYTHONPATH=${PYTHONPATH} && \
@@ -139,6 +140,7 @@ integration-test-cloudbuild:
 	export API_URL=${INT_API_URL} && \
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
