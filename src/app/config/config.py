@@ -197,8 +197,6 @@ class UnitTestingConfig(Config):
         super().__init__()
         self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
-        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
 
     TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
-    SURVEY_MAP_URL: str
