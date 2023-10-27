@@ -39,8 +39,8 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
-        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
+        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
+        docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:$SHORT_SHA"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
@@ -98,7 +98,8 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}"
+        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID},FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}"
+
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
     entrypoint: sh
@@ -133,7 +134,7 @@ steps:
         export INT_API_URL=$_API_URL
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
+        export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         make integration-test-cloudbuild
-
 options:
   logging: CLOUD_LOGGING_ONLY
