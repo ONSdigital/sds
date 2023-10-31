@@ -9,11 +9,8 @@ steps:
 
   - name: python:3.11
     id: "Audit packages"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make audit
+    entrypoint: python
+    args: ["-m", "pip_audit"]
   - name: python:3.11
     id: "black"
     entrypoint: python
