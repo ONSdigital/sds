@@ -1,7 +1,7 @@
 steps:
   - name: python:3.11
     entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip"]
+    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
   - name: python:3.11
     id: "Setup Python"
     entrypoint: python
