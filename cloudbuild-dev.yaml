@@ -1,8 +1,11 @@
 steps:
   - name: python:3.11
+    entrypoint: "python"
+    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
+  - name: python:3.11
     id: "Setup Python"
-    entrypoint: pip
-    args: ["install", "-r", "requirements.txt", "--user"]
+    entrypoint: python
+    args: ["-m", "pip", "install", "-r", "requirements.txt", "--user"]
 
   - name: python:3.11
     id: "Audit packages"
@@ -18,7 +21,8 @@ steps:
   - name: python:3.11
     id: "isort"
     entrypoint: python
-    args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
+    args:
+      ["-m", "isort", "src", "devtools", "--check-only", "--profile", "black"]
 
   - name: python:3.11
     id: "flake8"
@@ -60,20 +64,20 @@ steps:
         "internal-and-cloud-load-balancing",
       ]
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Show image vulnerabilities'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Show image vulnerabilities"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest \
         --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
 
-  - name: 'alpine'
-    id: 'Check for critical vulnerabilities'
+  - name: "alpine"
+    id: "Check for critical vulnerabilities"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         apk add jq
         if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
@@ -98,8 +102,7 @@ steps:
         --entry-point=new_dataset \
         --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
         --trigger-event-filters="bucket=${_DATASET_BUCKET_NAME}" \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID},FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}"
-
+        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID},FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME},SURVEY_MAP_URL=${_SURVEY_MAP_URL}"
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
     entrypoint: sh
@@ -134,6 +137,7 @@ steps:
         export INT_API_URL=$_API_URL
         OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
         export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
+        export INT_SURVEY_MAP_URL=$_SURVEY_MAP_URL
         export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         make integration-test-cloudbuild
 options:

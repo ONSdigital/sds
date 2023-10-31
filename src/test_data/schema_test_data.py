@@ -163,4 +163,16 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
     },
 ]
 
-test_list_survey_id = ["test-survey-id-1", "test-survey-id-2"]
+test_survey_id_map = [
+    {"survey_id": "014", "survey_name": "Prodcom"},
+    {"survey_id": "132", "survey_name": "PPI"},
+    {"survey_id": "133", "survey_name": "EPI"},
+    {"survey_id": "156", "survey_name": "IPI"},
+    {"survey_id": "141", "survey_name": "ASHE"},
+    {"survey_id": "221", "survey_name": "BRES"},
+    {"survey_id": "241", "survey_name": "BRS"},
+    {"survey_id": "068", "survey_name": "Roofing Tiles"},
+    {"survey_id": "071", "survey_name": "Slate"},
+    {"survey_id": "066", "survey_name": "Sand & Gravel (Land Won)"},
+    {"survey_id": "076", "survey_name": "Sand & Gravel (Marine Dredged)"},
+]

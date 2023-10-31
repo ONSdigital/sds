@@ -16,6 +16,7 @@ class testConfigVars:
     schema_path = "test_schema_path"
     api_url = "test_api_url"
     oauth_client_id = "test_oauth_client_id"
+    survey_map_url = "test_survey_map_url"
 
 
 class ConfigTest(TestCase):

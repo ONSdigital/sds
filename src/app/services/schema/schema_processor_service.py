@@ -1,6 +1,7 @@
 import uuid
 
 import exception.exceptions as exceptions
+import requests
 from config.config_factory import config
 from logging_config import logging
 from models.schema_models import SchemaMetadata
@@ -218,19 +219,25 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException
 
-    def get_list_unique_survey_id(self) -> list[str]:
+    def get_survey_id_map(self) -> list[str]:
         """
-        Gets the list of unique Survey IDs from the 'schemas' collection in Firestore.
-        The Survey IDs are being returned as an array of strings.
+        Gets the Survey mapping data from the survey_map.json file in GitHub repository.
         """
 
         try:
-            logger.info("Fetching the list of Survey IDs")
-            list_survey_id = self.schema_firebase_repository.get_list_unique_survey_id()
-            logger.info("Fetched the list of Survey IDs")
+            logger.info("Fetching the survey mapping data")
+
+            url = config.SURVEY_MAP_URL
+            response = requests.get(url)
+            logger.debug(f"Response is {response}")
+
+            survey_map_dict = response.json()
+
+            logger.debug(f"Survey map data is {survey_map_dict}")
+            logger.info("Fetched the survey mapping data")
 
         except Exception as e:
-            logger.error(f"Error while fetching the list of Survey IDs: {e}")
+            logger.error(f"Error while fetching the survey mapping data: {e}")
             raise exceptions.GlobalException
 
-        return list_survey_id
+        return survey_map_dict

@@ -353,25 +353,25 @@ paths:
                 message: No results found
   /v1/survey_list:
     get:
-      summary: Get List Unique Survey Id
-      description: 'Gets the list of unique Survey IDs from the ''schemas'' collection
-        in Firestore.
+      summary: Get Survey Id Map
+      description: 'Gets the Survey mapping data from the survey_map.json file in
+        GitHub repository.
 
         Parameters:
 
         schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the metadata collection.'
-      operationId: get_list_unique_survey_id_v1_survey_list_get
+        processing the survey_map.json file.'
+      operationId: get_survey_id_map_v1_survey_list_get
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                title: Response Get List Unique Survey Id V1 Survey List Get
+                title: Response Get Survey Id Map V1 Survey List Get
                 type: array
                 items:
-                  type: string
+                  type: object
         '500':
           description: Internal Server Error
           content:
@@ -398,7 +398,6 @@ components:
       - survey_id
       - period_id
       - form_types
-      - title
       - sds_published_at
       - total_reporting_units
       - schema_version
@@ -418,9 +417,6 @@ components:
           type: array
           items:
             type: string
-        title:
-          title: Title
-          type: string
         sds_published_at:
           title: Sds Published At
           type: string
@@ -438,6 +434,9 @@ components:
           type: string
         dataset_id:
           title: Dataset Id
+          type: string
+        title:
+          title: Title
           type: string
     ExceptionResponseModel:
       title: ExceptionResponseModel

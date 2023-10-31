@@ -19,6 +19,7 @@ class Config(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
@@ -31,6 +32,7 @@ class Config(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
 
 
@@ -63,6 +65,10 @@ class IntegrationTestConfig(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
+        )
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
@@ -79,6 +85,7 @@ class IntegrationTestConfig(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
+    SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
 
 
@@ -108,6 +115,10 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
+        )
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
@@ -123,6 +134,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
+    SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
 
 
@@ -141,6 +153,7 @@ class CloudBuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
+        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
 
     CONF: str
@@ -153,6 +166,7 @@ class CloudBuildConfig(BaseSettings):
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
+    SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
 
 
