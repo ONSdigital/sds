@@ -27,6 +27,27 @@ steps:
     args: [ 'run', 'deploy', 'sds', '--image', 'europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:latest',
             '--region', 'europe-west2', '--allow-unauthenticated', '--ingress', 'internal-and-cloud-load-balancing' ]
 
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Show image vulnerabilities'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest \
+        --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
+
+  - name: 'alpine'
+    id: 'Check for critical vulnerabilities'
+    entrypoint: sh
+    args:
+      - '-c'
+      - |
+        apk add jq
+        if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
+          echo "Error: Critical vulnerability found with image" >&2
+          exit 1
+        fi
+
   # Deploy cloud function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: "Deploy cloud function"
