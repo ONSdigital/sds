@@ -1,6 +1,6 @@
 steps:
   - name: python:3.11
-    entrypoint: python
+    entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip"]
   - name: python:3.11
     id: "Setup Python"
@@ -21,7 +21,8 @@ steps:
   - name: python:3.11
     id: "isort"
     entrypoint: python
-    args: ["-m", "isort", "src", "devtools", "--check-only",  "--profile", "black"]
+    args:
+      ["-m", "isort", "src", "devtools", "--check-only", "--profile", "black"]
 
   - name: python:3.11
     id: "flake8"
@@ -63,20 +64,20 @@ steps:
         "internal-and-cloud-load-balancing",
       ]
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'Show image vulnerabilities'
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Show image vulnerabilities"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest \
         --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
 
-  - name: 'alpine'
-    id: 'Check for critical vulnerabilities'
+  - name: "alpine"
+    id: "Check for critical vulnerabilities"
     entrypoint: sh
     args:
-      - '-c'
+      - "-c"
       - |
         apk add jq
         if jq -e '.package_vulnerability_summary.vulnerabilities.CRITICAL[] | select(.kind == "VULNERABILITY" and .vulnerability.severity == "CRITICAL")' vulnerability_report.txt > /dev/null; then
