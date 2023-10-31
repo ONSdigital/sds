@@ -1,34 +1,34 @@
 steps:
-  - name: python:3.11
+  - name: python:3.11-alpine
     entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "Setup Python"
     entrypoint: python
     args: ["-m", "pip", "install", "-r", "requirements.txt", "--user"]
 
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "Audit packages"
     entrypoint: sh
     args:
       - "-c"
       - |
         make audit
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "black"
     entrypoint: python
     args: ["-m", "black", "src", "devtools", "--check"]
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "isort"
     entrypoint: python
     args:
       ["-m", "isort", "src", "devtools", "--check-only", "--profile", "black"]
 
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "flake8"
     entrypoint: python
     args: ["-m", "flake8", "src", "devtools", "--max-line-length=127"]
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "unit tests"
     entrypoint: sh
     args:
@@ -73,7 +73,7 @@ steps:
         gcloud alpha artifacts docker images describe europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest \
         --show-package-vulnerability --format=json | tee /dev/fd/2 > vulnerability_report.txt
 
-  - name: "alpine"
+  - name: "python:3.11-alpine"
     id: "Check for critical vulnerabilities"
     entrypoint: sh
     args:
@@ -120,7 +120,7 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
-  - name: python:3.11
+  - name: python:3.11-alpine
     id: "Run integration test"
     entrypoint: sh
     args:
