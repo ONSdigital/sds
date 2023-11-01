@@ -159,9 +159,9 @@ generate-spec:
 	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:
-	black . --check
-	isort . --check-only --profile black
-	flake8 src --max-line-length=127
+	python -m black . --check
+	python -m isort . --check-only --profile black
+	python -m flake8 src --max-line-length=127
 
 audit:
 	python -m pip_audit
