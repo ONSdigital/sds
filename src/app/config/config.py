@@ -176,10 +176,12 @@ class ServiceEmulatorDevelopmentConfig(Config):
         self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
         self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
         self.PUBSUB_EMULATOR_HOST = get_value_from_env("PUBSUB_EMULATOR_HOST")
+        self.FIRESTORE_DB_NAME = "(default)"
 
     FIRESTORE_EMULATOR_HOST: str
     STORAGE_EMULATOR_HOST: str
     PUBSUB_EMULATOR_HOST: str
+    FIRESTORE_DB_NAME: str
 
 
 class CloudDevelopmentConfig(Config):
