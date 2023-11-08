@@ -13,7 +13,7 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/${PROJECT_ID}:${TAG_NAME}" .
+        docker build -t "europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:latest" -t "europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:${TAG_NAME}" .
         docker push "europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:latest"
         docker push "europe-west2-docker.pkg.dev/ons-sds-dns/sds/${PROJECT_ID}:${TAG_NAME}"
 
