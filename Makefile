@@ -1,12 +1,15 @@
 # Global Variables
+PROJECT_ID = $(shell gcloud config get project)
+
+FIRESTORE_DB_NAME=${PROJECT_ID}-sds
 PYTHONPATH=src/app
 TEST_DATASET_PATH=src/test_data/json/
 TEST_SCHEMA_PATH=src/test_data/json/
-GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
+GOOGLE_APPLICATION_CREDENTIALS=ons-sds-preprod-cloudbuild-sa-key.json
 AUTODELETE_DATASET_BUCKET_FILE=True
 RETAIN_DATASET_FIRESTORE=True
 LOG_LEVEL=INFO
-PROJECT_ID = $(shell gcloud config get project)
+
 OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
 OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
         --limit=1)
@@ -106,21 +109,22 @@ integration-test-local:
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
-	export CONF=int-test && \
-	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
-	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
-	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
+	export API_URL=https://preprod.sds.gcp.onsdigital.uk && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
+	export CONF=int-test && \
+    export DATASET_BUCKET_NAME=ons-sds-preprod-sds-europe-west2-dataset-34a2 && \
+	export FIRESTORE_DB_NAME=${FIRESTORE_DB_NAME} && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
+	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export PROJECT_ID=$(PROJECT_ID) && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export API_URL=https://${SANDBOX_IP_ADDRESS}.nip.io && \
-	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
+	export PYTHONPATH=${PYTHONPATH} && \
+    export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
+	export SCHEMA_BUCKET_NAME=ons-sds-preprod-sds-europe-west2-schema-34a2 && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
+	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
