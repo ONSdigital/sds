@@ -34,6 +34,7 @@ class Config(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
+    SDS_APPLICATION_VERSION: str = "development"
 
 
 class IntegrationTestConfig(BaseSettings):
