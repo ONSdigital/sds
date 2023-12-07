@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
+
 from src.app.models.dataset_models import DeploymentStatus
 
 router = APIRouter()
@@ -27,7 +28,12 @@ async def http_get_status():
     application_version = settings.SDS_APPLICATION_VERSION
     if application_version:
         response_content = DeploymentStatus(version=settings.SDS_APPLICATION_VERSION)
-        return JSONResponse(status_code=status.HTTP_200_OK, content=asdict(response_content))
+        return JSONResponse(
+            status_code=status.HTTP_200_OK, content=asdict(response_content)
+        )
     else:
         response_content = BadRequest(message="Internal server error")
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=asdict(response_content))
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content=asdict(response_content),
+        )
