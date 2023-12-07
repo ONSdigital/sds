@@ -1,7 +1,7 @@
 from fastapi import status
+from tests.integration_tests.utils import make_iap_request
 
 from app.config import Settings
-from tests.integration_tests.utils import make_iap_request
 
 settings = Settings()
 
@@ -33,5 +33,7 @@ class TestHttpGetDeploymentStatus:
         """
         Endpoint should return a 401 unauthorized error if the endpoint is requested with an unauthorized token.
         """
-        status_response = make_iap_request("GET", self.deployment_status_url, unauthenticated=True)
+        status_response = make_iap_request(
+            "GET", self.deployment_status_url, unauthenticated=True
+        )
         assert status_response.status_code == status.HTTP_401_UNAUTHORIZED
