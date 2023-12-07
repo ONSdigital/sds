@@ -4,8 +4,7 @@ from config.config_factory import config
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from logging_config import logging
-
-from src.app.models.status_models import BadRequest, DeploymentStatus
+from models.status_models import BadRequest, DeploymentStatus
 
 router = APIRouter()
 
