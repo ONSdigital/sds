@@ -33,7 +33,7 @@ steps:
         "--ingress",
         "internal-and-cloud-load-balancing",
         "--update-env-vars",
-        "CIR_APPLICATION_VERSION=${TAG_NAME}",
+        "SDS_APPLICATION_VERSION=${TAG_NAME}",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"

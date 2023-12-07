@@ -63,11 +63,3 @@ class UnitDataset:
 class DatasetPublishResponse:
     status: str
     message: str
-
-
-@dataclass
-class DeploymentStatus:
-    """Model for Successful deployment response"""
-
-    version: str
-    status: str = "OK"
