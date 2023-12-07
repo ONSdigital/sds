@@ -1,15 +1,18 @@
-from fastapi import APIRouter, Body, Depends
-from logging_config import logging
-from config.config_factory import config
+from dataclasses import asdict
 
-from src.app.models.status_models import DeploymentStatus
+from config.config_factory import config
+from fastapi import APIRouter, status
+from fastapi.responses import JSONResponse
+from logging_config import logging
+
+from src.app.models.status_models import BadRequest, DeploymentStatus
 
 router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
 
-@app.get(
+@router.get(
     "/status",
     responses={
         status.HTTP_200_OK: {
