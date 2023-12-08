@@ -31,7 +31,7 @@ async def http_get_status():
     """
     application_version = UtilityFunctions.get_application_version()
     if application_version:
-        response_content = DeploymentStatus(version=config.SDS_APPLICATION_VERSION)
+        response_content = DeploymentStatus(version=application_version)
         return JSONResponse(
             status_code=status.HTTP_200_OK, content=asdict(response_content)
         )

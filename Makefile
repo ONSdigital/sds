@@ -16,6 +16,7 @@ SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global --format='va
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
 SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
+SDS_APPLICATION_VERSION=development
 
 start-cloud-dev:
 	export CONF=cloud-dev && \
@@ -30,6 +31,7 @@ start-cloud-dev:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m uvicorn src.app.app:app --reload --port 3033
 
 start-docker-dev:
@@ -47,6 +49,7 @@ start-docker-dev:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m uvicorn src.app.app:app --reload --port 3033
 
 lint-and-unit-test:
@@ -65,6 +68,7 @@ lint-and-unit-test:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
@@ -83,6 +87,7 @@ unit-test:
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
@@ -103,6 +108,8 @@ integration-test-local:
 	export API_URL=${LOCAL_URL} && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
@@ -121,6 +128,8 @@ integration-test-sandbox:
 	export API_URL=https://${SANDBOX_IP_ADDRESS}.nip.io && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
@@ -141,6 +150,7 @@ integration-test-cloudbuild:
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
@@ -156,6 +166,8 @@ generate-spec:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:

@@ -390,8 +390,41 @@ paths:
               example:
                 status: error
                 message: No Survey IDs found
+  /status:
+    get:
+      summary: Http Get Status
+      description: GET method that returns `SDS_APPLICATION_VERSION` if the deployment
+        is successful
+      operationId: http_get_status_status_get
+      responses:
+        '200':
+          description: Deployment done succuessfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+        '500':
+          description: Internal error. This is triggered when something an unexpected
+            error occurs on the server side.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
 components:
   schemas:
+    BadRequest:
+      title: BadRequest
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          title: Message
+          type: string
+        status:
+          title: Status
+          type: string
+          default: error
     DatasetMetadata:
       title: DatasetMetadata
       required:
@@ -438,6 +471,19 @@ components:
         title:
           title: Title
           type: string
+    DeploymentStatus:
+      title: DeploymentStatus
+      required:
+      - version
+      type: object
+      properties:
+        version:
+          title: Version
+          type: string
+        status:
+          title: Status
+          type: string
+          default: OK
     ExceptionResponseModel:
       title: ExceptionResponseModel
       required:
