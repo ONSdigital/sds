@@ -1,10 +1,13 @@
-from fastapi import status
 from unittest import TestCase
+
+from fastapi import status
+
+from src.app.config.config_factory import config
 from src.integration_tests.helpers.integration_helpers import (
     generate_headers,
     setup_session,
 )
-from src.app.config.config_factory import config
+
 
 class TestHttpGetDeploymentStatus(TestCase):
     def test_endpoint_returns_right_response_if_deployment_successful(self):
@@ -31,7 +34,10 @@ class TestHttpGetDeploymentStatus(TestCase):
             pass
         else:
             session = setup_session()
-            headers = {"Authorization": "Bearer bad-request-key", "Content-Type": "application/json"}
+            headers = {
+                "Authorization": "Bearer bad-request-key",
+                "Content-Type": "application/json",
+            }
 
             status_response = session.get(
                 f"{config.API_URL}/status",
