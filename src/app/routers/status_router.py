@@ -1,6 +1,5 @@
 from dataclasses import asdict
 
-from config.config_factory import config
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from logging_config import logging
