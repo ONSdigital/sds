@@ -5,6 +5,7 @@ from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from logging_config import logging
 from models.status_models import BadRequest, DeploymentStatus
+from services.shared.utility_functions import UtilityFunctions
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ async def http_get_status():
     """
     GET method that returns `SDS_APPLICATION_VERSION` if the deployment is successful
     """
-    application_version = config.SDS_APPLICATION_VERSION
+    application_version = UtilityFunctions.get_application_version()
     if application_version:
         response_content = DeploymentStatus(version=config.SDS_APPLICATION_VERSION)
         return JSONResponse(
