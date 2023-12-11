@@ -21,8 +21,8 @@ SDS_APPLICATION_VERSION=development
 start-cloud-dev:
 	export CONF=cloud-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
+	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
+	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
@@ -31,6 +31,7 @@ start-cloud-dev:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m uvicorn src.app.app:app --reload --port 3033
 
@@ -49,6 +50,7 @@ start-docker-dev:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m uvicorn src.app.app:app --reload --port 3033
 
@@ -68,6 +70,7 @@ lint-and-unit-test:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
 	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
@@ -95,8 +98,8 @@ unit-test:
 integration-test-local:
 	export CONF=int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
+    export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
+    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
@@ -115,8 +118,8 @@ integration-test-local:
 integration-test-sandbox:
 	export CONF=int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
+    export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
+    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
