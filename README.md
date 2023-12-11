@@ -147,6 +147,7 @@ The openapi spec file in gateway/openapi.yaml should not be edited manually as i
 To deploy the Cloud Function, run the following locally, but set the PROJECT_NAME environment variables first:
 
 ```bash
+PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
@@ -177,6 +178,7 @@ run after creating a PR and gone through the pipeline. These services both talk 
 This test configuration is also what is run at the end of the Cloud Build deployment.
 
 ```bash
+PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
