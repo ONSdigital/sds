@@ -12,6 +12,7 @@ The docker-compose will launch the SDS application, two storage emulators(fireba
 
 ```
 docker-compose up
+
 ```
 
 Once, loaded you can do the following:
