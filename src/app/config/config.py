@@ -21,6 +21,7 @@ class Config(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
+        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -34,6 +35,7 @@ class Config(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
+    SDS_APPLICATION_VERSION: str
 
 
 class IntegrationTestConfig(BaseSettings):
@@ -70,6 +72,7 @@ class IntegrationTestConfig(BaseSettings):
             "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
         )
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
+        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -87,6 +90,7 @@ class IntegrationTestConfig(BaseSettings):
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
+    SDS_APPLICATION_VERSION: str
 
 
 class IntegrationTestCloudbuildConfig(BaseSettings):
@@ -120,6 +124,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
             "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
         )
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
+        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -136,6 +141,7 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
+    SDS_APPLICATION_VERSION: str
 
 
 class CloudBuildConfig(BaseSettings):
@@ -155,6 +161,7 @@ class CloudBuildConfig(BaseSettings):
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
+        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
@@ -168,6 +175,7 @@ class CloudBuildConfig(BaseSettings):
     PUBLISH_DATASET_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
+    SDS_APPLICATION_VERSION: str
 
 
 class ServiceEmulatorDevelopmentConfig(Config):

@@ -34,6 +34,7 @@ services:
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
+      - SDS_APPLICATION_VERSION=development
     volumes:
       - ./src/app:/src
       - ./devtools:/devtools
@@ -79,6 +80,7 @@ services:
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
+      - SDS_APPLICATION_VERSION=development
     volumes:
       - ./devtools:/devtools
     container_name: cloudfunction-new_dataset-sds
@@ -102,6 +104,8 @@ services:
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
+      - FIRESTORE_DB_NAME=(default)
+      - SDS_APPLICATION_VERSION=development
     volumes:
       - ./devtools:/devtools
     container_name: dev-publish-dataset-sds
