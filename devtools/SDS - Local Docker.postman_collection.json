@@ -7,14 +7,6 @@
   },
   "item": [
     {
-      "name":"Status",
-      "request":{
-        "method":"GET",
-        "header":[]
-      },
-      "response":[]
-    },
-    {
       "name": "Publish Schema",
       "request": {
         "method": "POST",
@@ -199,6 +191,14 @@
         }
       },
       "response": []
+    },
+    {
+      "name":"Status",
+      "request":{
+        "method":"GET",
+        "header":[]
+      },
+      "response":[]
     }
   ]
 }
