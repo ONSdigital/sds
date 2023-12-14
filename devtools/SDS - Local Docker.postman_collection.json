@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "e572364b-9f1e-48dc-b0b3-f4984c073a3b",
+    "_postman_id": "36413b75-d39d-454a-bcda-8d0fe0a212ac",
     "name": "SDS - Local Docker",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "27074658"
+    "_exporter_id": "30975257"
   },
   "item": [
     {
@@ -120,7 +120,9 @@
         "url": {
           "raw": "http://localhost:3006",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "3006"
         }
       },
@@ -186,19 +188,18 @@
           "protocol": "http",
           "host": ["127", "0", "0", "1"],
           "port": "3033",
-          "path": ["v1", "survey_list"],
-          "query": []
+          "path": ["v1", "survey_list"]
         }
       },
       "response": []
     },
     {
-      "name":"Status",
-      "request":{
-        "method":"GET",
-        "header":[]
+      "name": "Status",
+      "request": {
+        "method": "GET",
+        "header": []
       },
-      "response":[]
+      "response": []
     }
   ]
 }
