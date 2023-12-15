@@ -2,21 +2,21 @@
 PYTHONPATH=src/app
 TEST_DATASET_PATH=src/test_data/json/
 TEST_SCHEMA_PATH=src/test_data/json/
-GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
-AUTODELETE_DATASET_BUCKET_FILE=True
-RETAIN_DATASET_FIRESTORE=True
-LOG_LEVEL=INFO
-PROJECT_ID = $(shell gcloud config get project)
-OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
-OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
-        --limit=1)
-OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
-LOCAL_URL=http://localhost:3033
-SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-sds-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
-PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
-PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
-SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
-SDS_APPLICATION_VERSION=development
+# GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
+# AUTODELETE_DATASET_BUCKET_FILE=True
+# RETAIN_DATASET_FIRESTORE=True
+# LOG_LEVEL=INFO
+# PROJECT_ID = $(shell gcloud config get project)
+# OAUTH_BRAND_NAME = $(shell gcloud iap oauth-brands list --format='value(name)' --limit=1 --project=$(PROJECT_ID))
+# OAUTH_CLIENT_NAME = $(shell gcloud iap oauth-clients list $(OAUTH_BRAND_NAME) --format='value(name)' \
+#         --limit=1)
+# OAUTH_CLIENT_ID = $(shell echo $(OAUTH_CLIENT_NAME)| cut -d'/' -f 6)
+# LOCAL_URL=http://localhost:3033
+# SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-sds-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
+# PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
+# PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
+# SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
+# SDS_APPLICATION_VERSION=development
 
 start-cloud-dev:
 	export CONF=cloud-dev && \
@@ -187,3 +187,10 @@ lint-fix:
 
 setup: requirements.txt
 	pip install -r requirements.txt
+
+upload-schema:
+	export CONF=int-test && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
+	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
+	python -m ./scripts/upload_schema.py
