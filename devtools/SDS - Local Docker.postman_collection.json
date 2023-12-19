@@ -197,7 +197,14 @@
       "name": "Status",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3033/status",
+          "protocol": "http",
+          "host": ["127", "0", "0", "1"],
+          "port": "3033",
+          "path": ["status"]
+        }
       },
       "response": []
     }
