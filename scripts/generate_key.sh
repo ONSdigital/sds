@@ -1,7 +1,8 @@
 # Check if project id is available and ask user to input if not
 if [[ -z "${PROJECT_ID}" ]]; then
     # Prompt the user for their GCP project ID and store it in a variable
-    read PROJECT_ID"?Enter your GCP project ID: "
+    echo -n "Enter your GCP project ID: "
+    read PROJECT_ID
 fi
 
 CLOUDBUILD_SA=cloudbuild-sa@${PROJECT_ID}.iam.gserviceaccount.com
