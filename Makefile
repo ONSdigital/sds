@@ -12,30 +12,8 @@ SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitio
 TEST_DATASET_PATH=src/test_data/json/
 TEST_SCHEMA_PATH=src/test_data/json/
 
-	export CONF=cloud-dev && \
-	export CONF=cloud-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-export CONF=cloud-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-export LOCAL_URL=${LOCAL_URL} && \
-export LOG_LEVEL=${LOG_LEVEL} && \
-export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-export PYTHONPATH=${PYTHONPATH} && \
-export REGION=${REGION} && \
-export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-
 start-cloud-dev:
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE\} && \
+	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export CONF=cloud-dev && \
 	export LOCAL_URL=${LOCAL_URL} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
@@ -50,7 +28,7 @@ start-cloud-dev:
 	python -m uvicorn src.app.app:app --reload --port 3033
 
 start-docker-dev:
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE\} && \
+	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export CONF=docker-dev && \
 	export DATASET_BUCKET_NAME=my-dataset-bucket && \
 	export FIRESTORE_DB_NAME=mock-project-id-sds && \
@@ -176,21 +154,21 @@ integration-test-cloudbuild:
 	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export CONF=cloud-dev && \
-	export DATASET_BUCKET_NAME=my-schema-bucket && \
-	export FIRESTORE_DB_NAME=mock-project-id-sds && \
-	export LOCAL_URL=${LOCAL_URL} && \
-	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=mock-project-id && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PYTHONPATH=${PYTHONPATH} && \
-	export REGION=${REGION} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export SCHEMA_BUCKET_NAME="the bucket name" && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
+	# export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
+	# export CONF=cloud-dev && \
+	# export DATASET_BUCKET_NAME=my-schema-bucket && \
+	# export FIRESTORE_DB_NAME=mock-project-id-sds && \
+	# export LOCAL_URL=${LOCAL_URL} && \
+	# export LOG_LEVEL=${LOG_LEVEL} && \
+	# export PROJECT_ID=mock-project-id && \
+	# export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	# export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	# export PYTHONPATH=${PYTHONPATH} && \
+	# export REGION=${REGION} && \
+	# export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
+	# export SCHEMA_BUCKET_NAME="the-bucket-name" && \
+	# export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
+	# export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:
