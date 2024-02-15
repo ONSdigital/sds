@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 def get_value_from_env(env_value, default_value="") -> str:
