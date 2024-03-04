@@ -94,6 +94,10 @@ steps:
         "SDS_APPLICATION_VERSION=development",
         "--cpu-boost",
         "--session-affinity",
+        "--min-instances",
+        "1",
+        "--max-instances",
+        "2",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
