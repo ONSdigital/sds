@@ -34,6 +34,12 @@ steps:
         "internal-and-cloud-load-balancing",
         "--update-env-vars",
         "SDS_APPLICATION_VERSION=${TAG_NAME}",
+        "--cpu-boost",
+        "--session-affinity",
+        "--min-instances",
+        "2",
+        "--max-instances",
+        "8",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
