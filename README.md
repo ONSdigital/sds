@@ -82,7 +82,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Running SDS locally with services running in GCloud
+### Running SDS locally with services running in GCloud.
 
 In order to connect to real services in GCloud, you will need a GCP test project or make
 use of the sandbox project. Instructions for setting this up are included in the IaC repo.
