@@ -5,6 +5,7 @@ from models.dataset_models import (
     DatasetMetadataWithoutId,
     DatasetPublishResponse,
     UnitDataset,
+    DatasetError
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.publisher_service import publisher_service
@@ -61,7 +62,7 @@ class DatasetWriterService:
             return {"status": "error", "message": "Publishing dataset has failed."}
 
     def try_publish_dataset_metadata_to_topic(
-        self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse
+        self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse | DatasetError
     ) -> None:
         """
         Publishes dataset response to google pubsub topic, raising an exception if unsuccessful.
@@ -69,18 +70,23 @@ class DatasetWriterService:
         Parameters:
         dataset_publish_response: dataset metadata or unhappy path response to be published.
         """
+        # if the dataset publish response is an error, set topic_id to the error topic id
+        topic_id = config.PUBLISH_DATASET_TOPIC_ID
+        if isinstance(dataset_publish_response, DatasetError):
+            topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
+
         try:
             publisher_service.publish_data_to_topic(
                 dataset_publish_response,
                 config.PUBLISH_DATASET_TOPIC_ID,
             )
             logger.debug(
-                f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
+                f"Dataset response {dataset_publish_response} published to topic {topic_id}"
             )
             logger.info("Dataset response published successfully.")
         except Exception as e:
             logger.debug(
-                f"Dataset response {dataset_publish_response} failed to publish to topic {config.PUBLISH_DATASET_TOPIC_ID} "
+                f"Dataset response {dataset_publish_response} failed to publish to topic {topic_id} "
                 f"with error {e}"
             )
             raise RuntimeError("Error publishing dataset response to the topic.")
