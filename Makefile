@@ -15,6 +15,7 @@ LOCAL_URL=http://localhost:3033
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-sds-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
+PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
 SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
 SDS_APPLICATION_VERSION=development
 

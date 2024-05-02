@@ -168,7 +168,7 @@ gcloud functions deploy new-dataset-function \
 --entry-point=new_dataset \
 --trigger-event-filters="type=google.cloud.storage.object.v1.finalized" \
 --trigger-event-filters="bucket=$PROJECT_NAME-sds-europe-west2-dataset" \
---set-env-vars="DATASET_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-dataset,SCHEMA_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-schema,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,RETAIN_DATASET_FIRESTORE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,FIRESTORE_DB_NAME=$PROJECT_NAME-sds,PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema,PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset,SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json,SDS_APPLICATION_VERSION=development"
+--set-env-vars="DATASET_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-dataset,SCHEMA_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-schema,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,RETAIN_DATASET_FIRESTORE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,FIRESTORE_DB_NAME=$PROJECT_NAME-sds,PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema,PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset,PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error,SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json,SDS_APPLICATION_VERSION=development"
 ```
 
 ## Running the integration tests
@@ -205,4 +205,3 @@ make integration-test-local
 # Contact
 
 - mike.tidman@ons.gov.uk
-
