@@ -1,5 +1,5 @@
-from models.dataset_models import RawDataset
-
+from models.dataset_models import RawDataset, DatasetError
+from dataset.dataset_writer_service import DatasetWriterService
 
 class DatasetValidatorService:
     @staticmethod
@@ -12,7 +12,10 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
+            pubsub_message = DatasetError(type="InvalidFileType", message=f"Invalid filetype received - {filename}")
+            DatasetWriterService.try_publish_dataset_metadata_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
+
 
     @staticmethod
     def validate_raw_dataset(raw_dataset: RawDataset) -> None:
@@ -53,6 +56,8 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
+            pubsub_message = DatasetError(type="Missing mandatory key(s)", message=f"Mandatory key(s) missing from JSON: {message}")
+            DatasetWriterService.try_publish_dataset_metadata_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
