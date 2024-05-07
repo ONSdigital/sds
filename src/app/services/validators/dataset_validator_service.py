@@ -20,7 +20,6 @@ class DatasetValidatorService:
                 message=f"Invalid filetype received - {filename}",
             )
             dataset_repository = DatasetFirebaseRepository()
-            print("Dataset repository created")
             dataset_writer_service = DatasetWriterService(dataset_repository)
             dataset_writer_service.try_publish_dataset_metadata_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
@@ -64,15 +63,6 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
-            pubsub_message = DatasetError(
-                type="Missing mandatory key(s)",
-                message=f"Mandatory key(s) missing from JSON: {message}",
-            )
-            dataset_repository = DatasetFirebaseRepository()
-            print("Dataset repository created")
-            dataset_writer_service = DatasetWriterService(dataset_repository)
-            print("Dataset writer service created")
-            dataset_writer_service.try_publish_dataset_metadata_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -156,106 +146,3 @@ class DatasetValidatorService:
         """
 
         return False, ", ".join(missing_keys)
-
-    @staticmethod
-    def validate_dataset_values(raw_dataset: RawDataset) -> None:
-        """
-        Validates the dataset values.
-
-        Parameters:
-        raw_dataset (RawDataset): dataset being validated.
-        """
-        isValid, message = DatasetValidatorService._check_for_missing_values(
-            raw_dataset
-        )
-
-        if isValid is False:
-            pubsub_message = DatasetError(
-                type="Missing mandatory values(s)",
-                message=f"Mandatory values(s) missing from JSON: {message}",
-            )
-            dataset_writer_service = DatasetWriterService()
-            dataset_writer_service.try_publish_dataset_metadata_to_topic(pubsub_message)
-            raise RuntimeError(f"Mandatory values(s) missing from JSON: {message}.")
-
-        return raw_dataset
-
-    @staticmethod
-    def _check_for_missing_values(
-        raw_dataset: RawDataset,
-    ) -> tuple[bool, str]:
-        """
-        Returns a boolean and message depending on if there are values missing from the data.
-
-        Parameters:
-        raw_dataset (RawDataset): dataset being validated.
-        """
-        mandatory_values_keys = [
-            "survey_id",
-            "period_id",
-            "form_types",
-            "schema_version",
-            "data",
-        ]
-
-        missing_values = DatasetValidatorService._collect_missing_values_from_dataset(
-            mandatory_values_keys, raw_dataset
-        )
-
-        return DatasetValidatorService._determine_missing_value_check_response(
-            missing_values
-        )
-
-    @staticmethod
-    def _collect_missing_values_from_dataset(
-        mandatory_values_keys: list[str], raw_dataset: RawDataset
-    ) -> list[str]:
-        """
-        Gets a list of any mandatory values missing from the raw dataset using the keys provided.
-
-        Parameters:
-        mandatory_values_keys (list[str]): the keys for the mandatory values referenced.
-        raw_dataset (RawDataset): dataset being validated.
-        """
-
-        return [
-            mandatory_value_key
-            for mandatory_value_key in mandatory_values_keys
-            if raw_dataset[mandatory_value_key] is None
-        ]
-
-    @staticmethod
-    def _determine_missing_value_check_response(
-        missing_values: list[str],
-    ) -> tuple[bool, str]:
-        """
-        Determines a response based on if there are any mandatory values missing.
-
-        Parameters:
-        missing_values (list[str]): list of missing values.
-        """
-
-        return (
-            DatasetValidatorService._missing_values_response(missing_values)
-            if len(missing_values) > 0
-            else DatasetValidatorService._valid_values_response()
-        )
-
-    @staticmethod
-    def _valid_values_response() -> tuple[bool, str]:
-        """
-        Response for when no values are missing.
-        """
-
-        return True, ""
-
-    @staticmethod
-    def _missing_values_response(missing_values: list[str]) -> tuple[bool, str]:
-        """
-        Response for when there are missing values.
-
-        Parameters:
-        missing_values (list[str]): list of missing values.
-        """
-
-        return False, ", ".join(missing_values)
