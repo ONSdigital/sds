@@ -63,9 +63,9 @@ class DatasetWriterService:
 
     def try_publish_dataset_metadata_to_topic(
         self,
-        dataset_publish_response: DatasetMetadata
-        | DatasetPublishResponse
-        | DatasetError,
+        dataset_publish_response: (
+            DatasetMetadata | DatasetPublishResponse | DatasetError
+        ),
     ) -> None:
         """
         Publishes dataset response to google pubsub topic, raising an exception if unsuccessful.
