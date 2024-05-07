@@ -19,7 +19,9 @@ class Config(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_ERROR_TOPIC_ID")
+        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
+            "PUBLISH_DATASET_ERROR_TOPIC_ID"
+        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
@@ -67,7 +69,9 @@ class IntegrationTestConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_ERROR_TOPIC_ID")
+        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
+            "PUBLISH_DATASET_ERROR_TOPIC_ID"
+        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -121,7 +125,9 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_ERROR_TOPIC_ID")
+        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
+            "PUBLISH_DATASET_ERROR_TOPIC_ID"
+        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -165,7 +171,9 @@ class CloudBuildConfig(BaseSettings):
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_ERROR_TOPIC_ID")
+        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
+            "PUBLISH_DATASET_ERROR_TOPIC_ID"
+        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
