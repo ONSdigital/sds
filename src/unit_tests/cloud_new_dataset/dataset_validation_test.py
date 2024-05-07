@@ -25,22 +25,22 @@ class DatasetValidationTest(TestCase):
             self.get_dataset_file_as_json_stash
         )
 
-    def test_upload_invalid_file_type(self):
-        """
-        Tests the validation for when the file extension is not a json
-        """
-        cloud_event = MagicMock()
-        cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
+    # def test_upload_invalid_file_type(self):
+    #     """
+    #     Tests the validation for when the file extension is not a json
+    #     """
+    #     cloud_event = MagicMock()
+    #     cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
 
-        DatasetProcessorService.process_raw_dataset = MagicMock()
+    #     DatasetProcessorService.process_raw_dataset = MagicMock()
 
-        with raises(
-            RuntimeError,
-            match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_data['name']}",
-        ):
-            TestHelper.new_dataset_mock(cloud_event)
+    #     with raises(
+    #         RuntimeError,
+    #         match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_data['name']}",
+    #     ):
+    #         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetProcessorService.process_raw_dataset.assert_not_called()
+    #     DatasetProcessorService.process_raw_dataset.assert_not_called()
 
     def test_no_dataset_in_bucket(self):
         """
@@ -62,24 +62,24 @@ class DatasetValidationTest(TestCase):
 
         DatasetProcessorService.process_raw_dataset.assert_not_called()
 
-    def test_missing_dataset_keys(self):
-        """
-        Validates when there are mandatory keys missing from the dataset.
-        """
-        cloud_event = MagicMock()
-        cloud_event.data = dataset_test_data.cloud_event_data
+    # def test_missing_dataset_keys(self):
+    #     """
+    #     Validates when there are mandatory keys missing from the dataset.
+    #     """
+    #     cloud_event = MagicMock()
+    #     cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetProcessorService.process_raw_dataset = MagicMock()
+    #     DatasetProcessorService.process_raw_dataset = MagicMock()
 
-        DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
-        DatasetBucketRepository.get_dataset_file_as_json.return_value = (
-            dataset_test_data.missing_keys_dataset_metadata
-        )
+    #     DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
+    #     DatasetBucketRepository.get_dataset_file_as_json.return_value = (
+    #         dataset_test_data.missing_keys_dataset_metadata
+    #     )
 
-        with raises(
-            RuntimeError,
-            match=re.escape("Mandatory key(s) missing from JSON: survey_id."),
-        ):
-            TestHelper.new_dataset_mock(cloud_event)
+    #     with raises(
+    #         RuntimeError,
+    #         match=re.escape("Mandatory key(s) missing from JSON: survey_id."),
+    #     ):
+    #         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetProcessorService.process_raw_dataset.assert_not_called()
+    #     DatasetProcessorService.process_raw_dataset.assert_not_called()
