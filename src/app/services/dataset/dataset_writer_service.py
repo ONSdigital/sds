@@ -1,11 +1,11 @@
 from config.config_factory import config
 from logging_config import logging
 from models.dataset_models import (
+    DatasetError,
     DatasetMetadata,
     DatasetMetadataWithoutId,
     DatasetPublishResponse,
     UnitDataset,
-    DatasetError
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.publisher_service import publisher_service
@@ -62,7 +62,10 @@ class DatasetWriterService:
             return {"status": "error", "message": "Publishing dataset has failed."}
 
     def try_publish_dataset_metadata_to_topic(
-        self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse | DatasetError
+        self,
+        dataset_publish_response: DatasetMetadata
+        | DatasetPublishResponse
+        | DatasetError,
     ) -> None:
         """
         Publishes dataset response to google pubsub topic, raising an exception if unsuccessful.
@@ -71,9 +74,11 @@ class DatasetWriterService:
         dataset_publish_response: dataset metadata or unhappy path response to be published.
         """
         # if the dataset publish response is an error, set topic_id to the error topic id
-        topic_id = config.PUBLISH_DATASET_TOPIC_ID
-        if isinstance(dataset_publish_response, DatasetError):
-            topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
+        topic_id = (
+            config.PUBLISH_DATASET_ERROR_TOPIC_ID
+            if isinstance(dataset_publish_response, DatasetError)
+            else config.PUBLISH_DATASET_TOPIC_ID
+        )
 
         try:
             publisher_service.publish_data_to_topic(
