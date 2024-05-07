@@ -1,5 +1,6 @@
 from models.dataset_models import DatasetError, RawDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from dataclasses import asdict
 
 from ..dataset.dataset_writer_service import DatasetWriterService
 
@@ -15,10 +16,10 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-            pubsub_message = DatasetError(
+            pubsub_message = asdict(DatasetError(
                 type="InvalidFileType",
                 message=f"Invalid filetype received - {filename}",
-            )
+            ))
             dataset_repository = DatasetFirebaseRepository()
             dataset_writer_service = DatasetWriterService(dataset_repository)
             dataset_writer_service.try_publish_dataset_metadata_to_topic(pubsub_message)
