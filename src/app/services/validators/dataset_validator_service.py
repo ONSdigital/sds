@@ -1,4 +1,4 @@
-from flask import json
+from json import JSONDecodeError
 from models.dataset_models import DatasetError, RawDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
@@ -47,7 +47,7 @@ class DatasetValidatorService:
 
         try:
             DatasetBucketRepository().get_dataset_file_as_json(filename)
-        except json.JSONDecodeError:
+        except JSONDecodeError:
             pubsub_message = {
                 "type": "File content error",
                 "message": "Invalid JSON content received.",
