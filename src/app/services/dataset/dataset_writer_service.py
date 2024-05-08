@@ -79,8 +79,8 @@ class DatasetWriterService:
             if isinstance(dataset_publish_response, DatasetError)
             else config.PUBLISH_DATASET_TOPIC_ID
         )
-        logger.debug(
-            f"Datatype for dataset_publish_response: {type(dataset_publish_response)}"
+        print(
+            f"Data type for dataset_publish_response: {type(dataset_publish_response)}"
         )
 
         try:
@@ -110,13 +110,13 @@ class DatasetWriterService:
         previous_version: latest previous version of the dataset.
         """
         logger.info(
-            f"Deleting a previous version dataset. Version nnumber: {previous_version}..."
+            f"Deleting a previous version dataset. Version number: {previous_version}..."
         )
         try:
             self.dataset_firebase_repository.perform_delete_previous_version_dataset_transaction(
                 survey_id, period_id, previous_version
             )
-            logger.info("Previous version of dataset deleted succesfully.")
+            logger.info("Previous version of dataset deleted successfully.")
         except Exception as e:
             logger.debug(
                 f"Failed to delete previous version of dataset with survey id: {survey_id} \
