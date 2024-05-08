@@ -79,7 +79,9 @@ class DatasetWriterService:
             if isinstance(dataset_publish_response, DatasetError)
             else config.PUBLISH_DATASET_TOPIC_ID
         )
-        logger.debug(f"Datatype for dataset_publish_response: {type(dataset_publish_response)}")
+        logger.debug(
+            f"Datatype for dataset_publish_response: {type(dataset_publish_response)}"
+        )
 
         try:
             publisher_service.publish_data_to_topic(
