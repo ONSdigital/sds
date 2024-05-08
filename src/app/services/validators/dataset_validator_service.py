@@ -31,7 +31,7 @@ class DatasetValidatorService:
 
         if filename[-5:].lower() != ".json":
             pubsub_message = {
-                "type": "Filetype error",
+                "error": "Filetype error",
                 "message": "Invalid filetype received.",
             }
             DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
@@ -50,7 +50,7 @@ class DatasetValidatorService:
             DatasetBucketRepository().get_dataset_file_as_json(filename)
         except JSONDecodeError:
             pubsub_message = {
-                "type": "File content error",
+                "error": "File content error",
                 "message": "Invalid JSON content received.",
             }
             DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
