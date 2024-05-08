@@ -1,4 +1,6 @@
+from flask import json
 from models.dataset_models import DatasetError, RawDataset
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
 from ..dataset.dataset_writer_service import DatasetWriterService
@@ -7,6 +9,18 @@ from ..dataset.dataset_writer_service import DatasetWriterService
 class DatasetValidatorService:
     @staticmethod
     def validate_file_is_json(filename: str) -> None:
+        """
+        Validates the file extension is json.
+
+        Parameters:
+        filename (str): filename being validated.
+        """
+
+        DatasetValidatorService._validate_file_extension_is_json(filename)
+        DatasetValidatorService._validate_file_content_is_json(filename)
+
+    @staticmethod
+    def _validate_file_extension_is_json(filename: str) -> None:
         """
         Raises a runtime error if the file type is not json.
 
@@ -21,6 +35,25 @@ class DatasetValidatorService:
             }
             DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
+
+    @staticmethod
+    def _validate_file_content_is_json(filename: str) -> None:
+        """
+        Raises a runtime error if the file content is not json.
+
+        Parameters:
+        filename (str): filename being validated.
+        """
+
+        try:
+            DatasetBucketRepository().get_dataset_file_as_json(filename)
+        except json.JSONDecodeError:
+            pubsub_message = {
+                "type": "File content error",
+                "message": "Invalid JSON content received.",
+            }
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+            raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
     def validate_raw_dataset(raw_dataset: RawDataset) -> None:
