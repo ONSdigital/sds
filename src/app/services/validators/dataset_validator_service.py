@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from models.dataset_models import DatasetError, RawDataset
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
