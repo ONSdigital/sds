@@ -130,6 +130,6 @@ class DatasetWriterService:
         # if the message starts with "error:" then it is an error message
         return (
             config.PUBLISH_DATASET_ERROR_TOPIC_ID
-            if isinstance(pubsub_message, DatasetMetadata)
+            if "error" in pubsub_message
             else config.PUBLISH_DATASET_TOPIC_ID
         )
