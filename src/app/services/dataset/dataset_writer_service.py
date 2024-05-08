@@ -117,8 +117,10 @@ class DatasetWriterService:
             raise RuntimeError(
                 "Failed to delete previous version of dataset from firestore. Rolling back..."
             )
-        
-    def _get_pubsub_topic(self, pubsub_message: (DatasetMetadata | DatasetPublishResponse | DatasetError)) -> str:
+
+    def _get_pubsub_topic(
+        self, pubsub_message: DatasetMetadata | DatasetPublishResponse | DatasetError
+    ) -> str:
         """
         Returns the topic id to publish the message to.
 
@@ -126,4 +128,8 @@ class DatasetWriterService:
         pubsub_message: the message to be published.
         """
         # if the message starts with "error:" then it is an error message
-        return config.PUBLISH_DATASET_ERROR_TOPIC_ID if isinstance(pubsub_message, DatasetMetadata) else config.PUBLISH_DATASET_TOPIC_ID
+        return (
+            config.PUBLISH_DATASET_ERROR_TOPIC_ID
+            if isinstance(pubsub_message, DatasetMetadata)
+            else config.PUBLISH_DATASET_TOPIC_ID
+        )
