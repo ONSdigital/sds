@@ -17,15 +17,11 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-            pubsub_message = asdict(
-                DatasetError(
-                    type="InvalidFileType",
-                    message=f"Invalid filetype received - {filename}",
-                )
-            )
-            dataset_repository = DatasetFirebaseRepository()
-            dataset_writer_service = DatasetWriterService(dataset_repository)
-            dataset_writer_service.try_publish_dataset_metadata_to_topic(pubsub_message)
+            pubsub_message = {
+                "type": "Filetype error",
+                "message": "Invalid filetype received.",
+            }
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
@@ -67,6 +63,11 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
+            pubsub_message = {
+                "type": "Mandatory key(s) error",
+                "message": "Mandatory key(s) missing from JSON.",
+            }
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -150,3 +151,18 @@ class DatasetValidatorService:
         """
 
         return False, ", ".join(missing_keys)
+
+    @staticmethod
+    def try_publish_dataset_error_to_topic(
+        error_message: DatasetError,
+    ) -> None:
+        """
+        Publishes dataset error response to google pubsub topic.
+
+        Parameters:
+        error_message (str): error message to be published.
+        """
+
+        dataset_repository = DatasetFirebaseRepository()
+        dataset_writer_service = DatasetWriterService(dataset_repository)
+        dataset_writer_service.try_publish_dataset_metadata_to_topic(error_message)
