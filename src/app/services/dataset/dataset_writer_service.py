@@ -75,12 +75,9 @@ class DatasetWriterService:
         """
         # if the dataset publish response is an error, set topic_id to the error topic id
         topic_id = (
-            config.PUBLISH_DATASET_ERROR_TOPIC_ID
-            if isinstance(dataset_publish_response, DatasetError)
+            config.PUBLISH_DATASET_ERROR_TOPIC_IDå
+            if isinstance(dataset_publish_response, DatasetMetadata)
             else config.PUBLISH_DATASET_TOPIC_ID
-        )
-        print(
-            f"Data type for dataset_publish_response: {type(dataset_publish_response)}"
         )
 
         try:
