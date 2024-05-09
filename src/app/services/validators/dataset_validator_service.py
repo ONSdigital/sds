@@ -96,7 +96,7 @@ class DatasetValidatorService:
 
         if isValid is False:
             pubsub_message = {
-                "type": "Mandatory key(s) error",
+                "error": "Mandatory key(s) error",
                 "message": "Mandatory key(s) missing from JSON.",
             }
             DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
