@@ -34,7 +34,7 @@ class DatasetValidatorService:
                 "error": "Filetype error",
                 "message": "Invalid filetype received.",
             }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
@@ -53,7 +53,7 @@ class DatasetValidatorService:
                 "error": "File content error",
                 "message": "Invalid JSON content received.",
             }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
@@ -99,7 +99,7 @@ class DatasetValidatorService:
                 "error": "Mandatory key(s) error",
                 "message": "Mandatory key(s) missing from JSON.",
             }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -185,7 +185,7 @@ class DatasetValidatorService:
         return False, ", ".join(missing_keys)
 
     @staticmethod
-    def try_publish_dataset_error_to_topic(
+    def _publish_dataset_error_to_topic(
         error_message: DatasetError,
     ) -> None:
         """
@@ -197,4 +197,4 @@ class DatasetValidatorService:
 
         dataset_repository = DatasetFirebaseRepository()
         dataset_writer_service = DatasetWriterService(dataset_repository)
-        dataset_writer_service.try_publish_dataset_metadata_to_topic(error_message)
+        dataset_writer_service.try_publish_dataset_error_to_topic(error_message)
