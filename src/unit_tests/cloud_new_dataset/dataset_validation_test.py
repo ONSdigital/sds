@@ -1,4 +1,5 @@
 import re
+from json import JSONDecodeError
 from unittest import TestCase
 from unittest.mock import MagicMock
 
@@ -79,7 +80,6 @@ class DatasetValidationTest(TestCase):
 
         DatasetProcessorService.process_raw_dataset = MagicMock()
 
-        DatasetBucketRepository.get_dataset_file_as_json = MagicMock()
         DatasetBucketRepository.get_dataset_file_as_json.return_value = (
             dataset_test_data.missing_keys_dataset_metadata
         )
@@ -88,6 +88,27 @@ class DatasetValidationTest(TestCase):
         with raises(
             RuntimeError,
             match=re.escape("Mandatory key(s) missing from JSON: survey_id."),
+        ):
+            TestHelper.new_dataset_mock(cloud_event)
+
+        DatasetProcessorService.process_raw_dataset.assert_not_called()
+
+    def test_invalid_json_content(self):
+        """
+        Validates when the content of the dataset is not valid JSON.
+        """
+        cloud_event = MagicMock()
+        cloud_event.data = dataset_test_data.cloud_event_data
+
+        DatasetProcessorService.process_raw_dataset = MagicMock()
+        DatasetBucketRepository.get_dataset_file_as_json = MagicMock(
+            side_effect=JSONDecodeError("Expecting value", "", 0)
+        )
+        DatasetValidatorService._publish_dataset_error_to_topic = MagicMock()
+
+        with raises(
+            RuntimeError,
+            match=re.escape("Invalid JSON content received."),
         ):
             TestHelper.new_dataset_mock(cloud_event)
 
