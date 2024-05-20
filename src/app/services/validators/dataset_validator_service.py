@@ -1,5 +1,6 @@
 from json import JSONDecodeError
 
+from config.config_factory import config
 from models.dataset_models import DatasetError, RawDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
@@ -34,7 +35,7 @@ class DatasetValidatorService:
                 "error": "Filetype error",
                 "message": "Invalid filetype received.",
             }
-            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
@@ -53,7 +54,7 @@ class DatasetValidatorService:
                 "error": "File content error",
                 "message": "Invalid JSON content received.",
             }
-            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
@@ -99,7 +100,7 @@ class DatasetValidatorService:
                 "error": "Mandatory key(s) error",
                 "message": "Mandatory key(s) missing from JSON.",
             }
-            DatasetValidatorService._publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -185,16 +186,14 @@ class DatasetValidatorService:
         return False, ", ".join(missing_keys)
 
     @staticmethod
-    def _publish_dataset_error_to_topic(
-        error_message: DatasetError,
-    ) -> None:
+    def try_publish_dataset_error_to_topic(self, error_message: DatasetError) -> None:
         """
         Publishes dataset error response to google pubsub topic.
 
         Parameters:
-        error_message (str): error message to be published.
+        error_message: error message to be published.
         """
-
         dataset_repository = DatasetFirebaseRepository()
         dataset_writer_service = DatasetWriterService(dataset_repository)
-        dataset_writer_service.try_publish_dataset_error_to_topic(error_message)
+        topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
+        dataset_writer_service.try_publish_message_to_topic(error_message, topic_id)
