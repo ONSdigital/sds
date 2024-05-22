@@ -4,10 +4,7 @@ from config.config_factory import config
 from logging_config import logging
 from models.dataset_models import DatasetError, RawDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.publisher_service import publisher_service
-
-from ..dataset.dataset_writer_service import DatasetWriterService
 
 logger = logging.getLogger(__name__)
 
