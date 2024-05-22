@@ -193,11 +193,10 @@ class DatasetValidatorService:
 
     def try_publish_dataset_error_to_topic(message: DatasetError) -> None:
         """
-        Publishes a message to a specified topic, raising an exception if unsuccessful.
+        Publishes error message to a error topic, raising an exception if unsuccessful.
 
         Parameters:
         message: message to be published.
-        topic_id: the unique identifier of the topic the message is published to.
         """
 
         topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
