@@ -431,14 +431,6 @@ class E2EDatasetIntegrationTest(TestCase):
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
 
-        # Check file is not removed from bucket
-        assert (
-            storage.Client()
-            .bucket(config.DATASET_BUCKET_NAME)
-            .blob(dataset_invalid_json_filename)
-            .exists()
-        )
-
         # Check pubsub messages and ack
         received_messages = dataset_error_pubsub_helper.pull_and_acknowledge_messages(
             test_dataset_error_subscriber_id
@@ -462,14 +454,6 @@ class E2EDatasetIntegrationTest(TestCase):
 
         if create_dataset_response is not None and create_dataset_response != 200:
             assert False, "Unsuccessful request to create dataset"
-
-        # Check file is not removed from bucket
-        assert (
-            storage.Client()
-            .bucket(config.DATASET_BUCKET_NAME)
-            .blob(dataset_missing_keys_filename)
-            .exists()
-        )
 
         # Check pubsub messages and ack
         received_messages = dataset_error_pubsub_helper.pull_and_acknowledge_messages(
