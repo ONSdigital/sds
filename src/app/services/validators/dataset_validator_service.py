@@ -190,7 +190,7 @@ class DatasetValidatorService:
 
         return False, ", ".join(missing_keys)
 
-    def try_publish_dataset_error_to_topic(self, error_message: DatasetError) -> None:
+    def try_publish_dataset_error_to_topic(error_message: DatasetError) -> None:
         """
         Publishes dataset error response to google pubsub topic, raising an exception if unsuccessful.
 
