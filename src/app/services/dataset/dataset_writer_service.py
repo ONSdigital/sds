@@ -1,7 +1,6 @@
 from config.config_factory import config
 from logging_config import logging
 from models.dataset_models import (
-    DatasetError,
     DatasetMetadata,
     DatasetMetadataWithoutId,
     DatasetPublishResponse,
@@ -62,8 +61,7 @@ class DatasetWriterService:
             return {"status": "error", "message": "Publishing dataset has failed."}
 
     def try_publish_dataset_metadata_to_topic(
-        self,
-        dataset_publish_response: DatasetMetadata | DatasetPublishResponse,
+        self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse
     ) -> None:
         """
         Publishes dataset response to google pubsub topic, raising an exception if unsuccessful.
@@ -71,8 +69,21 @@ class DatasetWriterService:
         Parameters:
         dataset_publish_response: dataset metadata or unhappy path response to be published.
         """
-        topic_id = config.PUBLISH_DATASET_TOPIC_ID
-        self._try_publish_message_to_topic(dataset_publish_response, topic_id)
+        try:
+            publisher_service.publish_data_to_topic(
+                dataset_publish_response,
+                config.PUBLISH_DATASET_TOPIC_ID,
+            )
+            logger.debug(
+                f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
+            )
+            logger.info("Dataset response published successfully.")
+        except Exception as e:
+            logger.debug(
+                f"Dataset response {dataset_publish_response} failed to publish to topic {config.PUBLISH_DATASET_TOPIC_ID} "
+                f"with error {e}"
+            )
+            raise RuntimeError("Error publishing dataset response to the topic.")
 
     def try_perform_delete_previous_version_dataset_transaction(
         self, survey_id: str, period_id: str, previous_version: int
@@ -85,13 +96,13 @@ class DatasetWriterService:
         previous_version: latest previous version of the dataset.
         """
         logger.info(
-            f"Deleting a previous version dataset. Version number: {previous_version}..."
+            f"Deleting a previous version dataset. Version nnumber: {previous_version}..."
         )
         try:
             self.dataset_firebase_repository.perform_delete_previous_version_dataset_transaction(
                 survey_id, period_id, previous_version
             )
-            logger.info("Previous version of dataset deleted successfully.")
+            logger.info("Previous version of dataset deleted succesfully.")
         except Exception as e:
             logger.debug(
                 f"Failed to delete previous version of dataset with survey id: {survey_id} \
@@ -100,25 +111,3 @@ class DatasetWriterService:
             raise RuntimeError(
                 "Failed to delete previous version of dataset from firestore. Rolling back..."
             )
-
-    def _try_publish_message_to_topic(
-        self,
-        message: DatasetMetadata | DatasetPublishResponse | DatasetError,
-        topic_id: str,
-    ) -> None:
-        """
-        Publishes a message to a specified topic, raising an exception if unsuccessful.
-
-        Parameters:
-        message: message to be published.
-        topic_id: the unique identifier of the topic the message is published to.
-        """
-        try:
-            publisher_service.publish_data_to_topic(message, topic_id)
-            logger.debug(f"Message {message} published to topic {topic_id}")
-            logger.info("Pubsub message published successfully.")
-        except Exception as e:
-            logger.debug(
-                f"Pubsub message {message} failed to publish to topic {topic_id} with error {e}"
-            )
-            raise RuntimeError("Error publishing message to the topic.")
