@@ -35,7 +35,7 @@ class DatasetValidatorService:
                 "error": "Filetype error",
                 "message": "Invalid filetype received.",
             }
-            DatasetValidatorService._try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
@@ -54,7 +54,7 @@ class DatasetValidatorService:
                 "error": "File content error",
                 "message": "Invalid JSON content received.",
             }
-            DatasetValidatorService._try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
@@ -100,7 +100,7 @@ class DatasetValidatorService:
                 "error": "Mandatory key(s) error",
                 "message": "Mandatory key(s) missing from JSON.",
             }
-            DatasetValidatorService._try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
