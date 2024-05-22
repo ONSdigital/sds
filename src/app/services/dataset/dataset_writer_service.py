@@ -72,7 +72,17 @@ class DatasetWriterService:
         dataset_publish_response: dataset metadata or unhappy path response to be published.
         """
         topic_id = config.PUBLISH_DATASET_TOPIC_ID
-        self.try_publish_message_to_topic(dataset_publish_response, topic_id)
+        self._try_publish_message_to_topic(dataset_publish_response, topic_id)
+
+    def try_publish_dataset_error_to_topic(self, error_message: DatasetError) -> None:
+        """
+        Publishes dataset error response to google pubsub topic, raising an exception if unsuccessful.
+
+        Parameters:
+        error_message: error message to be published.
+        """
+        topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
+        self._try_publish_message_to_topic(error_message, topic_id)
 
     def try_perform_delete_previous_version_dataset_transaction(
         self, survey_id: str, period_id: str, previous_version: int
@@ -101,7 +111,7 @@ class DatasetWriterService:
                 "Failed to delete previous version of dataset from firestore. Rolling back..."
             )
 
-    def try_publish_message_to_topic(
+    def _try_publish_message_to_topic(
         self,
         message: DatasetMetadata | DatasetPublishResponse | DatasetError,
         topic_id: str,

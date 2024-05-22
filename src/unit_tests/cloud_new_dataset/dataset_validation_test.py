@@ -19,7 +19,7 @@ class DatasetValidationTest(TestCase):
             DatasetBucketRepository.get_dataset_file_as_json
         )
         self.publish_dataset_error_to_topic_stash = (
-            DatasetValidatorService.try_publish_dataset_error_to_topic
+            DatasetValidatorService._publish_dataset_error_to_topic
         )
 
         TestHelper.mock_get_dataset_from_bucket()
@@ -29,7 +29,7 @@ class DatasetValidationTest(TestCase):
         DatasetBucketRepository.get_dataset_file_as_json = (
             self.get_dataset_file_as_json_stash
         )
-        DatasetValidatorService.try_publish_dataset_error_to_topic = (
+        DatasetValidatorService._publish_dataset_error_to_topic = (
             self.publish_dataset_error_to_topic_stash
         )
 
@@ -41,7 +41,7 @@ class DatasetValidationTest(TestCase):
         cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
 
         DatasetProcessorService.process_raw_dataset = MagicMock()
-        DatasetValidatorService.try_publish_dataset_error_to_topic = MagicMock()
+        DatasetValidatorService._publish_dataset_error_to_topic = MagicMock()
 
         with raises(
             RuntimeError,
@@ -83,7 +83,7 @@ class DatasetValidationTest(TestCase):
         DatasetBucketRepository.get_dataset_file_as_json.return_value = (
             dataset_test_data.missing_keys_dataset_metadata
         )
-        DatasetValidatorService.try_publish_dataset_error_to_topic = MagicMock()
+        DatasetValidatorService._publish_dataset_error_to_topic = MagicMock()
 
         with raises(
             RuntimeError,
@@ -104,7 +104,7 @@ class DatasetValidationTest(TestCase):
         DatasetBucketRepository.get_dataset_file_as_json = MagicMock(
             side_effect=JSONDecodeError("Expecting value", "", 0)
         )
-        DatasetValidatorService.try_publish_dataset_error_to_topic = MagicMock()
+        DatasetValidatorService._publish_dataset_error_to_topic = MagicMock()
 
         with raises(
             RuntimeError,
