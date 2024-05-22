@@ -1,11 +1,15 @@
 from json import JSONDecodeError
 
 from config.config_factory import config
+from logging_config import logging
 from models.dataset_models import DatasetError, RawDataset
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.shared.publisher_service import publisher_service
 
 from ..dataset.dataset_writer_service import DatasetWriterService
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetValidatorService:
@@ -190,15 +194,23 @@ class DatasetValidatorService:
 
         return False, ", ".join(missing_keys)
 
-    def try_publish_dataset_error_to_topic(error_message: DatasetError) -> None:
+    def try_publish_dataset_error_to_topic(message: DatasetError) -> None:
         """
-        Publishes dataset error response to google pubsub topic, raising an exception if unsuccessful.
+        Publishes a message to a specified topic, raising an exception if unsuccessful.
 
         Parameters:
-        error_message: error message to be published.
+        message: message to be published.
+        topic_id: the unique identifier of the topic the message is published to.
         """
+
         topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
 
-        dataset_repository = DatasetFirebaseRepository()
-        dataset_writer_service = DatasetWriterService(dataset_repository)
-        dataset_writer_service._try_publish_message_to_topic(error_message, topic_id)
+        try:
+            publisher_service.publish_data_to_topic(message, topic_id)
+            logger.debug(f"Message {message} published to topic {topic_id}")
+            logger.info("Pubsub message published successfully.")
+        except Exception as e:
+            logger.debug(
+                f"Pubsub message {message} failed to publish to topic {topic_id} with error {e}"
+            )
+            raise RuntimeError("Error publishing message to the topic.")
