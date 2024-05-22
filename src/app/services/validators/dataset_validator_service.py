@@ -31,11 +31,13 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-            pubsub_message = {
-                "error": "Filetype error",
-                "message": "Invalid filetype received.",
-            }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "Filetype error",
+                    "message": "Invalid filetype received.",
+                }
+            )
             raise RuntimeError(f"Invalid filetype received - {filename}")
 
     @staticmethod
@@ -50,11 +52,12 @@ class DatasetValidatorService:
         try:
             DatasetBucketRepository().get_dataset_file_as_json(filename)
         except JSONDecodeError:
-            pubsub_message = {
-                "error": "File content error",
-                "message": "Invalid JSON content received.",
-            }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "File content error",
+                    "message": "Invalid JSON content received.",
+                }
+            )
             raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
@@ -96,11 +99,13 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
-            pubsub_message = {
-                "error": "Mandatory key(s) error",
-                "message": "Mandatory key(s) missing from JSON.",
-            }
-            DatasetValidatorService.try_publish_dataset_error_to_topic(pubsub_message)
+
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "Mandatory key(s) error",
+                    "message": "Mandatory key(s) missing from JSON.",
+                }
+            )
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -196,4 +201,4 @@ class DatasetValidatorService:
 
         dataset_repository = DatasetFirebaseRepository()
         dataset_writer_service = DatasetWriterService(dataset_repository)
-        dataset_writer_service._try_publish_message_to_topic(topic_id, error_message)
+        dataset_writer_service._try_publish_message_to_topic(error_message, topic_id)
