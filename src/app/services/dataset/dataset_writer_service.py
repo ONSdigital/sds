@@ -39,7 +39,7 @@ class DatasetWriterService:
         """
         logger.info("Beginning dataset transaction...")
         try:
-            self.dataset_firebase_repository.perform_new_dataset_transaction(
+            self.dataset_firebase_repository.perform_batched_dataset_write(
                 dataset_id,
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
@@ -56,7 +56,6 @@ class DatasetWriterService:
         except Exception as e:
             logger.error(f"Dataset transaction error, exception raised: {e}")
             logger.error("Rolling back dataset transaction.")
-
             logger.info("Publishing dataset error response to topic.")
             return {"status": "error", "message": "Publishing dataset has failed."}
 
