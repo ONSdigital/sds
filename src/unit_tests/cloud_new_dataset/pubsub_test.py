@@ -130,5 +130,7 @@ class PubSubTest(TestCase):
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
-        with raises(RuntimeError, match="Error publishing message to the topic."):
+        with raises(
+            RuntimeError, match="Error publishing dataset response to the topic."
+        ):
             TestHelper.new_dataset_mock(cloud_event)
