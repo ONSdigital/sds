@@ -193,8 +193,7 @@ class DatasetValidatorService:
         error_message: error message to be published.
         """
         topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
-        self._try_publish_message_to_topic(error_message, topic_id)
 
         dataset_repository = DatasetFirebaseRepository()
         dataset_writer_service = DatasetWriterService(dataset_repository)
-        dataset_writer_service._try_publish_message_to_topic(error_message)
+        dataset_writer_service._try_publish_message_to_topic(topic_id, error_message)
