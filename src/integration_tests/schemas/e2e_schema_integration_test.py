@@ -109,7 +109,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_guid_schema_response.status_code == 200
             assert set_guid_schema_response.json() == test_schema
 
-    def test_get_survey_id_map(self):
+    def test_survey_id_map(self):
         """
         Retrieve survey mapping data using the /survey_list endpoint.
         Verify that the retrieved data matches the expected survey mapping data.
