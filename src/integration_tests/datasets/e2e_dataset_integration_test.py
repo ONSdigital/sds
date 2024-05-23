@@ -1,4 +1,3 @@
-# from time import sleep
 from unittest import TestCase
 
 from config.config_factory import config
