@@ -32,7 +32,7 @@ async def dev_simulate_publish_dataset(request: Request, filename: str = None):
     data = await request.body()
     blob.upload_from_string(
         data.decode("utf-8"),
-        content_type="application/octet-stream",
+        content_type="text/plain",
     )
 
     # Set the data object that will be sent to the cloud function
