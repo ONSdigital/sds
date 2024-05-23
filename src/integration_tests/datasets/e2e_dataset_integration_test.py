@@ -31,8 +31,6 @@ from src.test_data.shared_test_data import (
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        # Prevent 404 errors where previous tests have not cleaned up yet
-        sleep(5)
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 

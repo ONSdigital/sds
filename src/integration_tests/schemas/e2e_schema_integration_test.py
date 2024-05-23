@@ -1,4 +1,3 @@
-from time import sleep
 from unittest import TestCase
 
 from src.app.config.config_factory import config
@@ -18,8 +17,6 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 class E2ESchemaIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        # Prevent 404 errors where previous tests have not cleaned up yet
-        sleep(5)
         pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
 
     def tearDown(self) -> None:
