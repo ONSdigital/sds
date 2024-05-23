@@ -104,7 +104,11 @@ def create_filename_error_filepath(file_prefix: str):
 
 
 def create_dataset(
-    filename: str, dataset: dict, session: requests.Session, headers: dict[str, str]
+    filename: str,
+    dataset: dict,
+    session: requests.Session,
+    headers: dict[str, str],
+    skip_wait: bool = False,
 ) -> int | None:
     """
     Method to create a dataset using either the remote new dataset function or the local version.
@@ -121,7 +125,7 @@ def create_dataset(
     if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, filename, dataset)
     else:
-        _create_remote_dataset(session, filename, dataset, headers)
+        _create_remote_dataset(session, filename, dataset, headers, skip_wait)
 
 
 def _create_local_dataset(
@@ -145,7 +149,11 @@ def _create_local_dataset(
 
 
 def _create_remote_dataset(
-    session: requests.Session, filename: str, dataset: dict, headers: dict[str, str]
+    session: requests.Session,
+    filename: str,
+    dataset: dict,
+    headers: dict[str, str],
+    skip_wait: bool = False,
 ) -> None:
     """
     Method to create a remote dataset.
@@ -164,9 +172,11 @@ def _create_remote_dataset(
     blob.upload_from_string(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
-    wait_until_dataset_ready(
-        dataset["survey_id"], dataset["period_id"], filename, session, headers
-    )
+
+    if not skip_wait:
+        wait_until_dataset_ready(
+            dataset["survey_id"], dataset["period_id"], filename, session, headers
+        )
 
 
 def create_dataset_as_string(

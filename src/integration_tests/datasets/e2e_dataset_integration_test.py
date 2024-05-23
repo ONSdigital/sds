@@ -404,6 +404,7 @@ class E2EDatasetIntegrationTest(TestCase):
             dataset_incorrect_extension,
             session,
             headers,
+            skip_wait=True,
         )
 
         if create_dataset_response is not None and create_dataset_response != 200:
@@ -451,7 +452,11 @@ class E2EDatasetIntegrationTest(TestCase):
         dataset_missing_keys_filename = create_filepath("integration-test-missing-keys")
 
         create_dataset_response = create_dataset(
-            dataset_missing_keys_filename, dataset_missing_keys, session, headers
+            dataset_missing_keys_filename,
+            dataset_missing_keys,
+            session,
+            headers,
+            skip_wait=True,
         )
 
         if create_dataset_response is not None and create_dataset_response != 200:
