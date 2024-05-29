@@ -63,3 +63,9 @@ class UnitDataset:
 class DatasetPublishResponse:
     status: str
     message: str
+
+
+@dataclass
+class DatasetError:
+    error: str
+    message: str

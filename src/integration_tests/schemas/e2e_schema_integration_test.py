@@ -1,3 +1,4 @@
+import time
 from unittest import TestCase
 
 from src.app.config.config_factory import config
@@ -17,6 +18,7 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 class E2ESchemaIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
+        time.sleep(5)
         pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
 
     def tearDown(self) -> None:
@@ -107,7 +109,7 @@ class E2ESchemaIntegrationTest(TestCase):
             assert set_guid_schema_response.status_code == 200
             assert set_guid_schema_response.json() == test_schema
 
-    def test_get_survey_id_map(self):
+    def test_survey_id_map(self):
         """
         Retrieve survey mapping data using the /survey_list endpoint.
         Verify that the retrieved data matches the expected survey mapping data.

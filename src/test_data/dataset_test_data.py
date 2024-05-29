@@ -260,3 +260,18 @@ unit_response_amended = {
     "form_types": ["abc", "fgg", "ynm"],
     "data": "<encrypted data>",
 }
+
+incorrect_file_extension_message = {
+    "error": "Filetype error",
+    "message": "Invalid filetype received.",
+}
+
+invalid_json_message = {
+    "error": "File content error",
+    "message": "Invalid JSON content received.",
+}
+
+missing_keys_message = {
+    "error": "Mandatory key(s) error",
+    "message": "Mandatory key(s) missing from JSON.",
+}

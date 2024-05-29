@@ -1,9 +1,29 @@
-from models.dataset_models import RawDataset
+from json import JSONDecodeError
+
+from config.config_factory import config
+from logging_config import logging
+from models.dataset_models import DatasetError, RawDataset
+from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
+from services.shared.publisher_service import publisher_service
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetValidatorService:
     @staticmethod
     def validate_file_is_json(filename: str) -> None:
+        """
+        Validates the file extension is json.
+
+        Parameters:
+        filename (str): filename being validated.
+        """
+
+        DatasetValidatorService._validate_file_extension_is_json(filename)
+        DatasetValidatorService._validate_file_content_is_json(filename)
+
+    @staticmethod
+    def _validate_file_extension_is_json(filename: str) -> None:
         """
         Raises a runtime error if the file type is not json.
 
@@ -12,7 +32,34 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
+
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "Filetype error",
+                    "message": "Invalid filetype received.",
+                }
+            )
             raise RuntimeError(f"Invalid filetype received - {filename}")
+
+    @staticmethod
+    def _validate_file_content_is_json(filename: str) -> None:
+        """
+        Raises a runtime error if the file content is not json.
+
+        Parameters:
+        filename (str): filename being validated.
+        """
+
+        try:
+            DatasetBucketRepository().get_dataset_file_as_json(filename)
+        except JSONDecodeError:
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "File content error",
+                    "message": "Invalid JSON content received.",
+                }
+            )
+            raise RuntimeError("Invalid JSON content received.")
 
     @staticmethod
     def validate_raw_dataset(raw_dataset: RawDataset) -> None:
@@ -53,6 +100,13 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
+
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "Mandatory key(s) error",
+                    "message": "Mandatory key(s) missing from JSON.",
+                }
+            )
             raise RuntimeError(f"Mandatory key(s) missing from JSON: {message}.")
 
         return raw_dataset
@@ -136,3 +190,23 @@ class DatasetValidatorService:
         """
 
         return False, ", ".join(missing_keys)
+
+    def try_publish_dataset_error_to_topic(message: DatasetError) -> None:
+        """
+        Publishes error message to a error topic, raising an exception if unsuccessful.
+
+        Parameters:
+        message: message to be published.
+        """
+
+        topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
+
+        try:
+            publisher_service.publish_data_to_topic(message, topic_id)
+            logger.debug(f"Message {message} published to topic {topic_id}")
+            logger.info("Pubsub message published successfully.")
+        except Exception as e:
+            logger.debug(
+                f"Pubsub message {message} failed to publish to topic {topic_id} with error {e}"
+            )
+            raise RuntimeError("Error publishing message to the topic.")

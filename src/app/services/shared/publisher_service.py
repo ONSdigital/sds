@@ -3,7 +3,7 @@ import json
 from config.config_factory import config
 from google.cloud.pubsub_v1 import PublisherClient
 from logging_config import logging
-from models.dataset_models import DatasetMetadata
+from models.dataset_models import DatasetError, DatasetMetadata
 from models.schema_models import SchemaMetadata
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,9 @@ class PublisherService:
         self.publisher = None if config.CONF == "unit" else PublisherClient()
 
     def publish_data_to_topic(
-        self, publish_data: DatasetMetadata | SchemaMetadata, topic_id: str
+        self,
+        publish_data: DatasetMetadata | SchemaMetadata | DatasetError,
+        topic_id: str,
     ) -> None:
         """
         Publishes data to the pubsub topic.
