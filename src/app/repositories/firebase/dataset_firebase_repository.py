@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    BATCH_SIZE = 500;
+    BATCH_SIZE = 500
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -43,7 +43,7 @@ class DatasetFirebaseRepository:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) : 
+    ):
         """
         Write dataset metadata and unit data to firestore in batches.
         Parameters:
@@ -52,7 +52,7 @@ class DatasetFirebaseRepository:
         logger.info("performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
-        
+
         try:
             batch = self.client.batch()
             batch.set(new_dataset_document, dataset_metadata_without_id, merge=True)
@@ -64,37 +64,37 @@ class DatasetFirebaseRepository:
                 if batch_counter == 0:
                     batch = self.client.batch()
 
-                new_unit = unit_data_collection_snapshot.document(extracted_unit_data_identifiers[i])
+                new_unit = unit_data_collection_snapshot.document(
+                    extracted_unit_data_identifiers[i]
+                )
                 batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
                 batch_counter += 1
 
                 if batch_counter == self.BATCH_SIZE:
                     batch.commit()
                     batch_counter = 0
-                    #logger.info(f"Committed  a batch of {self.BATCH_SIZE} unit data items");
+                    # logger.info(f"Committed  a batch of {self.BATCH_SIZE} unit data items");
 
             if batch_counter > 0:
                 batch.commit()
                 logger.info("committed the final batch of unit data items.")
-            
+
             logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
             self._cleanup_failed_batches(unit_data_collection_snapshot)
             raise e
-        
 
         def _cleanup_failed_batches(self, unit_data_collection_snapshot):
             """
-            Cleanup due to failed batch writes 
+            Cleanup due to failed batch writes
             """
             logger.info("Cleaning up failed batch writes")
             docs = unit_data_collection_snapshot.stream()
             for doc in docs:
-                logger.info(f"Deleting Doc {doc.id}")#just testing with log
+                logger.info(f"Deleting Doc {doc.id}")  # just testing with log
                 doc.reference.delete()
             logger.info("Cleanup of failed batch writes completed")
-
 
     def perform_new_dataset_transaction(
         self,
