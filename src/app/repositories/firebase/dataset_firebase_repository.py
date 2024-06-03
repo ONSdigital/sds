@@ -80,16 +80,20 @@ class DatasetFirebaseRepository:
             logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
+            self._cleanup_failed_batches(unit_data_collection_snapshot)
             raise e
         
 
         def _cleanup_failed_batches(self, unit_data_collection_snapshot):
             """
+            Cleanup due to failed batch writes 
             """
             logger.info("Cleaning up failed batch writes")
+            docs = unit_data_collection_snapshot.stream()
             for doc in docs:
-                logger.info()
-
+                logger.info(f"Deleting Doc {doc.id}")#just testing with log
+                doc.reference.delete()
+            logger.info("Cleanup of failed batch writes completed")
 
 
     def perform_new_dataset_transaction(
