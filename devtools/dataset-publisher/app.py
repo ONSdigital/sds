@@ -29,9 +29,10 @@ async def dev_simulate_publish_dataset(request: Request, filename: str = None):
 
     # Save the dataset to the bucket
     blob = dataset_bucket.blob(filename)
+    data = await request.body()
     blob.upload_from_string(
-        json.dumps(await request.json(), indent=2),
-        content_type="application/json",
+        data.decode("utf-8"),
+        content_type="text/plain",
     )
 
     # Set the data object that will be sent to the cloud function

@@ -15,6 +15,7 @@ LOCAL_URL=http://localhost:3033
 SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=name:$(PROJECT_ID)-sds-static-lb-ip --format='value(address)' --limit=1 --project=$(PROJECT_ID))
 PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
 PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
+PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
 SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
 SDS_APPLICATION_VERSION=development
 
@@ -30,6 +31,7 @@ start-cloud-dev:
 	export PROJECT_ID=${PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
@@ -49,6 +51,7 @@ start-docker-dev:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
@@ -69,6 +72,7 @@ lint-and-unit-test:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
@@ -88,6 +92,7 @@ unit-test:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
@@ -108,6 +113,7 @@ integration-test-local:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export API_URL=${LOCAL_URL} && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
@@ -128,6 +134,7 @@ integration-test-sandbox:
 	export PROJECT_ID=$(PROJECT_ID) && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export API_URL=https://${SANDBOX_IP_ADDRESS}.nip.io && \
 	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
@@ -149,6 +156,7 @@ integration-test-cloudbuild:
 	export PROJECT_ID=${INT_PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${INT_PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${INT_PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export API_URL=${INT_API_URL} && \
 	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
@@ -168,6 +176,7 @@ generate-spec:
 	export PROJECT_ID=${PROJECT_ID} && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \

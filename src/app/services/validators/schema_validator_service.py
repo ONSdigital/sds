@@ -61,14 +61,14 @@ class SchemaValidatorService:
 
                 # If not the last hierarchy, check the key is an object
                 if index != len(key_hierarchy) - 1:
-                    if type(rolling_field[key]) != dict:
+                    if type(rolling_field[key]) is not dict:
                         logger.error(f"Key '{key}' must be an object")
                         raise ValidationException
 
                     rolling_field = rolling_field[key]
                 else:
                     # If at the last hierarchy, check the key type matches definition
-                    if type(rolling_field[key]) != key_type:
+                    if type(rolling_field[key]) is not key_type:
                         logger.error(
                             f"Key '{key}' must be in type {key_type}, but it is now {type(rolling_field[key])}"
                         )
