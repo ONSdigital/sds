@@ -41,6 +41,7 @@ class DatasetWriterService:
         try:
             self.dataset_firebase_repository.perform_batched_dataset_write(
                 dataset_id,
+                survey_id
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
                 extracted_unit_data_identifiers,

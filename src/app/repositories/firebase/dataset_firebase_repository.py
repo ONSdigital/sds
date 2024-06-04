@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    BATCH_SIZE = 500
+    BATCH_SIZE = 500;
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -40,10 +40,11 @@ class DatasetFirebaseRepository:
     def perform_batched_dataset_write(
         self,
         dataset_id: str,
+        survey_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ):
+    ) : 
         """
         Write dataset metadata and unit data to firestore in batches.
         Parameters:
@@ -52,7 +53,7 @@ class DatasetFirebaseRepository:
         logger.info("performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
-
+        
         try:
             batch = self.client.batch()
             batch.set(new_dataset_document, dataset_metadata_without_id, merge=True)
@@ -64,37 +65,49 @@ class DatasetFirebaseRepository:
                 if batch_counter == 0:
                     batch = self.client.batch()
 
-                new_unit = unit_data_collection_snapshot.document(
-                    extracted_unit_data_identifiers[i]
-                )
+                if i == 10:
+                    batch.set(new_unit, {"invalid_field": object()});
+
+                new_unit = unit_data_collection_snapshot.document(extracted_unit_data_identifiers[i])
                 batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
                 batch_counter += 1
 
                 if batch_counter == self.BATCH_SIZE:
                     batch.commit()
                     batch_counter = 0
-                    # logger.info(f"Committed  a batch of {self.BATCH_SIZE} unit data items");
+                    #logger.info(f"Committed  a batch of {self.BATCH_SIZE} unit data items");
 
             if batch_counter > 0:
                 batch.commit()
                 logger.info("committed the final batch of unit data items.")
-
+            
             logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
-            self._cleanup_failed_batches(unit_data_collection_snapshot)
+            # self._recursively_delete_document_and_sub_collections(new_dataset_document)
+            self._delete_collection_in_batches(new_dataset_document, "your_survey_id",100)
             raise e
+        
 
-        def _cleanup_failed_batches(self, unit_data_collection_snapshot):
-            """
-            Cleanup due to failed batch writes
-            """
-            logger.info("Cleaning up failed batch writes")
-            docs = unit_data_collection_snapshot.stream()
-            for doc in docs:
-                logger.info(f"Deleting Doc {doc.id}")  # just testing with log
-                doc.reference.delete()
-            logger.info("Cleanup of failed batch writes completed")
+    def delete_collection_in_batches(
+        collection_ref: firestore.CollectionReference, survey_id: str, batch_size: int
+        ):
+        docs = collection_ref.where("survey_id", "==", survey_id).limit(batch_size).get()
+        doc_count = 0
+        
+        for doc in docs:
+            doc_count += 1
+            # Delete all subcollections of document
+            for subcollection in doc.reference.collections():
+                delete_collection_in_batches(subcollection, survey_id, batch_size)
+
+            doc.reference.delete()
+
+            if doc_count < batch_size:
+                return None
+        return delete_collection_in_batches(collection_ref, survey_id, batch_size)
+
+
 
     def perform_new_dataset_transaction(
         self,
@@ -205,6 +218,8 @@ class DatasetFirebaseRepository:
             )
 
             self._delete_collection(transaction, previous_version_dataset)
+            for docs in previous_version_dataset.stream():
+                self._recursively_delete_document_and_sub_collections(doc.reference, transaction)
 
         delete_collection_transaction(self.client.transaction())
 
@@ -226,18 +241,3 @@ class DatasetFirebaseRepository:
             self._recursively_delete_document_and_sub_collections(
                 transaction, doc.reference
             )
-
-    def _recursively_delete_document_and_sub_collections(
-        self, transaction: firestore.Transaction, doc_ref: firestore.DocumentReference
-    ) -> None:
-        """
-        Loops through each collection in a document and deletes the collection.
-
-        Parameters:
-        transaction: the firestore transaction performing the delete.
-        doc_ref: the reference of the document being deleted.
-        """
-        for collection_ref in doc_ref.collections():
-            self._delete_collection(transaction, collection_ref)
-
-        transaction.delete(doc_ref)
