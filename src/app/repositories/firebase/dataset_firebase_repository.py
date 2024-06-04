@@ -85,7 +85,7 @@ class DatasetFirebaseRepository:
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
             # self._recursively_delete_document_and_sub_collections(new_dataset_document)
-            self._delete_collection_in_batches(new_dataset_document, "your_survey_id",100)
+            self._delete_collection_in_batches(new_dataset_document, survey_id,100)
             raise e
         
 
