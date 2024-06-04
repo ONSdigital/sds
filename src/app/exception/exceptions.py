@@ -43,3 +43,11 @@ class ValidationException(Exception):
 
 class ExceptionNoSurveyIDs(Exception):
     pass
+
+
+class ExceptionBucketNotFound(Exception):
+    pass
+
+
+class ExceptionTopicNotFound(Exception):
+    pass
