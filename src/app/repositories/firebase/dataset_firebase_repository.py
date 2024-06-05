@@ -65,7 +65,8 @@ class DatasetFirebaseRepository:
                 if batch_counter == 0:
                     batch = self.client.batch()
 
-                if i == 10:
+                #forces an exception, delete this line to upload dataset properly     
+                if i == 10: 
                     batch.set(new_unit, {"invalid_field": object()});
 
                 new_unit = unit_data_collection_snapshot.document(extracted_unit_data_identifiers[i])
@@ -92,33 +93,33 @@ class DatasetFirebaseRepository:
     def delete_collection_in_batches(
         self, collection_ref: firestore.CollectionReference, batch_size: int, dataset_id: str | None = None
         ):
-        logger.info("here")
-        doc_count = 0
+        # logger.info("here")
         if dataset_id:
-            logger.info("here datasetid")
+            # logger.info("here datasetid")
             doc = collection_ref.document(dataset_id).get()
-            doc_count += 1
+            # doc_count += 1
             # Delete all subcollections of document
-            logger.info("past first doc")
-            for subcollection in collection_ref.subcollection():
+            # logger.info("past first doc")
+            for subcollection in doc.reference.collections():
+                # logger.info("loop")
                 self.delete_collection_in_batches(subcollection, batch_size)
-                logger.info("loop")
             doc.reference.delete()
         else:
-            logger.info("here elsee")
-            doc = collection_ref.limit(batch_size).get()
+            # logger.info("here elsee")
+            docs = collection_ref.limit(batch_size).get()
+            doc_count = 0
             for doc in docs:
-                logger.info("enter loop")
+                # logger.info("enter loop")
                 doc_count += 1
                 # Delete all subcollections of document
                 for subcollection in doc.reference.collections():
                     self.delete_collection_in_batches(subcollection, batch_size)
-                    logger.info("loop")
+                    # logger.info("loop")
                 doc.reference.delete()
-                if doc_count < batch_size:
-                    return None
+            if doc_count < batch_size:
+                return None
 
-        logger.info("passed conditionals")
+        # logger.info("passed conditionals")
         return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
 
 
