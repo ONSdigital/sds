@@ -33,13 +33,12 @@ class PublisherService:
             topic_path, data=json.dumps(publish_data).encode("utf-8")
         )
 
-    def _verify_topic_exists(self, topic_path: str) -> bool:
+    def _verify_topic_exists(self, topic_path: str) -> None:
         """
-        Returns True if the topic exists otherwise raises 500 global error.
+        If the topic does not exist raises 500 global error.
         """
         try:
             self.publisher.get_topic(request={"topic": topic_path})
-            return True
         except Exception:
             raise exceptions.ExceptionTopicNotFound
 
