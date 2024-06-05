@@ -27,7 +27,7 @@ class PublisherService:
         topic_id: unique identifier of the topic the data is published to
         """
         topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
-        self._get_topic(topic_path)
+        self._verify_topic_exists(topic_path)
 
         self.publisher.publish(
             topic_path, data=json.dumps(publish_data).encode("utf-8")
