@@ -40,7 +40,7 @@ class DatasetFirebaseRepository:
     def perform_batched_dataset_write(
         self,
         dataset_id: str,
-        survey_id: str,
+        # survey_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
@@ -85,27 +85,41 @@ class DatasetFirebaseRepository:
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
             # self._recursively_delete_document_and_sub_collections(new_dataset_document)
-            self._delete_collection_in_batches(new_dataset_document, survey_id,100)
+            self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
             raise e
         
 
     def delete_collection_in_batches(
-        collection_ref: firestore.CollectionReference, survey_id: str, batch_size: int
+        self, collection_ref: firestore.CollectionReference, batch_size: int, dataset_id: str | None = None
         ):
-        docs = collection_ref.where("survey_id", "==", survey_id).limit(batch_size).get()
+        logger.info("here")
         doc_count = 0
-        
-        for doc in docs:
+        if dataset_id:
+            logger.info("here datasetid")
+            doc = collection_ref.document(dataset_id).get()
             doc_count += 1
             # Delete all subcollections of document
-            for subcollection in doc.reference.collections():
-                delete_collection_in_batches(subcollection, survey_id, batch_size)
-
+            logger.info("past first doc")
+            for subcollection in collection_ref.subcollection():
+                self.delete_collection_in_batches(subcollection, batch_size)
+                logger.info("loop")
             doc.reference.delete()
+        else:
+            logger.info("here elsee")
+            doc = collection_ref.limit(batch_size).get()
+            for doc in docs:
+                logger.info("enter loop")
+                doc_count += 1
+                # Delete all subcollections of document
+                for subcollection in doc.reference.collections():
+                    self.delete_collection_in_batches(subcollection, batch_size)
+                    logger.info("loop")
+                doc.reference.delete()
+                if doc_count < batch_size:
+                    return None
 
-            if doc_count < batch_size:
-                return None
-        return delete_collection_in_batches(collection_ref, survey_id, batch_size)
+        logger.info("passed conditionals")
+        return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
 
 
 
@@ -218,8 +232,6 @@ class DatasetFirebaseRepository:
             )
 
             self._delete_collection(transaction, previous_version_dataset)
-            for docs in previous_version_dataset.stream():
-                self._recursively_delete_document_and_sub_collections(doc.reference, transaction)
 
         delete_collection_transaction(self.client.transaction())
 
@@ -241,3 +253,16 @@ class DatasetFirebaseRepository:
             self._recursively_delete_document_and_sub_collections(
                 transaction, doc.reference
             )
+
+    def _recursively_delete_document_and_sub_collections(
+        self, transaction: firestore.Transaction, doc_ref: firestore.DocumentReference
+    ) -> None:
+        """
+        Loops through each collection in a document and deletes the collection.
+        Parameters:
+        transaction: the firestore transaction performing the delete.
+        doc_ref: the reference of the document being deleted.
+        """
+        for collection_ref in doc_ref.collections():
+            self._delete_collection(transaction, collection_ref)
+        transaction.delete(doc_ref)
