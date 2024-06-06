@@ -77,6 +77,14 @@ app.add_exception_handler(
     exceptions.ExceptionNoSurveyIDs,
     ExceptionInterceptor.throw_404_no_survey_id_exception,
 )
+app.add_exception_handler(
+    exceptions.ExceptionBucketNotFound,
+    ExceptionInterceptor.throw_500_global_exception,
+)
+app.add_exception_handler(
+    exceptions.ExceptionTopicNotFound,
+    ExceptionInterceptor.throw_500_global_exception,
+)
 
 
 @app.exception_handler(500)
