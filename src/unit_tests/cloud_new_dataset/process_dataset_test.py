@@ -20,8 +20,8 @@ class ProcessDatasetTest(TestCase):
         self.perform_batched_dataset_write_stash = (
             DatasetFirebaseRepository.perform_batched_dataset_write
         )
-        self.perform_delete_previous_version_dataset_transaction_stash = (
-            DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction
+        self.perform_delete_previous_version_dataset_batch_stash = (
+            DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch
         )
         self.calculate_previous_version_stash = (
             DocumentVersionService.calculate_previous_version
@@ -39,8 +39,8 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.perform_batched_dataset_write = (
             self.perform_batched_dataset_write_stash
         )
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
-            self.perform_delete_previous_version_dataset_transaction_stash
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
+            self.perform_delete_previous_version_dataset_batch_stash
         )
         DocumentVersionService.calculate_previous_version = (
             self.calculate_previous_version_stash
@@ -62,7 +62,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=None)
         )
         DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
 
@@ -100,7 +100,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -137,7 +137,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -147,7 +147,7 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_called_once_with(
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_called_once_with(
             dataset_test_data.survey_id,
             dataset_test_data.period_id,
             dataset_test_data.updated_dataset_version - 1,
@@ -172,7 +172,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = MagicMock(
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = MagicMock(
             side_effect=Exception
         )
 
@@ -208,7 +208,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -218,7 +218,7 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_not_called()
 
     def test_skip_perform_delete_previous_version_dataset_when_dataset_first_upload(
         self,
@@ -241,7 +241,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -251,7 +251,7 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_not_called()
 
     def test_skip_perform_delete_previous_version_dataset_when_dataset_upload_failed(
         self,
@@ -276,7 +276,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -286,7 +286,7 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_not_called()
 
     def test_runtime_error_in_calculate_previous_version_of_dataset_when_dataset_not_found(
         self,
@@ -311,7 +311,7 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -322,4 +322,4 @@ class ProcessDatasetTest(TestCase):
         ):
             TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction.assert_not_called()
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_not_called()

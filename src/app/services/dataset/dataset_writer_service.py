@@ -81,7 +81,7 @@ class DatasetWriterService:
             )
             raise RuntimeError("Error publishing dataset response to the topic.")
 
-    def try_perform_delete_previous_version_dataset_transaction(
+    def try_perform_delete_previous_version_dataset_batch(
         self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
@@ -95,7 +95,7 @@ class DatasetWriterService:
             f"Deleting a previous version dataset. Version nnumber: {previous_version}..."
         )
         try:
-            self.dataset_firebase_repository.perform_delete_previous_version_dataset_transaction(
+            self.dataset_firebase_repository.perform_delete_previous_version_dataset_batch(
                 survey_id, period_id, previous_version
             )
             logger.info("Previous version of dataset deleted succesfully.")

@@ -19,8 +19,8 @@ class PubSubTest(TestCase):
         self.perform_batched_dataset_write_stash = (
             DatasetFirebaseRepository.perform_batched_dataset_write
         )
-        self.perform_delete_previous_version_dataset_transaction_stash = (
-            DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction
+        self.perform_delete_previous_version_dataset_batch_stash = (
+            DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch
         )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
         self.publish_data_to_topic_stash = PublisherService.publish_data_to_topic
@@ -34,8 +34,8 @@ class PubSubTest(TestCase):
         DatasetFirebaseRepository.perform_batched_dataset_write = (
             self.perform_batched_dataset_write_stash
         )
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
-            self.perform_delete_previous_version_dataset_transaction_stash
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
+            self.perform_delete_previous_version_dataset_batch_stash
         )
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
         PublisherService.publish_data_to_topic = self.publish_data_to_topic_stash
@@ -58,7 +58,7 @@ class PubSubTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -91,7 +91,7 @@ class PubSubTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
@@ -125,7 +125,7 @@ class PubSubTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock(side_effect=Exception)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             MagicMock()
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()

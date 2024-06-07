@@ -275,7 +275,7 @@ class DatasetProcessorService:
             )
             return None
 
-        self.dataset_writer_service.try_perform_delete_previous_version_dataset_transaction(
+        self.dataset_writer_service.try_perform_delete_previous_version_dataset_batch(
             current_dataset_survey_id,
             current_dataset_period_id,
             previous_dataset_version_from_firestore,

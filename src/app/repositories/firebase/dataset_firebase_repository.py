@@ -106,7 +106,7 @@ class DatasetFirebaseRepository:
             if doc_count < batch_size:
                 return None
 
-        return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
+            return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
@@ -151,7 +151,7 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata_list
 
-    def perform_delete_previous_version_dataset_transaction(
+    def perform_delete_previous_version_dataset_batch(
         self, survey_id: str, period_id: str, previous_version: int
     ) -> None:
         """
@@ -166,26 +166,21 @@ class DatasetFirebaseRepository:
         previous_version: previous version of the dataset to delete.
         """
 
-        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
-        # to be 'transaction', but since we're using classes the first parameter is always
-        # 'self'. Encapsulating the transaction within this function circumvents the issue.
-        # @firestore.transactional
-        # def delete_collection_transaction(transaction: firestore.Transaction):
         previous_version_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
             .where("sds_dataset_version", "==", previous_version).stream()
             )
 
-            # self._delete_collection(transaction, previous_version_dataset)
         for dataset in previous_version_dataset:
             dataset_id = dataset.id
             logger.info(f"dataset id {dataset_id}")
-            self.delete_collection_in_batches(
-                self.datasets_collection, 100, dataset_id
-            )
 
-        # delete_collection_transaction(self.client.transaction())
+        self.delete_collection_in_batches(
+            self.datasets_collection, 100, dataset_id
+        )
+        logger.info(f"Successfully deleted previous version dataset")
+
 
     def _delete_collection(
         self,
