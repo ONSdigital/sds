@@ -19,45 +19,40 @@ class DatasetWriterService:
     ):
         self.dataset_firebase_repository = dataset_firebase_repository
 
-    def perform_dataset_transaction(
+    def perform_batched_dataset_write(
         self,
         dataset_id: str,
-        # survey_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) -> DatasetMetadata | DatasetPublishResponse:
+    ) ->  DatasetMetadata | DatasetPublishResponse:
         """
-        Performs a transaction on dataset data, committing if dataset metadata and unit data operations are successful,
-        rolling back otherwise, and returning a publish response.
-
+        Writes dataset metadata and unit data to Firestore in batches.
+        
         Parameters:
         dataset_id: the uniquely generated id of the dataset
         dataset_metadata_without_id: the metadata of the dataset without its id
         unit_data_collection_with_metadata: the collection of unit data associated with the new dataset
         extracted_unit_data_identifiers: list of identifiers ordered to match the identifier for each set of
-            unit data in the collection.
+        unit data in the collection.
         """
-        logger.info("Beginning dataset transaction...")
+        logger.info("Performing batched dataset write...")
         try:
             self.dataset_firebase_repository.perform_batched_dataset_write(
                 dataset_id,
-                # survey_id,
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
                 extracted_unit_data_identifiers,
             )
-            logger.info(
-                "Dataset transaction committed successfully. Publishing dataset metadata to topic..."
-            )
-
+            logger.info("Batched dataset write committed successfully.")
+            
             return {
                 **dataset_metadata_without_id,
                 "dataset_id": dataset_id,
             }
         except Exception as e:
-            logger.error(f"Dataset transaction error, exception raised: {e}")
-            logger.error("Rolling back dataset transaction.")
+            logger.error(f"Error during batched dataset write: {e}")
+            logger.error("Cleaning up dataset.")
             logger.info("Publishing dataset error response to topic.")
             return {"status": "error", "message": "Publishing dataset has failed."}
 

@@ -17,8 +17,8 @@ class ProcessDatasetTest(TestCase):
         self.get_latest_dataset_with_survey_id_stash = (
             DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
         )
-        self.perform_new_dataset_transaction_stash = (
-            DatasetFirebaseRepository.perform_new_dataset_transaction
+        self.perform_batched_dataset_write_stash = (
+            DatasetFirebaseRepository.perform_batched_dataset_write
         )
         self.perform_delete_previous_version_dataset_transaction_stash = (
             DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction
@@ -36,8 +36,8 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
         )
-        DatasetFirebaseRepository.perform_new_dataset_transaction = (
-            self.perform_new_dataset_transaction_stash
+        DatasetFirebaseRepository.perform_batched_dataset_write = (
+            self.perform_batched_dataset_write_stash
         )
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
             self.perform_delete_previous_version_dataset_transaction_stash
@@ -61,7 +61,7 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             MagicMock(return_value=None)
         )
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_transaction = (
             MagicMock()
         )
@@ -76,7 +76,7 @@ class ProcessDatasetTest(TestCase):
             dataset_test_data.survey_id, dataset_test_data.period_id
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction.assert_called_once_with(
+        DatasetFirebaseRepository.perform_batched_dataset_write.assert_called_once_with(
             shared_test_data.test_guid,
             dataset_test_data.first_dataset_metadata_without_id,
             dataset_test_data.dataset_unit_data_collection,
@@ -96,7 +96,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=dataset_test_data.dataset_metadata_first_version)
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -111,7 +111,7 @@ class ProcessDatasetTest(TestCase):
             dataset_test_data.survey_id, dataset_test_data.period_id
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction.assert_called_once_with(
+        DatasetFirebaseRepository.perform_batched_dataset_write.assert_called_once_with(
             shared_test_data.test_guid,
             dataset_test_data.updated_dataset_metadata_without_id,
             dataset_test_data.dataset_unit_data_collection,
@@ -133,7 +133,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -168,7 +168,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -204,7 +204,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -237,7 +237,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=None)
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -272,7 +272,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=(dataset_test_data.dataset_metadata_updated_version))
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -307,7 +307,7 @@ class ProcessDatasetTest(TestCase):
             MagicMock(return_value=None)
         )
 
-        DatasetFirebaseRepository.perform_new_dataset_transaction = MagicMock()
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
 
         PublisherService.publish_data_to_topic = MagicMock()
 

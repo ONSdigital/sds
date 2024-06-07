@@ -40,7 +40,6 @@ class DatasetFirebaseRepository:
     def perform_batched_dataset_write(
         self,
         dataset_id: str,
-        # survey_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
@@ -50,6 +49,7 @@ class DatasetFirebaseRepository:
         Parameters:
         ...
         """
+
         logger.info("performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
@@ -66,8 +66,8 @@ class DatasetFirebaseRepository:
                     batch = self.client.batch()
 
                 #forces an exception, delete this line to upload dataset properly     
-                if i == 10: 
-                    batch.set(new_unit, {"invalid_field": object()});
+                # if i == 10: 
+                #     batch.set(new_unit, {"invalid_field": object()});
 
                 new_unit = unit_data_collection_snapshot.document(extracted_unit_data_identifiers[i])
                 batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
@@ -76,7 +76,6 @@ class DatasetFirebaseRepository:
                 if batch_counter == self.BATCH_SIZE:
                     batch.commit()
                     batch_counter = 0
-                    #logger.info(f"Committed  a batch of {self.BATCH_SIZE} unit data items");
 
             if batch_counter > 0:
                 batch.commit()
@@ -85,83 +84,33 @@ class DatasetFirebaseRepository:
             logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
-            # self._recursively_delete_document_and_sub_collections(new_dataset_document)
             self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
-            raise e
         
 
     def delete_collection_in_batches(
         self, collection_ref: firestore.CollectionReference, batch_size: int, dataset_id: str | None = None
         ):
-        # logger.info("here")
         if dataset_id:
-            # logger.info("here datasetid")
             doc = collection_ref.document(dataset_id).get()
             # doc_count += 1
             # Delete all subcollections of document
-            # logger.info("past first doc")
             for subcollection in doc.reference.collections():
-                # logger.info("loop")
                 self.delete_collection_in_batches(subcollection, batch_size)
             doc.reference.delete()
         else:
-            # logger.info("here elsee")
             docs = collection_ref.limit(batch_size).get()
             doc_count = 0
             for doc in docs:
-                # logger.info("enter loop")
                 doc_count += 1
                 # Delete all subcollections of document
                 for subcollection in doc.reference.collections():
                     self.delete_collection_in_batches(subcollection, batch_size)
-                    # logger.info("loop")
                 doc.reference.delete()
             if doc_count < batch_size:
                 return None
 
         # logger.info("passed conditionals")
         return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
-
-
-
-    def perform_new_dataset_transaction(
-        self,
-        dataset_id: str,
-        dataset_metadata_without_id: DatasetMetadataWithoutId,
-        unit_data_collection_with_metadata: list[UnitDataset],
-        extracted_unit_data_identifiers: list[str],
-    ):
-        """
-        Writes dataset metadata and unit data to firestore as a transaction, which is
-        rolled back if any of the operations fail.
-
-        Parameters:
-        dataset_id: id of the dataset
-        dataset_metadata_without_id: dataset metadata without a dataset id
-        unit_data_collection_with_metadata: collection of unit data associated to a dataset
-        extracted_unit_data_identifiers: identifiers associated with the unit data collection
-        """
-
-        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
-        # to be 'transaction', but since we're using classes the first parameter is always
-        # 'self'. Encapsulating the transaction within this function circumvents the issue.
-        @firestore.transactional
-        def dataset_transaction(transaction: firestore.Transaction):
-            new_dataset_document = self.datasets_collection.document(dataset_id)
-
-            transaction.set(
-                new_dataset_document, dataset_metadata_without_id, merge=True
-            )
-            unit_data_collection_snapshot = new_dataset_document.collection("units")
-
-            for unit_data, identifier in zip(
-                unit_data_collection_with_metadata,
-                iter(extracted_unit_data_identifiers),
-            ):
-                new_unit = unit_data_collection_snapshot.document(identifier)
-                transaction.set(new_unit, unit_data, merge=True)
-
-        dataset_transaction(self.client.transaction())
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
