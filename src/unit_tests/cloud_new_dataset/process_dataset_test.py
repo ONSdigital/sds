@@ -172,8 +172,8 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = MagicMock(
-            side_effect=Exception
+        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
+            MagicMock(side_effect=Exception)
         )
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()

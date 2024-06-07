@@ -106,7 +106,9 @@ class DatasetFirebaseRepository:
             if doc_count < batch_size:
                 return None
 
-            return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
+            return self.delete_collection_in_batches(
+                collection_ref, batch_size, dataset_id
+            )
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
@@ -169,47 +171,13 @@ class DatasetFirebaseRepository:
         previous_version_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
-            .where("sds_dataset_version", "==", previous_version).stream()
-            )
+            .where("sds_dataset_version", "==", previous_version)
+            .stream()
+        )
 
         for dataset in previous_version_dataset:
             dataset_id = dataset.id
             logger.info(f"dataset id {dataset_id}")
 
-        self.delete_collection_in_batches(
-            self.datasets_collection, 100, dataset_id
-        )
+        self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
         logger.info(f"Successfully deleted previous version dataset")
-
-
-    def _delete_collection(
-        self,
-        transaction: firestore.Transaction,
-        collection_ref: firestore.CollectionReference,
-    ) -> None:
-        """
-        Recursively deletes the collection and its subcollections.
-
-        Parameters:
-        transaction: the firestore transaction performing the delete.
-        collection_ref: the reference of the collection being deleted.
-        """
-        doc_collection = collection_ref.stream()
-
-        for doc in doc_collection:
-            self._recursively_delete_document_and_sub_collections(
-                transaction, doc.reference
-            )
-
-    def _recursively_delete_document_and_sub_collections(
-        self, transaction: firestore.Transaction, doc_ref: firestore.DocumentReference
-    ) -> None:
-        """
-        Loops through each collection in a document and deletes the collection.
-        Parameters:
-        transaction: the firestore transaction performing the delete.
-        doc_ref: the reference of the document being deleted.
-        """
-        for collection_ref in doc_ref.collections():
-            self._delete_collection(transaction, collection_ref)
-        transaction.delete(doc_ref)
