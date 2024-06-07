@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    BATCH_SIZE = 500;
+    BATCH_SIZE = 500
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -43,7 +43,7 @@ class DatasetFirebaseRepository:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) : 
+    ):
         """
         Write dataset metadata and unit data to firestore in batches.
         Parameters:
@@ -53,7 +53,7 @@ class DatasetFirebaseRepository:
         logger.info("performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
-        
+
         try:
             batch = self.client.batch()
             batch.set(new_dataset_document, dataset_metadata_without_id, merge=True)
@@ -65,11 +65,9 @@ class DatasetFirebaseRepository:
                 if batch_counter == 0:
                     batch = self.client.batch()
 
-                #forces an exception, delete this line to upload dataset properly     
-                # if i == 10: 
-                #     batch.set(new_unit, {"invalid_field": object()});
-
-                new_unit = unit_data_collection_snapshot.document(extracted_unit_data_identifiers[i])
+                new_unit = unit_data_collection_snapshot.document(
+                    extracted_unit_data_identifiers[i]
+                )
                 batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
                 batch_counter += 1
 
@@ -80,20 +78,20 @@ class DatasetFirebaseRepository:
             if batch_counter > 0:
                 batch.commit()
                 logger.info("committed the final batch of unit data items.")
-            
+
             logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
             self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
-        
 
     def delete_collection_in_batches(
-        self, collection_ref: firestore.CollectionReference, batch_size: int, dataset_id: str | None = None
-        ):
+        self,
+        collection_ref: firestore.CollectionReference,
+        batch_size: int,
+        dataset_id: str | None = None,
+    ):
         if dataset_id:
             doc = collection_ref.document(dataset_id).get()
-            # doc_count += 1
-            # Delete all subcollections of document
             for subcollection in doc.reference.collections():
                 self.delete_collection_in_batches(subcollection, batch_size)
             doc.reference.delete()
@@ -102,14 +100,12 @@ class DatasetFirebaseRepository:
             doc_count = 0
             for doc in docs:
                 doc_count += 1
-                # Delete all subcollections of document
                 for subcollection in doc.reference.collections():
                     self.delete_collection_in_batches(subcollection, batch_size)
                 doc.reference.delete()
             if doc_count < batch_size:
                 return None
 
-        # logger.info("passed conditionals")
         return self.delete_collection_in_batches(collection_ref, batch_size, dataset_id)
 
     def get_unit_supplementary_data(
@@ -173,17 +169,23 @@ class DatasetFirebaseRepository:
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
         # to be 'transaction', but since we're using classes the first parameter is always
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
-        @firestore.transactional
-        def delete_collection_transaction(transaction: firestore.Transaction):
-            previous_version_dataset = (
-                self.datasets_collection.where("survey_id", "==", survey_id)
-                .where("period_id", "==", period_id)
-                .where("sds_dataset_version", "==", previous_version)
+        # @firestore.transactional
+        # def delete_collection_transaction(transaction: firestore.Transaction):
+        previous_version_dataset = (
+            self.datasets_collection.where("survey_id", "==", survey_id)
+            .where("period_id", "==", period_id)
+            .where("sds_dataset_version", "==", previous_version).stream()
             )
 
-            self._delete_collection(transaction, previous_version_dataset)
+            # self._delete_collection(transaction, previous_version_dataset)
+        for dataset in previous_version_dataset:
+            dataset_id = dataset.id
+            logger.info(f"dataset id {dataset_id}")
+            self.delete_collection_in_batches(
+                self.datasets_collection, 100, dataset_id
+            )
 
-        delete_collection_transaction(self.client.transaction())
+        # delete_collection_transaction(self.client.transaction())
 
     def _delete_collection(
         self,

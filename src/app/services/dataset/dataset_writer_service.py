@@ -25,10 +25,10 @@ class DatasetWriterService:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) ->  DatasetMetadata | DatasetPublishResponse:
+    ) -> DatasetMetadata | DatasetPublishResponse:
         """
         Writes dataset metadata and unit data to Firestore in batches.
-        
+
         Parameters:
         dataset_id: the uniquely generated id of the dataset
         dataset_metadata_without_id: the metadata of the dataset without its id
@@ -45,7 +45,7 @@ class DatasetWriterService:
                 extracted_unit_data_identifiers,
             )
             logger.info("Batched dataset write committed successfully.")
-            
+
             return {
                 **dataset_metadata_without_id,
                 "dataset_id": dataset_id,
