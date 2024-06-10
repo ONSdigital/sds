@@ -180,4 +180,4 @@ class DatasetFirebaseRepository:
             logger.info(f"dataset id {dataset_id}")
 
         self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
-        logger.info(f"Successfully deleted previous version dataset")
+        logger.info("Successfully deleted previous version dataset")
