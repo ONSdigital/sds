@@ -22,6 +22,9 @@ class PubSubTest(TestCase):
         self.perform_delete_previous_version_dataset_batch_stash = (
             DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch
         )
+        self.get_number_of_unit_supplementary_data_with_dataset_id_stash = (
+            DatasetFirebaseRepository.get_number_of_unit_supplementary_data_with_dataset_id
+        )
         self.delete_bucket_file_stash = DatasetBucketRepository.delete_bucket_file
         self.publish_data_to_topic_stash = PublisherService.publish_data_to_topic
 
@@ -34,15 +37,18 @@ class PubSubTest(TestCase):
         DatasetFirebaseRepository.perform_batched_dataset_write = (
             self.perform_batched_dataset_write_stash
         )
+        DatasetFirebaseRepository.get_number_of_unit_supplementary_data_with_dataset_id = (
+            self.get_number_of_unit_supplementary_data_with_dataset_id_stash
+        )
         DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
             self.perform_delete_previous_version_dataset_batch_stash
         )
         DatasetBucketRepository.delete_bucket_file = self.delete_bucket_file_stash
         PublisherService.publish_data_to_topic = self.publish_data_to_topic_stash
 
-    def test_dataset_transaction_success_publish_response(self):
+    def test_dataset_batch_write_success_publish_response(self):
         """
-        When the dataset transaction is successful a success response should be published to the dataset topic
+        When the dataset batch write is successful a success response should be published to the dataset topic
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -55,6 +61,10 @@ class PubSubTest(TestCase):
         )
 
         DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
+
+        DatasetFirebaseRepository.get_number_of_unit_supplementary_data_with_dataset_id = MagicMock(
+            return_value=2
+        )
 
         PublisherService.publish_data_to_topic = MagicMock()
 
@@ -69,41 +79,7 @@ class PubSubTest(TestCase):
             dataset_test_data.updated_dataset_metadata, config.PUBLISH_DATASET_TOPIC_ID
         )
 
-    def test_dataset_transaction_fail_publish_response(
-        self,
-    ):
-        """
-        When the dataset transaction fails a failure response should be published to the dataset topic
-        """
-        cloud_event = MagicMock()
-        cloud_event.data = dataset_test_data.cloud_event_data
-
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
-            MagicMock()
-        )
-        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.return_value = (
-            dataset_test_data.dataset_metadata_first_version
-        )
-
-        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock(
-            side_effect=Exception
-        )
-
-        PublisherService.publish_data_to_topic = MagicMock()
-
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
-            MagicMock()
-        )
-        DatasetBucketRepository.delete_bucket_file = MagicMock()
-
-        TestHelper.new_dataset_mock(cloud_event)
-
-        PublisherService.publish_data_to_topic.assert_called_once_with(
-            {"status": "error", "message": "Publishing dataset has failed."},
-            config.PUBLISH_DATASET_TOPIC_ID,
-        )
-
-    def test_dataset_metadata_transaction_fail_publish_response(
+    def test_dataset_metadata_fail_publish_response(
         self,
     ):
         """
@@ -120,6 +96,10 @@ class PubSubTest(TestCase):
         )
 
         DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
+
+        DatasetFirebaseRepository.get_number_of_unit_supplementary_data_with_dataset_id = MagicMock(
+            return_value=2
+        )
 
         PublisherService.publish_data_to_topic = MagicMock()
 

@@ -43,14 +43,19 @@ class DatasetFirebaseRepository:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ):
+    ) -> bool:
         """
         Write dataset metadata and unit data to firestore in batches.
         Parameters:
-        ...
+        dataset_id (str): The unique id of the dataset
+        dataset_metadata_without_id (DatasetMetadataWithoutId): The metadata of the dataset without its id
+        unit_data_collection_with_metadata (list[UnitDataset]): The collection of unit data associated with the new dataset
+        extracted_unit_data_identifiers (list[str]): List of identifiers ordered to match the identifier for each set of
+        unit data in the collection.
+
         """
 
-        logger.info("performing batch writes")
+        logger.info("Performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
 
@@ -60,9 +65,11 @@ class DatasetFirebaseRepository:
             batch.commit()
 
             batch_counter = 0
+            batch = self.client.batch()
 
             for i in range(len(unit_data_collection_with_metadata)):
-                if batch_counter == 0:
+                if batch_counter > 0 and batch_counter % self.BATCH_SIZE == 0:
+                    batch.commit()
                     batch = self.client.batch()
 
                 new_unit = unit_data_collection_snapshot.document(
@@ -71,18 +78,16 @@ class DatasetFirebaseRepository:
                 batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
                 batch_counter += 1
 
-                if batch_counter == self.BATCH_SIZE:
-                    batch.commit()
-                    batch_counter = 0
+            batch.commit()
 
-            if batch_counter > 0:
-                batch.commit()
-                logger.info("committed the final batch of unit data items.")
+            logger.info("Batch writes for dataset completed successfully.")
 
-            logger.info("Batch writes for dataset completed successfully")
         except Exception as e:
             logger.error(f"Error performing batched dataset write: {e}")
             self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
+            logger.info("Dataset clean up is completed")
+
+            raise RuntimeError("Error performing batched dataset write.")
 
     def delete_collection_in_batches(
         self,
@@ -90,25 +95,31 @@ class DatasetFirebaseRepository:
         batch_size: int,
         dataset_id: str | None = None,
     ):
-        if dataset_id:
-            doc = collection_ref.document(dataset_id).get()
-            for subcollection in doc.reference.collections():
-                self.delete_collection_in_batches(subcollection, batch_size)
-            doc.reference.delete()
-        else:
-            docs = collection_ref.limit(batch_size).get()
-            doc_count = 0
-            for doc in docs:
-                doc_count += 1
+        logger.info("Deleting data in batches")
+
+        try:
+            if dataset_id:
+                doc = collection_ref.document(dataset_id).get()
                 for subcollection in doc.reference.collections():
                     self.delete_collection_in_batches(subcollection, batch_size)
                 doc.reference.delete()
-            if doc_count < batch_size:
-                return None
+            else:
+                docs = collection_ref.limit(batch_size).get()
+                doc_count = 0
+                for doc in docs:
+                    doc_count += 1
+                    for subcollection in doc.reference.collections():
+                        self.delete_collection_in_batches(subcollection, batch_size)
+                    doc.reference.delete()
+                if doc_count < batch_size:
+                    return None
 
-            return self.delete_collection_in_batches(
-                collection_ref, batch_size, dataset_id
-            )
+                return self.delete_collection_in_batches(
+                    collection_ref, batch_size, dataset_id
+                )
+        except Exception as e:
+            logger.error(f"Error deleting collection in batches: {e}")
+            raise RuntimeError("Error deleting collection in batches.")
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
@@ -127,6 +138,26 @@ class DatasetFirebaseRepository:
             .get()
             .to_dict()
         )
+
+    def get_number_of_unit_supplementary_data_with_dataset_id(
+        self, dataset_id: str
+    ) -> int:
+        """
+        Get the number of unit supplementary data associated with a dataset id.
+
+        Parameters:
+        dataset_id (str): The unique id of the dataset
+        """
+
+        returned_unit_data = (
+            self.datasets_collection.document(dataset_id).collection("units").stream()
+        )
+
+        unit_data_count = 0
+        for unit_data in returned_unit_data:
+            unit_data_count += 1
+
+        return unit_data_count
 
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str

@@ -25,9 +25,10 @@ class DatasetWriterService:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) -> DatasetMetadata | DatasetPublishResponse:
+    ) -> DatasetMetadata:
         """
-        Writes dataset metadata and unit data to Firestore in batches.
+        Writes dataset metadata and unit data to Firestore in batches and checks the unit data count matches the total
+        reporting units.
 
         Parameters:
         dataset_id: the uniquely generated id of the dataset
@@ -37,24 +38,34 @@ class DatasetWriterService:
         unit data in the collection.
         """
         logger.info("Performing batched dataset write...")
-        try:
-            self.dataset_firebase_repository.perform_batched_dataset_write(
-                dataset_id,
-                dataset_metadata_without_id,
-                unit_data_collection_with_metadata,
-                extracted_unit_data_identifiers,
-            )
-            logger.info("Batched dataset write committed successfully.")
 
-            return {
-                **dataset_metadata_without_id,
-                "dataset_id": dataset_id,
-            }
-        except Exception as e:
-            logger.error(f"Error during batched dataset write: {e}")
-            logger.error("Cleaning up dataset.")
-            logger.info("Publishing dataset error response to topic.")
-            return {"status": "error", "message": "Publishing dataset has failed."}
+        self.dataset_firebase_repository.perform_batched_dataset_write(
+            dataset_id,
+            dataset_metadata_without_id,
+            unit_data_collection_with_metadata,
+            extracted_unit_data_identifiers,
+        )
+
+        logger.info("Checking unit data count matches total reporting units.")
+
+        unit_data_count = self.dataset_firebase_repository.get_number_of_unit_supplementary_data_with_dataset_id(
+            dataset_id
+        )
+
+        if unit_data_count != dataset_metadata_without_id["total_reporting_units"]:
+            logger.error(
+                f"Unit data count {unit_data_count} does not match total reporting "
+                f"units {dataset_metadata_without_id['total_reporting_units']}"
+            )
+            raise RuntimeError("Unit data count does not match total reporting units.")
+
+        logger.info("Unit data count matches total reporting units.")
+        logger.info("Dataset write completed successfully.")
+
+        return {
+            **dataset_metadata_without_id,
+            "dataset_id": dataset_id,
+        }
 
     def try_publish_dataset_metadata_to_topic(
         self, dataset_publish_response: DatasetMetadata | DatasetPublishResponse
