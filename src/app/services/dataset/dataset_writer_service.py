@@ -19,7 +19,7 @@ class DatasetWriterService:
     ):
         self.dataset_firebase_repository = dataset_firebase_repository
 
-    def perform_batched_dataset_write(
+    def perform_dataset_write(
         self,
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,

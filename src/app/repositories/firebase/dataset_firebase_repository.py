@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    BATCH_SIZE = 500
+    WRITE_BATCH_SIZE = 500
+    DELETE_BATCH_SIZE = 100
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -68,7 +69,7 @@ class DatasetFirebaseRepository:
             batch = self.client.batch()
 
             for i in range(len(unit_data_collection_with_metadata)):
-                if batch_counter > 0 and batch_counter % self.BATCH_SIZE == 0:
+                if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
                     batch.commit()
                     batch = self.client.batch()
 
@@ -83,43 +84,59 @@ class DatasetFirebaseRepository:
             logger.info("Batch writes for dataset completed successfully.")
 
         except Exception as e:
+            # If an error occurs during the batch write, the dataset and all its subcollections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
-            self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
+            self.delete_dataset_with_dataset_id(dataset_id)
+
             logger.info("Dataset clean up is completed")
 
             raise RuntimeError("Error performing batched dataset write.")
 
-    def delete_collection_in_batches(
+    def delete_dataset_with_dataset_id(
         self,
-        collection_ref: firestore.CollectionReference,
-        batch_size: int,
-        dataset_id: str | None = None,
+        dataset_id: str
     ):
-        logger.info("Deleting data in batches")
+        logger.info("Deleting dataset")
+        logger.debug(f"Deleting dataset with id: {dataset_id}")
 
         try:
-            if dataset_id:
-                doc = collection_ref.document(dataset_id).get()
-                for subcollection in doc.reference.collections():
-                    self.delete_collection_in_batches(subcollection, batch_size)
-                doc.reference.delete()
-            else:
-                docs = collection_ref.limit(batch_size).get()
-                doc_count = 0
-                for doc in docs:
-                    doc_count += 1
-                    for subcollection in doc.reference.collections():
-                        self.delete_collection_in_batches(subcollection, batch_size)
-                    doc.reference.delete()
-                if doc_count < batch_size:
-                    return None
+            doc = self.datasets_collection.document(dataset_id).get()
+            
+            logger.info("Deleting subcollection in batches")
+            for subcollection in doc.reference.collections():
+                self.delete_subcollection_in_batches(subcollection)
 
-                return self.delete_collection_in_batches(
-                    collection_ref, batch_size, dataset_id
-                )
+            doc.reference.delete()
+            
         except Exception as e:
-            logger.error(f"Error deleting collection in batches: {e}")
-            raise RuntimeError("Error deleting collection in batches.")
+            logger.error(f"Error deleting dataset: {e}")
+            raise RuntimeError("Error deleting dataset.")
+        
+    def delete_subcollection_in_batches(
+        self,
+        subcollection_ref: firestore.CollectionReference,
+    ):
+
+        try:
+            docs = subcollection_ref.limit(self.DELETE_BATCH_SIZE).get()
+            doc_count = 0
+
+            batch = self.client.batch()
+
+            for doc in docs:
+                doc_count += 1
+                batch.delete(doc.reference)
+
+            batch.commit()
+
+            if doc_count < self.DELETE_BATCH_SIZE:
+                return None
+
+            return self.delete_subcollection_in_batches(subcollection_ref)
+        
+        except Exception as e:
+            logger.error(f"Error deleting subcollection in batches: {e}")
+            raise RuntimeError("Error deleting subcollection in batches.")
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str

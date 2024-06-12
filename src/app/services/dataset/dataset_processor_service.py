@@ -47,7 +47,7 @@ class DatasetProcessorService:
         )
 
         dataset_publish_response = (
-            self.dataset_writer_service.perform_batched_dataset_write(
+            self.dataset_writer_service.perform_dataset_write(
                 dataset_id,
                 dataset_metadata_without_id,
                 unit_data_collection_with_metadata,
