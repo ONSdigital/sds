@@ -46,13 +46,11 @@ class DatasetProcessorService:
             new_dataset_unit_data_collection
         )
 
-        dataset_publish_response = (
-            self.dataset_writer_service.perform_dataset_write(
-                dataset_id,
-                dataset_metadata_without_id,
-                unit_data_collection_with_metadata,
-                extracted_unit_data_identifiers,
-            )
+        dataset_publish_response = self.dataset_writer_service.perform_dataset_write(
+            dataset_id,
+            dataset_metadata_without_id,
+            unit_data_collection_with_metadata,
+            extracted_unit_data_identifiers,
         )
 
         self.dataset_writer_service.try_publish_dataset_metadata_to_topic(

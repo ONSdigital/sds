@@ -92,31 +92,27 @@ class DatasetFirebaseRepository:
 
             raise RuntimeError("Error performing batched dataset write.")
 
-    def delete_dataset_with_dataset_id(
-        self,
-        dataset_id: str
-    ):
+    def delete_dataset_with_dataset_id(self, dataset_id: str):
         logger.info("Deleting dataset")
         logger.debug(f"Deleting dataset with id: {dataset_id}")
 
         try:
             doc = self.datasets_collection.document(dataset_id).get()
-            
+
             logger.info("Deleting subcollection in batches")
             for subcollection in doc.reference.collections():
                 self.delete_subcollection_in_batches(subcollection)
 
             doc.reference.delete()
-            
+
         except Exception as e:
             logger.error(f"Error deleting dataset: {e}")
             raise RuntimeError("Error deleting dataset.")
-        
+
     def delete_subcollection_in_batches(
         self,
         subcollection_ref: firestore.CollectionReference,
     ):
-
         try:
             docs = subcollection_ref.limit(self.DELETE_BATCH_SIZE).get()
             doc_count = 0
@@ -133,7 +129,7 @@ class DatasetFirebaseRepository:
                 return None
 
             return self.delete_subcollection_in_batches(subcollection_ref)
-        
+
         except Exception as e:
             logger.error(f"Error deleting subcollection in batches: {e}")
             raise RuntimeError("Error deleting subcollection in batches.")
