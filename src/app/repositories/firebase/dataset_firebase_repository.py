@@ -161,26 +161,38 @@ class DatasetFirebaseRepository:
         Parameters:
         dataset_id (str): The unique id of the dataset
         """
-    
+
         limit = 1000
         count = 0
 
-        collection_ref = self.datasets_collection.document(dataset_id).collection("units")
+        collection_ref = self.datasets_collection.document(dataset_id).collection(
+            "units"
+        )
 
         while True:
             # Frees memory incurred in the recursion algorithm
             docs = []
 
             if cursor:
-                docs = [snapshot for snapshot in
-                        collection_ref.limit(limit).order_by('__name__').start_after(cursor).stream()]
+                docs = [
+                    snapshot
+                    for snapshot in collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .start_after(cursor)
+                    .stream()
+                ]
             else:
-                docs = [snapshot for snapshot in collection_ref.limit(limit).order_by('__name__').stream()]
-            
+                docs = [
+                    snapshot
+                    for snapshot in collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .stream()
+                ]
+
             count = count + len(docs)
 
             if len(docs) == limit:
-                cursor = docs[limit-1]
+                cursor = docs[limit - 1]
                 continue
 
             break
