@@ -153,7 +153,7 @@ class DatasetFirebaseRepository:
         )
 
     def get_number_of_unit_supplementary_data_with_dataset_id(
-        self, dataset_id: str
+        self, dataset_id: str, cursor=None
     ) -> int:
         """
         Get the number of unit supplementary data associated with a dataset id.
