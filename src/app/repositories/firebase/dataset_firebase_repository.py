@@ -161,16 +161,31 @@ class DatasetFirebaseRepository:
         Parameters:
         dataset_id (str): The unique id of the dataset
         """
+    
+        limit = 1000
+        count = 0
 
-        returned_unit_data = (
-            self.datasets_collection.document(dataset_id).collection("units").stream()
-        )
+        collection_ref = self.datasets_collection.document(dataset_id).collection("units")
 
-        unit_data_count = 0
-        for unit_data in returned_unit_data:
-            unit_data_count += 1
+        while True:
+            # Frees memory incurred in the recursion algorithm
+            docs = []
 
-        return unit_data_count
+            if cursor:
+                docs = [snapshot for snapshot in
+                        collection_ref.limit(limit).order_by('__name__').start_after(cursor).stream()]
+            else:
+                docs = [snapshot for snapshot in collection_ref.limit(limit).order_by('__name__').stream()]
+            
+            count = count + len(docs)
+
+            if len(docs) == limit:
+                cursor = docs[limit-1]
+                continue
+
+            break
+
+        return count
 
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str
