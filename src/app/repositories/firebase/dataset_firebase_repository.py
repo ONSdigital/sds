@@ -171,7 +171,7 @@ class DatasetFirebaseRepository:
         """
         Get the number of unit supplementary data associated with a dataset id.
         This function use a cursor to create a snapshot of unit data and aggregate
-        the count. This is to prevent 530 query timed out error when the number of 
+        the count. This is to prevent 530 query timed out error when the number of
         unit data is too large.
 
         Parameters:
