@@ -44,9 +44,10 @@ class DatasetFirebaseRepository:
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ) -> bool:
+    ) -> None:
         """
         Write dataset metadata and unit data to firestore in batches.
+
         Parameters:
         dataset_id (str): The unique id of the dataset
         dataset_metadata_without_id (DatasetMetadataWithoutId): The metadata of the dataset without its id
@@ -92,7 +93,13 @@ class DatasetFirebaseRepository:
 
             raise RuntimeError("Error performing batched dataset write.")
 
-    def delete_dataset_with_dataset_id(self, dataset_id: str):
+    def delete_dataset_with_dataset_id(self, dataset_id: str) -> None:
+        """
+        Deletes the dataset with the specified dataset id.
+
+        Parameters:
+        dataset_id (str): The unique id of the dataset
+        """
         logger.info("Deleting dataset")
         logger.debug(f"Deleting dataset with id: {dataset_id}")
 
@@ -112,7 +119,13 @@ class DatasetFirebaseRepository:
     def delete_subcollection_in_batches(
         self,
         subcollection_ref: firestore.CollectionReference,
-    ):
+    ) -> None:
+        """
+        Deletes a subcollection in batches.
+
+        Parameters:
+        subcollection_ref (firestore.CollectionReference): The reference to the subcollection
+        """
         try:
             docs = subcollection_ref.limit(self.DELETE_BATCH_SIZE).get()
             doc_count = 0
@@ -157,9 +170,15 @@ class DatasetFirebaseRepository:
     ) -> int:
         """
         Get the number of unit supplementary data associated with a dataset id.
+        This function use a cursor to create a snapshot of unit data and aggregate
+        the count. This is to prevent 530 query timed out error when the number of 
+        unit data is too large.
 
         Parameters:
         dataset_id (str): The unique id of the dataset
+
+        Returns:
+        int: The number of unit supplementary data associated with the dataset id
         """
 
         limit = 1000
