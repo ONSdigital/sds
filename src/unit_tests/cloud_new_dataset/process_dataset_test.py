@@ -20,8 +20,11 @@ class ProcessDatasetTest(TestCase):
         self.perform_batched_dataset_write_stash = (
             DatasetFirebaseRepository.perform_batched_dataset_write
         )
-        self.perform_delete_previous_version_dataset_batch_stash = (
-            DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch
+        self.get_dataset_metadata_with_survey_id_period_id_and_version_stash = (
+            DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version
+        )
+        self.delete_dataset_with_dataset_id_stash = (
+            DatasetFirebaseRepository.delete_dataset_with_dataset_id
         )
         self.calculate_previous_version_stash = (
             DocumentVersionService.calculate_previous_version
@@ -42,8 +45,11 @@ class ProcessDatasetTest(TestCase):
         DatasetFirebaseRepository.perform_batched_dataset_write = (
             self.perform_batched_dataset_write_stash
         )
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
-            self.perform_delete_previous_version_dataset_batch_stash
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
+            self.get_dataset_metadata_with_survey_id_period_id_and_version_stash
+        )
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id = (
+            self.delete_dataset_with_dataset_id_stash
         )
         DocumentVersionService.calculate_previous_version = (
             self.calculate_previous_version_stash
@@ -155,9 +161,11 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
-            MagicMock()
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
+            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock()
+
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
         DocumentVersionService.calculate_previous_version = MagicMock()
@@ -165,10 +173,8 @@ class ProcessDatasetTest(TestCase):
 
         TestHelper.new_dataset_mock(cloud_event)
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch.assert_called_once_with(
-            dataset_test_data.survey_id,
-            dataset_test_data.period_id,
-            dataset_test_data.updated_dataset_version - 1,
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id.assert_called_once_with(
+            dataset_test_data.dataset_metadata_first_version["dataset_id"]
         )
 
     def test_perform_delete_previous_version_dataset_failure(self):
@@ -176,7 +182,7 @@ class ProcessDatasetTest(TestCase):
         Tests an exception is raised if there is an issue deleting previous dataset versions from firestore.
 
         This test simulates an exception raising in the dataset deletion process. It assert
-        the appropriate runtime error will be prompted when it happens to ensure the rollback process.
+        the appropriate runtime error will be prompted when it happens.
         """
         cloud_event = MagicMock()
         cloud_event.data = dataset_test_data.cloud_event_data
@@ -194,9 +200,10 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.perform_delete_previous_version_dataset_batch = (
-            MagicMock(side_effect=Exception)
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
+            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
         )
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock(side_effect=Exception)
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
@@ -206,6 +213,45 @@ class ProcessDatasetTest(TestCase):
         with raises(
             RuntimeError,
             match="Failed to delete previous version of dataset from firestore.",
+        ):
+            TestHelper.new_dataset_mock(cloud_event)
+
+    def test_perform_delete_previous_version_dataset_not_found(self):
+        """
+        Tests an exception is raised if dataset of previous dataset versions is not found from firestore.
+
+        This test simulates null return in the dataset retrieval process. It assert
+        the appropriate runtime error will be prompted when it happens.
+        """
+        cloud_event = MagicMock()
+        cloud_event.data = dataset_test_data.cloud_event_data
+        config.RETAIN_DATASET_FIRESTORE = False
+
+        DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
+            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
+        )
+
+        DatasetFirebaseRepository.perform_batched_dataset_write = MagicMock()
+
+        DatasetFirebaseRepository.get_number_of_unit_supplementary_data_with_dataset_id = MagicMock(
+            return_value=2
+        )
+
+        PublisherService.publish_data_to_topic = MagicMock()
+
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
+            MagicMock(return_value=None)
+        )
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock()
+
+        DatasetBucketRepository.delete_bucket_file = MagicMock()
+
+        DocumentVersionService.calculate_previous_version = MagicMock()
+        DocumentVersionService.calculate_previous_version.return_value = 1
+
+        with raises(
+            RuntimeError,
+            match="Previous version of dataset is not found. Cannot delete.",
         ):
             TestHelper.new_dataset_mock(cloud_event)
 

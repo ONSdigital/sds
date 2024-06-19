@@ -237,30 +237,32 @@ class DatasetFirebaseRepository:
             dataset_metadata_list.append(metadata)
 
         return dataset_metadata_list
-
-    def perform_delete_previous_version_dataset_batch(
-        self, survey_id: str, period_id: str, previous_version: int
-    ) -> None:
+    
+    def get_dataset_metadata_with_survey_id_period_id_and_version(
+        self, survey_id: str, period_id: str, version: int
+    ) -> DatasetMetadata | None:
         """
-        Queries firestore for a previous version of a dataset associated with a survey id
-        and period id, iterates to delete it and their sub collections recursively. The
-        recursion is needed because you cannot delete sub collections of a document in firestore
-        just by deleting the document, it does not cascade.
+        Get the dataset metadata from firestore associated with a specific survey and period id and version.
 
         Parameters:
-        survey_id: survey id of the dataset.
-        period_id: period id of the dataset.
-        previous_version: previous version of the dataset to delete.
-        """
+        survey_id (str): The survey id of the dataset.
+        period_id (str): The period id of the unit on the dataset.
+        version (int): The version of the dataset.
 
-        previous_version_dataset = (
+        Returns:
+        DatasetMetadata | None: The dataset metadata associated with the survey id, period id and version.
+        """
+        retrieved_dataset = (
             self.datasets_collection.where("survey_id", "==", survey_id)
             .where("period_id", "==", period_id)
-            .where("sds_dataset_version", "==", previous_version)
+            .where("sds_dataset_version", "==", version)
             .stream()
         )
 
-        for dataset in previous_version_dataset:
-            dataset_id = dataset.id
+        dataset_metadata: DatasetMetadata = None
+        for dataset in retrieved_dataset:
+            dataset_metadata: DatasetMetadata = {**(dataset.to_dict())}
+            dataset_metadata["dataset_id"] = dataset.id
 
-        self.delete_dataset_with_dataset_id(dataset_id)
+        return dataset_metadata
+

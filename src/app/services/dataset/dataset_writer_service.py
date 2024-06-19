@@ -104,19 +104,32 @@ class DatasetWriterService:
         survey_id: survey id of the dataset.
         previous_version: latest previous version of the dataset.
         """
-        logger.info(
-            f"Deleting a previous version dataset. Version nnumber: {previous_version}..."
+        logger.info("Deleting previous version of dataset...")
+        logger.debug(
+            f"Deleting previous version dataset. Survey_id: {survey_id}, Period_id: {period_id}, Version number: {previous_version}..."
         )
-        try:
-            self.dataset_firebase_repository.perform_delete_previous_version_dataset_batch(
+
+        dataset_metadata = self.dataset_firebase_repository.get_dataset_metadata_with_survey_id_period_id_and_version(
                 survey_id, period_id, previous_version
             )
-            logger.info("Previous version of dataset deleted succesfully.")
-        except Exception as e:
-            logger.debug(
-                f"Failed to delete previous version of dataset with survey id: {survey_id} \
-                and version number: {previous_version}, message: {e}"
+
+        if not dataset_metadata:
+            logger.error(
+                "Previous version of dataset is not found. Cannot delete."
             )
             raise RuntimeError(
-                "Failed to delete previous version of dataset from firestore."
+                "Previous version of dataset is not found. Cannot delete."
             )
+
+        try:
+            
+            dataset_id = dataset_metadata["dataset_id"]
+
+            self.dataset_firebase_repository.delete_dataset_with_dataset_id(dataset_id)
+
+            logger.info("Previous version of dataset deleted succesfully.")
+
+        except Exception as e:
+            logger.error(f"Failed to delete previous version of dataset from firestore.: {e}")
+            raise RuntimeError("Failed to delete previous version of dataset from firestore.")
+
