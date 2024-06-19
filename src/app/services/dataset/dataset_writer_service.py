@@ -46,6 +46,8 @@ class DatasetWriterService:
             extracted_unit_data_identifiers,
         )
 
+        logger.info("Batch writes for dataset completed successfully.")
+
         logger.info("Checking unit data count matches total reporting units.")
 
         unit_data_count = self.dataset_firebase_repository.get_number_of_unit_supplementary_data_with_dataset_id(
@@ -116,5 +118,5 @@ class DatasetWriterService:
                 and version number: {previous_version}, message: {e}"
             )
             raise RuntimeError(
-                "Failed to delete previous version of dataset from firestore. Rolling back..."
+                "Failed to delete previous version of dataset from firestore."
             )

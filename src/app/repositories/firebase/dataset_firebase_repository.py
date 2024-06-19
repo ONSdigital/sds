@@ -56,8 +56,6 @@ class DatasetFirebaseRepository:
         unit data in the collection.
 
         """
-
-        logger.info("Performing batch writes")
         new_dataset_document = self.datasets_collection.document(dataset_id)
         unit_data_collection_snapshot = new_dataset_document.collection("units")
 
@@ -82,11 +80,12 @@ class DatasetFirebaseRepository:
 
             batch.commit()
 
-            logger.info("Batch writes for dataset completed successfully.")
-
         except Exception as e:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
+            logger.info("Performing clean up of dataset and sub collections")
+            logger.debug(f"Deleting dataset with id: {dataset_id}")
+
             self.delete_dataset_with_dataset_id(dataset_id)
 
             logger.info("Dataset clean up is completed")
@@ -100,13 +99,9 @@ class DatasetFirebaseRepository:
         Parameters:
         dataset_id (str): The unique id of the dataset
         """
-        logger.info("Deleting dataset")
-        logger.debug(f"Deleting dataset with id: {dataset_id}")
-
         try:
             doc = self.datasets_collection.document(dataset_id).get()
 
-            logger.info("Deleting sub collection in batches")
             for sub_collection in doc.reference.collections():
                 self.delete_sub_collection_in_batches(sub_collection)
 
@@ -267,7 +262,5 @@ class DatasetFirebaseRepository:
 
         for dataset in previous_version_dataset:
             dataset_id = dataset.id
-            logger.info(f"dataset id {dataset_id}")
 
-        self.delete_collection_in_batches(self.datasets_collection, 100, dataset_id)
-        logger.info("Successfully deleted previous version dataset")
+        self.delete_dataset_with_dataset_id(dataset_id)
