@@ -132,7 +132,7 @@ class ProcessDatasetTest(TestCase):
             dataset_test_data.dataset_unit_data_identifier,
         )
 
-    def test_perform_delete_previous_version_dataset_transaction_success(self):
+    def test_perform_delete_previous_version_dataset_success(self):
         """
         Tests the previous version of dataset are deleted when a new dataset version is uploaded to firestore.
 
@@ -171,7 +171,7 @@ class ProcessDatasetTest(TestCase):
             dataset_test_data.updated_dataset_version - 1,
         )
 
-    def test_perform_delete_previous_version_dataset_transaction_failure(self):
+    def test_perform_delete_previous_version_dataset_failure(self):
         """
         Tests an exception is raised if there is an issue deleting previous dataset versions from firestore.
 
@@ -205,7 +205,7 @@ class ProcessDatasetTest(TestCase):
 
         with raises(
             RuntimeError,
-            match="Failed to delete previous version of dataset from firestore. Rolling back...",
+            match="Failed to delete previous version of dataset from firestore.",
         ):
             TestHelper.new_dataset_mock(cloud_event)
 
