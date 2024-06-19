@@ -106,7 +106,8 @@ class DatasetWriterService:
         """
         logger.info("Deleting previous version of dataset...")
         logger.debug(
-            f"Deleting previous version dataset. Survey_id: {survey_id}, Period_id: {period_id}, Version number: {previous_version}..."
+            f"Deleting previous version dataset. Survey_id: {survey_id}, Period_id: {period_id}, "
+            f"Version number: {previous_version}..."
         )
 
         dataset_metadata = self.dataset_firebase_repository.get_dataset_metadata_with_survey_id_period_id_and_version(
