@@ -85,7 +85,7 @@ class DatasetFirebaseRepository:
             logger.info("Batch writes for dataset completed successfully.")
 
         except Exception as e:
-            # If an error occurs during the batch write, the dataset and all its subcollections are deleted
+            # If an error occurs during the batch write, the dataset and all its sub collections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
             self.delete_dataset_with_dataset_id(dataset_id)
 
@@ -106,9 +106,9 @@ class DatasetFirebaseRepository:
         try:
             doc = self.datasets_collection.document(dataset_id).get()
 
-            logger.info("Deleting subcollection in batches")
-            for subcollection in doc.reference.collections():
-                self.delete_subcollection_in_batches(subcollection)
+            logger.info("Deleting sub collection in batches")
+            for sub_collection in doc.reference.collections():
+                self.delete_sub_collection_in_batches(sub_collection)
 
             doc.reference.delete()
 
@@ -116,18 +116,18 @@ class DatasetFirebaseRepository:
             logger.error(f"Error deleting dataset: {e}")
             raise RuntimeError("Error deleting dataset.")
 
-    def delete_subcollection_in_batches(
+    def delete_sub_collection_in_batches(
         self,
-        subcollection_ref: firestore.CollectionReference,
+        sub_collection_ref: firestore.CollectionReference,
     ) -> None:
         """
-        Deletes a subcollection in batches.
+        Deletes a sub collection in batches.
 
         Parameters:
-        subcollection_ref (firestore.CollectionReference): The reference to the subcollection
+        sub_collection_ref (firestore.CollectionReference): The reference to the sub collection
         """
         try:
-            docs = subcollection_ref.limit(self.DELETE_BATCH_SIZE).get()
+            docs = sub_collection_ref.limit(self.DELETE_BATCH_SIZE).get()
             doc_count = 0
 
             batch = self.client.batch()
@@ -141,11 +141,11 @@ class DatasetFirebaseRepository:
             if doc_count < self.DELETE_BATCH_SIZE:
                 return None
 
-            return self.delete_subcollection_in_batches(subcollection_ref)
+            return self.delete_sub_collection_in_batches(sub_collection_ref)
 
         except Exception as e:
-            logger.error(f"Error deleting subcollection in batches: {e}")
-            raise RuntimeError("Error deleting subcollection in batches.")
+            logger.error(f"Error deleting sub collection in batches: {e}")
+            raise RuntimeError("Error deleting sub collection in batches.")
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
@@ -248,8 +248,8 @@ class DatasetFirebaseRepository:
     ) -> None:
         """
         Queries firestore for a previous version of a dataset associated with a survey id
-        and period id, iterates to delete it and their subcollections recursively. The
-        recursion is needed because you cannot delete subcollections of a document in firestore
+        and period id, iterates to delete it and their sub collections recursively. The
+        recursion is needed because you cannot delete sub collections of a document in firestore
         just by deleting the document, it does not cascade.
 
         Parameters:
