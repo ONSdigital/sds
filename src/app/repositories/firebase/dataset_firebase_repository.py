@@ -237,7 +237,7 @@ class DatasetFirebaseRepository:
             dataset_metadata_list.append(metadata)
 
         return dataset_metadata_list
-    
+
     def get_dataset_metadata_with_survey_id_period_id_and_version(
         self, survey_id: str, period_id: str, version: int
     ) -> DatasetMetadata | None:
@@ -265,4 +265,3 @@ class DatasetFirebaseRepository:
             dataset_metadata["dataset_id"] = dataset.id
 
         return dataset_metadata
-

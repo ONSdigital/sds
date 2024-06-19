@@ -161,8 +161,8 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
-            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = MagicMock(
+            return_value=(dataset_test_data.dataset_metadata_first_version)
         )
         DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock()
 
@@ -200,10 +200,12 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
-            MagicMock(return_value=(dataset_test_data.dataset_metadata_first_version))
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = MagicMock(
+            return_value=(dataset_test_data.dataset_metadata_first_version)
         )
-        DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock(side_effect=Exception)
+        DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock(
+            side_effect=Exception
+        )
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
@@ -239,8 +241,8 @@ class ProcessDatasetTest(TestCase):
 
         PublisherService.publish_data_to_topic = MagicMock()
 
-        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = (
-            MagicMock(return_value=None)
+        DatasetFirebaseRepository.get_dataset_metadata_with_survey_id_period_id_and_version = MagicMock(
+            return_value=None
         )
         DatasetFirebaseRepository.delete_dataset_with_dataset_id = MagicMock()
 
