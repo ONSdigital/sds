@@ -176,6 +176,7 @@ gcloud functions deploy new-dataset-function \
 The integration tests will work in a number of different ways depending on how you want to test the SDS API service
 and SDS cloud function. The following sections describe a number of combinations
 
+
 ### Everything running in the cloud
 
 In this configuration, the integration test uses the SDS API service running in Cloud Run and the new-dataset-function
