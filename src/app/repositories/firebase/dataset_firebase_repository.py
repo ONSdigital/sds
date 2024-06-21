@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
+    WRITE_BATCH_SIZE = 500
+    DELETE_BATCH_SIZE = 100
+
     def __init__(self):
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
@@ -35,44 +38,109 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata
 
-    def perform_new_dataset_transaction(
+    def perform_batched_dataset_write(
         self,
         dataset_id: str,
         dataset_metadata_without_id: DatasetMetadataWithoutId,
         unit_data_collection_with_metadata: list[UnitDataset],
         extracted_unit_data_identifiers: list[str],
-    ):
+    ) -> None:
         """
-        Writes dataset metadata and unit data to firestore as a transaction, which is
-        rolled back if any of the operations fail.
+        Write dataset metadata and unit data to firestore in batches.
 
         Parameters:
-        dataset_id: id of the dataset
-        dataset_metadata_without_id: dataset metadata without a dataset id
-        unit_data_collection_with_metadata: collection of unit data associated to a dataset
-        extracted_unit_data_identifiers: identifiers associated with the unit data collection
+        dataset_id (str): The unique id of the dataset
+        dataset_metadata_without_id (DatasetMetadataWithoutId): The metadata of the dataset without its id
+        unit_data_collection_with_metadata (list[UnitDataset]): The collection of unit data associated with the new dataset
+        extracted_unit_data_identifiers (list[str]): List of identifiers ordered to match the identifier for each set of
+        unit data in the collection.
+
         """
+        new_dataset_document = self.datasets_collection.document(dataset_id)
+        unit_data_collection_snapshot = new_dataset_document.collection("units")
 
-        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
-        # to be 'transaction', but since we're using classes the first parameter is always
-        # 'self'. Encapsulating the transaction within this function circumvents the issue.
-        @firestore.transactional
-        def dataset_transaction(transaction: firestore.Transaction):
-            new_dataset_document = self.datasets_collection.document(dataset_id)
+        try:
+            batch = self.client.batch()
+            batch.set(new_dataset_document, dataset_metadata_without_id, merge=True)
+            batch.commit()
 
-            transaction.set(
-                new_dataset_document, dataset_metadata_without_id, merge=True
-            )
-            unit_data_collection_snapshot = new_dataset_document.collection("units")
+            batch_counter = 0
+            batch = self.client.batch()
 
-            for unit_data, identifier in zip(
-                unit_data_collection_with_metadata,
-                iter(extracted_unit_data_identifiers),
-            ):
-                new_unit = unit_data_collection_snapshot.document(identifier)
-                transaction.set(new_unit, unit_data, merge=True)
+            for i in range(len(unit_data_collection_with_metadata)):
+                if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
+                    batch.commit()
+                    batch = self.client.batch()
 
-        dataset_transaction(self.client.transaction())
+                new_unit = unit_data_collection_snapshot.document(
+                    extracted_unit_data_identifiers[i]
+                )
+                batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
+                batch_counter += 1
+
+            batch.commit()
+
+        except Exception as e:
+            # If an error occurs during the batch write, the dataset and all its sub collections are deleted
+            logger.error(f"Error performing batched dataset write: {e}")
+            logger.info("Performing clean up of dataset and sub collections")
+            logger.debug(f"Deleting dataset with id: {dataset_id}")
+
+            self.delete_dataset_with_dataset_id(dataset_id)
+
+            logger.info("Dataset clean up is completed")
+
+            raise RuntimeError("Error performing batched dataset write.")
+
+    def delete_dataset_with_dataset_id(self, dataset_id: str) -> None:
+        """
+        Deletes the dataset with the specified dataset id.
+
+        Parameters:
+        dataset_id (str): The unique id of the dataset
+        """
+        try:
+            doc = self.datasets_collection.document(dataset_id).get()
+
+            for sub_collection in doc.reference.collections():
+                self.delete_sub_collection_in_batches(sub_collection)
+
+            doc.reference.delete()
+
+        except Exception as e:
+            logger.error(f"Error deleting dataset: {e}")
+            raise RuntimeError("Error deleting dataset.")
+
+    def delete_sub_collection_in_batches(
+        self,
+        sub_collection_ref: firestore.CollectionReference,
+    ) -> None:
+        """
+        Deletes a sub collection in batches.
+
+        Parameters:
+        sub_collection_ref (firestore.CollectionReference): The reference to the sub collection
+        """
+        try:
+            docs = sub_collection_ref.limit(self.DELETE_BATCH_SIZE).get()
+            doc_count = 0
+
+            batch = self.client.batch()
+
+            for doc in docs:
+                doc_count += 1
+                batch.delete(doc.reference)
+
+            batch.commit()
+
+            if doc_count < self.DELETE_BATCH_SIZE:
+                return None
+
+            return self.delete_sub_collection_in_batches(sub_collection_ref)
+
+        except Exception as e:
+            logger.error(f"Error deleting sub collection in batches: {e}")
+            raise RuntimeError("Error deleting sub collection in batches.")
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
@@ -91,6 +159,59 @@ class DatasetFirebaseRepository:
             .get()
             .to_dict()
         )
+
+    def get_number_of_unit_supplementary_data_with_dataset_id(
+        self, dataset_id: str, cursor=None
+    ) -> int:
+        """
+        Get the number of unit supplementary data associated with a dataset id.
+        This function use a cursor to create a snapshot of unit data and aggregate
+        the count. This is to prevent 530 query timed out error when the number of
+        unit data is too large.
+
+        Parameters:
+        dataset_id (str): The unique id of the dataset
+
+        Returns:
+        int: The number of unit supplementary data associated with the dataset id
+        """
+
+        limit = 1000
+        count = 0
+
+        collection_ref = self.datasets_collection.document(dataset_id).collection(
+            "units"
+        )
+
+        while True:
+            # Frees memory incurred in the recursion algorithm
+            docs = []
+
+            if cursor:
+                docs = [
+                    snapshot
+                    for snapshot in collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .start_after(cursor)
+                    .stream()
+                ]
+            else:
+                docs = [
+                    snapshot
+                    for snapshot in collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .stream()
+                ]
+
+            count = count + len(docs)
+
+            if len(docs) == limit:
+                cursor = docs[limit - 1]
+                continue
+
+            break
+
+        return count
 
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str
@@ -117,66 +238,30 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata_list
 
-    def perform_delete_previous_version_dataset_transaction(
-        self, survey_id: str, period_id: str, previous_version: int
-    ) -> None:
+    def get_dataset_metadata_with_survey_id_period_id_and_version(
+        self, survey_id: str, period_id: str, version: int
+    ) -> DatasetMetadata | None:
         """
-        Queries firestore for a previous version of a dataset associated with a survey id
-        and period id, iterates to delete it and their subcollections recursively. The
-        recursion is needed because you cannot delete subcollections of a document in firestore
-        just by deleting the document, it does not cascade.
+        Get the dataset metadata from firestore associated with a specific survey and period id and version.
 
         Parameters:
-        survey_id: survey id of the dataset.
-        period_id: period id of the dataset.
-        previous_version: previous version of the dataset to delete.
+        survey_id (str): The survey id of the dataset.
+        period_id (str): The period id of the unit on the dataset.
+        version (int): The version of the dataset.
+
+        Returns:
+        DatasetMetadata | None: The dataset metadata associated with the survey id, period id and version.
         """
+        retrieved_dataset = (
+            self.datasets_collection.where("survey_id", "==", survey_id)
+            .where("period_id", "==", period_id)
+            .where("sds_dataset_version", "==", version)
+            .stream()
+        )
 
-        # A stipulation of the @firestore.transactional decorator is the first parameter HAS
-        # to be 'transaction', but since we're using classes the first parameter is always
-        # 'self'. Encapsulating the transaction within this function circumvents the issue.
-        @firestore.transactional
-        def delete_collection_transaction(transaction: firestore.Transaction):
-            previous_version_dataset = (
-                self.datasets_collection.where("survey_id", "==", survey_id)
-                .where("period_id", "==", period_id)
-                .where("sds_dataset_version", "==", previous_version)
-            )
+        dataset_metadata: DatasetMetadata = None
+        for dataset in retrieved_dataset:
+            dataset_metadata: DatasetMetadata = {**(dataset.to_dict())}
+            dataset_metadata["dataset_id"] = dataset.id
 
-            self._delete_collection(transaction, previous_version_dataset)
-
-        delete_collection_transaction(self.client.transaction())
-
-    def _delete_collection(
-        self,
-        transaction: firestore.Transaction,
-        collection_ref: firestore.CollectionReference,
-    ) -> None:
-        """
-        Recursively deletes the collection and its subcollections.
-
-        Parameters:
-        transaction: the firestore transaction performing the delete.
-        collection_ref: the reference of the collection being deleted.
-        """
-        doc_collection = collection_ref.stream()
-
-        for doc in doc_collection:
-            self._recursively_delete_document_and_sub_collections(
-                transaction, doc.reference
-            )
-
-    def _recursively_delete_document_and_sub_collections(
-        self, transaction: firestore.Transaction, doc_ref: firestore.DocumentReference
-    ) -> None:
-        """
-        Loops through each collection in a document and deletes the collection.
-
-        Parameters:
-        transaction: the firestore transaction performing the delete.
-        doc_ref: the reference of the document being deleted.
-        """
-        for collection_ref in doc_ref.collections():
-            self._delete_collection(transaction, collection_ref)
-
-        transaction.delete(doc_ref)
+        return dataset_metadata

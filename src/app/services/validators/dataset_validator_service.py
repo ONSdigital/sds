@@ -32,7 +32,6 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
                     "error": "Filetype error",
@@ -100,7 +99,6 @@ class DatasetValidatorService:
         isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if isValid is False:
-
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
                     "error": "Mandatory key(s) error",
