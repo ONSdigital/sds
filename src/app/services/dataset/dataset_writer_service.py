@@ -7,7 +7,8 @@ from models.dataset_models import (
     UnitDataset,
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.publisher_service import publisher_service
+#from services.shared.publisher_service import publisher_service
+from ons_sds_publisher_demo.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,7 @@ class DatasetWriterService:
         """
         try:
             publisher_service.publish_data_to_topic(
+                config.PROJECT_ID,
                 dataset_publish_response,
                 config.PUBLISH_DATASET_TOPIC_ID,
             )

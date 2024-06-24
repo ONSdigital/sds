@@ -6,7 +6,7 @@ from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.document_version_service import DocumentVersionService
-from services.shared.publisher_service import PublisherService
+from ons_sds_publisher_demo.publisher_service import PublisherService
 
 from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper

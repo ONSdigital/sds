@@ -5,7 +5,7 @@ from config.config_factory import config
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.publisher_service import PublisherService
+from ons_sds_publisher_demo.publisher_service import PublisherService
 
 from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
@@ -76,7 +76,9 @@ class PubSubTest(TestCase):
         TestHelper.new_dataset_mock(cloud_event)
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
-            dataset_test_data.updated_dataset_metadata, config.PUBLISH_DATASET_TOPIC_ID
+            config.PROJECT_ID,
+            dataset_test_data.updated_dataset_metadata, 
+            config.PUBLISH_DATASET_TOPIC_ID
         )
 
     def test_dataset_metadata_fail_publish_response(
