@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
+from ons_sds_publisher_demo.publisher_service import PublisherService
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
-from ons_sds_publisher_demo.publisher_service import PublisherService
 
 from src.test_data import schema_test_data
 

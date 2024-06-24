@@ -2,11 +2,11 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 from config.config_factory import config
+from ons_sds_publisher_demo.publisher_service import PublisherService
 from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.shared.document_version_service import DocumentVersionService
-from ons_sds_publisher_demo.publisher_service import PublisherService
 
 from src.test_data import dataset_test_data, shared_test_data
 from src.unit_tests.test_helper import TestHelper

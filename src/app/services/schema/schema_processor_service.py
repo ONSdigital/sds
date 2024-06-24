@@ -5,12 +5,13 @@ import requests
 from config.config_factory import config
 from logging_config import logging
 from models.schema_models import SchemaMetadata
+
+# from services.shared.publisher_service import publisher_service
+from ons_sds_publisher_demo.publisher_service import publisher_service
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
-#from services.shared.publisher_service import publisher_service
-from ons_sds_publisher_demo.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
