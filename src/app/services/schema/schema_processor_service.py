@@ -205,11 +205,13 @@ class SchemaProcessorService:
         """
         try:
             logger.info("Publishing schema metadata to topic...")
-            publisher_service.publish_data_to_topic(
+            if not publisher_service.publish_data_to_topic(
                 config.PROJECT_ID,
                 next_version_schema_metadata,
                 config.PUBLISH_SCHEMA_TOPIC_ID,
-            )
+            ):
+                logger.error("Error. Topic not found.")
+                raise exceptions.ExceptionTopicNotFound
             logger.debug(
                 f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
             )
