@@ -88,7 +88,7 @@ class DatasetWriterService:
             ):
                 logger.error("Error. Topic not found.")
                 raise RuntimeError("Error publishing dataset response to the topic.")
-            
+
             logger.debug(
                 f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
             )
