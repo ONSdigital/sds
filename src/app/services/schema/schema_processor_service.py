@@ -5,11 +5,13 @@ import requests
 from config.config_factory import config
 from logging_config import logging
 from models.schema_models import SchemaMetadata
+
+# from services.shared.publisher_service import publisher_service
+from ons_sds_publisher_demo.publisher_service import publisher_service
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from services.shared.datetime_service import DatetimeService
 from services.shared.document_version_service import DocumentVersionService
-from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -203,10 +205,13 @@ class SchemaProcessorService:
         """
         try:
             logger.info("Publishing schema metadata to topic...")
-            publisher_service.publish_data_to_topic(
+            if not publisher_service.publish_data_to_topic(
+                config.PROJECT_ID,
                 next_version_schema_metadata,
                 config.PUBLISH_SCHEMA_TOPIC_ID,
-            )
+            ):
+                logger.error("Error. Topic not found.")
+                raise exceptions.ExceptionTopicNotFound
             logger.debug(
                 f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
             )

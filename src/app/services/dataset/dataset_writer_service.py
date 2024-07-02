@@ -6,8 +6,10 @@ from models.dataset_models import (
     DatasetPublishResponse,
     UnitDataset,
 )
+
+# from services.shared.publisher_service import publisher_service
+from ons_sds_publisher_demo.publisher_service import publisher_service
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -79,10 +81,14 @@ class DatasetWriterService:
         dataset_publish_response: dataset metadata or unhappy path response to be published.
         """
         try:
-            publisher_service.publish_data_to_topic(
+            if not publisher_service.publish_data_to_topic(
+                config.PROJECT_ID,
                 dataset_publish_response,
                 config.PUBLISH_DATASET_TOPIC_ID,
-            )
+            ):
+                logger.error("Error. Topic not found.")
+                raise RuntimeError("Error publishing dataset response to the topic.")
+
             logger.debug(
                 f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
             )

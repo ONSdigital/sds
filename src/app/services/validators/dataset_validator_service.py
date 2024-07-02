@@ -3,8 +3,8 @@ from json import JSONDecodeError
 from config.config_factory import config
 from logging_config import logging
 from models.dataset_models import DatasetError, RawDataset
+from ons_sds_publisher_demo.publisher_service import publisher_service
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
-from services.shared.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +200,12 @@ class DatasetValidatorService:
         topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
 
         try:
-            publisher_service.publish_data_to_topic(message, topic_id)
+            if not publisher_service.publish_data_to_topic(
+                config.PROJECT_ID, message, topic_id
+            ):
+                logger.error("Error. Topic not found.")
+                raise RuntimeError("Error publishing message to the topic.")
+
             logger.debug(f"Message {message} published to topic {topic_id}")
             logger.info("Pubsub message published successfully.")
         except Exception as e:

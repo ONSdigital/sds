@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 import pytest
 from config.config_factory import config
+from ons_sds_publisher_demo.publisher_service import PublisherService
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
-from services.shared.publisher_service import PublisherService
 
 from src.test_data import schema_test_data
 
@@ -94,6 +94,7 @@ class PostSchemaTest(TestCase):
         )
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
+            config.PROJECT_ID,
             schema_test_data.test_post_schema_metadata_updated_version_response,
             config.PUBLISH_SCHEMA_TOPIC_ID,
         )
