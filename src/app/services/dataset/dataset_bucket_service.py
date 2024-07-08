@@ -40,3 +40,12 @@ class DatasetBucketService:
                 f"Failed to delete file {filename} from bucket {config.DATASET_BUCKET_NAME} with error: {e}"
             )
             raise RuntimeError("Failed to delete file from dataset bucket.")
+        
+    def get_filename_from_bucket(self) -> str:
+        """
+        Get a filename from bucket.
+
+        Returns:
+        str: filename from the bucket.
+        """
+        return self.dataset_bucket_repository.fetch_first_filename_from_bucket()

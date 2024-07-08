@@ -21,3 +21,15 @@ class DatasetBucketRepository(BucketRepository):
         RawDatasetWithMetadata: raw dataset from the bucket file as json.
         """
         return self.get_bucket_file_as_json(filename)
+
+    def fetch_first_filename_from_bucket(self) -> str:
+        """
+        Fetches the first filename from the bucket.
+
+        Returns:
+        str: filename from the bucket.
+        """
+        blobs = self.bucket.list_blobs()
+
+        for blob in blobs:
+            return blob.name
