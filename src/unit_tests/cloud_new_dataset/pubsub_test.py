@@ -57,7 +57,9 @@ class PubSubTest(TestCase):
         When the dataset batch write is successful a success response should be published to the dataset topic
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             MagicMock()
@@ -92,7 +94,9 @@ class PubSubTest(TestCase):
         When there is an issue with the dataset data publishing an error should be raised
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             MagicMock()

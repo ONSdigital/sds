@@ -1,5 +1,6 @@
-import functions_framework
 import json
+
+import functions_framework
 from logging_config import logging
 from services.dataset.dataset_bucket_service import DatasetBucketService
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -22,9 +23,8 @@ def new_dataset(request):
 
     if not filename:
         logger.info("No dataset files found in bucket. Process is skipped")
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
 
-    
     logger.info("Uploading new dataset...")
 
     raw_dataset = DatasetBucketService().get_and_validate_dataset(filename)
@@ -36,4 +36,4 @@ def new_dataset(request):
 
     logger.info("Dataset uploaded successfully.")
 
-    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}

@@ -10,14 +10,18 @@ from src.unit_tests.test_helper import TestHelper
 
 class BucketRetrievalTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_first_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_first_filename_from_bucket
+        )
         self.empty_bucket_stash = DatasetBucketRepository.delete_bucket_file
         self.process_raw_dataset_stash = DatasetProcessorService.process_raw_dataset
 
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_first_filename_from_bucket = (
+            self.fetch_first_filename_from_bucket_stash
+        )
         DatasetBucketRepository.delete_bucket_file = self.empty_bucket_stash
         DatasetProcessorService.process_raw_dataset = self.process_raw_dataset_stash
 
@@ -25,10 +29,12 @@ class BucketRetrievalTest(TestCase):
         """
         Tests datasets are deleted from the bucket after they have been retrieved.
         """
-        #cloud_event = MagicMock()
-        #cloud_event.data = dataset_test_data.cloud_event_data
+        # cloud_event = MagicMock()
+        # cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetBucketRepository.delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
@@ -41,10 +47,12 @@ class BucketRetrievalTest(TestCase):
         """
         Tests an exception is raised if there is an issue deleting data from the bucket.
         """
-        #cloud_event = MagicMock()
-        #cloud_event.data = dataset_test_data.cloud_event_data
+        # cloud_event = MagicMock()
+        # cloud_event.data = dataset_test_data.cloud_event_data
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetBucketRepository.delete_bucket_file = MagicMock(side_effect=Exception)
 

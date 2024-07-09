@@ -19,7 +19,9 @@ class DatasetValidatorService:
         filename (str): filename being validated.
         """
 
-        isValid, message = DatasetValidatorService._validate_file_extension_is_json(filename)
+        isValid, message = DatasetValidatorService._validate_file_extension_is_json(
+            filename
+        )
         if not isValid:
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
@@ -28,7 +30,9 @@ class DatasetValidatorService:
                 }
             )
             return False, message
-        isValid, message = DatasetValidatorService._validate_file_content_is_json(filename)
+        isValid, message = DatasetValidatorService._validate_file_content_is_json(
+            filename
+        )
         if not isValid:
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
@@ -37,7 +41,7 @@ class DatasetValidatorService:
                 }
             )
             return False, message
-        
+
         return True, ""
 
     @staticmethod
@@ -52,7 +56,7 @@ class DatasetValidatorService:
         if filename[-5:].lower() != ".json":
             message = "Invalid filetype received"
             return False, f"{message} - {filename}"
-        
+
         return True, ""
 
     @staticmethod
@@ -69,7 +73,7 @@ class DatasetValidatorService:
         except JSONDecodeError:
             message = "Invalid JSON content received."
             return False, message
-        
+
         return True, ""
 
     @staticmethod

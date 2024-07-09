@@ -33,5 +33,5 @@ class DatasetBucketRepository(BucketRepository):
 
         for blob in blobs:
             return blob.name
-        
+
         return None

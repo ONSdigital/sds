@@ -15,7 +15,9 @@ from src.unit_tests.test_helper import TestHelper
 
 class DatasetValidationTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_first_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_first_filename_from_bucket
+        )
         self.try_delete_bucket_file_stash = DatasetBucketService.try_delete_bucket_file
         self.process_raw_dataset_stash = DatasetProcessorService.process_raw_dataset
         self.get_dataset_file_as_json_stash = (
@@ -28,7 +30,9 @@ class DatasetValidationTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_first_filename_from_bucket = (
+            self.fetch_first_filename_from_bucket_stash
+        )
         DatasetBucketService.try_delete_bucket_file = self.try_delete_bucket_file_stash
         DatasetProcessorService.process_raw_dataset = self.process_raw_dataset_stash
         DatasetBucketRepository.get_dataset_file_as_json = (
@@ -42,10 +46,12 @@ class DatasetValidationTest(TestCase):
         """
         Tests the validation for when the file extension is not a json
         """
-        #cloud_event = MagicMock()
-        #cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
+        # cloud_event = MagicMock()
+        # cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="bad_filename.test")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="bad_filename.test"
+        )
 
         DatasetBucketService.try_delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
@@ -64,7 +70,9 @@ class DatasetValidationTest(TestCase):
         Validates when an empty object is returned from the bucket.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetBucketService.try_delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
@@ -85,7 +93,9 @@ class DatasetValidationTest(TestCase):
         Validates when there are mandatory keys missing from the dataset.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetBucketService.try_delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
@@ -108,7 +118,9 @@ class DatasetValidationTest(TestCase):
         Validates when the content of the dataset is not valid JSON.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(return_value="test_filename.json")
+        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetBucketService.try_delete_bucket_file = MagicMock()
         DatasetProcessorService.process_raw_dataset = MagicMock()
