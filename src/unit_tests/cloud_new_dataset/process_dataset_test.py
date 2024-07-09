@@ -73,8 +73,6 @@ class ProcessDatasetTest(TestCase):
         """
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
@@ -115,8 +113,6 @@ class ProcessDatasetTest(TestCase):
         """
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
@@ -159,8 +155,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates a successful dataset upload process when retain flag is off. It assert
         the deletion process will be run with appropriate arguments
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         config.RETAIN_DATASET_FIRESTORE = False
 
@@ -203,8 +197,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates an exception raising in the dataset deletion process. It assert
         the appropriate runtime error will be prompted when it happens.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
@@ -248,9 +240,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates null return in the dataset retrieval process. It assert
         the appropriate runtime error will be prompted when it happens.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
-
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
@@ -294,9 +283,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates the upload of an updated version of datset when retain flag is on.
         The test assert that no deletion process will be attempted.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
-
         config.RETAIN_DATASET_FIRESTORE = True
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
@@ -336,9 +322,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates the upload of the first version of dataset and assert that
         no deletion process will be attempted even when retain flag is off.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
-
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
@@ -380,9 +363,6 @@ class ProcessDatasetTest(TestCase):
         a non-incremented version (1 instead of 2) simulating a failed upload in transaction
         The test then assert the data deletion process will not run even when retain flag is off.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
-
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
@@ -419,8 +399,6 @@ class ProcessDatasetTest(TestCase):
         """
         Tests appropriate runtime error will be promted when unit data count does not match total reporting units.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
@@ -461,8 +439,6 @@ class ProcessDatasetTest(TestCase):
         to simulate a dataset not found situation. The test then assert the runtime error
         and check the deletion is not processed.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         config.RETAIN_DATASET_FIRESTORE = False
 

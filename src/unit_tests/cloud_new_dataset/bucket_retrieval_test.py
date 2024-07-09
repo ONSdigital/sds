@@ -29,8 +29,6 @@ class BucketRetrievalTest(TestCase):
         """
         Tests datasets are deleted from the bucket after they have been retrieved.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
@@ -47,8 +45,6 @@ class BucketRetrievalTest(TestCase):
         """
         Tests an exception is raised if there is an issue deleting data from the bucket.
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_data
 
         DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
