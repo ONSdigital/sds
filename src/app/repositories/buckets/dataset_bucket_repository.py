@@ -22,7 +22,7 @@ class DatasetBucketRepository(BucketRepository):
         """
         return self.get_bucket_file_as_json(filename)
 
-    def fetch_first_filename_from_bucket(self) -> str:
+    def fetch_first_filename_from_bucket(self) -> str | None:
         """
         Fetches the first filename from the bucket.
 
@@ -33,3 +33,5 @@ class DatasetBucketRepository(BucketRepository):
 
         for blob in blobs:
             return blob.name
+        
+        return None

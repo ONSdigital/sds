@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class DatasetValidatorService:
     @staticmethod
-    def validate_file_is_json(filename: str) -> None:
+    def validate_file_is_json(filename: str) -> tuple[bool, str]:
         """
         Validates the file extension is json.
 
@@ -19,11 +19,29 @@ class DatasetValidatorService:
         filename (str): filename being validated.
         """
 
-        DatasetValidatorService._validate_file_extension_is_json(filename)
-        DatasetValidatorService._validate_file_content_is_json(filename)
+        isValid, message = DatasetValidatorService._validate_file_extension_is_json(filename)
+        if not isValid:
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "Filetype error",
+                    "message": message,
+                }
+            )
+            return False, message
+        isValid, message = DatasetValidatorService._validate_file_content_is_json(filename)
+        if not isValid:
+            DatasetValidatorService.try_publish_dataset_error_to_topic(
+                {
+                    "error": "File content error",
+                    "message": message,
+                }
+            )
+            return False, message
+        
+        return True, ""
 
     @staticmethod
-    def _validate_file_extension_is_json(filename: str) -> None:
+    def _validate_file_extension_is_json(filename: str) -> tuple[bool, str]:
         """
         Raises a runtime error if the file type is not json.
 
@@ -32,16 +50,13 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-            DatasetValidatorService.try_publish_dataset_error_to_topic(
-                {
-                    "error": "Filetype error",
-                    "message": "Invalid filetype received.",
-                }
-            )
-            raise RuntimeError(f"Invalid filetype received - {filename}")
+            message = "Invalid filetype received."
+            return False, message
+        
+        return True, ""
 
     @staticmethod
-    def _validate_file_content_is_json(filename: str) -> None:
+    def _validate_file_content_is_json(filename: str) -> tuple[bool, str]:
         """
         Raises a runtime error if the file content is not json.
 
@@ -52,13 +67,10 @@ class DatasetValidatorService:
         try:
             DatasetBucketRepository().get_dataset_file_as_json(filename)
         except JSONDecodeError:
-            DatasetValidatorService.try_publish_dataset_error_to_topic(
-                {
-                    "error": "File content error",
-                    "message": "Invalid JSON content received.",
-                }
-            )
-            raise RuntimeError("Invalid JSON content received.")
+            message = "Invalid JSON content received."
+            return False, message
+        
+        return True, ""
 
     @staticmethod
     def validate_raw_dataset(raw_dataset: RawDataset) -> None:
