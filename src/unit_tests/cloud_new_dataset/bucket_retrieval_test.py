@@ -5,7 +5,6 @@ from pytest import raises
 from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
 
-from src.test_data import dataset_test_data
 from src.unit_tests.test_helper import TestHelper
 
 
