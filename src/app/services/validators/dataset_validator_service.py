@@ -30,7 +30,7 @@ class DatasetValidatorService:
                 }
             )
             return False, message
-        
+
         isValid, message = DatasetValidatorService._validate_file_content_is_json(
             filename
         )
