@@ -1,4 +1,3 @@
-import time
 from unittest import TestCase
 
 from config.config_factory import config
@@ -31,7 +30,6 @@ from src.test_data.shared_test_data import (
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        time.sleep(5)
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
