@@ -30,6 +30,7 @@ class DatasetValidatorService:
                 }
             )
             return False, message
+        
         isValid, message = DatasetValidatorService._validate_file_content_is_json(
             filename
         )
@@ -54,8 +55,8 @@ class DatasetValidatorService:
         """
 
         if filename[-5:].lower() != ".json":
-            message = "Invalid filetype received"
-            return False, f"{message} - {filename}"
+            message = "Invalid filetype received."
+            return False, message
 
         return True, ""
 

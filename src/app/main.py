@@ -4,7 +4,6 @@ import functions_framework
 from logging_config import logging
 from services.dataset.dataset_bucket_service import DatasetBucketService
 from services.dataset.dataset_processor_service import DatasetProcessorService
-from services.validators.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
 

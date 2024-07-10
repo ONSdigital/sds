@@ -421,9 +421,12 @@ class E2EDatasetIntegrationTest(TestCase):
         ) in dataset_test_data.incorrect_file_extension_message.items():
             assert received_messages[0][key] == value
 
+        
+
         # Upload dataset with invalid json
         with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
+            file.close()
 
         dataset_invalid_json_filename = create_filepath("integration-test-invalid-json")
 

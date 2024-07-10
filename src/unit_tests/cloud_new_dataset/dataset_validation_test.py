@@ -59,7 +59,7 @@ class DatasetValidationTest(TestCase):
 
         with raises(
             RuntimeError,
-            match=f"Invalid filetype received - {dataset_test_data.cloud_event_invalid_filename_data['name']}",
+            match=f"Invalid filetype received.",
         ):
             TestHelper.new_dataset_mock(request=None)
 
