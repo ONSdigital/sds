@@ -31,20 +31,6 @@ env:
   # or posted in a PR (pull_request)
   APPLY_FIXES_MODE: commit
 
-  ENABLE_LINTERS:
-    - PYTHON_BLACK
-    - PYTHON_RUFF
-
-  DISABLE_LINTERS:
-    - REPOSITORY_DEVSKIM
-    - REPOSITORY_TRUFFLEHOG
-    - REPOSITORY_GIT_DIFF
-
-  DISABLE:
-    - COPYPASTE
-    - EDITORCONFIG
-    - SPELL
-
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
