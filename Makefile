@@ -194,5 +194,14 @@ lint-fix:
 	black .
 	isort . --profile black
 
+test-lint:
+	python -m yamllint /Users/omarmoulana/Documents/repo/sds/gateway/openapi.yaml
+
+megalint:  ## Run the mega-linter.
+	docker run --platform linux/amd64 --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock:rw \
+		-v $(shell pwd):/tmp/lint:rw \
+		oxsecurity/megalinter:v7		
+
 setup: requirements.txt
 	pip install -r requirements.txt
