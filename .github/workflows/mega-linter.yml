@@ -82,8 +82,8 @@ jobs:
           #     github.event_name == 'push' &&
           #     contains(fromJSON('["refs/heads/main", "refs/heads/master"]'), github.ref)
           #   }}
-          ENABLE:
-            - PYTHON
+
+          ENABLE: PYTHON
 
           VALIDATE_ALL_CODEBASE: >-
             ${{
