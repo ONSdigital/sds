@@ -82,19 +82,9 @@ jobs:
           #     github.event_name == 'push' &&
           #     contains(fromJSON('["refs/heads/main", "refs/heads/master"]'), github.ref)
           #   }}
-          ENABLE_LINTERS:
-            - PYTHON_BLACK
-            - PYTHON_RUFF
+          ENABLE:
+            - PYTHON
 
-          DISABLE_LINTERS:
-            - REPOSITORY_DEVSKIM
-            - REPOSITORY_TRUFFLEHOG
-            - REPOSITORY_GIT_DIFF
-
-          DISABLE:
-            - COPYPASTE
-            - EDITORCONFIG
-            - SPELL
           VALIDATE_ALL_CODEBASE: >-
             ${{
               github.event_name == 'push' &&
