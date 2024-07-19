@@ -66,8 +66,6 @@ jobs:
 
         id: ml
 
-        with:
-          ENABLE: "PYTHON"
         # All available variables are described in documentation
         # https://megalinter.io/configuration/
         env:
