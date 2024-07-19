@@ -11,24 +11,9 @@ FORMATTERS_DISABLE_ERRORS: false
 
 # If you use ENABLE variable, all other languages/formats/tooling-formats will
 # be disabled by default
-# ENABLE:
-ENABLE: PYTHON
+
 # If you use ENABLE_LINTERS variable, all other linters will be disabled by
 # default
-# ENABLE_LINTERS:
-#   - PYTHON_BLACK
-#   - PYTHON_RUFF
-#   - PYTHON_PYLINT
-
-# DISABLE:
-#   - COPYPASTE
-#   - EDITORCONFIG
-#   - SPELL
-
-# DISABLE_LINTERS:
-#   - REPOSITORY_DEVSKIM
-#   - REPOSITORY_TRUFFLEHOG
-#   - REPOSITORY_GIT_DIFF
 
 SHOW_ELAPSED_TIME: true
 
