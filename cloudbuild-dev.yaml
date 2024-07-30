@@ -45,6 +45,14 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
 
   - name: "gcr.io/cloud-builders/gcloud"
+    id: "Trigger new-dataset function to update by triggering the Cloud Build called 'update-new-dataset-cloud-function'"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        gcloud builds triggers run update-new-dataset-cloud-function --branch=main --substitutions=SDS_BRANCH=$BRANCH_NAME
+
+  - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
     args:
@@ -139,7 +147,7 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
-
+ 
   - name: python:3.11
     id: "Run integration test"
     entrypoint: sh
