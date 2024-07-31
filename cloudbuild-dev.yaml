@@ -50,15 +50,21 @@ steps:
     args:
       - "-c"
       - |
-        # Trigger the Cloud Build to update the new-dataset function
-        TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
+        echo "Triggering the Cloud Build 'update-new-dataset-cloud-function'..."
+        TRIGGER_NAME="update-new-dataset-cloud-function"
+        REGION="europe-west2"
+        BRANCH="sdss-712-http-trigger-implementation"
+
+        # Trigger the build
+        TRIGGER_RESPONSE=$(gcloud builds triggers run $TRIGGER_NAME --region=$REGION --branch=$BRANCH --substitutions=_SDS_BRANCH=$BRANCH --format=json)
         
-        # Extract the ID of the triggered build
-        TRIGGER_ID=$(echo ${TRIGGER_RESPONSE} | jq -r '.id')
-        echo "Triggered build with ID: ${TRIGGER_ID}"
-        
-        # Wait for the triggered build to finish
-        gcloud builds operations wait ${TRIGGER_ID}
+        # Extract the build ID from the response
+        BUILD_ID=$(echo $TRIGGER_RESPONSE | jq -r '.metadata.build.id')
+        echo "Triggered build with ID: ${BUILD_ID}"
+
+        # Wait for the build to complete
+        echo "Waiting for build $BUILD_ID to complete..."
+        gcloud builds wait $BUILD_ID
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
