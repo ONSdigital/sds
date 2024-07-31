@@ -62,7 +62,8 @@ steps:
         
         # Poll the build status
         while true; do
-          _BUILD_STATUS = $(gcloud builds describe $BUILD_ID --format='value(status)' --region=$_REGION)
+          _BUILD_STATUS=$(gcloud builds describe $BUILD_ID --format=json --region=$_REGION)
+          _BUILD_STATUS=$(echo ${_BUILD_STATUS} | jq -r '.status')
           echo "Current build status: ${_BUILD_STATUS}"
           if [[ "${_BUILD_STATUS}" == "SUCCESS" ]]; then
             echo "Build succeeded."
