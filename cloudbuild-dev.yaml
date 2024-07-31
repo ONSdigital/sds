@@ -50,7 +50,7 @@ steps:
     args:
       - "-c"
       - |
-        gcloud builds triggers run update-new-dataset-cloud-function --branch=main --substitutions=SDS_BRANCH=$BRANCH_NAME
+        gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=SDSS-712-http-trigger-implementation
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
