@@ -50,7 +50,15 @@ steps:
     args:
       - "-c"
       - |
-        gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=SDSS-712-http-trigger-implementation
+        # Trigger the Cloud Build to update the new-dataset function
+        TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH_NAME=SDSS-712-http-trigger-implementation --format=json)
+        
+        # Extract the ID of the triggered build
+        TRIGGER_ID=$(echo ${TRIGGER_RESPONSE} | jq -r '.id')
+        echo "Triggered build with ID: ${TRIGGER_ID}"
+        
+        # Wait for the triggered build to finish
+        gcloud builds operations wait ${TRIGGER_ID}
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
@@ -107,27 +115,6 @@ steps:
         "--max-instances",
         "2",
       ]
-
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    id: "Deploy cloud function"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        cd src/app/
-        gcloud functions deploy new-dataset-function \
-        --no-allow-unauthenticated \
-        --gen2 \
-        --ingress-settings=all \
-        --runtime=python311 \
-        --region=europe-west2 \
-        --source=. \
-        --entry-point=new_dataset \
-        --timeout=3600s \
-        --memory=512MiB \
-        --cpu=1 \
-        --trigger-http \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID},PUBLISH_DATASET_ERROR_TOPIC_ID=${_PUBLISH_DATASET_ERROR_TOPIC_ID},FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME},SURVEY_MAP_URL=${_SURVEY_MAP_URL},SDS_APPLICATION_VERSION=development"
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Retrieve `OAUTH_BRAND_NAME` and save it to workspace"
