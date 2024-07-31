@@ -54,11 +54,11 @@ steps:
         _TRIGGER_RESPONSE = $(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
         
         # Extract the ID of the triggered build
-        TRIGGER_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.id')
-        echo "Triggered build with ID: ${TRIGGER_ID}"
+        _TRIGGER_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.id')
+        echo "Triggered build with ID: ${_TRIGGER_ID}"
         
         # Wait for the triggered build to finish
-        gcloud builds operations wait ${TRIGGER_ID}
+        gcloud builds operations wait ${_TRIGGER_ID}
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
