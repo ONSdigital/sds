@@ -51,7 +51,7 @@ steps:
       - "-c"
       - |
         # Trigger the Cloud Build to update the new-dataset function
-        TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=SDSS-712-http-trigger-implementation --format=json)
+        TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
         
         # Extract the ID of the triggered build
         TRIGGER_ID=$(echo ${TRIGGER_RESPONSE} | jq -r '.id')
