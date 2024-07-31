@@ -64,10 +64,10 @@ steps:
         while true; do
           _BUILD_STATUS = $(gcloud builds describe $BUILD_ID --format='value(status)' --region=$_REGION)
           echo "Current build status: ${_BUILD_STATUS}"
-          if [[ "$_BUILD_STATUS" == "SUCCESS" ]]; then
+          if [[ "${_BUILD_STATUS}" == "SUCCESS" ]]; then
             echo "Build succeeded."
             break
-          elif [[ "$_BUILD_STATUS" == "FAILURE" || "_$BUILD_STATUS" == "CANCELLED" ]]; then
+          elif [[ "${_BUILD_STATUS}" == "FAILURE" || "${_BUILD_STATUS}" == "CANCELLED" ]]; then
             echo "Build failed or was cancelled."
             exit 1
           else
