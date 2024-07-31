@@ -1,4 +1,37 @@
 steps:
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Trigger new-dataset function to update by triggering the Cloud Build called 'update-new-dataset-cloud-function'"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        # Install jq
+        apt-get -y update && apt-get install -y jq
+
+        # Trigger the Cloud Build to update the new-dataset function
+        gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json | tee /workspace/trigger_response.json
+        # Extract the ID of the triggered build
+        _TRIGGER_RESPONSE=$(cat /workspace/trigger_response.json)
+        _BUILD_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.metadata.build.id')
+        echo "Triggered build with ID: ${_BUILD_ID}"
+        
+        # Poll the build status
+        while true; do
+          _BUILD_STATUS=$(gcloud builds describe $_BUILD_ID --format=json --region=$_REGION)
+          _BUILD_STATUS=$(echo ${_BUILD_STATUS} | jq -r '.status')
+          echo "Current build status: ${_BUILD_STATUS}"
+          if [[ "${_BUILD_STATUS}" == "SUCCESS" ]]; then
+            echo "Build succeeded."
+            break
+          elif [[ "${_BUILD_STATUS}" == "FAILURE" || "${_BUILD_STATUS}" == "CANCELLED" ]]; then
+            echo "Build failed or was cancelled."
+            exit 1
+          else
+            echo "Build is still in progress..."
+            sleep 15
+          fi
+        done
+
   - name: python:3.11
     id: "Upgrade pip"
     entrypoint: "python"
@@ -44,38 +77,7 @@ steps:
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
 
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Trigger new-dataset function to update by triggering the Cloud Build called 'update-new-dataset-cloud-function'"
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        # Install jq
-        apt-get -y update && apt-get install -y jq
-
-        # Trigger the Cloud Build to update the new-dataset function
-        _TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
-        echo $_TRIGGER_RESPONSE
-        # Extract the ID of the triggered build
-        _BUILD_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.metadata.build.id')
-        echo "Triggered build with ID: ${_BUILD_ID}"
-        
-        # Poll the build status
-        while true; do
-          _BUILD_STATUS=$(gcloud builds describe $_BUILD_ID --format=json --region=$_REGION)
-          _BUILD_STATUS=$(echo ${_BUILD_STATUS} | jq -r '.status')
-          echo "Current build status: ${_BUILD_STATUS}"
-          if [[ "${_BUILD_STATUS}" == "SUCCESS" ]]; then
-            echo "Build succeeded."
-            break
-          elif [[ "${_BUILD_STATUS}" == "FAILURE" || "${_BUILD_STATUS}" == "CANCELLED" ]]; then
-            echo "Build failed or was cancelled."
-            exit 1
-          else
-            echo "Build is still in progress..."
-            sleep 15
-          fi
-        done
+  
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
