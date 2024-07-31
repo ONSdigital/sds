@@ -54,15 +54,15 @@ steps:
         apt-get -y update && apt-get install -y jq
 
         # Trigger the Cloud Build to update the new-dataset function
-        _TRIGGER_RESPONSE = $(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
+        _TRIGGER_RESPONSE=$(gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$BRANCH_NAME --format=json)
         
         # Extract the ID of the triggered build
-        _TRIGGER_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.id')
-        echo "Triggered build with ID: ${_TRIGGER_ID}"
+        _BUILD_ID=$(echo ${_TRIGGER_RESPONSE} | jq -r '.metadata.build.id')
+        echo "Triggered build with ID: ${_BUILD_ID}"
         
         # Poll the build status
         while true; do
-          _BUILD_STATUS=$(gcloud builds describe $BUILD_ID --format=json --region=$_REGION)
+          _BUILD_STATUS=$(gcloud builds describe $_BUILD_ID --format=json --region=$_REGION)
           _BUILD_STATUS=$(echo ${_BUILD_STATUS} | jq -r '.status')
           echo "Current build status: ${_BUILD_STATUS}"
           if [[ "${_BUILD_STATUS}" == "SUCCESS" ]]; then
