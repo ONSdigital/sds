@@ -2,7 +2,7 @@
 apt-get -y update && apt-get install -y jq
 
 # Get IaC branch substitution, if it is empty string, set it to "main"
-if [ -z "$_IAC_BRANCH" ]; then
+if [[ "${_IAC_BRANCH}" == "" ]]; then
     _IAC_BRANCH="main"
 fi
 
