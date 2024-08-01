@@ -1,16 +1,17 @@
 # Install jq for JSON parsing
 apt-get -y update && apt-get install -y jq
 
-# Get IaC branch substitution, if it is empty string, set it to "main"
-if [[ "${_IAC_BRANCH}" == "" ]]; then
-    _IAC_BRANCH="main"
-fi
+# Get _IAC_BRANCH from argument, if empty string, set to 'main'
+_IAC_BRANCH=${1:-main}
+
+# Get SDS branch from argument
+_SDS_BRANCH=${2}
 
 echo "IaC branch: ${_IAC_BRANCH}"
 
 # Trigger the build and store the response - dump the stdout to /dev/null to avoid cluttering the logs with the JSON response
 echo "Triggering build on IaC branch: ${_IAC_BRANCH}..."
-gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=SDSS-712-http-trigger-implementation --format=json | tee trigger_response.json >/dev/null
+gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=$_SDS_BRANCH --format=json | tee trigger_response.json >/dev/null
 
 # Extract the build ID from the trigger response
 _BUILD_ID=$(cat trigger_response.json | jq -r '.metadata.build.id')
