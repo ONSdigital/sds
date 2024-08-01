@@ -7,7 +7,6 @@ _IAC_BRANCH=${1:-main}
 # Get SDS branch from argument
 _SDS_BRANCH=${2}
 
-echo "IaC branch: ${_IAC_BRANCH}"
 
 # Trigger the build and store the response - dump the stdout to /dev/null to avoid cluttering the logs with the JSON response
 echo "Triggering build on IaC branch: ${_IAC_BRANCH}..."
