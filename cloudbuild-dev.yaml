@@ -1,13 +1,4 @@
 steps:
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Trigger new-dataset function to update by triggering the Cloud Build called 'update-new-dataset-cloud-function'"
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        chmod +x build-cloud-function.sh
-        ./build-cloud-function.sh ${_IAC_BRANCH} $BRANCH_NAME
-
   - name: python:3.11
     id: "Upgrade pip"
     entrypoint: "python"
@@ -52,8 +43,6 @@ steps:
         docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
-
-  
 
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
@@ -129,7 +118,17 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
- 
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Update new-dataset Cloud Function"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        chmod +x build-cloud-function.sh
+        # run the build-cloud-function.sh script with the IaC branch name and SDS branch name as an argument
+        ./build-cloud-function.sh ${_IAC_BRANCH} $BRANCH_NAME
+
   - name: python:3.11
     id: "Run integration test"
     entrypoint: sh

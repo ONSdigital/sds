@@ -3,9 +3,9 @@ steps:
     id: "Google cloud docker auth"
     entrypoint: sh
     args:
-    - "-c"
-    - |
-      gcloud auth configure-docker europe-west2-docker.pkg.dev
+      - "-c"
+      - |
+        gcloud auth configure-docker europe-west2-docker.pkg.dev
 
   - name: docker
     id: "Docker build and push"
@@ -49,7 +49,8 @@ steps:
       - "-c"
       - |
         chmod +x build-cloud-function.sh
-        ./build-cloud-function.sh
+        # run the build-cloud-function.sh script with the IaC branch name and SDS branch name as an argument
+        ./build-cloud-function.sh ${_IAC_BRANCH} $BRANCH_NAME
 
 options:
   logging: CLOUD_LOGGING_ONLY
