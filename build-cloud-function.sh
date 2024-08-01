@@ -9,10 +9,8 @@ fi
 echo "IaC branch: ${_IAC_BRANCH}"
 
 # Trigger the build and store the response - dump the stdout to /dev/null to avoid cluttering the logs with the JSON response
+echo "Triggering build on IaC branch: ${_IAC_BRANCH}..."
 gcloud builds triggers run update-new-dataset-cloud-function --region=europe-west2 --branch=sdss-712-http-trigger-implementation --substitutions=_SDS_BRANCH=SDSS-712-http-trigger-implementation --format=json | tee trigger_response.json >/dev/null
-
-# Parse the build ID of the triggered build from the trigger response
-echo "Piping trigger response to jq..."
 
 # Extract the build ID from the trigger response
 _BUILD_ID=$(cat trigger_response.json | jq -r '.metadata.build.id')
