@@ -42,26 +42,14 @@ steps:
         "8",
       ]
 
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    id: "Deploy cloud function"
-    entrypoint: sh
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Update new-dataset Cloud Function"
+    entrypoint: bash
     args:
       - "-c"
       - |
-        cd src/app/
-        gcloud functions deploy new-dataset-function \
-        --no-allow-unauthenticated \
-        --gen2 \
-        --ingress-settings=all \
-        --runtime=python311 \
-        --region=europe-west2 \
-        --source=. \
-        --entry-point=new_dataset \
-        --timeout=3600s \
-        --memory=512MiB \
-        --cpu=1 \
-        --trigger-http \
-        --set-env-vars="DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME},SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME},CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE},RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE},LOG_LEVEL=${_LOG_LEVEL},PROJECT_ID=${PROJECT_ID},PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID},PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID},PUBLISH_DATASET_ERROR_TOPIC_ID=${_PUBLISH_DATASET_ERROR_TOPIC_ID},FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME},SURVEY_MAP_URL=${_SURVEY_MAP_URL},SDS_APPLICATION_VERSION=${TAG_NAME}"
+        chmod +x build-cloud-function.sh
+        ./build-cloud-function.sh
 
 options:
   logging: CLOUD_LOGGING_ONLY

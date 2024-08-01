@@ -1,12 +1,5 @@
 steps:
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Trigger new-dataset function to update by triggering the Cloud Build called 'update-new-dataset-cloud-function'"
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        chmod +x build-cloud-function.sh
-        ./build-cloud-function.sh
+
 
   - name: python:3.11
     id: "Upgrade pip"
@@ -129,6 +122,15 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
+
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Update new-dataset Cloud Function"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        chmod +x build-cloud-function.sh
+        ./build-cloud-function.sh
  
   - name: python:3.11
     id: "Run integration test"
