@@ -34,6 +34,17 @@ steps:
         make setup
         make unit-test
 
+  - name: "gcr.io/cloud-builders/gcloud"
+    id: "Update new-dataset Cloud Function"
+    entrypoint: bash
+    args:
+      - "-c"
+      - |
+        chmod +x build-cloud-function.sh
+        # run the build-cloud-function.sh script with the IaC branch name and SDS branch name as an argument
+        ./build-cloud-function.sh ${_IAC_BRANCH} $BRANCH_NAME
+
+
   - name: docker
     id: "docker build and push"
     entrypoint: sh
@@ -118,16 +129,6 @@ steps:
         gcloud iap oauth-clients list $(cat /workspace/oauth_brand_name) --format='value(name)' \
         --limit=1 \
         > /workspace/oauth_client_name
-
-  - name: "gcr.io/cloud-builders/gcloud"
-    id: "Update new-dataset Cloud Function"
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        chmod +x build-cloud-function.sh
-        # run the build-cloud-function.sh script with the IaC branch name and SDS branch name as an argument
-        ./build-cloud-function.sh ${_IAC_BRANCH} $BRANCH_NAME
 
   - name: python:3.11
     id: "Run integration test"
