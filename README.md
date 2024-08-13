@@ -146,7 +146,29 @@ The openapi spec file in gateway/openapi.yaml should not be edited manually as i
 
 ## new_dataset cloud Function
 
-`new_dataset` runs as a Cloud Function. It is Triggered by a Cloud Scheduler that runs once per hour, uploading the first file in the dataset storage bucket.
+`new_dataset` runs as a Cloud Function. It is Triggered by uploading a new dataset file to the dataset storage bucket.
+To deploy the Cloud Function, run the following locally, but set the PROJECT_NAME environment variables first:
+
+```bash
+PROJECT_NAME=ons-sds-sandbox-01
+gcloud auth login
+gcloud config set project $PROJECT_NAME
+
+cd src/app/
+gcloud functions deploy http-new-dataset-function \
+--no-allow-unauthenticated \
+--gen2 \
+--ingress-settings=all \
+--runtime=python311 \
+--region=europe-west2 \
+--source=. \
+--entry-point=new_dataset \
+--timeout=3600s \
+--memory=512MiB \
+--cpu=1 \
+--trigger-http \
+--set-env-vars="DATASET_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-dataset,SCHEMA_BUCKET_NAME=$PROJECT_NAME-sds-europe-west2-schema,CONF=cloud-build,AUTODELETE_DATASET_BUCKET_FILE=True,RETAIN_DATASET_FIRESTORE=True,LOG_LEVEL=DEBUG,PROJECT_ID=$PROJECT_NAME,FIRESTORE_DB_NAME=$PROJECT_NAME-sds,PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema,PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset,PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error,SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json,SDS_APPLICATION_VERSION=development"
+```
 
 ## Running the integration tests
 
@@ -178,3 +200,5 @@ docker-compose up
 
 make integration-test-local
 ```
+
+# Contact
