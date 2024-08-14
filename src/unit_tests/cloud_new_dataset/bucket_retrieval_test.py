@@ -10,8 +10,8 @@ from src.unit_tests.test_helper import TestHelper
 
 class BucketRetrievalTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = (
-            DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
         )
         self.empty_bucket_stash = DatasetBucketRepository.delete_bucket_file
         self.process_raw_dataset_stash = DatasetProcessorService.process_raw_dataset
@@ -19,8 +19,8 @@ class BucketRetrievalTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = (
-            self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
         )
         DatasetBucketRepository.delete_bucket_file = self.empty_bucket_stash
         DatasetProcessorService.process_raw_dataset = self.process_raw_dataset_stash
@@ -30,7 +30,7 @@ class BucketRetrievalTest(TestCase):
         Tests datasets are deleted from the bucket after they have been retrieved.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -46,7 +46,7 @@ class BucketRetrievalTest(TestCase):
         Tests an exception is raised if there is an issue deleting data from the bucket.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 

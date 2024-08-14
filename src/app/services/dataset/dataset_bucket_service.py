@@ -46,7 +46,7 @@ class DatasetBucketService:
             )
             raise RuntimeError("Failed to delete file from dataset bucket.")
 
-    def try_fetch_first_filename_from_bucket(self) -> str | None:
+    def try_fetch_oldest_filename_from_bucket(self) -> str | None:
         """
         Fetches the first filename from the bucket.
 
@@ -54,7 +54,7 @@ class DatasetBucketService:
         str: filename from the bucket.
         """
         try:
-            filename = self.dataset_bucket_repository.fetch_first_filename_from_bucket()
+            filename = self.dataset_bucket_repository.fetch_oldest_filename_from_bucket()
 
             return filename
 

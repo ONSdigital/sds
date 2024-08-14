@@ -13,8 +13,8 @@ from src.unit_tests.test_helper import TestHelper
 
 class PubSubTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = (
-            DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
         )
         self.get_latest_dataset_with_survey_id_stash = (
             DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
@@ -34,8 +34,8 @@ class PubSubTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = (
-            self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
         )
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
@@ -57,7 +57,7 @@ class PubSubTest(TestCase):
         When the dataset batch write is successful a success response should be published to the dataset topic
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -94,7 +94,7 @@ class PubSubTest(TestCase):
         When there is an issue with the dataset data publishing an error should be raised
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 

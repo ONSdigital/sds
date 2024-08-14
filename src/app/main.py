@@ -18,7 +18,7 @@ def new_dataset(request):
     * The dataset_id is an auto generated GUID and the filename is saved as a new field in the metadata.
     """
     logger.info("Fetching new dataset...")
-    filename = DatasetBucketService().try_fetch_first_filename_from_bucket()
+    filename = DatasetBucketService().try_fetch_oldest_filename_from_bucket()
 
     if not filename:
         logger.info("No dataset files found in bucket. Process is skipped")

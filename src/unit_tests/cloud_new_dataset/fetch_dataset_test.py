@@ -11,27 +11,27 @@ from src.unit_tests.test_helper import TestHelper
 
 class FetchDatasetTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = (
-            DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
         )
         self.get_and_validate_dataset_stash = (
             DatasetBucketService.get_and_validate_dataset
         )
-        self.fetch_first_filename_from_bucket_stash = (
-            DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
         )
 
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = (
-            self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
         )
         DatasetBucketService.get_and_validate_dataset = (
             self.get_and_validate_dataset_stash
         )
-        DatasetBucketRepository.fetch_first_filename_from_bucket = (
-            self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
         )
 
     def test_fetch_no_dataset_from_bucket(
@@ -40,7 +40,7 @@ class FetchDatasetTest(TestCase):
         """
         When there is no dataset in the bucket, an error should be raised
         """
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value=None
         )
         DatasetBucketService.get_and_validate_dataset = MagicMock()
@@ -56,7 +56,7 @@ class FetchDatasetTest(TestCase):
         """
         When the dataset fetch from the bucket fails, an error should be raised
         """
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             side_effect=Exception
         )
 

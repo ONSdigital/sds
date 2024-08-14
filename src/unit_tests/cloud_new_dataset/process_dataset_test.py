@@ -14,8 +14,8 @@ from src.unit_tests.test_helper import TestHelper
 
 class ProcessDatasetTest(TestCase):
     def setUp(self):
-        self.fetch_first_filename_from_bucket_stash = (
-            DatasetBucketRepository.fetch_first_filename_from_bucket
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
         )
         self.get_latest_dataset_with_survey_id_stash = (
             DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
@@ -42,8 +42,8 @@ class ProcessDatasetTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
-        DatasetBucketRepository.fetch_first_filename_from_bucket = (
-            self.fetch_first_filename_from_bucket_stash
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
         )
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
@@ -74,7 +74,7 @@ class ProcessDatasetTest(TestCase):
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -114,7 +114,7 @@ class ProcessDatasetTest(TestCase):
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -158,7 +158,7 @@ class ProcessDatasetTest(TestCase):
 
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -199,7 +199,7 @@ class ProcessDatasetTest(TestCase):
         """
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -242,7 +242,7 @@ class ProcessDatasetTest(TestCase):
         """
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -285,7 +285,7 @@ class ProcessDatasetTest(TestCase):
         """
         config.RETAIN_DATASET_FIRESTORE = True
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -324,7 +324,7 @@ class ProcessDatasetTest(TestCase):
         """
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -365,7 +365,7 @@ class ProcessDatasetTest(TestCase):
         """
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -400,7 +400,7 @@ class ProcessDatasetTest(TestCase):
         Tests appropriate runtime error will be promted when unit data count does not match total reporting units.
         """
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
@@ -442,7 +442,7 @@ class ProcessDatasetTest(TestCase):
 
         config.RETAIN_DATASET_FIRESTORE = False
 
-        DatasetBucketRepository.fetch_first_filename_from_bucket = MagicMock(
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
 
