@@ -54,7 +54,9 @@ class DatasetBucketService:
         str: filename from the bucket.
         """
         try:
-            filename = self.dataset_bucket_repository.fetch_oldest_filename_from_bucket()
+            filename = (
+                self.dataset_bucket_repository.fetch_oldest_filename_from_bucket()
+            )
 
             return filename
 
