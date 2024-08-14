@@ -33,6 +33,7 @@ services:
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
+      - COLLECTION_EXERCISE_END_SUBSCRIPTION_ID=collection-exercise-end-subscription
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
       - SDS_APPLICATION_VERSION=development
@@ -80,6 +81,7 @@ services:
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
+      - COLLECTION_EXERCISE_END_SUBSCRIPTION_ID=collection-exercise-end-subscription
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
       - SDS_APPLICATION_VERSION=development
@@ -106,6 +108,7 @@ services:
       - PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema
       - PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset
       - PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
+      - COLLECTION_EXERCISE_END_SUBSCRIPTION_ID=collection-exercise-end-subscription
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
       - SDS_APPLICATION_VERSION=development

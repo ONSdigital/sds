@@ -20,15 +20,12 @@ subscription_path = subscriber.subscription_path(
     config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
 )
 
+streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+print(f"Listening for messages on {subscription_path}..\n")
 
 def callback(message: pubsub_v1.subscriber.message.Message) -> None:
     print(f"Received {message}.")
     message.ack()
-
-
-streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
-print(f"Listening for messages on {subscription_path}..\n")
-
 
 def custom_openapi():
     if app.openapi_schema:
