@@ -23,9 +23,11 @@ subscription_path = subscriber.subscription_path(
 streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
 print(f"Listening for messages on {subscription_path}..\n")
 
+
 def callback(message: pubsub_v1.subscriber.message.Message) -> None:
     print(f"Received {message}.")
     message.ack()
+
 
 def custom_openapi():
     if app.openapi_schema:
