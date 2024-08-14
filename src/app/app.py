@@ -15,6 +15,12 @@ app.description = "Open api schema for SDS"
 app.title = "Supplementary Data Service"
 app.version = "1.0.0"
 
+
+def callback(message: pubsub_v1.subscriber.message.Message) -> None:
+    print(f"Received {message}.")
+    message.ack()
+
+
 subscriber = pubsub_v1.SubscriberClient()
 subscription_path = subscriber.subscription_path(
     config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
@@ -22,11 +28,6 @@ subscription_path = subscriber.subscription_path(
 
 streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
 print(f"Listening for messages on {subscription_path}..\n")
-
-
-def callback(message: pubsub_v1.subscriber.message.Message) -> None:
-    print(f"Received {message}.")
-    message.ack()
 
 
 def custom_openapi():
