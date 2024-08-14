@@ -22,16 +22,22 @@ class DatasetBucketRepository(BucketRepository):
         """
         return self.get_bucket_file_as_json(filename)
 
-    def fetch_first_filename_from_bucket(self) -> str | None:
-        """
-        Fetches the first filename from the bucket.
+    def fetch_oldest_filename_from_bucket(self) -> str | None:
+            """
+            Fetches the filename with the oldest 'last modified' date from the bucket.
 
-        Returns:
-        str: filename from the bucket.
-        """
-        blobs = self.bucket.list_blobs()
+            Returns:
+            str: filename with the oldest 'last modified' date from the bucket.
+            """
+            blobs = self.bucket.list_blobs()
+            oldest_blob = None
+            oldest_date = None
 
-        for blob in blobs:
-            return blob.name
+            for blob in blobs:
+                last_modified = blob.updated
 
-        return None
+                if oldest_date is None or last_modified < oldest_date:
+                    oldest_date = last_modified
+                    oldest_blob = blob
+
+            return oldest_blob.name if oldest_blob else None
