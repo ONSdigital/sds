@@ -328,6 +328,12 @@ def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
+def empty_dataset_bucket() -> None:
+    """
+    Method to empty the dataset bucket.
+    """
+    delete_blobs(bucket_loader.get_dataset_bucket())
+
 
 def force_run_schedule_job() -> None:
     """

@@ -14,6 +14,7 @@ from src.integration_tests.helpers.integration_helpers import (
     pubsub_setup,
     pubsub_teardown,
     setup_session,
+    empty_dataset_bucket,
 )
 from src.integration_tests.helpers.pubsub_helper import (
     dataset_error_pubsub_helper,
@@ -32,6 +33,7 @@ class E2EDatasetIntegrationTest(TestCase):
         cleanup()
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+        empty_dataset_bucket()
 
     def tearDown(self) -> None:
         cleanup()
