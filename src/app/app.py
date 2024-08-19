@@ -4,7 +4,6 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from logging_config import logging
-from message import collectionexerciseendsubscriber
 from routers import dataset_router, schema_router, status_router
 
 logger = logging.getLogger(__name__)

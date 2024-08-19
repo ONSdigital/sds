@@ -1,5 +1,4 @@
 from config.config_factory import config
-from fastapi import FastAPI
 from google.cloud import pubsub_v1
 from logging_config import logging
 
