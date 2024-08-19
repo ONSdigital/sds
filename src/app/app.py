@@ -1,11 +1,10 @@
 import exception.exceptions as exceptions
-from config.config_factory import config
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
-from google.cloud import pubsub_v1
 from logging_config import logging
+from message import collectionexerciseendsubscriber
 from routers import dataset_router, schema_router, status_router
 
 logger = logging.getLogger(__name__)
@@ -14,20 +13,6 @@ app = FastAPI()
 app.description = "Open api schema for SDS"
 app.title = "Supplementary Data Service"
 app.version = "1.0.0"
-
-
-def callback(message: pubsub_v1.subscriber.message.Message) -> None:
-    print(f"Received {message}.")
-    message.ack()
-
-
-subscriber = pubsub_v1.SubscriberClient()
-subscription_path = subscriber.subscription_path(
-    config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
-)
-
-streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
-print(f"Listening for messages on {subscription_path}..\n")
 
 
 def custom_openapi():
