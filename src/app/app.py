@@ -117,11 +117,12 @@ subscription_path = subscriber.subscription_path(
 
 async def process_subscription():
     def callback(message: pubsub_v1.subscriber.message.Message) -> None:
-        print(f"Received {message}.")
+        logger.info("Collection Exercise End Message received")
+        logger.debug(f"Collection Exercise End Message received : {message}")
         message.ack()
 
     subscriber.subscribe(subscription_path, callback=callback)
-    print(f"Listening for messages on {subscription_path}..\n")
+    logger.debug(f"Listening for messages on subscription path : {subscription_path}")
 
 
 @app.on_event("startup")
