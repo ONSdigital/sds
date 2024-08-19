@@ -13,6 +13,34 @@ class CollectionExerciseEndSubscriber:
         self.create_topic()
         self.create_subscription()
 
+    def create_topic(self) -> None:
+        topic_path = self.subscriber.topic_path(
+            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )
+        """Create a new Pub/Sub topic."""
+        logger.debug("create_topic")
+        topic = self.publisher.create_topic(request={"name": topic_path})
+        logger.debug(f"Created topic: {topic.name}")
+
+    def create_subscription(self) -> None:
+        subscription_path = self.subscriber.subscription_path(
+            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
+        )
+        topic_path = self.subscriber.topic_path(
+            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )
+        """Creates a subscription using `self.subscription_path`"""
+
+        subscription = self.subscriber.create_subscription(
+            request={
+                "name": subscription_path,
+                "topic": topic_path,
+                "enable_message_ordering": True,
+            }
+        )
+
+        logger.debug(f"Subscription created: {subscription}")
+
     def pull_message(self):
         subscription_path = self.subscriber.subscription_path(
             config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID

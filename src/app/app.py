@@ -1,8 +1,10 @@
 import exception.exceptions as exceptions
+from config.config_factory import config
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
+from google.cloud import pubsub_v1
 from logging_config import logging
 from routers import dataset_router, schema_router, status_router
 
@@ -104,6 +106,57 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     validation exception handler to return 400 instead of 422
     """
     return ExceptionInterceptor.throw_400_validation_exception(request, exc)
+
+
+subscriber = pubsub_v1.SubscriberClient()
+publisher = pubsub_v1.PublisherClient()
+subscription_path = subscriber.subscription_path(
+    config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
+)
+
+
+def create_topic() -> None:
+    topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+    )
+    """Create a new Pub/Sub topic."""
+    logger.debug("create_topic")
+    topic = publisher.create_topic(request={"name": topic_path})
+    logger.debug(f"Created topic: {topic.name}")
+
+
+def create_subscription() -> None:
+    topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+    )
+    """Creates a subscription using `self.subscription_path`"""
+
+    subscription = subscriber.create_subscription(
+        request={
+            "name": subscription_path,
+            "topic": topic_path,
+            "enable_message_ordering": True,
+        }
+    )
+
+    logger.debug(f"Subscription created: {subscription}")
+
+
+async def process_subscription():
+    def callback(message: pubsub_v1.subscriber.message.Message) -> None:
+        print(f"Received {message}.")
+        message.ack()
+
+    subscriber.subscribe(subscription_path, callback=callback)
+    print(f"Listening for messages on {subscription_path}..\n")
+
+
+@app.on_event("startup")
+async def startup_event():
+    create_topic()
+    create_subscription()
+    # Start the background task to receive and process messages
+    await process_subscription()
 
 
 app.include_router(dataset_router.router)
