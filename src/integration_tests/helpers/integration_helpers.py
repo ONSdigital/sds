@@ -5,7 +5,7 @@ from datetime import datetime
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
-from google.cloud import storage
+from google.cloud import scheduler_v1, storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
@@ -173,6 +173,8 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
+    force_run_schedule_job()
+
     if not skip_wait:
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
@@ -239,6 +241,8 @@ def _create_remote_dataset_as_string(
     bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
     blob = bucket.blob(filename)
     blob.upload_from_string(file_content, content_type="text/plain")
+
+    force_run_schedule_job()
 
 
 def wait_until_dataset_ready(
@@ -323,3 +327,23 @@ def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
 def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
+
+
+def empty_dataset_bucket() -> None:
+    """
+    Method to empty the dataset bucket.
+    """
+    delete_blobs(bucket_loader.get_dataset_bucket())
+
+
+def force_run_schedule_job() -> None:
+    """
+    Method to force run the schedule job to trigger the new dataset upload function.
+    """
+    client = scheduler_v1.CloudSchedulerClient()
+
+    request = scheduler_v1.RunJobRequest(
+        name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
+    )
+
+    client.run_job(request=request)

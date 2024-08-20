@@ -1,14 +1,15 @@
+import json
+
 import functions_framework
 from logging_config import logging
 from services.dataset.dataset_bucket_service import DatasetBucketService
 from services.dataset.dataset_processor_service import DatasetProcessorService
-from services.validators.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
 
 
-@functions_framework.cloud_event
-def new_dataset(cloud_event):
+@functions_framework.http
+def new_dataset(request):
     """
     Triggered by uploading a new dataset file to the
     dataset storage bucket. See the 'Cloud Functions' section
@@ -16,12 +17,14 @@ def new_dataset(cloud_event):
     is set up.
     * The dataset_id is an auto generated GUID and the filename is saved as a new field in the metadata.
     """
+    logger.info("Fetching new dataset...")
+    filename = DatasetBucketService().try_fetch_oldest_filename_from_bucket()
+
+    if not filename:
+        logger.info("No dataset files found in bucket. Process is skipped")
+        return json.dumps({"success": True}), 200, {"ContentType": "application/json"}
+
     logger.info("Uploading new dataset...")
-    logger.debug(f"Cloud event data: {cloud_event.data}")
-
-    filename = cloud_event.data["name"]
-
-    DatasetValidatorService.validate_file_is_json(filename)
 
     raw_dataset = DatasetBucketService().get_and_validate_dataset(filename)
 
@@ -31,3 +34,5 @@ def new_dataset(cloud_event):
     DatasetProcessorService().process_raw_dataset(filename, raw_dataset)
 
     logger.info("Dataset uploaded successfully.")
+
+    return json.dumps({"success": True}), 200, {"ContentType": "application/json"}

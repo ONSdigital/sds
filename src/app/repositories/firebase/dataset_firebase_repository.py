@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    WRITE_BATCH_SIZE = 500
+    WRITE_BATCH_SIZE = 100
     DELETE_BATCH_SIZE = 100
 
     def __init__(self):

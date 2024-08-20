@@ -13,6 +13,9 @@ from src.unit_tests.test_helper import TestHelper
 
 class PubSubTest(TestCase):
     def setUp(self):
+        self.fetch_oldest_filename_from_bucket_stash = (
+            DatasetBucketRepository.fetch_oldest_filename_from_bucket
+        )
         self.get_latest_dataset_with_survey_id_stash = (
             DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id
         )
@@ -31,6 +34,9 @@ class PubSubTest(TestCase):
         TestHelper.mock_get_dataset_from_bucket()
 
     def tearDown(self):
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = (
+            self.fetch_oldest_filename_from_bucket_stash
+        )
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             self.get_latest_dataset_with_survey_id_stash
         )
@@ -50,8 +56,10 @@ class PubSubTest(TestCase):
         """
         When the dataset batch write is successful a success response should be published to the dataset topic
         """
-        cloud_event = MagicMock()
-        cloud_event.data = dataset_test_data.cloud_event_data
+
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             MagicMock()
@@ -73,7 +81,7 @@ class PubSubTest(TestCase):
         )
         DatasetBucketRepository.delete_bucket_file = MagicMock()
 
-        TestHelper.new_dataset_mock(cloud_event)
+        TestHelper.new_dataset_mock(request=None)
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
             dataset_test_data.updated_dataset_metadata, config.PUBLISH_DATASET_TOPIC_ID
@@ -85,8 +93,10 @@ class PubSubTest(TestCase):
         """
         When there is an issue with the dataset data publishing an error should be raised
         """
-        cloud_event = MagicMock()
-        cloud_event.data = dataset_test_data.cloud_event_data
+
+        DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
+            return_value="test_filename.json"
+        )
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id = (
             MagicMock()
@@ -113,4 +123,4 @@ class PubSubTest(TestCase):
         with raises(
             RuntimeError, match="Error publishing dataset response to the topic."
         ):
-            TestHelper.new_dataset_mock(cloud_event)
+            TestHelper.new_dataset_mock(request=None)

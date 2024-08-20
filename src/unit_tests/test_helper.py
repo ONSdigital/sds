@@ -8,13 +8,13 @@ from repositories.buckets.dataset_bucket_repository import DatasetBucketReposito
 
 class TestHelper:
     @staticmethod
-    def new_dataset_mock(cloud_event):
+    def new_dataset_mock(request):
         """
         Mocks the cloud function call.
         """
         from main import new_dataset
 
-        return new_dataset(cloud_event)
+        return new_dataset(request)
 
     @staticmethod
     def mock_get_dataset_from_bucket():
