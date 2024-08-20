@@ -19,10 +19,10 @@ class DatasetValidatorService:
         filename (str): filename being validated.
         """
 
-        isValid, message = DatasetValidatorService._validate_file_extension_is_json(
+        is_valid, message = DatasetValidatorService._validate_file_extension_is_json(
             filename
         )
-        if not isValid:
+        if not is_valid:
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
                     "error": "Filetype error",
@@ -31,10 +31,10 @@ class DatasetValidatorService:
             )
             return False, message
 
-        isValid, message = DatasetValidatorService._validate_file_content_is_json(
+        is_valid, message = DatasetValidatorService._validate_file_content_is_json(
             filename
         )
-        if not isValid:
+        if not is_valid:
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
                     "error": "File content error",
@@ -113,9 +113,9 @@ class DatasetValidatorService:
         raw_dataset (RawDataset): dataset being validated.
         """
 
-        isValid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
+        is_valid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
-        if isValid is False:
+        if is_valid is False:
             DatasetValidatorService.try_publish_dataset_error_to_topic(
                 {
                     "error": "Mandatory key(s) error",

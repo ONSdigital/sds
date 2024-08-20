@@ -18,8 +18,8 @@ class DatasetBucketService:
         Parameters:
         filename: name of file being retrieved from bucket
         """
-        isValid, message = DatasetValidatorService.validate_file_is_json(filename)
-        if not isValid:
+        is_valid, message = DatasetValidatorService.validate_file_is_json(filename)
+        if not is_valid:
             if config.AUTODELETE_DATASET_BUCKET_FILE is True:
                 self.try_delete_bucket_file(filename)
 
