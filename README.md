@@ -113,6 +113,37 @@ docker-compose stop api
 
 make start-docker-dev
 ```
+Missing infrastructure for local docker
+
+Topic for publisher_service.py and call on init
+```python
+    def create_topic(self, topic_id) -> None:
+        topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
+        topic = self.publisher.create_topic(request={"name": topic_path})
+```
+Add the following topic and subscription to app.py and call in startup_event()
+```python
+    def create_topic() -> None:
+        topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )
+        topic = publisher.create_topic(request={"name": topic_path})
+```
+
+```python
+    def create_subscription() -> None:
+        topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )    
+            subscription = subscriber.create_subscription(
+                request={
+                    "name": subscription_path,
+                    "topic": topic_path,
+                    "enable_message_ordering": True,
+                }
+            )
+```
+
 
 ## Running linting and unit tests
 

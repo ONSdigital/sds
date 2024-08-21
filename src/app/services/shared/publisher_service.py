@@ -42,12 +42,5 @@ class PublisherService:
         except Exception:
             raise exceptions.ExceptionTopicNotFound
 
-    # def create_topic(self, topic_id) -> None:
-    #     topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
-    #     """Create a new Pub/Sub topic."""
-    #     logger.debug("create_topic")
-    #     topic = self.publisher.create_topic(request={"name": topic_path})
-    #     logger.debug(f"Created topic: {topic.name}")
-
 
 publisher_service = PublisherService()
