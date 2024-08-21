@@ -1,4 +1,3 @@
-import time
 from unittest import TestCase
 
 from config.config_factory import config
@@ -10,6 +9,7 @@ from src.integration_tests.helpers.integration_helpers import (
     create_dataset_as_string,
     create_filename_error_filepath,
     create_filepath,
+    empty_dataset_bucket,
     generate_headers,
     load_json,
     pubsub_setup,
@@ -31,9 +31,9 @@ from src.test_data.shared_test_data import (
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        time.sleep(5)
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+        empty_dataset_bucket()
 
     def tearDown(self) -> None:
         cleanup()
@@ -424,6 +424,7 @@ class E2EDatasetIntegrationTest(TestCase):
         # Upload dataset with invalid json
         with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
+            file.close()
 
         dataset_invalid_json_filename = create_filepath("integration-test-invalid-json")
 
