@@ -115,6 +115,33 @@ subscription_path = subscriber.subscription_path(
 )
 
 
+def create_topic() -> None:
+    topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+    )
+    """Create a new Pub/Sub topic."""
+    logger.debug("create_topic")
+    topic = publisher.create_topic(request={"name": topic_path})
+    logger.debug(f"Created topic: {topic.name}")
+
+
+def create_subscription() -> None:
+    topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+    )
+    """Creates a subscription using `self.subscription_path`"""
+
+    subscription = subscriber.create_subscription(
+        request={
+            "name": subscription_path,
+            "topic": topic_path,
+            "enable_message_ordering": True,
+        }
+    )
+
+    logger.debug(f"Subscription created: {subscription}")
+
+
 async def process_subscription():
     def callback(message: pubsub_v1.subscriber.message.Message) -> None:
         logger.info("Collection Exercise End Message received")
@@ -127,6 +154,8 @@ async def process_subscription():
 
 @app.on_event("startup")
 async def startup_event():
+    create_topic()
+    create_subscription()
     # Start the background task to receive and process messages
     await process_subscription()
 

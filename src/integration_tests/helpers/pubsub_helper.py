@@ -15,13 +15,14 @@ class PubSubHelper:
         self.topic_id = topic_id
 
         if config.OAUTH_CLIENT_ID.__contains__("local"):
-            self._try_create_topic()
+            self._try_create_topic(self.topic_id)
+            self._try_create_topic(config.COLLECTION_EXERCISE_END_TOPIC_ID)
 
-    def _try_create_topic(self) -> None:
+    def _try_create_topic(self, topic_id) -> None:
         """
         Try to create a topic for publisher if not exists
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
 
         try:
             if not self._topic_exists(topic_path):
@@ -53,6 +54,32 @@ class PubSubHelper:
         )
 
         if not self._subscription_exists(subscriber_id):
+            self.subscriber_client.create_subscription(
+                request={
+                    "name": subscription_path,
+                    "topic": topic_path,
+                    "enable_message_ordering": True,
+                }
+            )
+
+    def try_create_collection_end_subscriber(self) -> None:
+        """
+        Creates a subscriber with a unique subscriber id if one does not already exist.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
+        topic_path = self.publisher_client.topic_path(
+            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )
+
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
+        )
+
+        if not self._subscription_exists(
+            config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
+        ):
             self.subscriber_client.create_subscription(
                 request={
                     "name": subscription_path,
