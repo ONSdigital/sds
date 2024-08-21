@@ -89,9 +89,11 @@ class PubSubHelper:
                 }
             )
 
-            self._wait_and_check_subscription_exists(subscriber_id)
+            self._wait_and_check_subscription_exists(
+                config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
+            )
 
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
+    def pull_and_acknowledge_messages(self, subscriber_id: str) -> list[dict]:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -148,7 +150,7 @@ class PubSubHelper:
 
             self._wait_and_check_subscription_deleted(subscriber_id)
 
-    def _subscription_exists(self, subscriber_id: str) -> None:
+    def _subscription_exists(self, subscriber_id: str) -> bool:
         """
         Checks a subscription exists.
 
