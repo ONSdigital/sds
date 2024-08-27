@@ -1,6 +1,6 @@
 FROM python:3.11-slim
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-COPY src/app src
-ENV PYTHONPATH=src
+WORKDIR /code
+COPY requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY src/app /code/app
 CMD ["fastapi", "run", "app/main.py", "--port", "$PORT"]
