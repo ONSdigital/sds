@@ -1,6 +1,6 @@
-FROM python:3.11-slim
-WORKDIR /code
-COPY requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-COPY src/app /code/app
-CMD ["fastapi", "run", "app/main.py", "--port", "$PORT"]
+FROM python:3.11-alpine
+COPY src/app src
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+ENV PYTHONPATH=src
+CMD exec uvicorn src.app:app --host 0.0.0.0 --port $PORT
