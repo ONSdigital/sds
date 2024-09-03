@@ -155,7 +155,7 @@ gcloud auth login
 gcloud config set project $PROJECT_NAME
 
 cd src/app/
-gcloud functions deploy http-new-dataset-function \
+gcloud functions deploy new-dataset-function \
 --no-allow-unauthenticated \
 --gen2 \
 --ingress-settings=all \
