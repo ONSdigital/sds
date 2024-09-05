@@ -7,6 +7,7 @@ class FirebaseLoader:
         self.client = self._connect_client()
         self.datasets_collection = self._set_collection("datasets")
         self.schemas_collection = self._set_collection("schemas")
+        self.deletion_collection = self._set_collection("marked_for_deletion")
 
     def get_client(self) -> firestore.Client:
         """
@@ -25,6 +26,12 @@ class FirebaseLoader:
         Get the schemas collection from firestore
         """
         return self.schemas_collection
+
+    def get_deletion_collection(self) -> firestore.CollectionReference:
+        """
+        Get the schemas collection from firestore
+        """
+        return self.deletion_collection
 
     def _connect_client(self) -> firestore.Client:
         """

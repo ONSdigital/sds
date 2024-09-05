@@ -7,6 +7,7 @@ from fastapi.openapi.utils import get_openapi
 from google.cloud import pubsub_v1
 from logging_config import logging
 from routers import dataset_router, schema_router, status_router
+from services.dataset.dataset_deletion_service import DatasetDeletionService
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
@@ -119,6 +120,7 @@ async def process_subscription():
     def callback(message: pubsub_v1.subscriber.message.Message) -> None:
         logger.info("Collection Exercise End Message received")
         logger.debug(f"Collection Exercise End Message received : {message}")
+        DatasetDeletionService.process_collection_exercise_end_message(message)
         message.ack()
 
     subscriber.subscribe(subscription_path, callback=callback)
