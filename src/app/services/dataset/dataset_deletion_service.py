@@ -1,14 +1,12 @@
 import json
 
-from models.collection_exericise_end_data import (
-    CollectionExerciseEndData,
-    DeleteMetadata,
-)
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
 
-from src.app.repositories.firebase.marked_for_delete_firebase_repository import (
+from src.app.models.deletion_models import DeleteMetadata
+from src.app.repositories.firebase.deletion_firebase_repository import (
     DeletionMetadataFirebaseRepository,
 )
 

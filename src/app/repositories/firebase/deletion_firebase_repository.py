@@ -1,4 +1,4 @@
-from models.collection_exericise_end_data import DeleteMetadata
+from models.deletion_models import DeleteMetadata
 from repositories.firebase.firebase_loader import firebase_loader
 
 
