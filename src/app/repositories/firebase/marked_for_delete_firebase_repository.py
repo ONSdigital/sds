@@ -1,9 +1,4 @@
-from firebase_admin import firestore
-from google.cloud.firestore import Transaction
-from models.collection_exericise_end_data import (
-    CollectionExerciseEndData,
-    DeleteMetadata,
-)
+from models.collection_exericise_end_data import DeleteMetadata
 from repositories.firebase.firebase_loader import firebase_loader
 
 

@@ -5,9 +5,6 @@ from models.collection_exericise_end_data import (
     DeleteMetadata,
 )
 from models.dataset_models import DatasetMetadata
-from repositories.firebase.marked_for_delete_firebase_repository import (
-    DeletionMetadataFirebaseRepository,
-)
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
 
@@ -63,4 +60,6 @@ class DatasetDeletionService:
                 "mark_deleted_at": time_now,
                 "deleted_at": "n/a",
             }
-            DeletionMetadataFirebaseRepository.create_delete_in_transaction(delete_metadata)
+            DeletionMetadataFirebaseRepository.create_delete_in_transaction(
+                delete_metadata
+            )
