@@ -127,7 +127,7 @@ async def process_subscription():
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("nothing")
+    logger.debug("Application pre-start")
 
 
 app.include_router(dataset_router.router)
