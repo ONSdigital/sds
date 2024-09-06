@@ -12,8 +12,7 @@ from services.shared.datetime_service import DatetimeService
 
 class DatasetDeletionService:
 
-    def __init__(self, delete_firebase_repository: DeletionMetadataFirebaseRepository):
-        self.dataset_firebase_repository = delete_firebase_repository
+    dataset_firebase_repository = DeletionMetadataFirebaseRepository()
 
     def process_collection_exercise_end_message(self, json_string: str):
         collection_exercise_end = self._json_to_object(json_string)
