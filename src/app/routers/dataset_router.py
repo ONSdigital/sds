@@ -3,7 +3,6 @@ import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends, Request
 from logging_config import logging
-from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -20,13 +19,13 @@ logger = logging.getLogger(__name__)
 async def pull_subscription(request: Request):
     logger.info("endpoint hit")
     payload = await request.json()
-    collection_exercise_end_message: CollectionExerciseEndData = {
-        "dataset_guid": payload["dataset_guid"],
-        "survey_id": payload["survey_id"],
-        "period": payload["period"],
-    }
+    # collection_exercise_end_message: CollectionExerciseEndData = {
+    #     "dataset_guid": payload["dataset_guid"],
+    #     "survey_id": payload["survey_id"],
+    #     "period": payload["period"],
+    # }
     logger.info("extracted data")
-    logger.info(collection_exercise_end_message)
+    logger.info(payload)
 
 
 @router.get(
