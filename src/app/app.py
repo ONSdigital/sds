@@ -115,14 +115,14 @@ subscription_path = subscriber.subscription_path(
     config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
 )
 
-deletion_service = DatasetDeletionService()
+delete_service = DatasetDeletionService()
 
 
 async def process_subscription():
     def callback(message: pubsub_v1.subscriber.message.Message) -> None:
         logger.info("Collection Exercise End Message received")
         logger.debug(f"Collection Exercise End Message received : {message}")
-        deletion_service.process_collection_exercise_end_message(message)
+        delete_service.process_collection_exercise_end_message(message)
         message.ack()
 
     subscriber.subscribe(subscription_path, callback=callback)

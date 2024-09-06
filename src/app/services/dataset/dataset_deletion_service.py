@@ -1,5 +1,6 @@
 import json
 
+from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from models.deletion_models import DeleteMetadata
@@ -8,6 +9,8 @@ from repositories.firebase.deletion_firebase_repository import (
 )
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
+
+logger = logging.getLogger(__name__)
 
 
 class DatasetDeletionService:
@@ -22,6 +25,7 @@ class DatasetDeletionService:
             self._mark_collections_for_deletion(list_supplementary_metadata)
 
     def _json_to_object(self, json_string: str) -> DeleteMetadata:
+        logger.info("Mapping to obj")
         collection_exercise_end_dict = json.loads(json_string)
         collection_exercise_end_obj = CollectionExerciseEndData(
             **collection_exercise_end_dict
@@ -33,11 +37,13 @@ class DatasetDeletionService:
     ) -> bool:
         if collection_exercise_end_data.dataset_guid == "":
             return False
+        logger.info("Supplementary data found")
         return True
 
     def _collect_metadata_for_period_and_survey(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
+        logger.info("Collecting all datasets for period and survey")
         return DatasetProcessorService.dataset_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )

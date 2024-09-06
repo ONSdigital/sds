@@ -15,6 +15,11 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+@router.post("/new-sub")
+async def pull_subscription():
+    logger.info("endpoint hit")
+
+
 @router.get(
     "/v1/unit_data",
     responses={
