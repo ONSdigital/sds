@@ -6,8 +6,6 @@ from google.cloud import storage
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
-    create_dataset_as_string,
-    create_filename_error_filepath,
     create_filepath,
     empty_dataset_bucket,
     generate_headers,
