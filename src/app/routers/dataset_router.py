@@ -1,8 +1,11 @@
+import base64
+
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends, Request
 from logging_config import logging
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -15,17 +18,33 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+# {
+#     "message": {
+#         "data":
+#         "ewogICAgImRhdGFzZXRfZ3VpZCI6ImRmZmQzNmJjLTEyMmYtNGQzYy1hNGI1LWVjN2Y0MWQxZWYxZCIsCiAgICAic3VydmV5X2lkIjogIjA2NiIsCiAgICAicGVyaW9kIjogIjIwMjUwMSIKfQ==",
+#         "messageId": "12206893431830414",
+#         "message_id": "12206893431830414",
+#         "publishTime": "2024-09-06T18:25:41.725Z",
+#         "publish_time": "2024-09-06T18:25:41.725Z"
+#     },
+#     "subscription": "projects/ons-sds-sandbox-01/subscriptions/collection-exercise-end-subscription"
+# }
+
+
 @router.post("/new-sub")
 async def pull_subscription(request: Request):
     logger.info("endpoint hit")
     payload = await request.json()
-    # collection_exercise_end_message: CollectionExerciseEndData = {
-    #     "dataset_guid": payload["dataset_guid"],
-    #     "survey_id": payload["survey_id"],
-    #     "period": payload["period"],
-    # }
+    encoded_data = payload["data"]
+    json_data = base64.b64decode(encoded_data)
+
+    collection_exercise_end_message: CollectionExerciseEndData = {
+        "dataset_guid": json_data["dataset_guid"],
+        "survey_id": json_data["survey_id"],
+        "period": json_data["period"],
+    }
     logger.info("extracted data")
-    logger.info(payload)
+    logger.info(collection_exercise_end_message)
 
 
 @router.get(
