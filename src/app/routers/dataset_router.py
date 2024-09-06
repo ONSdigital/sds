@@ -1,11 +1,8 @@
-import base64
-
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends, Request
 from logging_config import logging
-from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -34,17 +31,17 @@ logger = logging.getLogger(__name__)
 @router.post("/new-sub")
 async def pull_subscription(request: Request):
     logger.info("endpoint hit")
-    payload = await request.json()
-    encoded_data = payload["data"]
-    json_data = base64.b64decode(encoded_data)
+    payload_json = await request.json()
+    payload = await request.data()
 
-    collection_exercise_end_message: CollectionExerciseEndData = {
-        "dataset_guid": json_data["dataset_guid"],
-        "survey_id": json_data["survey_id"],
-        "period": json_data["period"],
-    }
+    # collection_exercise_end_message: CollectionExerciseEndData = {
+    #     "dataset_guid": json_data["dataset_guid"],
+    #     "survey_id": json_data["survey_id"],
+    #     "period": json_data["period"],
+    # }
     logger.info("extracted data")
-    logger.info(collection_exercise_end_message)
+    logger.info(payload_json)
+    logger.info(payload)
 
 
 @router.get(
