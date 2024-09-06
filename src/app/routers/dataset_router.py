@@ -1,7 +1,10 @@
+import base64
+import json
+
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from logging_config import logging
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
@@ -16,9 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/new-sub")
-async def pull_subscription(message):
+async def pull_subscription(request: Request):
     logger.info("endpoint hit")
-    logger.info(message)
+    envelope = json.loads(request.data.decode("utf-8"))
+    payload = base64.b64decode(envelope["message"]["data"])
+    logger.info(payload)
 
 
 @router.get(
