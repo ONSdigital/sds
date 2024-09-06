@@ -1,6 +1,3 @@
-import base64
-import json
-
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
@@ -21,9 +18,7 @@ logger = logging.getLogger(__name__)
 @router.post("/new-sub")
 async def pull_subscription(request: Request):
     logger.info("endpoint hit")
-    envelope = json.loads(request.data.decode("utf-8"))
-    payload = base64.b64decode(envelope["message"]["data"])
-    logger.info(payload)
+    logger.info(request)
 
 
 @router.get(

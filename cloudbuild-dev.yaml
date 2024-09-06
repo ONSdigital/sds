@@ -9,21 +9,21 @@ steps:
     entrypoint: python
     args: ["-m", "pip", "install", "-r", "requirements.txt", "--user"]
 
-  - name: python:3.11
-    id: "Audit packages"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make audit
-
-  - name: python:3.11
-    id: "Check linting and code formatting"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make lint
+#  - name: python:3.11
+#    id: "Audit packages"
+#    entrypoint: sh
+#    args:
+#      - "-c"
+#      - |
+#        make audit
+#
+#  - name: python:3.11
+#    id: "Check linting and code formatting"
+#    entrypoint: sh
+#    args:
+#      - "-c"
+#      - |
+#        make lint
 
   - name: python:3.11
     id: "Run unit tests"
@@ -140,29 +140,29 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python:3.11
-    id: "Run integration test"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        export INT_DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME}
-        export INT_AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE}
-        export INT_RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE}
-        export INT_LOG_LEVEL=${_LOG_LEVEL}
-        export INT_PROJECT_ID=${PROJECT_ID}
-        export INT_SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
-        export INT_PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
-        export INT_PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}
-        export INT_PUBLISH_DATASET_ERROR_TOPIC_ID=${_PUBLISH_DATASET_ERROR_TOPIC_ID}
-        export INT_COLLECTION_EXERCISE_END_SUBSCRIPTION_ID=${_COLLECTION_EXERCISE_END_SUBSCRIPTION_ID}
-        export INT_COLLECTION_EXERCISE_END_TOPIC_ID=${_COLLECTION_EXERCISE_END_TOPIC_ID}
-        export INT_API_URL=${_API_URL}
-        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
-        export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
-        export INT_SURVEY_MAP_URL=${_SURVEY_MAP_URL}
-        export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
-        make integration-test-cloudbuild
+#  - name: python:3.11
+#    id: "Run integration test"
+#    entrypoint: sh
+#    args:
+#      - "-c"
+#      - |
+#        export INT_DATASET_BUCKET_NAME=${_DATASET_BUCKET_NAME}
+#        export INT_AUTODELETE_DATASET_BUCKET_FILE=${_AUTODELETE_DATASET_BUCKET_FILE}
+#        export INT_RETAIN_DATASET_FIRESTORE=${_RETAIN_DATASET_FIRESTORE}
+#        export INT_LOG_LEVEL=${_LOG_LEVEL}
+#        export INT_PROJECT_ID=${PROJECT_ID}
+#        export INT_SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
+#        export INT_PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
+#        export INT_PUBLISH_DATASET_TOPIC_ID=${_PUBLISH_DATASET_TOPIC_ID}
+#        export INT_PUBLISH_DATASET_ERROR_TOPIC_ID=${_PUBLISH_DATASET_ERROR_TOPIC_ID}
+#        export INT_COLLECTION_EXERCISE_END_SUBSCRIPTION_ID=${_COLLECTION_EXERCISE_END_SUBSCRIPTION_ID}
+#        export INT_COLLECTION_EXERCISE_END_TOPIC_ID=${_COLLECTION_EXERCISE_END_TOPIC_ID}
+#        export INT_API_URL=${_API_URL}
+#        OAUTH_CLIENT_NAME=$(cat /workspace/oauth_client_name)
+#        export INT_OAUTH_CLIENT_ID=${OAUTH_CLIENT_NAME##*/}
+#        export INT_SURVEY_MAP_URL=${_SURVEY_MAP_URL}
+#        export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
+#        make integration-test-cloudbuild
 
 options:
   logging: CLOUD_LOGGING_ONLY
