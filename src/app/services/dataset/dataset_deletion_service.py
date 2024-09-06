@@ -11,8 +11,8 @@ from services.shared.datetime_service import DatetimeService
 
 
 class DatasetDeletionService:
-    def process_collection_exercise_end_message(self, json_string: str):
-        collection_exercise_end = self._json_to_object(json_string)
+    def process_collection_exercise_end_message(self, json_string):
+        collection_exercise_end = self._json_to_object(json_string.data)
         supplementary_data = self._check_if_supplementary_data(collection_exercise_end)
 
         if supplementary_data:
