@@ -53,6 +53,9 @@ class DatasetDeletionService:
         for dataset_meta in list_dataset_metadata:
             delete_metadata: DeleteMetadata = {
                 "dataset_guid": dataset_meta.dataset_guid,
+                "period_id": dataset_meta.period_id,
+                "survey_id": dataset_meta.survey_id,
+                "sds_dataset_version": dataset_meta.sds_dataset_version,
                 "status": "status",
                 "mark_deleted_at": time_now,
                 "deleted_at": "n/a",
