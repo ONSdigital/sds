@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 @router.post("/new-sub")
 async def pull_subscription(request: Request):
     logger.info("endpoint hit")
-    logger.info(request)
+    logger.info(request.json)
+    logger.info(request.body)
 
 
 @router.get(
