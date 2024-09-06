@@ -1,8 +1,9 @@
 import exception.exception_response_models as erm
 import exception.exceptions as exceptions
 from exception.exception_response_models import ExceptionResponseModel
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from logging_config import logging
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_processor_service import DatasetProcessorService
@@ -29,19 +30,10 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/new-sub")
-async def pull_subscription(request: Request):
+async def pull_subscription(collection_end_data: CollectionExerciseEndData):
     logger.info("endpoint hit")
-    payload_json = await request.json()
-    payload = await request.data()
-
-    # collection_exercise_end_message: CollectionExerciseEndData = {
-    #     "dataset_guid": json_data["dataset_guid"],
-    #     "survey_id": json_data["survey_id"],
-    #     "period": json_data["period"],
-    # }
     logger.info("extracted data")
-    logger.info(payload_json)
-    logger.info(payload)
+    logger.info(collection_end_data)
 
 
 @router.get(
