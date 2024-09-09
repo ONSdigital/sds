@@ -18,9 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/new-sub")
-async def pull_subscription(collection_end_data: CollectionExerciseEndData):
+async def pull_subscription(
+    collection_end_data: CollectionExerciseEndData,
+    dataset_deletion_service: DatasetDeletionService = Depends(),
+):
     logger.info("collection exercise end message received")
-    DatasetDeletionService.process_collection_exercise_end_message()
+    dataset_deletion_service.process_collection_exercise_end_message(
+        collection_end_data
+    )
 
 
 @router.get(
