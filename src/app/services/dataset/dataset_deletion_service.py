@@ -1,5 +1,3 @@
-import json
-
 from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
@@ -14,25 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetDeletionService:
-    def process_collection_exercise_end_message(self, json_string):
-        collection_exercise_end = self._json_to_object(json_string.data)
-        supplementary_data = self._check_if_supplementary_data(collection_exercise_end)
+    def process_collection_exercise_end_message(
+        self, collection_exercise_end: CollectionExerciseEndData
+    ):
+        collection_has_supplementary_data = (
+            self._check_if_collection_has_supplementary_data(collection_exercise_end)
+        )
 
-        if supplementary_data:
+        if collection_has_supplementary_data:
             list_supplementary_metadata = self._collect_metadata_for_period_and_survey(
                 collection_exercise_end
             )
             self._mark_collections_for_deletion(list_supplementary_metadata)
 
-    def _json_to_object(self, json_string: str) -> DeleteMetadata:
-        logger.info("Mapping to obj")
-        collection_exercise_end_dict = json.loads(json_string)
-        collection_exercise_end_obj = CollectionExerciseEndData(
-            **collection_exercise_end_dict
-        )
-        return collection_exercise_end_obj
-
-    def _check_if_supplementary_data(
+    def _check_if_collection_has_supplementary_data(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> bool:
         if collection_exercise_end_data.dataset_guid == "":

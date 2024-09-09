@@ -6,6 +6,7 @@ from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.dataset.dataset_deletion_service import DatasetDeletionService
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
@@ -16,24 +17,10 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-# {
-#     "message": {
-#         "data":
-#         "ewogICAgImRhdGFzZXRfZ3VpZCI6ImRmZmQzNmJjLTEyMmYtNGQzYy1hNGI1LWVjN2Y0MWQxZWYxZCIsCiAgICAic3VydmV5X2lkIjogIjA2NiIsCiAgICAicGVyaW9kIjogIjIwMjUwMSIKfQ==",
-#         "messageId": "12206893431830414",
-#         "message_id": "12206893431830414",
-#         "publishTime": "2024-09-06T18:25:41.725Z",
-#         "publish_time": "2024-09-06T18:25:41.725Z"
-#     },
-#     "subscription": "projects/ons-sds-sandbox-01/subscriptions/collection-exercise-end-subscription"
-# }
-
-
 @router.post("/new-sub")
 async def pull_subscription(collection_end_data: CollectionExerciseEndData):
-    logger.info("endpoint hit")
-    logger.info("extracted data")
-    logger.info(collection_end_data)
+    logger.info("collection exercise end message received")
+    DatasetDeletionService.process_collection_exercise_end_message()
 
 
 @router.get(
