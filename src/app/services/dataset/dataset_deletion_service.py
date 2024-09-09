@@ -51,11 +51,12 @@ class DatasetDeletionService:
     ):
         time_now = DatetimeService.get_current_date_and_time()
         for dataset_metadata in list_dataset_metadata:
+            logger.info()
             delete_metadata: DeleteMetadata = {
-                "dataset_guid": dataset_metadata.dataset_id,
-                "period_id": dataset_metadata.period_id,
-                "survey_id": dataset_metadata.survey_id,
-                "sds_dataset_version": dataset_metadata.sds_dataset_version,
+                "dataset_guid": dataset_metadata["dataset_id"],
+                "period_id": dataset_metadata["period_id"],
+                "survey_id": dataset_metadata["survey_id"],
+                "sds_dataset_version": dataset_metadata["sds_dataset_version"],
                 "status": "status",
                 "mark_deleted_at": time_now,
                 "deleted_at": "n/a",
