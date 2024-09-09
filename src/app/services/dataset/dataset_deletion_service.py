@@ -42,7 +42,9 @@ class DatasetDeletionService:
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
         logger.debug("Collecting all datasets for period and survey")
-        return self.data_processor_service.get_dataset_metadata_collection(collection_exercise_end_data.survey_id, collection_exercise_end_data.period)
+        return self.data_processor_service.get_dataset_metadata_collection(
+            collection_exercise_end_data.survey_id, collection_exercise_end_data.period
+        )
 
     def _mark_collections_for_deletion(
         self, list_dataset_metadata: list[DatasetMetadata]

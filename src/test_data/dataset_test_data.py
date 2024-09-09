@@ -1,6 +1,6 @@
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
-from models.collection_exericise_end_data import CollectionExerciseEndData
 from src.test_data import shared_test_data
 
 cloud_event_data = {
