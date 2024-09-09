@@ -35,13 +35,13 @@ class DatasetDeletionService:
     ) -> bool:
         if collection_exercise_end_data.dataset_guid == "":
             return False
-        logger.info("Supplementary data found")
+        logger.debug("Supplementary data found")
         return True
 
     def _collect_metadata_for_period_and_survey(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
-        logger.info("Collecting all datasets for period and survey")
+        logger.debug("Collecting all datasets for period and survey")
         return self.data_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
@@ -51,7 +51,7 @@ class DatasetDeletionService:
     ):
         time_now = DatetimeService.get_current_date_and_time()
         for dataset_metadata in list_dataset_metadata:
-            logger.info()
+            logger.debug("dataset_metadata {}", dataset_metadata)
             delete_metadata: DeleteMetadata = {
                 "dataset_guid": dataset_metadata["dataset_id"],
                 "period_id": dataset_metadata["period_id"],
@@ -61,4 +61,5 @@ class DatasetDeletionService:
                 "mark_deleted_at": time_now,
                 "deleted_at": "n/a",
             }
+            logger.debug("marking dataset for deletion {}", delete_metadata)
             self.delete_repository.mark_dataset_for_deletion(delete_metadata)
