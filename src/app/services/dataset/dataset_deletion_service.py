@@ -12,6 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetDeletionService:
+
+    def __init__(self) -> None:
+        self.delete_repository = DeletionMetadataFirebaseRepository()
+        self.data_processor_service = DatasetProcessorService()
+
     def process_collection_exercise_end_message(
         self, collection_exercise_end: CollectionExerciseEndData
     ):
@@ -37,7 +42,7 @@ class DatasetDeletionService:
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
         logger.info("Collecting all datasets for period and survey")
-        return DatasetProcessorService.dataset_processor_service.get_dataset_metadata_collection(
+        return self.data_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
 
@@ -55,6 +60,4 @@ class DatasetDeletionService:
                 "mark_deleted_at": time_now,
                 "deleted_at": "n/a",
             }
-            DeletionMetadataFirebaseRepository.create_delete_in_transaction(
-                delete_metadata
-            )
+            self.delete_repository.mark_dataset_for_deletion(delete_metadata)

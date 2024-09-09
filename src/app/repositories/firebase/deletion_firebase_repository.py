@@ -8,7 +8,7 @@ class DeletionMetadataFirebaseRepository:
         self.client = firebase_loader.get_client()
         self.marked_for_deletion_collection = firebase_loader.deletion_collection()
 
-    def create_delete_in_transaction(
+    def mark_dataset_for_deletion(
         self,
         delete_metadata: DeleteMetadata,
     ) -> None:
