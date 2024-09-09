@@ -6,7 +6,7 @@ class DeletionMetadataFirebaseRepository:
 
     def __init__(self):
         self.client = firebase_loader.get_client()
-        self.deletion_collection = firebase_loader.deletion_collection()
+        self.deletion_collection = firebase_loader.get_deletion_collection()
 
     def mark_dataset_for_deletion(
         self,
