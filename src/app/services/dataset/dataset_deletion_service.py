@@ -33,7 +33,7 @@ class DatasetDeletionService:
     def _check_if_collection_has_supplementary_data(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> bool:
-        if collection_exercise_end_data.dataset_guid == "":
+        if collection_exercise_end_data["dataset_guid"] == "":
             return False
         logger.debug("Supplementary data found")
         return True
@@ -43,7 +43,8 @@ class DatasetDeletionService:
     ) -> list[DatasetMetadata]:
         logger.debug("Collecting all datasets for period and survey")
         return self.data_processor_service.get_dataset_metadata_collection(
-            collection_exercise_end_data.survey_id, collection_exercise_end_data.period
+            collection_exercise_end_data["survey_id"],
+            collection_exercise_end_data["period_id"],
         )
 
     def _mark_collections_for_deletion(

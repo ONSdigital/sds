@@ -84,6 +84,33 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     },
 ]
 
+dataset_metadata_collection_deletion: list[DatasetMetadata] = [
+    {
+        "survey_id": f"{survey_id}",
+        "period_id": period_id,
+        "form_types": ["123", "456", "789"],
+        "title": "Which side was better?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "0",
+    },
+    {
+        "survey_id": f"{survey_id}",
+        "period_id": period_id,
+        "form_types": ["123", "456", "789"],
+        "title": "Which side was better 2?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "1",
+    },
+]
+
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": survey_id,
     "period_id": period_id,

@@ -17,7 +17,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/new-sub")
+@router.post("/collection-exercise-end")
 async def pull_subscription(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(),
