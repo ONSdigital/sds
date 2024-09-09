@@ -1,5 +1,6 @@
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from src.test_data import shared_test_data
 
 cloud_event_data = {
@@ -30,7 +31,17 @@ period_id = "test_period_id"
 first_dataset_version = 1
 updated_dataset_version = 2
 
+test_data_collection_end: CollectionExerciseEndData = {
+    "dataset_guid": shared_test_data.test_guid,
+    "period": period_id,
+    "survey_id": survey_id,
+}
 
+test_data_collection_end_missing_id: CollectionExerciseEndData = {
+    "dataset_guid": "",
+    "period": period_id,
+    "survey_id": survey_id,
+}
 dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
