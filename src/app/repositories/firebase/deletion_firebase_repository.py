@@ -6,7 +6,7 @@ class DeletionMetadataFirebaseRepository:
 
     def __init__(self):
         self.client = firebase_loader.get_client()
-        self.marked_for_deletion_collection = firebase_loader.deletion_collection()
+        self.deletion_collection = firebase_loader.deletion_collection()
 
     def mark_dataset_for_deletion(
         self,
@@ -18,4 +18,4 @@ class DeletionMetadataFirebaseRepository:
         Parameters:
         delete_metadata (DeleteMetadata): The deletion metadata being added to firestore.
         """
-        self.marked_for_deletion_collection.document().set(delete_metadata)
+        self.deletion_collection.document().set(delete_metadata)
