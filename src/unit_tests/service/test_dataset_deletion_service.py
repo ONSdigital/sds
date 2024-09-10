@@ -18,31 +18,38 @@ class PostSchemaTest(TestCase):
     def prepare_fixture(self, test_client):
         self.test_client = test_client
 
-    # def test_process_collection_exercise_end_message(self):
-    #     DatasetProcessorService.get_dataset_metadata_collection = MagicMock()
-    #     DatasetProcessorService.get_dataset_metadata_collection.return_value = (
-    #         dataset_test_data.dataset_metadata_collection_deletion
-    #     )
-    #
-    #     DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
-    #     DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
-    #         dataset_test_data.dataset_metadata_collection_deletion
-    #     )
-    #
-    #     DeletionMetadataFirebaseRepository.mark_dataset_for_deletion = MagicMock()
-    #
-    #     DatasetDeletionService.process_collection_exercise_end_message = MagicMock()
-    #
-    #     collection_exercise_end = {
-    #         "dataset_guid": uuid.uuid4(),
-    #         "period_id": "period_id",
-    #         "survey_id": "survey_id",
-    #     }
-    #
-    #     response = self.test_client.post(
-    #         "/collection-exercise-end", json=collection_exercise_end
-    #     )
-    #     assert response.status_code == 200
+    def test_process_collection_exercise_end_message_through_endpoint(self):
+        DatasetDeletionService.process_collection_exercise_end_message = MagicMock()
+
+        DatasetDeletionService._check_if_collection_has_supplementary_data = MagicMock()
+        DatasetDeletionService._check_if_collection_has_supplementary_data.return_value(
+            True
+        )
+
+        DatasetDeletionService._collect_metadata_for_period_and_survey = MagicMock()
+        DatasetDeletionService._collect_metadata_for_period_and_survey.return_value = (
+            dataset_test_data.dataset_metadata_collection_deletion
+        )
+
+        DatasetProcessorService.get_dataset_metadata_collection = MagicMock()
+        DatasetProcessorService.get_dataset_metadata_collection.return_value = (
+            dataset_test_data.dataset_metadata_collection_deletion
+        )
+
+        DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
+        DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
+            dataset_test_data.dataset_metadata_collection_deletion
+        )
+
+        DeletionMetadataFirebaseRepository.mark_dataset_for_deletion = MagicMock()
+
+        DatasetDeletionService.process_collection_exercise_end_message = MagicMock()
+
+        response = self.test_client.post(
+            "/collection-exercise-end",
+            json=dataset_test_data.test_data_collection_end_input,
+        )
+        assert response.status_code == 200
 
     def test_check_if_collection_has_supplementary_data_return_true_when_dataset_id_present(
         self,
@@ -53,7 +60,7 @@ class PostSchemaTest(TestCase):
             dataset_test_data.test_data_collection_end
         )
 
-        assert result == "True"
+        assert result
 
     def test_check_if_collection_has_supplementary_data_return_false_when_dataset_id_not_present(
         self,
@@ -64,7 +71,7 @@ class PostSchemaTest(TestCase):
             dataset_test_data.test_data_collection_end_missing_id
         )
 
-        assert result == "False"
+        assert not result
 
     def test_collect_metadata_for_period_and_survey_returns_list_metadata(self):
         DatasetProcessorService.get_dataset_metadata_collection = MagicMock()

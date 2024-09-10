@@ -31,29 +31,32 @@ period_id = "test_period_id"
 first_dataset_version = 1
 updated_dataset_version = 2
 
-test_data_collection_end: CollectionExerciseEndData = {
+
+test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": shared_test_data.test_guid,
+        "survey_id": survey_id,
+        "period": period_id,
+    }
+)
+
+test_data_collection_end_input: CollectionExerciseEndData = {
     "dataset_guid": shared_test_data.test_guid,
     "survey_id": survey_id,
     "period": period_id,
 }
 
-test_data_collection_end_dict = {
-    "dataset_guid": shared_test_data.test_guid,
-    "survey_id": survey_id,
-    "period": period_id,
-}
+test_data_collection_end_missing_id: CollectionExerciseEndData = (
+    CollectionExerciseEndData(
+        **{
+            "dataset_guid": "",
+            "survey_id": survey_id,
+            "period": period_id,
+        }
+    )
+)
 
-test_data_collection_end_missing_id: CollectionExerciseEndData = {
-    "dataset_guid": "",
-    "survey_id": survey_id,
-    "period": period_id,
-}
 
-test_data_collection_end_missing_id_dict = {
-    "dataset_guid": "",
-    "survey_id": survey_id,
-    "period": period_id,
-}
 dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": shared_test_data.test_guid,
     "survey_id": survey_id,
