@@ -173,14 +173,14 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
-    request = force_run_schedule_job()
+    response = force_run_schedule_job()
 
     if not skip_wait:
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
 
-    return request.status_code
+    return response.status_code
 
 
 def create_dataset_as_string(
@@ -246,8 +246,8 @@ def _create_remote_dataset_as_string(
     blob = bucket.blob(filename)
     blob.upload_from_string(file_content, content_type="text/plain")
 
-    request = force_run_schedule_job()
-    return request.status_code
+    response = force_run_schedule_job()
+    return response.status_code
 
 
 def wait_until_dataset_ready(
@@ -351,5 +351,6 @@ def force_run_schedule_job():
         name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
 
-    client.run_job(request=request)
-    return request
+    operation = client.run_job(request=request)
+
+    return operation.result()
