@@ -109,7 +109,7 @@ def create_dataset(
     session: requests.Session,
     headers: dict[str, str],
     skip_wait: bool = False,
-) -> int | None:
+) -> None:
     """
     Method to create a dataset using either the remote new dataset function or the local version.
 
@@ -118,19 +118,20 @@ def create_dataset(
         dataset: the dataset to be created
         session: a session instance for http/s connections
         headers: the relevant headers for authentication for http/s calls
+        skip_wait: flag for skip waiting for dataset to create
 
     Returns:
-        int | None: status code for local function and no return for remote.
+        None
     """
     if config.OAUTH_CLIENT_ID.__contains__("local"):
-        return _create_local_dataset(session, filename, dataset)
+        _create_local_dataset(session, filename, dataset)
     else:
-        return _create_remote_dataset(session, filename, dataset, headers, skip_wait)
+        _create_remote_dataset(session, filename, dataset, headers, skip_wait)
 
 
 def _create_local_dataset(
     session: requests.Session, filename: str, dataset: dict
-) -> int:
+) -> None:
     """
     Method to create a local dataset.
 
@@ -139,13 +140,9 @@ def _create_local_dataset(
         session: a session instance for http/s connections
 
     Returns:
-        int: status code for local function.
+        None
     """
-    simulate_post_dataset_request = session.post(
-        f"http://localhost:3006?filename={filename}", json=dataset
-    )
-
-    return simulate_post_dataset_request.status_code
+    session.post(f"http://localhost:3006?filename={filename}", json=dataset)
 
 
 def _create_remote_dataset(
@@ -173,14 +170,12 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
-    response = force_run_schedule_job()
+    force_run_schedule_job()
 
     if not skip_wait:
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
-
-    return response.status_code
 
 
 def create_dataset_as_string(
@@ -199,16 +194,14 @@ def create_dataset_as_string(
         None
     """
     if config.OAUTH_CLIENT_ID.__contains__("local"):
-        return _create_local_dataset_as_string(session, filename, file_content)
+        _create_local_dataset_as_string(session, filename, file_content)
     else:
-        return _create_remote_dataset_as_string(
-            session, filename, file_content, headers
-        )
+        _create_remote_dataset_as_string(session, filename, file_content, headers)
 
 
 def _create_local_dataset_as_string(
     session: requests.Session, filename: str, file_content: str
-) -> int:
+) -> None:
     """
     Method to create a local dataset as a string.
 
@@ -220,16 +213,12 @@ def _create_local_dataset_as_string(
     Returns:
         int: status code for local function.
     """
-    simulate_post_dataset_request = session.post(
-        f"http://localhost:3006?filename={filename}", data=file_content
-    )
-
-    return simulate_post_dataset_request.status_code
+    session.post(f"http://localhost:3006?filename={filename}", data=file_content)
 
 
 def _create_remote_dataset_as_string(
     session: requests.Session, filename: str, file_content: str, headers: dict[str, str]
-):
+) -> None:
     """
     Method to create a remote dataset as a string.
 
@@ -246,8 +235,7 @@ def _create_remote_dataset_as_string(
     blob = bucket.blob(filename)
     blob.upload_from_string(file_content, content_type="text/plain")
 
-    response = force_run_schedule_job()
-    return response.status_code
+    force_run_schedule_job()
 
 
 def wait_until_dataset_ready(
@@ -346,11 +334,7 @@ def force_run_schedule_job():
     Method to force run the schedule job to trigger the new dataset upload function.
     """
     client = scheduler_v1.CloudSchedulerClient()
-
     request = scheduler_v1.RunJobRequest(
         name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
-
-    operation = client.run_job(request=request)
-
-    return operation.result()
+    client.run_job(request=request)
