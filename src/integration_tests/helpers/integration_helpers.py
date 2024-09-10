@@ -125,7 +125,7 @@ def create_dataset(
     if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, filename, dataset)
     else:
-        _create_remote_dataset(session, filename, dataset, headers, skip_wait)
+        return _create_remote_dataset(session, filename, dataset, headers, skip_wait)
 
 
 def _create_local_dataset(
@@ -173,17 +173,19 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
-    force_run_schedule_job()
+    request = force_run_schedule_job()
 
     if not skip_wait:
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
 
+    return request.status_code
+
 
 def create_dataset_as_string(
     filename: str, file_content: str, session: requests.Session, headers: dict[str, str]
-) -> None:
+) -> int:
     """
     Method to create a remote dataset without parsing it as JSON.
 
@@ -197,9 +199,9 @@ def create_dataset_as_string(
         None
     """
     if config.OAUTH_CLIENT_ID.__contains__("local"):
-        _create_local_dataset_as_string(session, filename, file_content)
+        return _create_local_dataset_as_string(session, filename, file_content)
     else:
-        _create_remote_dataset_as_string(session, filename, file_content, headers)
+        return _create_remote_dataset_as_string(session, filename, file_content, headers)
 
 
 def _create_local_dataset_as_string(
@@ -225,7 +227,7 @@ def _create_local_dataset_as_string(
 
 def _create_remote_dataset_as_string(
     session: requests.Session, filename: str, file_content: str, headers: dict[str, str]
-) -> None:
+):
     """
     Method to create a remote dataset as a string.
 
@@ -242,7 +244,8 @@ def _create_remote_dataset_as_string(
     blob = bucket.blob(filename)
     blob.upload_from_string(file_content, content_type="text/plain")
 
-    force_run_schedule_job()
+    request = force_run_schedule_job()
+    return request.status_code
 
 
 def wait_until_dataset_ready(
@@ -336,7 +339,7 @@ def empty_dataset_bucket() -> None:
     delete_blobs(bucket_loader.get_dataset_bucket())
 
 
-def force_run_schedule_job() -> None:
+def force_run_schedule_job():
     """
     Method to force run the schedule job to trigger the new dataset upload function.
     """
@@ -347,3 +350,4 @@ def force_run_schedule_job() -> None:
     )
 
     client.run_job(request=request)
+    return request
