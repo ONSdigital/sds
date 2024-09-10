@@ -1,10 +1,8 @@
 import exception.exceptions as exceptions
-from config.config_factory import config
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
-from google.cloud import pubsub_v1
 from logging_config import logging
 from routers import dataset_router, schema_router, status_router
 
@@ -106,28 +104,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     validation exception handler to return 400 instead of 422
     """
     return ExceptionInterceptor.throw_400_validation_exception(request, exc)
-
-
-subscriber = pubsub_v1.SubscriberClient()
-publisher = pubsub_v1.PublisherClient()
-subscription_path = subscriber.subscription_path(
-    config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
-)
-
-
-async def process_subscription():
-    def callback(message: pubsub_v1.subscriber.message.Message) -> None:
-        logger.info("Collection Exercise End Message received")
-        logger.debug(f"Collection Exercise End Message received : {message}")
-        message.ack()
-
-    subscriber.subscribe(subscription_path, callback=callback)
-    logger.debug(f"Listening for messages on subscription path : {subscription_path}")
-
-
-@app.on_event("startup")
-async def startup_event():
-    logger.debug("Application pre-start")
 
 
 app.include_router(dataset_router.router)

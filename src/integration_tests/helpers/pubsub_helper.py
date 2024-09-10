@@ -16,14 +16,13 @@ class PubSubHelper:
         self.topic_id = topic_id
 
         if config.OAUTH_CLIENT_ID.__contains__("local"):
-            self._try_create_topic(self.topic_id)
-            self._try_create_topic(config.COLLECTION_EXERCISE_END_TOPIC_ID)
+            self._try_create_topic()
 
-    def _try_create_topic(self, topic_id) -> None:
+    def _try_create_topic(self) -> None:
         """
         Try to create a topic for publisher if not exists
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, topic_id)
+        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
 
         try:
             if not self._topic_exists(topic_path):
@@ -63,37 +62,9 @@ class PubSubHelper:
                 }
             )
 
-    def try_create_collection_end_subscriber(self) -> None:
-        """
-        Creates a subscriber with a unique subscriber id if one does not already exist.
+            self._wait_and_check_subscription_exists(subscriber_id)
 
-        Parameters:
-        subscriber_id: the unique id of the subscriber being created.
-        """
-        topic_path = self.publisher_client.topic_path(
-            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
-        )
-
-        subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
-        )
-
-        if not self._subscription_exists(
-            config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
-        ):
-            self.subscriber_client.create_subscription(
-                request={
-                    "name": subscription_path,
-                    "topic": topic_path,
-                    "enable_message_ordering": True,
-                }
-            )
-
-            self._wait_and_check_subscription_exists(
-                config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID
-            )
-
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> list[dict]:
+    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -150,7 +121,7 @@ class PubSubHelper:
 
             self._wait_and_check_subscription_deleted(subscriber_id)
 
-    def _subscription_exists(self, subscriber_id: str) -> bool:
+    def _subscription_exists(self, subscriber_id: str) -> None:
         """
         Checks a subscription exists.
 
