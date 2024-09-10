@@ -322,7 +322,6 @@ def cleanup() -> None:
 def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Creates any subscribers that may be used in tests"""
     pubsub_helper.try_create_subscriber(subscriber_id)
-    pubsub_helper.try_create_collection_end_subscriber()
 
 
 def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
