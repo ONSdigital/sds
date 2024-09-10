@@ -201,7 +201,9 @@ def create_dataset_as_string(
     if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset_as_string(session, filename, file_content)
     else:
-        return _create_remote_dataset_as_string(session, filename, file_content, headers)
+        return _create_remote_dataset_as_string(
+            session, filename, file_content, headers
+        )
 
 
 def _create_local_dataset_as_string(
