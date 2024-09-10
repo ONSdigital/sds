@@ -17,15 +17,17 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/collection-exercise-end")
+@router.post("/collection-exercise-end", status_code=200)
 async def pull_subscription(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(),
 ):
     logger.info("collection exercise end message received")
+    logger.debug("collection exercise end message received {}", collection_end_data)
     dataset_deletion_service.process_collection_exercise_end_message(
         collection_end_data
     )
+    return {"message": "accepted"}
 
 
 @router.get(

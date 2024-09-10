@@ -49,6 +49,7 @@ class PostSchemaTest(TestCase):
             "/collection-exercise-end",
             json=dataset_test_data.test_data_collection_end_input,
         )
+
         assert response.status_code == 200
 
     def test_check_if_collection_has_supplementary_data_return_true_when_dataset_id_present(

@@ -29,13 +29,17 @@ class DatasetDeletionService:
                 collection_exercise_end
             )
             self._mark_collections_for_deletion(list_supplementary_metadata)
+        else:
+            logger.debug("Supplementary data found")
 
     def _check_if_collection_has_supplementary_data(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> bool:
-        if collection_exercise_end_data.dataset_guid == "":
+        if (
+            collection_exercise_end_data.dataset_guid is None
+            or collection_exercise_end_data.dataset_guid == ""
+        ):
             return False
-        logger.debug("Supplementary data found")
         return True
 
     def _collect_metadata_for_period_and_survey(
