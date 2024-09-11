@@ -257,7 +257,6 @@ def test_get_survey_id_map_500_response(test_client_no_server_exception):
     """
     If the app encounters a global exception, the API must return the error response with 500 status code
     """
-
     SchemaProcessorService.get_survey_id_map = MagicMock(side_effect=Exception)
 
     response = test_client_no_server_exception.get("/v1/survey_list")

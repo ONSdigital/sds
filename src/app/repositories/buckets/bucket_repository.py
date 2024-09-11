@@ -9,7 +9,6 @@ class BucketRepository:
         Parameters:
         filename (str): name of file being loaded.
         """
-
         return json.loads(self.bucket.blob(filename).download_as_string())
 
     def delete_bucket_file(self, filename: str) -> None:

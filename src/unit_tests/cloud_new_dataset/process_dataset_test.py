@@ -73,7 +73,6 @@ class ProcessDatasetTest(TestCase):
         """
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
@@ -113,7 +112,6 @@ class ProcessDatasetTest(TestCase):
         """
         The e2e journey for when a new dataset is uploaded, with repository boundaries, uuid generation and datetime mocked.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
@@ -155,7 +153,6 @@ class ProcessDatasetTest(TestCase):
         This test simulates a successful dataset upload process when retain flag is off. It assert
         the deletion process will be run with appropriate arguments
         """
-
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
@@ -399,7 +396,6 @@ class ProcessDatasetTest(TestCase):
         """
         Tests appropriate runtime error will be promted when unit data count does not match total reporting units.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
@@ -439,7 +435,6 @@ class ProcessDatasetTest(TestCase):
         to simulate a dataset not found situation. The test then assert the runtime error
         and check the deletion is not processed.
         """
-
         config.RETAIN_DATASET_FIRESTORE = False
 
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(

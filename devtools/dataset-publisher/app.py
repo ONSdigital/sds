@@ -12,7 +12,7 @@ config = ConfigFactory.get_config()
 
 
 @app.post("/")
-async def dev_simulate_publish_dataset(request: Request, filename: str = None):
+async def dev_simulate_publish_dataset(request: Request, filename: str | None = None):
     """
     Used to simulate SDX populating the bucket to manually fire the cloud event trigger
     """
@@ -25,7 +25,7 @@ async def dev_simulate_publish_dataset(request: Request, filename: str = None):
 
     # If filename is not provided, create a guid as the filename before we publish it
     if filename in (None, ""):
-        filename = f"{str(uuid.uuid4())}.json"
+        filename = f"{uuid.uuid4()!s}.json"
 
     # Save the dataset to the bucket
     blob = dataset_bucket.blob(filename)
@@ -50,7 +50,7 @@ async def dev_simulate_publish_dataset(request: Request, filename: str = None):
         "Content-Type": "application/json; charset=utf-8",
     }
 
-    requests.post(url, data=json.dumps(event_data), headers=headers)
+    requests.post(url, data=json.dumps(event_data), headers=headers, timeout=30)
 
     return {"filename": filename}
 
@@ -60,7 +60,6 @@ def setup_local_storage(bucket_name, storage_client):
     This is to check if the buckets exists and if it doe not, then it will create it. This is due to the fact that the
     storage emulator requires a 'bucket' to be created on start.
     """
-
     if bucket_name:
         bucket = storage_client.bucket(bucket_name)
         if not bucket.exists():

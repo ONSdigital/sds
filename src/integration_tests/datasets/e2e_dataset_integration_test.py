@@ -387,7 +387,6 @@ class E2EDatasetIntegrationTest(TestCase):
         * Check the error messages are published to the error topic
 
         """
-
         session = setup_session()
         headers = generate_headers()
 
@@ -422,7 +421,7 @@ class E2EDatasetIntegrationTest(TestCase):
             assert received_messages[0][key] == value
 
         # Upload dataset with invalid json
-        with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
+        with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json") as file:
             dataset_invalid_json = file.read()
             file.close()
 
