@@ -92,17 +92,6 @@ def create_filepath(file_prefix: str):
     return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
-def create_filename_error_filepath(file_prefix: str):
-    """
-    Creates a filepath without '.json' suffix for uploading a dataset file to a bucket
-
-    Parameters:
-        file_prefix: prefix to identify the file being uploaded
-
-    """
-    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
-
-
 def create_dataset(
     filename: str,
     dataset: dict,
@@ -122,7 +111,7 @@ def create_dataset(
     Returns:
         int | None: status code for local function and no return for remote.
     """
-    if config.OAUTH_CLIENT_ID.__contains__("local"):
+        if config.OAUTH_CLIENT_ID.__contains__("local"):
         return _create_local_dataset(session, filename, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers, skip_wait)
@@ -179,27 +168,6 @@ def _create_remote_dataset(
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
-
-
-def create_dataset_as_string(
-    filename: str, file_content: str, session: requests.Session, headers: dict[str, str]
-) -> None:
-    """
-    Method to create a remote dataset without parsing it as JSON.
-
-    Parameters:
-        filename: the filename to use for the file
-        file_content: the content of the file to be uploaded
-        session: a session instance for http/s connections
-        headers: the relevant headers for authentication for http/s calls
-
-    Returns:
-        None
-    """
-    if config.OAUTH_CLIENT_ID.__contains__("local"):
-        _create_local_dataset_as_string(session, filename, file_content)
-    else:
-        _create_remote_dataset_as_string(session, filename, file_content, headers)
 
 
 def _create_local_dataset_as_string(
