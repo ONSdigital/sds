@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/collection-exercise-end", status_code=200)
-async def pull_subscription(
+async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(),
 ):
