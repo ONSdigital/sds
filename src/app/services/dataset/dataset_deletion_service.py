@@ -15,18 +15,20 @@ class DatasetDeletionService:
 
     def __init__(self) -> None:
         self.delete_repository = DeletionMetadataFirebaseRepository()
-        self.data_processor_service = DatasetProcessorService()
+        self.dataset_processor_service = DatasetProcessorService()
 
     def process_collection_exercise_end_message(
-        self, collection_exercise_end: CollectionExerciseEndData
+        self, collection_exercise_end_data: CollectionExerciseEndData
     ):
         collection_has_supplementary_data = (
-            self._check_if_collection_has_supplementary_data(collection_exercise_end)
+            self._check_if_collection_has_supplementary_data(
+                collection_exercise_end_data
+            )
         )
 
         if collection_has_supplementary_data:
             list_supplementary_metadata = self._collect_metadata_for_period_and_survey(
-                collection_exercise_end
+                collection_exercise_end_data
             )
             self._mark_collections_for_deletion(list_supplementary_metadata)
         else:
@@ -46,7 +48,7 @@ class DatasetDeletionService:
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
         logger.debug("Collecting all datasets for period and survey")
-        return self.data_processor_service.get_dataset_metadata_collection(
+        return self.dataset_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
 
