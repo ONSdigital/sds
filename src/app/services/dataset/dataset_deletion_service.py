@@ -32,7 +32,7 @@ class DatasetDeletionService:
             )
             self._mark_collections_for_deletion(list_supplementary_metadata)
         else:
-            logger.debug("Supplementary data found")
+            logger.info("Supplementary not data found")
 
     def _check_if_collection_has_supplementary_data(
         self, collection_exercise_end_data: CollectionExerciseEndData
@@ -58,14 +58,16 @@ class DatasetDeletionService:
         time_now = DatetimeService.get_current_date_and_time()
         for dataset_metadata in list_dataset_metadata:
             logger.debug("dataset_metadata {}", dataset_metadata)
-            delete_metadata: DeleteMetadata = {
-                "dataset_guid": dataset_metadata["dataset_id"],
-                "period_id": dataset_metadata["period_id"],
-                "survey_id": dataset_metadata["survey_id"],
-                "sds_dataset_version": dataset_metadata["sds_dataset_version"],
-                "status": "status",
-                "mark_deleted_at": time_now,
-                "deleted_at": "n/a",
-            }
+            delete_metadata: DeleteMetadata = DeleteMetadata(
+                **{
+                    "dataset_guid": dataset_metadata["dataset_id"],
+                    "period_id": dataset_metadata["period_id"],
+                    "survey_id": dataset_metadata["survey_id"],
+                    "sds_dataset_version": dataset_metadata["sds_dataset_version"],
+                    "status": "pending",
+                    "mark_deleted_at": time_now,
+                    "deleted_at": "n/a",
+                }
+            )
             logger.debug("marking dataset for deletion {}", delete_metadata)
             self.delete_repository.mark_dataset_for_deletion(delete_metadata)
