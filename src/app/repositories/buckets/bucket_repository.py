@@ -8,6 +8,8 @@ class BucketRepository:
 
         Parameters:
         filename (str): name of file being loaded.
+
+        Returns: object: the file loaded as json.
         """
         return json.loads(self.bucket.blob(filename).download_as_string())
 
