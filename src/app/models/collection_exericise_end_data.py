@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class CollectionExerciseEndData:
-    dataset_guid: str
     survey_id: str
     period: str
+    dataset_guid: Optional[str] = ""
