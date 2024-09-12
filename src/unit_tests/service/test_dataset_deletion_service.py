@@ -36,11 +36,6 @@ class PostSchemaTest(TestCase):
             dataset_test_data.dataset_metadata_collection_deletion
         )
 
-        DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
-        DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
-            dataset_test_data.dataset_metadata_collection_deletion
-        )
-
         DeletionMetadataFirebaseRepository.mark_dataset_for_deletion = MagicMock()
 
         DatasetDeletionService.process_collection_exercise_end_message = MagicMock()
@@ -80,11 +75,6 @@ class PostSchemaTest(TestCase):
             dataset_test_data.dataset_metadata_collection_deletion
         )
 
-        DatasetFirebaseRepository.get_dataset_metadata_collection = MagicMock()
-        DatasetFirebaseRepository.get_dataset_metadata_collection.return_value = (
-            dataset_test_data.dataset_metadata_collection_deletion
-        )
-
         expected = [
             {
                 **dataset_test_data.dataset_metadata_collection_deletion[0],
@@ -104,9 +94,14 @@ class PostSchemaTest(TestCase):
 
     def test_mark_collections_for_deletion(self):
         DeletionMetadataFirebaseRepository.mark_dataset_for_deletion = MagicMock()
-        DeletionMetadataFirebaseRepository.mark_dataset_for_deletion.called
 
         dataset_delete_service = DatasetDeletionService()
         dataset_delete_service._mark_collections_for_deletion(
             dataset_test_data.dataset_metadata_collection_deletion
         )
+
+        mark_for_deletion_called = (
+            DeletionMetadataFirebaseRepository.mark_dataset_for_deletion.called
+        )
+
+        assert mark_for_deletion_called
