@@ -20,6 +20,7 @@ class DatasetDeletionService:
     def process_collection_exercise_end_message(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ):
+        # todo: validation on period_id and survey_id once we have go the 'real' message
         collection_has_supplementary_data = (
             self._check_if_collection_has_supplementary_data(
                 collection_exercise_end_data
