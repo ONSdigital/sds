@@ -29,7 +29,7 @@ class FirebaseLoader:
 
     def get_deletion_collection(self) -> firestore.CollectionReference:
         """
-        Get the schemas collection from firestore
+        Get the marked_for_deletion collection from firestore
         """
         return self.deletion_collection
 

@@ -2,7 +2,6 @@ from unittest import TestCase
 from unittest.mock import MagicMock
 
 import pytest
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from repositories.firebase.deletion_firebase_repository import (
     DeletionMetadataFirebaseRepository,
 )
