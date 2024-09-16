@@ -21,49 +21,49 @@ class DatasetDeletionService:
         self, collection_exercise_end_data: CollectionExerciseEndData
     ):
         # todo: validation on period_id and survey_id once we have go the 'real' message
-        collection_has_supplementary_data = (
-            self._check_if_collection_has_supplementary_data(
+        collection_has_dataset_guid = (
+            self._check_if_collection_has_dataset_guid(
                 collection_exercise_end_data
             )
         )
 
-        if collection_has_supplementary_data:
-            list_supplementary_metadata = self._collect_metadata_for_period_and_survey(
+        if collection_has_dataset_guid:
+            list_dataset_metadata = self._collect_metadata_for_period_and_survey(
                 collection_exercise_end_data
             )
-            self._mark_collections_for_deletion(list_supplementary_metadata)
+            self._mark_collections_for_deletion(list_dataset_metadata)
         else:
             logger.debug("Supplementary data not data found")
 
-    def _check_if_collection_has_supplementary_data(
+    def _check_if_collection_has_dataset_guid(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> bool:
         if (
             collection_exercise_end_data.dataset_guid is None
             or collection_exercise_end_data.dataset_guid == ""
         ):
-            return False
-        return True
+            supplementary_data_available = False
+        else:
+            supplementary_data_available = True
+        return supplementary_data_available
+
 
     def _collect_metadata_for_period_and_survey(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
         logger.info("Collecting all dataset versions for period and survey")
-        logger.info(
-            "Collecting all dataset versions for period: {} and survey: {}",
-            collection_exercise_end_data.survey_id,
-            collection_exercise_end_data.period,
-        )
+        logger.info(f"Collecting all dataset versions for period: {collection_exercise_end_data.survey_id} and survey: {collection_exercise_end_data.period}")
         return self.dataset_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
+
 
     def _mark_collections_for_deletion(
         self, list_dataset_metadata: list[DatasetMetadata]
     ):
         time_now = DatetimeService.get_current_date_and_time()
         for dataset_metadata in list_dataset_metadata:
-            logger.debug("Dataset_metadata {}", dataset_metadata)
+            logger.debug(f"Dataset_metadata {dataset_metadata}")
             delete_metadata: DeleteMetadata = DeleteMetadata(
                 **{
                     "dataset_guid": dataset_metadata["dataset_id"],
@@ -75,5 +75,5 @@ class DatasetDeletionService:
                     "deleted_at": "n/a",
                 }
             )
-            logger.debug("Marking dataset for deletion {}", delete_metadata)
+            logger.debug("Marking dataset for deletion s%", delete_metadata)
             self.delete_repository.mark_dataset_for_deletion(delete_metadata)

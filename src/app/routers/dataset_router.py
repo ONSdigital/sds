@@ -23,7 +23,7 @@ async def post_collection_exercise_end_message(
     dataset_deletion_service: DatasetDeletionService = Depends(),
 ):
     logger.info("collection_exercise_end message received")
-    logger.debug("collection_exercise_end message received {}", collection_end_data)
+    logger.debug(f"collection_exercise_end message received {collection_end_data}")
     dataset_deletion_service.process_collection_exercise_end_message(
         collection_end_data
     )

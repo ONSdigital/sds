@@ -20,8 +20,8 @@ class PostSchemaTest(TestCase):
     def test_process_collection_exercise_end_message_through_endpoint(self):
         DatasetDeletionService.process_collection_exercise_end_message = MagicMock()
 
-        DatasetDeletionService._check_if_collection_has_supplementary_data = MagicMock()
-        DatasetDeletionService._check_if_collection_has_supplementary_data.return_value(
+        DatasetDeletionService._check_if_collection_has_dataset_guid = MagicMock()
+        DatasetDeletionService._check_if_collection_has_dataset_guid.return_value(
             True
         )
 
@@ -51,7 +51,7 @@ class PostSchemaTest(TestCase):
     ):
         dataset_delete_service = DatasetDeletionService()
 
-        result = dataset_delete_service._check_if_collection_has_supplementary_data(
+        result = dataset_delete_service._check_if_collection_has_dataset_guid(
             dataset_test_data.test_data_collection_end
         )
 
@@ -62,7 +62,7 @@ class PostSchemaTest(TestCase):
     ):
         dataset_delete_service = DatasetDeletionService()
 
-        result = dataset_delete_service._check_if_collection_has_supplementary_data(
+        result = dataset_delete_service._check_if_collection_has_dataset_guid(
             dataset_test_data.test_data_collection_end_missing_id
         )
 
