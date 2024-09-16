@@ -5,7 +5,7 @@ from datetime import datetime
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
-from google.cloud import storage
+from google.cloud import scheduler_v1, storage
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.firebase.firebase_loader import firebase_loader
 from requests.adapters import HTTPAdapter
@@ -92,17 +92,6 @@ def create_filepath(file_prefix: str):
     return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
-def create_filename_error_filepath(file_prefix: str):
-    """
-    Creates a filepath without '.json' suffix for uploading a dataset file to a bucket
-
-    Parameters:
-        file_prefix: prefix to identify the file being uploaded
-
-    """
-    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
-
-
 def create_dataset(
     filename: str,
     dataset: dict,
@@ -173,72 +162,12 @@ def _create_remote_dataset(
         json.dumps(dataset, indent=2), content_type="application/json"
     )
 
+    force_run_schedule_job()
+
     if not skip_wait:
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
-
-
-def create_dataset_as_string(
-    filename: str, file_content: str, session: requests.Session, headers: dict[str, str]
-) -> None:
-    """
-    Method to create a remote dataset without parsing it as JSON.
-
-    Parameters:
-        filename: the filename to use for the file
-        file_content: the content of the file to be uploaded
-        session: a session instance for http/s connections
-        headers: the relevant headers for authentication for http/s calls
-
-    Returns:
-        None
-    """
-    if config.OAUTH_CLIENT_ID.__contains__("local"):
-        _create_local_dataset_as_string(session, filename, file_content)
-    else:
-        _create_remote_dataset_as_string(session, filename, file_content, headers)
-
-
-def _create_local_dataset_as_string(
-    session: requests.Session, filename: str, file_content: str
-) -> int:
-    """
-    Method to create a local dataset as a string.
-
-    Parameters:
-        filename: the filename to use for the file
-        file_content: the content of the file to be uploaded
-        session: a session instance for http/s connections
-
-    Returns:
-        int: status code for local function.
-    """
-    simulate_post_dataset_request = session.post(
-        f"http://localhost:3006?filename={filename}", data=file_content
-    )
-
-    return simulate_post_dataset_request.status_code
-
-
-def _create_remote_dataset_as_string(
-    session: requests.Session, filename: str, file_content: str, headers: dict[str, str]
-) -> None:
-    """
-    Method to create a remote dataset as a string.
-
-    Parameters:
-        filename: the filename to use for the file
-        file_content: the content of the file to be uploaded
-        session: a session instance for http/s connections
-        headers: the relevant headers for authentication for http/s calls
-
-    Returns:
-        None
-    """
-    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
-    blob = bucket.blob(filename)
-    blob.upload_from_string(file_content, content_type="text/plain")
 
 
 def wait_until_dataset_ready(
@@ -323,3 +252,23 @@ def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
 def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
+
+
+def empty_dataset_bucket() -> None:
+    """
+    Method to empty the dataset bucket.
+    """
+    delete_blobs(bucket_loader.get_dataset_bucket())
+
+
+def force_run_schedule_job() -> None:
+    """
+    Method to force run the schedule job to trigger the new dataset upload function.
+    """
+    client = scheduler_v1.CloudSchedulerClient()
+
+    request = scheduler_v1.RunJobRequest(
+        name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
+    )
+
+    client.run_job(request=request)

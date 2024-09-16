@@ -1,4 +1,4 @@
-import exception.exceptions as exceptions
+from exception import exceptions
 from exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError

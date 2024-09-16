@@ -14,21 +14,16 @@ class ConfigFactory:
     def get_config():
         env_conf = get_value_from_env("CONF")
 
-        match env_conf:
-            case "docker-dev":
-                return ServiceEmulatorDevelopmentConfig()
-            case "cloud-dev":
-                return CloudDevelopmentConfig()
-            case "unit":
-                return UnitTestingConfig()
-            case "cloud-build":
-                return CloudBuildConfig()
-            case "int-test":
-                return IntegrationTestConfig()
-            case "int-test-cloudbuild":
-                return IntegrationTestCloudbuildConfig()
-            case "default":
-                return Config()
+        config_mapping = {
+            "docker-dev": ServiceEmulatorDevelopmentConfig,
+            "cloud-dev": CloudDevelopmentConfig,
+            "unit": UnitTestingConfig,
+            "cloud-build": CloudBuildConfig,
+            "int-test": IntegrationTestConfig,
+            "int-test-cloudbuild": IntegrationTestCloudbuildConfig,
+        }
+
+        return config_mapping.get(env_conf, Config)()
 
 
 config = ConfigFactory.get_config()

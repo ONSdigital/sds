@@ -81,9 +81,9 @@ class ConfigTest(TestCase):
         os.environ["CONF"] = "unit"
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
         )
 
     def test_set_CloudBuildConfig(self):
@@ -96,9 +96,9 @@ class ConfigTest(TestCase):
         testConfig = config.CloudBuildConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
         )
 
     def test_set_ServiceEmulatorDevelopementConfig(self):
@@ -114,12 +114,12 @@ class ConfigTest(TestCase):
         testConfig = config.ServiceEmulatorDevelopmentConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
-            and testConfig.FIRESTORE_EMULATOR_HOST == testConfigVars.firestore_host
-            and testConfig.STORAGE_EMULATOR_HOST == testConfigVars.storage_host
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
+            and testConfigVars.firestore_host == testConfig.FIRESTORE_EMULATOR_HOST
+            and testConfigVars.storage_host == testConfig.STORAGE_EMULATOR_HOST
         )
 
     def test_set_CloudDevelopmentConfig(self):
@@ -134,12 +134,12 @@ class ConfigTest(TestCase):
         testConfig = config.CloudDevelopmentConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
-            and testConfig.GOOGLE_APPLICATION_CREDENTIALS
-            == testConfigVars.app_credentials
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
+            and testConfigVars.app_credentials
+            == testConfig.GOOGLE_APPLICATION_CREDENTIALS
         )
 
     def test_set_UnitTestingConfig(self):
@@ -156,12 +156,12 @@ class ConfigTest(TestCase):
         testConfig = config.UnitTestingConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
-            and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
-            and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
+            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
+            and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
         )
 
     def test_set_IntegrationTestConfig(self):
@@ -178,14 +178,14 @@ class ConfigTest(TestCase):
         testConfig = config.IntegrationTestConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
-            and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
-            and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
-            and testConfig.GOOGLE_APPLICATION_CREDENTIALS
-            == testConfigVars.app_credentials
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
+            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
+            and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
+            and testConfigVars.app_credentials
+            == testConfig.GOOGLE_APPLICATION_CREDENTIALS
         )
 
     def test_set_IntegrationTestCloudBuildConfig(self):
@@ -201,10 +201,10 @@ class ConfigTest(TestCase):
         testConfig = config.IntegrationTestCloudbuildConfig()
 
         assert (
-            testConfig.CONF == testConfigVars.conf
+            testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfig.DATASET_BUCKET_NAME == testConfigVars.datset_bucket_name
-            and testConfig.TEST_DATASET_PATH == testConfigVars.dataset_path
-            and testConfig.TEST_SCHEMA_PATH == testConfigVars.schema_path
-            and testConfig.SCHEMA_BUCKET_NAME == testConfigVars.schema_bucket_name
+            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
+            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
+            and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
+            and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
         )

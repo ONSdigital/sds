@@ -73,7 +73,6 @@ class DatasetProcessorService:
         survey_id (str): survey id of the collection.
         period_id (str): period id of the collection.
         """
-
         return self.dataset_repository.get_dataset_metadata_collection(
             survey_id, period_id
         )

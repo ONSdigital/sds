@@ -1,7 +1,7 @@
 import json
 
-import exception.exceptions as exceptions
 from config.config_factory import config
+from exception import exceptions
 from google.cloud.pubsub_v1 import PublisherClient
 from logging_config import logging
 from models.dataset_models import DatasetError, DatasetMetadata

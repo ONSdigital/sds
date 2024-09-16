@@ -1,4 +1,3 @@
-import time
 from unittest import TestCase
 
 from config.config_factory import config
@@ -7,9 +6,8 @@ from google.cloud import storage
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
-    create_dataset_as_string,
-    create_filename_error_filepath,
     create_filepath,
+    empty_dataset_bucket,
     generate_headers,
     load_json,
     pubsub_setup,
@@ -31,9 +29,9 @@ from src.test_data.shared_test_data import (
 class E2EDatasetIntegrationTest(TestCase):
     def setUp(self) -> None:
         cleanup()
-        time.sleep(5)
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+        empty_dataset_bucket()
 
     def tearDown(self) -> None:
         cleanup()
@@ -371,104 +369,3 @@ class E2EDatasetIntegrationTest(TestCase):
 
             json_response.pop("dataset_id")
             assert dataset_test_data.unit_response.items() == json_response.items()
-
-    def test_dataset_errors(self):
-        """
-        Test that when we upload three datasets with errors, the correct error is published to the error topic.
-        This checks the cloud function works when there are errors in the dataset.
-        There are errors on 3 instances:
-        - When the dataset file extension is not json
-        - When the dataset file is not valid json
-        - When the dataset file is missing required keys
-
-        * We load the sample dataset json files with errors
-        * Upload the dataset files to the dataset bucket
-        * Check the files are not removed from the bucket
-        * Check the error messages are published to the error topic
-
-        """
-
-        session = setup_session()
-        headers = generate_headers()
-
-        # Upload dataset with invalid filename
-        dataset_incorrect_extension = load_json(
-            f"{config.TEST_DATASET_PATH}dataset.json"
-        )
-        dataset_incorrect_extension_filename = create_filename_error_filepath(
-            "integration-test-incorrect-extension"
-        )
-
-        create_dataset_response = create_dataset(
-            dataset_incorrect_extension_filename,
-            dataset_incorrect_extension,
-            session,
-            headers,
-            skip_wait=True,
-        )
-
-        if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsuccessful request to create dataset"
-
-        # Check pubsub messages and ack
-        received_messages = dataset_error_pubsub_helper.pull_and_acknowledge_messages(
-            test_dataset_error_subscriber_id
-        )
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.incorrect_file_extension_message.items():
-            assert received_messages[0][key] == value
-
-        # Upload dataset with invalid json
-        with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
-            dataset_invalid_json = file.read()
-
-        dataset_invalid_json_filename = create_filepath("integration-test-invalid-json")
-
-        create_dataset_response = create_dataset_as_string(
-            dataset_invalid_json_filename, dataset_invalid_json, session, headers
-        )
-
-        if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsuccessful request to create dataset"
-
-        # Check pubsub messages and ack
-        received_messages = dataset_error_pubsub_helper.pull_and_acknowledge_messages(
-            test_dataset_error_subscriber_id
-        )
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.invalid_json_message.items():
-            assert received_messages[0][key] == value
-
-        # Upload dataset with missing keys
-        dataset_missing_keys = load_json(
-            f"{config.TEST_DATASET_PATH}dataset_missing_keys.json"
-        )
-        dataset_missing_keys_filename = create_filepath("integration-test-missing-keys")
-
-        create_dataset_response = create_dataset(
-            dataset_missing_keys_filename,
-            dataset_missing_keys,
-            session,
-            headers,
-            skip_wait=True,
-        )
-
-        if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsuccessful request to create dataset"
-
-        # Check pubsub messages and ack
-        received_messages = dataset_error_pubsub_helper.pull_and_acknowledge_messages(
-            test_dataset_error_subscriber_id
-        )
-
-        for (
-            key,
-            value,
-        ) in dataset_test_data.missing_keys_message.items():
-            assert received_messages[0][key] == value

@@ -15,7 +15,6 @@ def datetime_mock():
     """
     Mocks datetime.now() wrapper to always return the same date and time in tests.
     """
-
     DatetimeService.get_current_date_and_time = MagicMock()
     DatetimeService.get_current_date_and_time.return_value = datetime(
         2023, 4, 20, 12, 0, 0
@@ -27,7 +26,6 @@ def uuid_mock():
     """
     Mocks guid generation to always return the same guid.
     """
-
     uuid.uuid4 = MagicMock()
     uuid.uuid4.return_value = shared_test_data.test_guid
 

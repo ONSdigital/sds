@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 from config.config_factory import config
 from google.cloud import pubsub_v1
@@ -61,6 +62,8 @@ class PubSubHelper:
                 }
             )
 
+            self._wait_and_check_subscription_exists(subscriber_id)
+
     def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
         """
         Pulls all messages published to a topic via a subscriber.
@@ -116,6 +119,8 @@ class PubSubHelper:
                     request={"subscription": subscription_path}
                 )
 
+            self._wait_and_check_subscription_deleted(subscriber_id)
+
     def _subscription_exists(self, subscriber_id: str) -> None:
         """
         Checks a subscription exists.
@@ -134,6 +139,50 @@ class PubSubHelper:
             return True
         except Exception:
             return False
+
+    def _wait_and_check_subscription_exists(
+        self,
+        subscriber_id: str,
+        attempts: int = 5,
+        backoff: int = 0.5,
+    ) -> None:
+        """
+        Waits for a subscription to be created and checks if it exists.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        attempts: the number of attempts to check if the subscription exists.
+        backoff: the time to wait between attempts.
+        """
+        while attempts != 0:
+            if self._subscription_exists(subscriber_id):
+                return
+
+            attempts -= 1
+            time.sleep(backoff)
+            backoff += backoff
+
+    def _wait_and_check_subscription_deleted(
+        self,
+        subscriber_id: str,
+        attempts: int = 5,
+        backoff: int = 0.5,
+    ) -> None:
+        """
+        Waits for a subscription to be created and checks if it is deleted.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being checked.
+        attempts: the number of attempts to check if the subscription is deleted.
+        backoff: the time to wait between attempts.
+        """
+        while attempts != 0:
+            if not self._subscription_exists(subscriber_id):
+                return
+
+            attempts -= 1
+            time.sleep(backoff)
+            backoff += backoff
 
 
 dataset_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_TOPIC_ID)

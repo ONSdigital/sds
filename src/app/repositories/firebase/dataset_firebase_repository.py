@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    WRITE_BATCH_SIZE = 500
+    WRITE_BATCH_SIZE = 100
     DELETE_BATCH_SIZE = 100
 
     def __init__(self):
@@ -67,16 +67,14 @@ class DatasetFirebaseRepository:
             batch_counter = 0
             batch = self.client.batch()
 
-            for i in range(len(unit_data_collection_with_metadata)):
+            for unit_data, unit_identifier in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
                 if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
                     batch.commit()
                     batch = self.client.batch()
 
-                new_unit = unit_data_collection_snapshot.document(
-                    extracted_unit_data_identifiers[i]
-                )
-                batch.set(new_unit, unit_data_collection_with_metadata[i], merge=True)
-                batch_counter += 1
+                new_unit = unit_data_collection_snapshot.document(unit_identifier)
+                batch.set(new_unit, unit_data, merge=True)
+            batch_counter += 1
 
             batch.commit()
 
@@ -175,7 +173,6 @@ class DatasetFirebaseRepository:
         Returns:
         int: The number of unit supplementary data associated with the dataset id
         """
-
         limit = 1000
         count = 0
 
@@ -188,20 +185,14 @@ class DatasetFirebaseRepository:
             docs = []
 
             if cursor:
-                docs = [
-                    snapshot
-                    for snapshot in collection_ref.limit(limit)
+                docs = list(collection_ref.limit(limit)
                     .order_by("__name__")
                     .start_after(cursor)
-                    .stream()
-                ]
+                    .stream())
             else:
-                docs = [
-                    snapshot
-                    for snapshot in collection_ref.limit(limit)
+                docs = list(collection_ref.limit(limit)
                     .order_by("__name__")
-                    .stream()
-                ]
+                    .stream())
 
             count = count + len(docs)
 

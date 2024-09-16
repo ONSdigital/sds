@@ -58,8 +58,7 @@ start-docker-dev:
 	python -m uvicorn src.app.app:app --reload --port 3033
 
 lint-and-unit-test:
-	black .
-	isort . --profile black
+	python -m ruff check --fix .
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
@@ -183,16 +182,13 @@ generate-spec:
 	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:
-	python -m black . --check
-	python -m isort . --check-only --profile black
-	python -m flake8 src --max-line-length=127
+	python -m ruff check .
 
 audit:
 	python -m pip_audit
 
 lint-fix:
-	black .
-	isort . --profile black
+	python -m ruff check --fix .
 
 setup: requirements.txt
 	pip install -r requirements.txt

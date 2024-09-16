@@ -1,8 +1,8 @@
 import uuid
 
-import exception.exceptions as exceptions
 import requests
 from config.config_factory import config
+from exception import exceptions
 from logging_config import logging
 from models.schema_models import SchemaMetadata
 from repositories.buckets.schema_bucket_repository import SchemaBucketRepository
@@ -26,7 +26,6 @@ class SchemaProcessorService:
         Parameters:
         schema (dict): incoming schema.
         """
-
         schema_id = str(uuid.uuid4())
         stored_schema_filename = f"{survey_id}/{schema_id}.json"
 
@@ -108,7 +107,6 @@ class SchemaProcessorService:
         Parameters:
         survey_id (str): the survey id of the schema.
         """
-
         current_version_metadata = (
             self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
                 survey_id
@@ -126,7 +124,6 @@ class SchemaProcessorService:
         Parameters:
         schema (dict); schema being processed.
         """
-
         level_keys = ["properties", "schema_version", "const"]
         return self.get_child_property(schema, level_keys)
 
@@ -142,8 +139,7 @@ class SchemaProcessorService:
 
         for key in keys:
             field = field[key]
-        else:
-            result = field
+        result = field
 
         return result
 
@@ -156,7 +152,6 @@ class SchemaProcessorService:
         Parameters:
         survey_id (str): the survey id of the schema metadata.
         """
-
         schema_metadata_collection = (
             self.schema_firebase_repository.get_schema_metadata_collection(survey_id)
         )
@@ -223,12 +218,11 @@ class SchemaProcessorService:
         """
         Gets the Survey mapping data from the survey_map.json file in GitHub repository.
         """
-
         try:
             logger.info("Fetching the survey mapping data")
 
             url = config.SURVEY_MAP_URL
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             logger.debug(f"Response is {response}")
 
             survey_map_dict = response.json()
