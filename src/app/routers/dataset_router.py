@@ -22,8 +22,8 @@ async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(),
 ):
-    logger.info("collection exercise end message received")
-    logger.debug("collection exercise end message received {}", collection_end_data)
+    logger.info("collection_exercise_end message received")
+    logger.debug("collection_exercise_end message received {}", collection_end_data)
     dataset_deletion_service.process_collection_exercise_end_message(
         collection_end_data
     )

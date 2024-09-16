@@ -48,7 +48,12 @@ class DatasetDeletionService:
     def _collect_metadata_for_period_and_survey(
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
-        logger.debug("Collecting all datasets for period and survey")
+        logger.info("Collecting all dataset versions for period and survey")
+        logger.info(
+            "Collecting all dataset versions for period: {} and survey: {}",
+            collection_exercise_end_data.survey_id,
+            collection_exercise_end_data.period,
+        )
         return self.dataset_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
@@ -58,7 +63,7 @@ class DatasetDeletionService:
     ):
         time_now = DatetimeService.get_current_date_and_time()
         for dataset_metadata in list_dataset_metadata:
-            logger.debug("dataset_metadata {}", dataset_metadata)
+            logger.debug("Dataset_metadata {}", dataset_metadata)
             delete_metadata: DeleteMetadata = DeleteMetadata(
                 **{
                     "dataset_guid": dataset_metadata["dataset_id"],
@@ -70,5 +75,5 @@ class DatasetDeletionService:
                     "deleted_at": "n/a",
                 }
             )
-            logger.debug("marking dataset for deletion {}", delete_metadata)
+            logger.debug("Marking dataset for deletion {}", delete_metadata)
             self.delete_repository.mark_dataset_for_deletion(delete_metadata)
