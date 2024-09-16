@@ -1,6 +1,6 @@
 import json
 
-import exception.exceptions as exceptions
+from exception import exceptions
 from logging_config import logging
 from repositories.buckets.bucket_loader import bucket_loader
 from repositories.buckets.bucket_repository import BucketRepository

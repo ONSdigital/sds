@@ -47,7 +47,6 @@ class SchemaValidatorService:
         schema (dict): schema to be validated
         keys_definition_list (list): a list of keys definition to validate schema
         """
-
         for key_definition in keys_definition_list:
             rolling_field = schema
             key_hierarchy = key_definition["key_hierarchy"]

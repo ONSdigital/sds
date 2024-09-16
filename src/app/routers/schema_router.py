@@ -1,5 +1,5 @@
 import exception.exception_response_models as erm
-import exception.exceptions as exceptions
+from exception import exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Body, Depends
 from logging_config import logging
@@ -83,8 +83,8 @@ async def post_schema(
     },
 )
 async def get_schema_from_bucket(
-    survey_id: str = None,
-    version: str = None,
+    survey_id: str | None = None,
+    version: str | None = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> dict:
@@ -148,7 +148,7 @@ async def get_schema_from_bucket(
     },
 )
 async def get_schema_from_bucket_with_guid(
-    guid: str = None,
+    guid: str | None = None,
     schema_bucket_repository: SchemaBucketRepository = Depends(),
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> dict:
@@ -210,7 +210,7 @@ async def get_schema_from_bucket_with_guid(
     },
 )
 async def get_schema_metadata_collection(
-    survey_id: str = None, schema_processor_service: SchemaProcessorService = Depends()
+    survey_id: str | None = None, schema_processor_service: SchemaProcessorService = Depends()
 ) -> list[SchemaMetadata]:
     """
     Get all schema metadata associated with a specific survey id.
@@ -261,7 +261,6 @@ async def get_survey_id_map(
     Parameters:
     schema_processor_service (SchemaProcessorService): injected dependency for processing the survey_map.json file.
     """
-
     survey_id_map = schema_processor_service.get_survey_id_map()
 
     if not survey_id_map:

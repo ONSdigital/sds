@@ -1,4 +1,4 @@
-import exception.exceptions as exceptions
+from exception import exceptions
 from logging_config import logging
 
 logger = logging.getLogger(__name__)
@@ -79,7 +79,6 @@ class QueryParameterValidatorService:
         survey_id: survey id of the dataset metadata.
         period_id: period id of the dataset metadata.
         """
-
         if survey_id is None:
             logger.error("Survey ID not set")
             raise exceptions.ExceptionIncorrectDatasetKey

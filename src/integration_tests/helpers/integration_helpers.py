@@ -92,13 +92,24 @@ def create_filepath(file_prefix: str):
     return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
+def create_filename_error_filepath(file_prefix: str):
+    """
+    Creates a filepath without '.json' suffix for uploading a dataset file to a bucket
+
+    Parameters:
+        file_prefix: prefix to identify the file being uploaded
+
+    """
+    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
+
+
 def create_dataset(
     filename: str,
     dataset: dict,
     session: requests.Session,
     headers: dict[str, str],
     skip_wait: bool = False,
-) -> None:
+) -> int | None:
     """
     Method to create a dataset using either the remote new dataset function or the local version.
 
@@ -107,7 +118,6 @@ def create_dataset(
         dataset: the dataset to be created
         session: a session instance for http/s connections
         headers: the relevant headers for authentication for http/s calls
-        skip_wait: flag for skip waiting for dataset to create
 
     Returns:
         None

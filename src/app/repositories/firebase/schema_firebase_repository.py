@@ -20,7 +20,6 @@ class SchemaFirebaseRepository:
         Parameters:
         survey_id (str): The survey id of the dataset.
         """
-
         latest_schema = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
@@ -78,7 +77,6 @@ class SchemaFirebaseRepository:
         schema_id (str): The unique id of the new schema.
         schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
         """
-
         transaction.set(
             self.schemas_collection.document(schema_id),
             schema_metadata,
@@ -93,7 +91,6 @@ class SchemaFirebaseRepository:
         survey_id (str): The survey id of the survey being queried.
         version (str): The version of the survey being queried
         """
-
         schemas_result = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .where("sds_schema_version", "==", int(version))
@@ -110,7 +107,6 @@ class SchemaFirebaseRepository:
         Parameters:
         survey_id (str): The survey id of the survey being queried.
         """
-
         schemas_result = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
@@ -128,7 +124,6 @@ class SchemaFirebaseRepository:
         Parameters:
         guid (str): The guid of the survey being queried.
         """
-
         schemas_result = self.schemas_collection.where("guid", "==", guid).stream()
 
         for schema in schemas_result:
@@ -141,7 +136,6 @@ class SchemaFirebaseRepository:
         Parameters:
         survey_id (str): The survey id of the schema metadata being collected.
         """
-
         returned_schema_metadata = (
             self.schemas_collection.where("survey_id", "==", survey_id)
             .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)

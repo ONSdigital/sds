@@ -1,5 +1,5 @@
 import exception.exception_response_models as erm
-import exception.exceptions as exceptions
+from exception import exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends
 from logging_config import logging
@@ -105,8 +105,8 @@ async def get_unit_supplementary_data(
     },
 )
 async def get_dataset_metadata_collection(
-    survey_id: str = None,
-    period_id: str = None,
+    survey_id: str | None = None,
+    period_id: str | None = None,
     dataset_processor_service: DatasetProcessorService = Depends(),
 ) -> list[DatasetMetadata]:
     """

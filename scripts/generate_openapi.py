@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 import yaml
 from uvicorn.importer import import_from_string
@@ -19,8 +20,8 @@ if __name__ == "__main__":
     openapi = app.openapi()
 
     if not args.out.endswith(".yaml"):
-        print(f"Error, only yaml file is accepted")
-        quit()
+        print("Error, only yaml file is accepted")
+        sys.exit()
 
     with open(args.out, "w") as f:
         yaml.dump(openapi, f, sort_keys=False)

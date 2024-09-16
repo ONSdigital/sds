@@ -18,7 +18,6 @@ class DatasetValidatorService:
         Parameters:
         filename (str): filename being validated.
         """
-
         is_valid, message = DatasetValidatorService._validate_file_extension_is_json(
             filename
         )
@@ -53,7 +52,6 @@ class DatasetValidatorService:
         Parameters:
         filename (str): filename being validated.
         """
-
         if filename[-5:].lower() != ".json":
             message = "Invalid filetype received."
             return False, message
@@ -68,7 +66,6 @@ class DatasetValidatorService:
         Parameters:
         filename (str): filename being validated.
         """
-
         try:
             DatasetBucketRepository().get_dataset_file_as_json(filename)
         except JSONDecodeError:
@@ -85,7 +82,6 @@ class DatasetValidatorService:
         Parameters:
         raw_dataset (RawDataset): dataset being validated.
         """
-
         DatasetValidatorService._validate_dataset_exists_in_bucket(raw_dataset)
         DatasetValidatorService._validate_dataset_keys(raw_dataset)
 
@@ -112,7 +108,6 @@ class DatasetValidatorService:
         Parameters:
         raw_dataset (RawDataset): dataset being validated.
         """
-
         is_valid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
         if is_valid is False:
@@ -163,11 +158,10 @@ class DatasetValidatorService:
         mandatory_keys (list[str]): mandatory keys referenced.
         raw_dataset (RawDataset): dataset being validated.
         """
-
         return [
             mandatory_key
             for mandatory_key in mandatory_keys
-            if mandatory_key not in raw_dataset.keys()
+            if mandatory_key not in raw_dataset
         ]
 
     @staticmethod
@@ -180,7 +174,6 @@ class DatasetValidatorService:
         Parameters:
         missing_keys (list[str]): list of missing keys.
         """
-
         return (
             DatasetValidatorService._missing_keys_response(missing_keys)
             if len(missing_keys) > 0
@@ -192,7 +185,6 @@ class DatasetValidatorService:
         """
         Response for when no keys are missing.
         """
-
         return True, ""
 
     @staticmethod
@@ -203,7 +195,6 @@ class DatasetValidatorService:
         Parameters:
         missing_keys (list[str]): list of missing keys.
         """
-
         return False, ", ".join(missing_keys)
 
     def try_publish_dataset_error_to_topic(message: DatasetError) -> None:
@@ -213,7 +204,6 @@ class DatasetValidatorService:
         Parameters:
         message: message to be published.
         """
-
         topic_id = config.PUBLISH_DATASET_ERROR_TOPIC_ID
 
         try:
