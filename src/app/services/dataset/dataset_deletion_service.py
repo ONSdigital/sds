@@ -33,7 +33,7 @@ class DatasetDeletionService:
             )
             self._mark_collections_for_deletion(list_supplementary_metadata)
         else:
-            logger.info("Supplementary not data found")
+            logger.debug("Supplementary data not data found")
 
     def _check_if_collection_has_supplementary_data(
         self, collection_exercise_end_data: CollectionExerciseEndData
