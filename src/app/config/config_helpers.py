@@ -31,7 +31,7 @@ def format_value(value: str) -> str | bool:
     return get_bool_value(value) if can_cast_to_bool(value) else value
 
 
-def get_value_from_env(env_value: str, default_value: str = None) -> str | bool:
+def get_value_from_env(env_value: str, default_value: str | None = None) -> str | bool:
     """
     Method to determine if a desired enviroment variable has been set and return it.
     If an enviroment variable or default value are not set an expection is raised.

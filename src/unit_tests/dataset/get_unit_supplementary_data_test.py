@@ -9,7 +9,6 @@ def test_get_unit_supplementary_data_200_response(test_client):
     """
     The e2e journey for retrieving unit supplementary data from firestore,with repository boundaries mocked
     """
-
     DatasetFirebaseRepository.get_unit_supplementary_data = MagicMock()
     DatasetFirebaseRepository.get_unit_supplementary_data.return_value = (
         dataset_test_data.unit_supplementary_data

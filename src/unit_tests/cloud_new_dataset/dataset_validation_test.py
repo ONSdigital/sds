@@ -69,7 +69,6 @@ class DatasetValidationTest(TestCase):
         """
         Validates when an empty object is returned from the bucket.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
@@ -92,7 +91,6 @@ class DatasetValidationTest(TestCase):
         """
         Validates when there are mandatory keys missing from the dataset.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )
@@ -117,7 +115,6 @@ class DatasetValidationTest(TestCase):
         """
         Validates when the content of the dataset is not valid JSON.
         """
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="test_filename.json"
         )

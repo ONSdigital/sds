@@ -12,14 +12,12 @@ def validate_document_with_schema(document, schema):
 
     except ValidationError as e:
         logging.error(
-            "Schema Validation Error! [{}] does not validate against schema. Error [{}]".format(
-                document, e
-            )
+            f"Schema Validation Error! [{document}] does not validate against schema. Error [{e}]"
         )
 
     except SchemaError as e:
         logging.error(
-            "JSON Parse Error! Could not parse [{}]. Error [{}]".format(document, e)
+            f"JSON Parse Error! Could not parse [{document}]. Error [{e}]"
         )
 
 
