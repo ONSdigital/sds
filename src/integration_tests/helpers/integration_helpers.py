@@ -92,17 +92,6 @@ def create_filepath(file_prefix: str):
     return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}.json"
 
 
-def create_filename_error_filepath(file_prefix: str):
-    """
-    Creates a filepath without '.json' suffix for uploading a dataset file to a bucket
-
-    Parameters:
-        file_prefix: prefix to identify the file being uploaded
-
-    """
-    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
-
-
 def create_dataset(
     filename: str,
     dataset: dict,
