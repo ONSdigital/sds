@@ -58,7 +58,7 @@ start-docker-dev:
 	python -m uvicorn src.app.app:app --reload --port 3033
 
 lint-and-unit-test:
-	python -m ruff check --fix .
+	python -m ruff check .
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
