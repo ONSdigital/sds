@@ -22,12 +22,6 @@ class Config(BaseSettings):
         self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
             "PUBLISH_DATASET_ERROR_TOPIC_ID"
         )
-        self.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_SUBSCRIPTION_ID"
-        )
-        self.COLLECTION_EXERCISE_END_TOPIC_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_TOPIC_ID"
-        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
@@ -43,8 +37,6 @@ class Config(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     PUBLISH_DATASET_ERROR_TOPIC_ID: str
-    COLLECTION_EXERCISE_END_SUBSCRIPTION_ID: str
-    COLLECTION_EXERCISE_END_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
     SDS_APPLICATION_VERSION: str
@@ -80,12 +72,6 @@ class IntegrationTestConfig(BaseSettings):
         self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
             "PUBLISH_DATASET_ERROR_TOPIC_ID"
         )
-        self.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_SUBSCRIPTION_ID"
-        )
-        self.COLLECTION_EXERCISE_END_TOPIC_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_TOPIC_ID"
-        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -108,8 +94,6 @@ class IntegrationTestConfig(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     PUBLISH_DATASET_ERROR_TOPIC_ID: str
-    COLLECTION_EXERCISE_END_SUBSCRIPTION_ID: str
-    COLLECTION_EXERCISE_END_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
@@ -144,12 +128,6 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
             "PUBLISH_DATASET_ERROR_TOPIC_ID"
         )
-        self.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_SUBSCRIPTION_ID"
-        )
-        self.COLLECTION_EXERCISE_END_TOPIC_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_TOPIC_ID"
-        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -171,8 +149,6 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     PUBLISH_DATASET_ERROR_TOPIC_ID: str
-    COLLECTION_EXERCISE_END_SUBSCRIPTION_ID: str
-    COLLECTION_EXERCISE_END_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
@@ -198,12 +174,6 @@ class CloudBuildConfig(BaseSettings):
         self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
             "PUBLISH_DATASET_ERROR_TOPIC_ID"
         )
-        self.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_SUBSCRIPTION_ID"
-        )
-        self.COLLECTION_EXERCISE_END_TOPIC_ID = get_value_from_env(
-            "COLLECTION_EXERCISE_END_TOPIC_ID"
-        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
@@ -219,8 +189,6 @@ class CloudBuildConfig(BaseSettings):
     PUBLISH_SCHEMA_TOPIC_ID: str
     PUBLISH_DATASET_TOPIC_ID: str
     PUBLISH_DATASET_ERROR_TOPIC_ID: str
-    COLLECTION_EXERCISE_END_SUBSCRIPTION_ID: str
-    COLLECTION_EXERCISE_END_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
     SDS_APPLICATION_VERSION: str
