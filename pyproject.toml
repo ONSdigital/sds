@@ -10,7 +10,7 @@ select = [
 
     # Ruff rules: https://docs.astral.sh/ruff/rules/
 
-    "E",      # pycodestyle erros
+    "E",      # pycodestyle errors
     "W",      # pycodestyle warnings
     "F",      # Pyflakes
     "UP",     # pyupgrade

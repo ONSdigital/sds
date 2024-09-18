@@ -64,17 +64,15 @@ class DatasetFirebaseRepository:
             batch.set(new_dataset_document, dataset_metadata_without_id, merge=True)
             batch.commit()
 
-            batch_counter = 0
             batch = self.client.batch()
 
-            for unit_data, unit_identifier in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
+            for batch_counter, (unit_data, unit_identifier) in enumerate(zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers)):
                 if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
                     batch.commit()
                     batch = self.client.batch()
 
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
                 batch.set(new_unit, unit_data, merge=True)
-            batch_counter += 1
 
             batch.commit()
 
