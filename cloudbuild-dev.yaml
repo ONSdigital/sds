@@ -40,10 +40,13 @@ steps:
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
+        docker build --cache-from "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
-
+    cache:
+      paths:
+        - "/root/.cache/pip"
+        
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
