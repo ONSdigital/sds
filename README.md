@@ -4,8 +4,6 @@ More information on this service can be found on Confluence:
 
 - https://confluence.ons.gov.uk/display/SDC/SDS
 
----
-
 ## Dockerized
 
 The docker-compose will launch the SDS application, two storage emulators(firebase and bucket), the new_dataset cloud function and a supporting publish dataset endpoint. The SDS application will also support hot reloading within the `/src/app` directory.
@@ -203,4 +201,4 @@ make integration-test-local
 
 # Contact
 
-- <sds.cir.team@ons.gov.uk>
+- [sds.cir.team@ons.gov.uk](mailto:sds.cir.team@ons.gov.uk)
