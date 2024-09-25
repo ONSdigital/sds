@@ -298,13 +298,13 @@ class E2EDatasetIntegrationTest(TestCase):
         assert dataset_json["period_id"] == "test_period_id"
 
         assert (
-            dataset_different_survey_id_json["survey_id"] == "test_different_survey_id"
+            dataset_different_survey_id_json["survey_id"] == dataset_different_survey_id["survey_id"]
         )
-        assert dataset_different_survey_id_json["period_id"] == "test_period_id"
+        assert dataset_different_survey_id_json["period_id"] == dataset_different_survey_id["period_id"]
 
-        assert dataset_different_period_id_json["survey_id"] == "test_survey_id"
+        assert dataset_different_period_id_json["survey_id"] == dataset_different_period_id["survey_id"]
         assert (
-            dataset_different_period_id_json["period_id"] == "test_different_period_id"
+            dataset_different_period_id_json["period_id"] == dataset_different_period_id["period_id"]
         )
 
     def test_dataset_without_title(self):

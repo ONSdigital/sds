@@ -17,9 +17,10 @@ from src.integration_tests.helpers.bucket_helpers import (
 )
 from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
-    perform_delete_transaction,
+    perform_delete_on_collection_with_test_survey_id,
 )
 from src.integration_tests.helpers.pubsub_helper import PubSubHelper
+from src.test_data.dataset_test_data import test_survey_id
 
 storage_client = storage.Client()
 
@@ -234,13 +235,15 @@ def cleanup() -> None:
 
         client = firebase_loader.get_client()
 
-        perform_delete_transaction(
-            client.transaction(),
+        perform_delete_on_collection_with_test_survey_id(
+            client,
             firebase_loader.get_datasets_collection(),
+            test_survey_id
         )
-        perform_delete_transaction(
-            client.transaction(),
+        perform_delete_on_collection_with_test_survey_id(
+            client,
             firebase_loader.get_schemas_collection(),
+            test_survey_id
         )
 
 

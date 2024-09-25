@@ -1,7 +1,7 @@
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
+from src.test_data.shared_test_data import test_survey_id
 
 test_guid = "test_guid"
-test_survey_id = "test_survey_id"
 test_published_at = "2023-04-20T12:00:00Z"
 test_filename = f"{test_survey_id}/{test_guid}.json"
 test_schema_version = "v1"
