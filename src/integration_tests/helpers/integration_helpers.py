@@ -13,6 +13,7 @@ from urllib3 import Retry
 
 from src.integration_tests.helpers.bucket_helpers import (
     delete_blobs,
+    delete_blobs_with_test_survey_id,
     delete_local_bucket_data,
 )
 from src.integration_tests.helpers.firestore_helpers import (
@@ -231,7 +232,7 @@ def cleanup() -> None:
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
         delete_blobs(bucket_loader.get_dataset_bucket())
-        delete_blobs(bucket_loader.get_schema_bucket())
+        delete_blobs_with_test_survey_id(bucket_loader.get_schema_bucket(), test_survey_id)
 
         client = firebase_loader.get_client()
 
