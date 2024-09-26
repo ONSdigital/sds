@@ -1,3 +1,4 @@
+import json
 from firebase_admin import firestore
 from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 class DatasetFirebaseRepository:
     WRITE_BATCH_SIZE = 100
     DELETE_BATCH_SIZE = 100
+    MAX_BATCH_SIZE_BYTES= 9 * 1024 * 1024
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -65,16 +67,27 @@ class DatasetFirebaseRepository:
             batch.commit()
 
             batch = self.client.batch()
+            batch_size_bytes = 0
 
             for batch_counter, (unit_data, unit_identifier) in enumerate(zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers)):
-                if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
+
+                # Caclulate size of unit data
+                unit_data_size_bytes = self.get_serialized_size(unit_data)
+
+                if batch_counter > 0 and (batch_size_bytes + unit_data_size_bytes > self.MAX_BATCH_SIZE_BYTES):
                     batch.commit()
                     batch = self.client.batch()
+                    batch_size_bytes = 0
 
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
                 batch.set(new_unit, unit_data, merge=True)
+                batch_size_bytes += unit_data_size_bytes
 
-            batch.commit()
+                #current_batch_size = batch_size_bytes / (1024 * 1024) # MB
+                #logger.info(f"Added unit {unit_identifier} (count: {batch_counter + 1}), current batch size: {current_batch_size} MB")
+
+            if batch_size_bytes > 0:
+                batch.commit()
 
         except Exception as e:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
@@ -137,6 +150,18 @@ class DatasetFirebaseRepository:
         except Exception as e:
             logger.error(f"Error deleting sub collection in batches: {e}")
             raise RuntimeError("Error deleting sub collection in batches.")
+
+
+    def get_serialized_size(self, obj) -> int:
+        """
+        Get...
+
+        Parameters:
+
+        """
+        serialized_obj = json.dumps(obj)
+        return len(serialized_obj.encode('utf-8'))
+            
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
