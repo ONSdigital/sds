@@ -71,7 +71,6 @@ class DatasetFirebaseRepository:
 
             for batch_counter, (unit_data, unit_identifier) in enumerate(zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers)):
 
-                # Caclulate size of unit data
                 unit_data_size_bytes = self.get_serialized_size(unit_data)
 
                 if batch_counter > 0 and (batch_size_bytes + unit_data_size_bytes > self.MAX_BATCH_SIZE_BYTES):
@@ -82,9 +81,6 @@ class DatasetFirebaseRepository:
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
                 batch.set(new_unit, unit_data, merge=True)
                 batch_size_bytes += unit_data_size_bytes
-
-                #current_batch_size = batch_size_bytes / (1024 * 1024) # MB
-                #logger.info(f"Added unit {unit_identifier} (count: {batch_counter + 1}), current batch size: {current_batch_size} MB")
 
             if batch_size_bytes > 0:
                 batch.commit()
@@ -154,10 +150,13 @@ class DatasetFirebaseRepository:
 
     def get_serialized_size(self, obj) -> int:
         """
-        Get...
+        Calculate the size of serialized object in bytes.
 
         Parameters:
+        obj (Any): The object to be serilaized and measured
 
+        Returns:
+        int: The size of the serialized object in bytes
         """
         serialized_obj = json.dumps(obj)
         return len(serialized_obj.encode('utf-8'))
