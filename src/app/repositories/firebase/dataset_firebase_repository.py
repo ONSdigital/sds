@@ -73,7 +73,7 @@ class DatasetFirebaseRepository:
 
                 unit_data_size_bytes = self.get_serialized_size(unit_data)
 
-                if batch_size_bytes + unit_data_size_bytes > self.MAX_BATCH_SIZE_BYTES:
+                if batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
                     batch.commit()
                     batch = self.client.batch()
                     batch_size_bytes = 0
