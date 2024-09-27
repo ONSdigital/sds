@@ -46,9 +46,6 @@ class DatasetValidationTest(TestCase):
         """
         Tests the validation for when the file extension is not a json
         """
-        # cloud_event = MagicMock()
-        # cloud_event.data = dataset_test_data.cloud_event_invalid_filename_data
-
         DatasetBucketRepository.fetch_oldest_filename_from_bucket = MagicMock(
             return_value="bad_filename.test"
         )

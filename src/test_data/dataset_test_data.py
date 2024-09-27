@@ -2,34 +2,26 @@ from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, Uni
 
 from src.test_data.shared_test_data import test_guid, test_survey_id, test_period_id
 
-cloud_event_data = {
-    "id": "test_id",
-    "type": "test_type",
-    "bucket": "test_bucket",
-    "metageneration": "1",
-    "timeCreated": "test_time_created",
-    "updated": "test_time_updated",
-    "name": "test_filename.json",
-}
-
-cloud_event_invalid_filename_data = {
-    "id": "test_id",
-    "type": "test_type",
-    "bucket": "test_bucket",
-    "metageneration": "1",
-    "timeCreated": "test_time_created",
-    "updated": "test_time_updated",
-    "name": "bad_filename.test",
-}
-
-
-identifier = "test_identifier"
-
+"""
+Local variables:
+"""
 first_dataset_version = 1
 updated_dataset_version = 2
 
+
+"""
+Test data:
+"""
+# unit tests - dataset - test data
+identifier = "test_identifier"
+
+# e2e dataset integration test - test data
+int_identifier = "43532"
+
+# unit tests - cloud new dataset - test data
 dataset_unit_data_identifier: list[str] = ["43532", "65871"]
 
+# unit tests - cloud new dataset - test data
 dataset_metadata_first_version: DatasetMetadata = {
     "dataset_id": test_guid,
     "survey_id": test_survey_id,
@@ -43,6 +35,7 @@ dataset_metadata_first_version: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 dataset_metadata_updated_version: DatasetMetadata = {
     "dataset_id": test_guid,
     "survey_id": test_survey_id,
@@ -56,6 +49,7 @@ dataset_metadata_updated_version: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
+# unit tests - dataset - test data
 dataset_metadata_collection: list[DatasetMetadata] = [
     {
         "survey_id": f"{test_survey_id}_1",
@@ -83,6 +77,7 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     },
 ]
 
+# unit tests - cloud new dataset - test data
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -95,6 +90,7 @@ first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -107,11 +103,13 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 updated_dataset_metadata: DatasetMetadata = {
     **updated_dataset_metadata_without_id,
     "dataset_id": test_guid,
 }
 
+# unit tests - dataset - test data
 unit_supplementary_data: UnitDataset = {
     "dataset_id": test_guid,
     "survey_id": test_survey_id,
@@ -152,6 +150,7 @@ unit_supplementary_data: UnitDataset = {
     },
 }
 
+# unit tests - cloud new dataset - test data
 dataset_unit_data_collection: list[UnitDataset] = [
     {
         "dataset_id": test_guid,
@@ -210,6 +209,7 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
+# unit tests - cloud new dataset - test data
 missing_keys_dataset_metadata = {
     "period_id": test_period_id,
     "schema_version": 1,
@@ -221,7 +221,7 @@ missing_keys_dataset_metadata = {
     "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
-
+# e2e dataset integration test - test data
 nonrandom_pubsub_first_dataset_metadata = {
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -232,6 +232,7 @@ nonrandom_pubsub_first_dataset_metadata = {
     "sds_dataset_version": first_dataset_version,
 }
 
+# e2e dataset integration test - test data
 nonrandom_pubsub_second_dataset_metadata = {
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -242,6 +243,7 @@ nonrandom_pubsub_second_dataset_metadata = {
     "sds_dataset_version": updated_dataset_version,
 }
 
+# e2e dataset integration test - test data
 unit_response = {
     "schema_version": "v1.0.0",
     "survey_id": test_survey_id,
@@ -250,6 +252,7 @@ unit_response = {
     "data": "<encrypted data>",
 }
 
+# e2e dataset integration test - test data
 unit_response_amended = {
     "schema_version": "v2.0.0",
     "survey_id": test_survey_id,
@@ -258,16 +261,19 @@ unit_response_amended = {
     "data": "<encrypted data>",
 }
 
+# unused
 incorrect_file_extension_message = {
     "error": "Filetype error",
     "message": "Invalid filetype received.",
 }
 
+# unused
 invalid_json_message = {
     "error": "File content error",
     "message": "Invalid JSON content received.",
 }
 
+# unused
 missing_keys_message = {
     "error": "Mandatory key(s) error",
     "message": "Mandatory key(s) missing from JSON.",

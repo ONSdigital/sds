@@ -20,7 +20,6 @@ from src.integration_tests.helpers.pubsub_helper import (
 )
 from src.test_data import dataset_test_data
 from src.test_data.shared_test_data import (
-    identifier,
     test_dataset_error_subscriber_id,
     test_dataset_subscriber_id,
 )
@@ -169,7 +168,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 # Check against unit_data endpoint for second dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                     headers=headers,
                 )
 
@@ -202,7 +201,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 # Check against unit_data endpoint for first dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                     headers=headers,
                 )
 
@@ -360,7 +359,7 @@ class E2EDatasetIntegrationTest(TestCase):
             # Check against unit_data endpoint
             dataset_id = dataset_metadata["dataset_id"]
             unit_data_response = session.get(
-                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                 headers=headers,
             )
             assert unit_data_response.status_code == 200

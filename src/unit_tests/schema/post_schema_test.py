@@ -102,7 +102,7 @@ class PostSchemaTest(TestCase):
             schema_test_data.test_guid,
             schema_test_data.test_post_schema_metadata_updated_version_response,
             schema_test_data.test_post_schema_body,
-            schema_test_data.test_filename,
+            f"{schema_test_data.test_survey_id}/{schema_test_data.test_guid}.json",
         )
 
     def test_post_schema_with_invalid_dict(self):
