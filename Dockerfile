@@ -1,6 +1,6 @@
 FROM python:3.11-alpine
 
-RUN apk add --no-cache make
+RUN apk add --no-cache make gcc musl-dev
 COPY . .
 RUN pip install -r requirements.txt
 RUN make unit-test
