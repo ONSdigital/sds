@@ -1,4 +1,5 @@
 import json
+
 from firebase_admin import firestore
 from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
@@ -160,7 +161,7 @@ class DatasetFirebaseRepository:
         """
         serialized_obj = json.dumps(obj)
         return len(serialized_obj.encode('utf-8'))
-            
+
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
