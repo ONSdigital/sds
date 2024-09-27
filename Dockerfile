@@ -1,18 +1,9 @@
-FROM python:3.11-alpine AS compile-image
+FROM python:3.11
 
-RUN python -m venv /opt/venv
-# Make sure we use the virtualenv:
-ENV PATH="/opt/venv/bin:$PATH"
-
-COPY requirements.txt .
+RUN apt-get update && apt-get install -y make gcc
+COPY . .
 RUN pip install -r requirements.txt
-
-COPY src/app src
-
-FROM python:3.11-alpine AS build-image
-COPY --from=compile-image /opt/venv /opt/venv
-COPY --from=compile-image /src /src
-
-# Make sure we use the virtualenv:
-ENV PATH="/opt/venv/bin:$PATH"
+COPY src/unit_tests src/unit_tests
+RUN make unit-test
+ENV PYTHONPATH=src
 CMD exec uvicorn src.app:app --host 0.0.0.0 --port $PORT
