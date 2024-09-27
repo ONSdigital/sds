@@ -11,6 +11,7 @@ COPY src/app src
 
 FROM python:3.11-alpine AS build-image
 COPY --from=compile-image /opt/venv /opt/venv
+COPY --from=compile-image /src /src
 
 # Make sure we use the virtualenv:
 ENV PATH="/opt/venv/bin:$PATH"
