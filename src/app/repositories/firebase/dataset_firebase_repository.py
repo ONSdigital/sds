@@ -69,7 +69,7 @@ class DatasetFirebaseRepository:
             batch = self.client.batch()
             batch_size_bytes = 0
 
-            for (unit_data, unit_identifier) in enumerate(zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers)):
+            for (unit_data, unit_identifier) in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
 
                 unit_data_size_bytes = self.get_serialized_size(unit_data)
 
