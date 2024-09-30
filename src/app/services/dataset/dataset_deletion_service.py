@@ -1,3 +1,4 @@
+from config.config_factory import config
 from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
@@ -7,8 +8,6 @@ from repositories.firebase.deletion_firebase_repository import (
 )
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
-
-from config.config_factory import config
 
 logger = logging.getLogger(__name__)
 
