@@ -109,17 +109,17 @@ def create_dataset(
         headers: the relevant headers for authentication for http/s calls
 
     Returns:
-        int | None: status code for local function and no return for remote.
+        None
     """
     if config.OAUTH_CLIENT_ID.__contains__("local"):
-        return _create_local_dataset(session, filename, dataset)
+        _create_local_dataset(session, filename, dataset)
     else:
         _create_remote_dataset(session, filename, dataset, headers, skip_wait)
 
 
 def _create_local_dataset(
     session: requests.Session, filename: str, dataset: dict
-) -> int:
+) -> None:
     """
     Method to create a local dataset.
 
@@ -128,13 +128,9 @@ def _create_local_dataset(
         session: a session instance for http/s connections
 
     Returns:
-        int: status code for local function.
+        None
     """
-    simulate_post_dataset_request = session.post(
-        f"http://localhost:3006?filename={filename}", json=dataset
-    )
-
-    return simulate_post_dataset_request.status_code
+    session.post(f"http://localhost:3006?filename={filename}", json=dataset)
 
 
 def _create_remote_dataset(
@@ -168,6 +164,45 @@ def _create_remote_dataset(
         wait_until_dataset_ready(
             dataset["survey_id"], dataset["period_id"], filename, session, headers
         )
+
+
+def _create_local_dataset_as_string(
+    session: requests.Session, filename: str, file_content: str
+) -> None:
+    """
+    Method to create a local dataset as a string.
+
+    Parameters:
+        filename: the filename to use for the file
+        file_content: the content of the file to be uploaded
+        session: a session instance for http/s connections
+
+    Returns:
+        int: status code for local function.
+    """
+    session.post(f"http://localhost:3006?filename={filename}", data=file_content)
+
+
+def _create_remote_dataset_as_string(
+    session: requests.Session, filename: str, file_content: str, headers: dict[str, str]
+) -> None:
+    """
+    Method to create a remote dataset as a string.
+
+    Parameters:
+        filename: the filename to use for the file
+        file_content: the content of the file to be uploaded
+        session: a session instance for http/s connections
+        headers: the relevant headers for authentication for http/s calls
+
+    Returns:
+        None
+    """
+    bucket = storage_client.bucket(config.DATASET_BUCKET_NAME)
+    blob = bucket.blob(filename)
+    blob.upload_from_string(file_content, content_type="text/plain")
+
+    force_run_schedule_job()
 
 
 def wait_until_dataset_ready(
@@ -261,14 +296,12 @@ def empty_dataset_bucket() -> None:
     delete_blobs(bucket_loader.get_dataset_bucket())
 
 
-def force_run_schedule_job() -> None:
+def force_run_schedule_job():
     """
     Method to force run the schedule job to trigger the new dataset upload function.
     """
     client = scheduler_v1.CloudSchedulerClient()
-
     request = scheduler_v1.RunJobRequest(
         name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
-
     client.run_job(request=request)

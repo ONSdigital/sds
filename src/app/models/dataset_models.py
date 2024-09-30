@@ -17,6 +17,7 @@ class DatasetMetadataWithoutId:
 
 @dataclass
 class DatasetMetadata:
+    dataset_id: str
     survey_id: str
     period_id: str
     form_types: list[str]
@@ -25,7 +26,6 @@ class DatasetMetadata:
     schema_version: str
     sds_dataset_version: int
     filename: str
-    dataset_id: str
     title: Optional[str] = None
 
 
