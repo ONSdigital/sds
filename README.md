@@ -111,6 +111,47 @@ docker-compose stop api
 
 make start-docker-dev
 ```
+Missing infrastructure for local docker
+
+Topic for publisher_service.py and call on init
+```python
+    def create_topic(self, topic_id) -> None:
+        topic_path = self.publisher.topic_path(config.PROJECT_ID, topic_id)
+        topic = self.publisher.create_topic(request={"name": topic_path})
+```
+Add the following topic and subscription and call it (before its used)
+```python
+    def create_topic() -> None:
+        topic_path = subscriber.topic_path(
+        config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID
+        )
+        topic = publisher.create_topic(request={"name": topic_path})
+```
+
+```python
+    from google.cloud import pubsub_v1
+
+    base_url = "depends on if you are wanting to use GCP or local"
+    endpoint = "/collection-exercise-end"
+    
+    publisher = pubsub_v1.PublisherClient()
+    subscriber = pubsub_v1.SubscriberClient()
+    topic_path = publisher.topic_path(config.PROJECT_ID, config.COLLECTION_EXERCISE_END_TOPIC_ID)
+    subscription_path = subscriber.subscription_path(config.PROJECT_ID, config.COLLECTION_EXERCISE_END_SUBSCRIPTION_ID)
+    
+    push_config = pubsub_v1.types.PushConfig(push_endpoint=base_url+endpoint)
+    
+    
+    def create_subscription() -> None:
+        with subscriber:
+            subscription = subscriber.create_subscription(
+                request={
+                    "name": subscription_path,
+                    "topic": topic_path,
+                    "push_config": push_config,
+                }
+            )
+```
 
 ## Running linting and unit tests
 
