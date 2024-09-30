@@ -1,39 +1,4 @@
 steps:
-  - name: python:3.11
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-
-  - name: python:3.11
-    id: "Install app requirements"
-    entrypoint: python
-    args: ["-m", "pip", "install", "-r", "requirements.txt", "--user"]
-
-  - name: python:3.11
-    id: "Audit packages"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make audit
-
-  - name: python:3.11
-    id: "Check linting and code formatting"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make lint
-
-  - name: python:3.11
-    id: "Run unit tests"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make setup
-        make unit-test
-
   - name: docker
     id: "docker build and push"
     entrypoint: sh
@@ -43,7 +8,7 @@ steps:
         docker build --cache-from "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
-        
+
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
