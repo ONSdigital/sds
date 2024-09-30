@@ -1,3 +1,4 @@
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 from src.test_data import shared_test_data
@@ -29,6 +30,31 @@ period_id = "test_period_id"
 
 first_dataset_version = 1
 updated_dataset_version = 2
+
+
+test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": shared_test_data.test_guid,
+        "survey_id": survey_id,
+        "period": period_id,
+    }
+)
+
+test_data_collection_end_input: CollectionExerciseEndData = {
+    "dataset_guid": shared_test_data.test_guid,
+    "survey_id": survey_id,
+    "period": period_id,
+}
+
+test_data_collection_end_missing_id: CollectionExerciseEndData = (
+    CollectionExerciseEndData(
+        **{
+            "dataset_guid": "",
+            "survey_id": survey_id,
+            "period": period_id,
+        }
+    )
+)
 
 
 dataset_metadata_first_version: DatasetMetadata = {
@@ -74,6 +100,33 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "survey_id": f"{survey_id}_2",
         "period_id": period_id,
         "form_types": ["abc", "def", "hij"],
+        "title": "Which side was better 2?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "1",
+    },
+]
+
+dataset_metadata_collection_deletion: list[DatasetMetadata] = [
+    {
+        "survey_id": f"{survey_id}",
+        "period_id": period_id,
+        "form_types": ["123", "456", "789"],
+        "title": "Which side was better?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "0",
+    },
+    {
+        "survey_id": f"{survey_id}",
+        "period_id": period_id,
+        "form_types": ["123", "456", "789"],
         "title": "Which side was better 2?",
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 1,

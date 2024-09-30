@@ -3,8 +3,10 @@ from exception import exceptions
 from exception.exception_response_models import ExceptionResponseModel
 from fastapi import APIRouter, Depends
 from logging_config import logging
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.dataset.dataset_deletion_service import DatasetDeletionService
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
@@ -13,6 +15,19 @@ from services.validators.query_parameter_validator_service import (
 router = APIRouter()
 
 logger = logging.getLogger(__name__)
+
+
+@router.post("/collection-exercise-end", status_code=200)
+async def post_collection_exercise_end_message(
+    collection_end_data: CollectionExerciseEndData,
+    dataset_deletion_service: DatasetDeletionService = Depends(),
+):
+    logger.info("collection_exercise_end message received")
+    logger.debug(f"collection_exercise_end message received {collection_end_data}")
+    dataset_deletion_service.process_collection_exercise_end_message(
+        collection_end_data
+    )
+    return {"message": "accepted"}
 
 
 @router.get(

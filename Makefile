@@ -166,8 +166,8 @@ integration-test-cloudbuild:
 generate-spec:
 	export CONF=cloud-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-europe-west2-dataset && \
+	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
+	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
