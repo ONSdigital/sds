@@ -8,6 +8,8 @@ from repositories.firebase.deletion_firebase_repository import (
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
 
+from src.app.config.config_factory import config
+
 logger = logging.getLogger(__name__)
 
 
@@ -61,7 +63,7 @@ class DatasetDeletionService:
     def _mark_collections_for_deletion(
         self, list_dataset_metadata: list[DatasetMetadata]
     ):
-        time_now = DatetimeService.get_current_date_and_time()
+        time_now = DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
         for dataset_metadata in list_dataset_metadata:
             logger.debug(f"Dataset_metadata {dataset_metadata}")
             delete_metadata: DeleteMetadata = DeleteMetadata(
