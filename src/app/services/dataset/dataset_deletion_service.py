@@ -8,7 +8,7 @@ from repositories.firebase.deletion_firebase_repository import (
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.shared.datetime_service import DatetimeService
 
-from src.app.config.config_factory import config
+from config.config_factory import config
 
 logger = logging.getLogger(__name__)
 
