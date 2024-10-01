@@ -96,7 +96,7 @@ class ProcessDatasetTest(TestCase):
         TestHelper.new_dataset_mock(request=None)
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.assert_called_once_with(
-            dataset_test_data.survey_id, dataset_test_data.period_id
+            dataset_test_data.test_survey_id, dataset_test_data.test_period_id
         )
 
         DatasetFirebaseRepository.perform_batched_dataset_write.assert_called_once_with(
@@ -136,7 +136,7 @@ class ProcessDatasetTest(TestCase):
         TestHelper.new_dataset_mock(request=None)
 
         DatasetFirebaseRepository.get_latest_dataset_with_survey_id_and_period_id.assert_called_once_with(
-            dataset_test_data.survey_id, dataset_test_data.period_id
+            dataset_test_data.test_survey_id, dataset_test_data.test_period_id
         )
 
         DatasetFirebaseRepository.perform_batched_dataset_write.assert_called_once_with(

@@ -13,13 +13,15 @@ from urllib3 import Retry
 
 from src.integration_tests.helpers.bucket_helpers import (
     delete_blobs,
+    delete_blobs_with_test_survey_id,
     delete_local_bucket_data,
 )
 from src.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
-    perform_delete_transaction,
+    perform_delete_on_collection_with_test_survey_id,
 )
 from src.integration_tests.helpers.pubsub_helper import PubSubHelper
+from src.test_data.dataset_test_data import test_survey_id
 
 storage_client = storage.Client()
 
@@ -265,17 +267,19 @@ def cleanup() -> None:
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
         delete_blobs(bucket_loader.get_dataset_bucket())
-        delete_blobs(bucket_loader.get_schema_bucket())
+        delete_blobs_with_test_survey_id(bucket_loader.get_schema_bucket(), test_survey_id)
 
         client = firebase_loader.get_client()
 
-        perform_delete_transaction(
-            client.transaction(),
+        perform_delete_on_collection_with_test_survey_id(
+            client,
             firebase_loader.get_datasets_collection(),
+            test_survey_id
         )
-        perform_delete_transaction(
-            client.transaction(),
+        perform_delete_on_collection_with_test_survey_id(
+            client,
             firebase_loader.get_schemas_collection(),
+            test_survey_id
         )
 
 

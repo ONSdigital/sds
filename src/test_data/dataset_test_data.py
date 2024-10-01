@@ -1,66 +1,59 @@
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
-from src.test_data import shared_test_data
+from src.test_data.shared_test_data import test_guid, test_survey_id, test_period_id
 
-cloud_event_data = {
-    "id": "test_id",
-    "type": "test_type",
-    "bucket": "test_bucket",
-    "metageneration": "1",
-    "timeCreated": "test_time_created",
-    "updated": "test_time_updated",
-    "name": "test_filename.json",
-}
-
-cloud_event_invalid_filename_data = {
-    "id": "test_id",
-    "type": "test_type",
-    "bucket": "test_bucket",
-    "metageneration": "1",
-    "timeCreated": "test_time_created",
-    "updated": "test_time_updated",
-    "name": "bad_filename.test",
-}
-
-
-identifier = "test_identifier"
-survey_id = "test_survey_id"
-period_id = "test_period_id"
-
+"""
+Local variables:
+"""
 first_dataset_version = 1
 updated_dataset_version = 2
 
 
+"""
+Test data:
+"""
+# unit tests - dataset - test data
+identifier = "test_identifier"
+
+# e2e dataset integration test - test data
+int_identifier = "43532"
+
+# unit tests - cloud new dataset - test data
+dataset_unit_data_identifier: list[str] = ["43532", "65871"]
+
+# unit tests - service - test data
 test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
     **{
-        "dataset_guid": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period": period_id,
+        "dataset_guid": test_guid,
+        "survey_id": test_survey_id,
+        "period": test_period_id,
     }
 )
 
+# unit tests - service - test data
 test_data_collection_end_input: CollectionExerciseEndData = {
-    "dataset_guid": shared_test_data.test_guid,
-    "survey_id": survey_id,
-    "period": period_id,
+    "dataset_guid": test_guid,
+    "survey_id": test_survey_id,
+    "period": test_period_id,
 }
 
+# unit tests - service - test data
 test_data_collection_end_missing_id: CollectionExerciseEndData = (
     CollectionExerciseEndData(
         **{
             "dataset_guid": "",
-            "survey_id": survey_id,
-            "period": period_id,
+            "survey_id": test_survey_id,
+            "period": test_period_id,
         }
     )
 )
 
-
+# unit tests - cloud new dataset - test data
 dataset_metadata_first_version: DatasetMetadata = {
-    "dataset_id": shared_test_data.test_guid,
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "dataset_id": test_guid,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -70,10 +63,11 @@ dataset_metadata_first_version: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 dataset_metadata_updated_version: DatasetMetadata = {
-    "dataset_id": shared_test_data.test_guid,
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "dataset_id": test_guid,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -83,10 +77,11 @@ dataset_metadata_updated_version: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
+# unit tests - dataset - test data
 dataset_metadata_collection: list[DatasetMetadata] = [
     {
-        "survey_id": f"{survey_id}_1",
-        "period_id": period_id,
+        "survey_id": f"{test_survey_id}_1",
+        "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -97,8 +92,8 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "dataset_id": "0",
     },
     {
-        "survey_id": f"{survey_id}_2",
-        "period_id": period_id,
+        "survey_id": f"{test_survey_id}_2",
+        "period_id": test_period_id,
         "form_types": ["abc", "def", "hij"],
         "title": "Which side was better 2?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -110,10 +105,11 @@ dataset_metadata_collection: list[DatasetMetadata] = [
     },
 ]
 
+# unit tests - service - test data
 dataset_metadata_collection_deletion: list[DatasetMetadata] = [
     {
-        "survey_id": f"{survey_id}",
-        "period_id": period_id,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -124,8 +120,8 @@ dataset_metadata_collection_deletion: list[DatasetMetadata] = [
         "dataset_id": "0",
     },
     {
-        "survey_id": f"{survey_id}",
-        "period_id": period_id,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
         "title": "Which side was better 2?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -137,9 +133,11 @@ dataset_metadata_collection_deletion: list[DatasetMetadata] = [
     },
 ]
 
+
+# unit tests - cloud new dataset - test data
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -149,9 +147,10 @@ first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "sds_published_at": "2023-04-20T12:00:00Z",
@@ -161,15 +160,17 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "filename": "test_filename.json",
 }
 
+# unit tests - cloud new dataset - test data
 updated_dataset_metadata: DatasetMetadata = {
     **updated_dataset_metadata_without_id,
-    "dataset_id": shared_test_data.test_guid,
+    "dataset_id": test_guid,
 }
 
+# unit tests - dataset - test data
 unit_supplementary_data: UnitDataset = {
-    "dataset_id": shared_test_data.test_guid,
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "dataset_id": test_guid,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "schema_version": "v1.0.0",
     "form_types": ["klk", "xyz", "tzr"],
     "data": {
@@ -206,19 +207,20 @@ unit_supplementary_data: UnitDataset = {
     },
 }
 
+# unit tests - cloud new dataset - test data
 dataset_unit_data_collection: list[UnitDataset] = [
     {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": period_id,
+        "dataset_id": test_guid,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
         "schema_version": "v1.0.0",
         "form_types": ["klk", "xyz", "tzr"],
         "data": "<encrypted data>",
     },
     {
-        "dataset_id": shared_test_data.test_guid,
-        "survey_id": survey_id,
-        "period_id": period_id,
+        "dataset_id": test_guid,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
         "schema_version": "v1.0.0",
         "form_types": ["klk", "xyz", "tzr"],
         "data": {
@@ -264,10 +266,9 @@ dataset_unit_data_collection: list[UnitDataset] = [
     },
 ]
 
-dataset_unit_data_identifier: list[str] = ["43532", "65871"]
-
+# unit tests - cloud new dataset - test data
 missing_keys_dataset_metadata = {
-    "period_id": period_id,
+    "period_id": test_period_id,
     "schema_version": 1,
     "form_types": [
         "abc",
@@ -277,10 +278,10 @@ missing_keys_dataset_metadata = {
     "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
-
+# e2e dataset integration test - test data
 nonrandom_pubsub_first_dataset_metadata = {
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "total_reporting_units": 2,
@@ -288,9 +289,10 @@ nonrandom_pubsub_first_dataset_metadata = {
     "sds_dataset_version": first_dataset_version,
 }
 
+# e2e dataset integration test - test data
 nonrandom_pubsub_second_dataset_metadata = {
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["abc", "fgg", "ynm"],
     "title": "Which side was better? - Amended",
     "total_reporting_units": 3,
@@ -298,32 +300,37 @@ nonrandom_pubsub_second_dataset_metadata = {
     "sds_dataset_version": updated_dataset_version,
 }
 
+# e2e dataset integration test - test data
 unit_response = {
     "schema_version": "v1.0.0",
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
     "data": "<encrypted data>",
 }
 
+# e2e dataset integration test - test data
 unit_response_amended = {
     "schema_version": "v2.0.0",
-    "survey_id": survey_id,
-    "period_id": period_id,
+    "survey_id": test_survey_id,
+    "period_id": test_period_id,
     "form_types": ["abc", "fgg", "ynm"],
     "data": "<encrypted data>",
 }
 
+# unused
 incorrect_file_extension_message = {
     "error": "Filetype error",
     "message": "Invalid filetype received.",
 }
 
+# unused
 invalid_json_message = {
     "error": "File content error",
     "message": "Invalid JSON content received.",
 }
 
+# unused
 missing_keys_message = {
     "error": "Mandatory key(s) error",
     "message": "Mandatory key(s) missing from JSON.",
