@@ -1,3 +1,4 @@
+from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 from src.test_data.shared_test_data import test_guid, test_survey_id, test_period_id
@@ -20,6 +21,33 @@ int_identifier = "43532"
 
 # unit tests - cloud new dataset - test data
 dataset_unit_data_identifier: list[str] = ["43532", "65871"]
+
+# unit tests - service - test data
+test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": test_guid,
+        "survey_id": test_survey_id,
+        "period": test_period_id,
+    }
+)
+
+# unit tests - service - test data
+test_data_collection_end_input: CollectionExerciseEndData = {
+    "dataset_guid": test_guid,
+    "survey_id": test_survey_id,
+    "period": test_period_id,
+}
+
+# unit tests - service - test data
+test_data_collection_end_missing_id: CollectionExerciseEndData = (
+    CollectionExerciseEndData(
+        **{
+            "dataset_guid": "",
+            "survey_id": test_survey_id,
+            "period": test_period_id,
+        }
+    )
+)
 
 # unit tests - cloud new dataset - test data
 dataset_metadata_first_version: DatasetMetadata = {
@@ -76,6 +104,35 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "dataset_id": "1",
     },
 ]
+
+# unit tests - service - test data
+dataset_metadata_collection_deletion: list[DatasetMetadata] = [
+    {
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "form_types": ["123", "456", "789"],
+        "title": "Which side was better?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "0",
+    },
+    {
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "form_types": ["123", "456", "789"],
+        "title": "Which side was better 2?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 1,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+        "dataset_id": "1",
+    },
+]
+
 
 # unit tests - cloud new dataset - test data
 first_dataset_metadata_without_id: DatasetMetadataWithoutId = {

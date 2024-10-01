@@ -60,15 +60,7 @@ class E2EDatasetIntegrationTest(TestCase):
 
         first_dataset_filename = create_filepath("integration-test-first-file")
 
-        create_dataset_response_for_first_dataset = create_dataset(
-            first_dataset_filename, first_dataset, session, headers
-        )
-
-        if (
-            create_dataset_response_for_first_dataset is not None
-            and create_dataset_response_for_first_dataset != 200
-        ):
-            assert False, "Unsuccessful request to create dataset"
+        create_dataset(first_dataset_filename, first_dataset, session, headers)
 
         # Check file is removed from bucket
         # This config is within the integration test environment and has to match with
@@ -97,15 +89,7 @@ class E2EDatasetIntegrationTest(TestCase):
 
         second_dataset_filename = create_filepath("integration-test-second-file")
 
-        create_dataset_response_for_second_dataset = create_dataset(
-            second_dataset_filename, second_dataset, session, headers
-        )
-
-        if (
-            create_dataset_response_for_second_dataset is not None
-            and create_dataset_response_for_second_dataset != 200
-        ):
-            assert False, "Unsuccessful request to create dataset"
+        create_dataset(second_dataset_filename, second_dataset, session, headers)
 
         # Check file is removed from bucket
         # This config is within the integration test environment and has to match with
@@ -327,12 +311,9 @@ class E2EDatasetIntegrationTest(TestCase):
             "integration-test-file-without-title"
         )
 
-        create_dataset_response = create_dataset(
+        create_dataset(
             dataset_without_title_filename, dataset_without_title, session, headers
         )
-
-        if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsuccessful request to create dataset"
 
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(

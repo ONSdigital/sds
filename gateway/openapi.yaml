@@ -1,4 +1,4 @@
-openapi: 3.0.2
+openapi: 3.1.0
 info:
   title: Supplementary Data Service
   description: Open api schema for SDS
@@ -19,18 +19,18 @@ paths:
         queried.'
       operationId: get_unit_supplementary_data_v1_unit_data_get
       parameters:
-      - required: true
+      - name: dataset_id
+        in: query
+        required: true
         schema:
+          type: string
           title: Dataset Id
-          type: string
-        name: dataset_id
+      - name: identifier
         in: query
-      - required: true
+        required: true
         schema:
-          title: Identifier
           type: string
-        name: identifier
-        in: query
+          title: Identifier
       responses:
         '200':
           description: Successful Response
@@ -38,32 +38,32 @@ paths:
             application/json:
               schema: {}
         '400':
-          description: Bad Request
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
               example:
                 status: error
                 message: Validation has failed
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
               example:
                 status: error
                 message: Unable to process request
-        '404':
-          description: Not Found
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
               example:
                 status: error
                 message: No unit data found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
   /v1/dataset_metadata:
     get:
       summary: Get Dataset Metadata Collection
@@ -78,116 +78,61 @@ paths:
         period_id (str): The period id of the dataset being queried.'
       operationId: get_dataset_metadata_collection_v1_dataset_metadata_get
       parameters:
-      - required: false
+      - name: survey_id
+        in: query
+        required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Survey Id
-          type: string
-        name: survey_id
+      - name: period_id
         in: query
-      - required: false
+        required: false
         schema:
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Period Id
-          type: string
-        name: period_id
-        in: query
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                title: Response Get Dataset Metadata Collection V1 Dataset Metadata
-                  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/DatasetMetadata'
+                title: Response Get Dataset Metadata Collection V1 Dataset Metadata
+                  Get
         '400':
-          description: Bad Request
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
               example:
                 status: error
                 message: Invalid search parameters provided
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
               example:
                 status: error
                 message: Unable to process request
-        '404':
-          description: Not Found
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
               example:
                 status: error
                 message: No datasets found
-  /v1/schema:
-    get:
-      summary: Get Schema From Bucket
-      description: "Gets the filename of the bucket schema metadata and uses that\
-        \ to retrieve the schema metadata\nwith specific survey id and version from\
-        \ the bucket. Latest version schema will be retrieved\nif version is omitted\n\
-        \nParameters:\nsurvey_id (str): survey id of the schema metadata.\nversion\
-        \ (str) (optional): version of the survey.\nschema_firebase_repository (SchemaFirebaseRepository):\
-        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
-        schema_processor_service (SchemaProcessorService): injected dependency for\n\
-        \    interacting with the schema collection in firestore."
-      operationId: get_schema_from_bucket_v1_schema_get
-      parameters:
-      - required: false
-        schema:
-          title: Survey Id
-          type: string
-        name: survey_id
-        in: query
-      - required: false
-        schema:
-          title: Version
-          type: string
-        name: version
-        in: query
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                title: Response Get Schema From Bucket V1 Schema Get
-                type: object
-        '400':
-          description: Bad Request
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: Invalid search provided
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: Unable to process request
-        '404':
           description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: No schema found
+  /v1/schema:
     post:
       summary: Post Schema
       description: 'Posts the schema metadata to be processed.
@@ -203,19 +148,19 @@ paths:
         for processing the schema.'
       operationId: post_schema_v1_schema_post
       parameters:
-      - required: true
-        schema:
-          title: Survey Id
-          type: string
-        name: survey_id
+      - name: survey_id
         in: query
+        required: true
+        schema:
+          type: string
+          title: Survey Id
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              title: Schema
               type: object
-        required: true
+              title: Schema
       responses:
         '200':
           description: Successful Response
@@ -224,23 +169,86 @@ paths:
               schema:
                 $ref: '#/components/schemas/SchemaMetadata'
         '400':
-          description: Bad Request
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
               example:
                 status: error
                 message: Validation has failed
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
               example:
                 status: error
                 message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+    get:
+      summary: Get Schema From Bucket
+      description: "Gets the filename of the bucket schema metadata and uses that\
+        \ to retrieve the schema metadata\nwith specific survey id and version from\
+        \ the bucket. Latest version schema will be retrieved\nif version is omitted\n\
+        \nParameters:\nsurvey_id (str): survey id of the schema metadata.\nversion\
+        \ (str) (optional): version of the survey.\nschema_firebase_repository (SchemaFirebaseRepository):\
+        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
+        schema_processor_service (SchemaProcessorService): injected dependency for\n\
+        \    interacting with the schema collection in firestore."
+      operationId: get_schema_from_bucket_v1_schema_get
+      parameters:
+      - name: survey_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Id
+      - name: version
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Version
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                title: Response Get Schema From Bucket V1 Schema Get
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid search provided
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No schema found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
   /v2/schema:
     get:
       summary: Get Schema From Bucket With Guid
@@ -252,47 +260,49 @@ paths:
         \    interacting with the schema collection in firestore."
       operationId: get_schema_from_bucket_with_guid_v2_schema_get
       parameters:
-      - required: false
-        schema:
-          title: Guid
-          type: string
-        name: guid
+      - name: guid
         in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Guid
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                title: Response Get Schema From Bucket With Guid V2 Schema Get
                 type: object
+                title: Response Get Schema From Bucket With Guid V2 Schema Get
         '400':
-          description: Bad Request
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
               example:
                 status: error
                 message: Invalid parameter provided
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
               example:
                 status: error
                 message: Unable to process request
-        '404':
-          description: Not Found
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
               example:
                 status: error
                 message: No schema found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
   /v1/schema_metadata:
     get:
       summary: Get Schema Metadata Collection
@@ -307,50 +317,52 @@ paths:
         processing the metadata collection.'
       operationId: get_schema_metadata_collection_v1_schema_metadata_get
       parameters:
-      - required: false
-        schema:
-          title: Survey Id
-          type: string
-        name: survey_id
+      - name: survey_id
         in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Id
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                title: Response Get Schema Metadata Collection V1 Schema Metadata
-                  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/SchemaMetadata'
+                title: Response Get Schema Metadata Collection V1 Schema Metadata
+                  Get
         '400':
-          description: Bad Request
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
               example:
                 status: error
                 message: Invalid search provided
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
               example:
                 status: error
                 message: Unable to process request
-        '404':
-          description: Not Found
-          content:
-            application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
               example:
                 status: error
                 message: No results found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
   /v1/survey_list:
     get:
       summary: Get Survey Id Map
@@ -368,10 +380,10 @@ paths:
           content:
             application/json:
               schema:
-                title: Response Get Survey Id Map V1 Survey List Get
-                type: array
                 items:
                   type: object
+                type: array
+                title: Response Get Survey Id Map V1 Survey List Get
         '500':
           description: Internal Server Error
           content:
@@ -413,20 +425,55 @@ paths:
 components:
   schemas:
     BadRequest:
-      title: BadRequest
-      required:
-      - message
-      type: object
       properties:
         message:
+          type: string
           title: Message
-          type: string
         status:
-          title: Status
           type: string
+          title: Status
           default: error
+      type: object
+      required:
+      - message
+      title: BadRequest
     DatasetMetadata:
-      title: DatasetMetadata
+      properties:
+        survey_id:
+          type: string
+          title: Survey Id
+        period_id:
+          type: string
+          title: Period Id
+        form_types:
+          items:
+            type: string
+          type: array
+          title: Form Types
+        sds_published_at:
+          type: string
+          title: Sds Published At
+        total_reporting_units:
+          type: integer
+          title: Total Reporting Units
+        schema_version:
+          type: string
+          title: Schema Version
+        sds_dataset_version:
+          type: integer
+          title: Sds Dataset Version
+        filename:
+          type: string
+          title: Filename
+        dataset_id:
+          type: string
+          title: Dataset Id
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+      type: object
       required:
       - survey_id
       - period_id
@@ -437,77 +484,66 @@ components:
       - sds_dataset_version
       - filename
       - dataset_id
-      type: object
-      properties:
-        survey_id:
-          title: Survey Id
-          type: string
-        period_id:
-          title: Period Id
-          type: string
-        form_types:
-          title: Form Types
-          type: array
-          items:
-            type: string
-        sds_published_at:
-          title: Sds Published At
-          type: string
-        total_reporting_units:
-          title: Total Reporting Units
-          type: integer
-        schema_version:
-          title: Schema Version
-          type: string
-        sds_dataset_version:
-          title: Sds Dataset Version
-          type: integer
-        filename:
-          title: Filename
-          type: string
-        dataset_id:
-          title: Dataset Id
-          type: string
-        title:
-          title: Title
-          type: string
+      title: DatasetMetadata
     DeploymentStatus:
-      title: DeploymentStatus
-      required:
-      - version
-      type: object
       properties:
         version:
+          type: string
           title: Version
-          type: string
         status:
-          title: Status
           type: string
+          title: Status
           default: OK
+      type: object
+      required:
+      - version
+      title: DeploymentStatus
     ExceptionResponseModel:
-      title: ExceptionResponseModel
+      properties:
+        status:
+          type: string
+          title: Status
+        message:
+          type: string
+          title: Message
+      type: object
       required:
       - status
       - message
-      type: object
-      properties:
-        status:
-          title: Status
-          type: string
-        message:
-          title: Message
-          type: string
+      title: ExceptionResponseModel
     HTTPValidationError:
-      title: HTTPValidationError
-      type: object
       properties:
         detail:
-          title: Detail
-          type: array
           items:
             $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     SchemaMetadata:
-      title: SchemaMetadata
+      properties:
+        survey_id:
+          type: string
+          title: Survey Id
+        schema_location:
+          type: string
+          title: Schema Location
+        sds_schema_version:
+          type: integer
+          title: Sds Schema Version
+        sds_published_at:
+          type: string
+          title: Sds Published At
+        schema_version:
+          type: string
+          title: Schema Version
+        title:
+          type: string
+          title: Title
+        guid:
+          type: string
+          title: Guid
+      type: object
       required:
       - survey_id
       - schema_location
@@ -516,47 +552,25 @@ components:
       - schema_version
       - title
       - guid
-      type: object
-      properties:
-        survey_id:
-          title: Survey Id
-          type: string
-        schema_location:
-          title: Schema Location
-          type: string
-        sds_schema_version:
-          title: Sds Schema Version
-          type: integer
-        sds_published_at:
-          title: Sds Published At
-          type: string
-        schema_version:
-          title: Schema Version
-          type: string
-        title:
-          title: Title
-          type: string
-        guid:
-          title: Guid
-          type: string
+      title: SchemaMetadata
     ValidationError:
-      title: ValidationError
-      required:
-      - loc
-      - msg
-      - type
-      type: object
       properties:
         loc:
-          title: Location
-          type: array
           items:
             anyOf:
             - type: string
             - type: integer
+          type: array
+          title: Location
         msg:
+          type: string
           title: Message
-          type: string
         type:
-          title: Error Type
           type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

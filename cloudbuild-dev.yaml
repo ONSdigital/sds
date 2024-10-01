@@ -97,7 +97,9 @@ steps:
         "--min-instances",
         "1",
         "--max-instances",
-        "2",
+        "100",
+        "--concurrency",
+        "1",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
