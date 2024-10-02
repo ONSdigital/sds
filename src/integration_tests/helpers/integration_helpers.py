@@ -309,3 +309,11 @@ def force_run_schedule_job():
         name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
     client.run_job(request=request)
+
+def create_filename_error_filepath(file_prefix: str):
+    """
+    Creates a filepath without '.json' suffix for uploading a dataset file to a bucket
+    Parameters:
+        file_prefix: prefix to identify the file being uploaded
+    """
+    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
