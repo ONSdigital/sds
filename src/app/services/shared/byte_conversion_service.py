@@ -1,5 +1,6 @@
 import json
-   
+
+
 class ByteConversionService:
     @staticmethod
     def get_serialized_size(obj) -> int:

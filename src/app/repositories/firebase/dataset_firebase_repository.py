@@ -1,4 +1,3 @@
-import json
 
 from firebase_admin import firestore
 from logging_config import logging
