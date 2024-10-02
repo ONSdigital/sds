@@ -316,4 +316,4 @@ def create_filename_error_filepath(file_prefix: str):
     Parameters:
         file_prefix: prefix to identify the file being uploaded
     """
-    return f"{file_prefix}-{str(datetime.now()).replace(' ','-')}"
+    return f"{file_prefix}-{datetime.now().strftime(config.TIME_FORMAT).replace(' ','-')}.txt"
