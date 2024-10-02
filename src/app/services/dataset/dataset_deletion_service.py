@@ -53,7 +53,7 @@ class DatasetDeletionService:
         self, collection_exercise_end_data: CollectionExerciseEndData
     ) -> list[DatasetMetadata]:
         logger.info("Collecting all dataset versions for period and survey")
-        logger.info(f"Collecting all dataset versions for period: {collection_exercise_end_data.survey_id} and survey: {collection_exercise_end_data.period}")
+        logger.info(f"Collecting all dataset versions for survey_id: {collection_exercise_end_data.survey_id} and period_id: {collection_exercise_end_data.period}")
         return self.dataset_processor_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period
         )
@@ -71,7 +71,7 @@ class DatasetDeletionService:
                     "period_id": dataset_metadata["period_id"],
                     "survey_id": dataset_metadata["survey_id"],
                     "sds_dataset_version": dataset_metadata["sds_dataset_version"],
-                    "status": "pending",
+                    "status": "Pending",
                     "mark_deleted_at": time_now,
                     "deleted_at": "n/a",
                 }

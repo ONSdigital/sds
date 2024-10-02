@@ -18,4 +18,4 @@ class DeletionMetadataFirebaseRepository:
         Parameters:
         delete_metadata (DeleteMetadata): The deletion metadata being added to firestore.
         """
-        self.deletion_collection.document().set(delete_metadata)
+        self.deletion_collection.document().set(delete_metadata.__dict__)
