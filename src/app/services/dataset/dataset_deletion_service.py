@@ -76,5 +76,5 @@ class DatasetDeletionService:
                     "deleted_at": "n/a",
                 }
             )
-            logger.debug("Marking dataset for deletion s%", delete_metadata)
+            logger.debug(f"Marking dataset for deletion {delete_metadata}")
             self.delete_repository.mark_dataset_for_deletion(delete_metadata)
