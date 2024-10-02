@@ -66,10 +66,10 @@ class SchemaProcessorService:
 
             logger.info("Schema transaction committed successfully.")
             return next_version_schema_metadata
-        except Exception as e:
-            logger.error(f"Performing schema transaction: exception raised: {e}")
+        except Exception as exc:
+            logger.error(f"Performing schema transaction: exception raised: {exc}")
             logger.error("Rolling back schema transaction")
-            raise exceptions.GlobalException
+            raise exceptions.GlobalException from exc
 
     def build_next_version_schema_metadata(
         self,
@@ -206,13 +206,13 @@ class SchemaProcessorService:
                 f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
             )
             logger.info("Schema metadata published successfully.")
-        except Exception as e:
+        except Exception as exc:
             logger.debug(
                 f"Schema metadata {next_version_schema_metadata} failed to publish to topic "
-                f"{config.PUBLISH_SCHEMA_TOPIC_ID} with error {e}"
+                f"{config.PUBLISH_SCHEMA_TOPIC_ID} with error {exc}"
             )
             logger.error("Error publishing schema metadata to topic.")
-            raise exceptions.GlobalException
+            raise exceptions.GlobalException from exc
 
     def get_survey_id_map(self) -> list[str]:
         """
@@ -230,8 +230,8 @@ class SchemaProcessorService:
             logger.debug(f"Survey map data is {survey_map_dict}")
             logger.info("Fetched the survey mapping data")
 
-        except Exception as e:
-            logger.error(f"Error while fetching the survey mapping data: {e}")
-            raise exceptions.GlobalException
+        except Exception as exc:
+            logger.error(f"Error while fetching the survey mapping data: {exc}")
+            raise exceptions.GlobalException from exc
 
         return survey_map_dict

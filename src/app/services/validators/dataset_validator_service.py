@@ -210,8 +210,8 @@ class DatasetValidatorService:
             publisher_service.publish_data_to_topic(message, topic_id)
             logger.debug(f"Message {message} published to topic {topic_id}")
             logger.info("Pubsub message published successfully.")
-        except Exception as e:
+        except Exception as exc:
             logger.debug(
-                f"Pubsub message {message} failed to publish to topic {topic_id} with error {e}"
+                f"Pubsub message {message} failed to publish to topic {topic_id} with error {exc}"
             )
-            raise RuntimeError("Error publishing message to the topic.")
+            raise RuntimeError("Error publishing message to the topic.") from exc

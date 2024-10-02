@@ -39,8 +39,8 @@ class PublisherService:
         """
         try:
             self.publisher.get_topic(request={"topic": topic_path})
-        except Exception:
-            raise exceptions.ExceptionTopicNotFound
+        except Exception as exc:
+            raise exceptions.ExceptionTopicNotFound from exc
 
 
 publisher_service = PublisherService()
