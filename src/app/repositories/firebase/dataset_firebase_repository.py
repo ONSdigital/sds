@@ -4,12 +4,13 @@ from firebase_admin import firestore
 from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.firebase_loader import firebase_loader
+from services.shared.byte_conversion_service import ByteConversionService
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    MAX_BATCH_SIZE_BYTES= 9 * 1024 * 1024
+    MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
     DELETE_BATCH_SIZE = 100
 
     def __init__(self):
@@ -71,7 +72,7 @@ class DatasetFirebaseRepository:
 
             for (unit_data, unit_identifier) in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
 
-                unit_data_size_bytes = self.get_serialized_size(unit_data)
+                unit_data_size_bytes = ByteConversionService.get_serialized_size(unit_data)
 
                 if batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
                     batch.commit()
@@ -146,20 +147,6 @@ class DatasetFirebaseRepository:
         except Exception as e:
             logger.error(f"Error deleting sub collection in batches: {e}")
             raise RuntimeError("Error deleting sub collection in batches.")
-
-
-    def get_serialized_size(self, obj) -> int:
-        """
-        Calculate the size of serialized object in bytes.
-
-        Parameters:
-        obj (Any): The object to be serilaized and measured
-
-        Returns:
-        int: The size of the serialized object in bytes
-        """
-        serialized_obj = json.dumps(obj)
-        return len(serialized_obj.encode('utf-8'))
 
 
     def get_unit_supplementary_data(
