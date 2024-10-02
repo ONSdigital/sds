@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
     pubsub_setup,
     pubsub_teardown,
     setup_session,
-    create_filename_error_filepath,
+    create_dataset_as_string,
 )
 from src.integration_tests.helpers.pubsub_helper import (
     dataset_error_pubsub_helper,
@@ -370,9 +370,10 @@ class E2EDatasetIntegrationTest(TestCase):
         dataset_incorrect_extension = load_json(
             f"{config.TEST_DATASET_PATH}dataset.json"
         )
-        dataset_incorrect_extension_filename = create_filename_error_filepath(
+        dataset_incorrect_extension_filename = create_filepath(
             "integration-test-incorrect-extension"
-        )
+        ).replace(".json", ".txt")
+
         create_dataset_response = create_dataset(
             dataset_incorrect_extension_filename,
             dataset_incorrect_extension,
@@ -393,7 +394,7 @@ class E2EDatasetIntegrationTest(TestCase):
             assert received_messages[0][key] == value
 
         # Upload dataset with invalid json
-        """with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
+        with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
             file.close()
         dataset_invalid_json_filename = create_filepath("integration-test-invalid-json")
@@ -434,4 +435,4 @@ class E2EDatasetIntegrationTest(TestCase):
             key,
             value,
         ) in dataset_test_data.missing_keys_message.items():
-            assert received_messages[0][key] == value"""
+            assert received_messages[0][key] == value
