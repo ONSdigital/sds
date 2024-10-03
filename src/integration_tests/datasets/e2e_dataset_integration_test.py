@@ -7,7 +7,6 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     create_dataset,
     create_filepath,
-    empty_dataset_bucket,
     generate_headers,
     load_json,
     pubsub_setup,
@@ -31,12 +30,12 @@ class E2EDatasetIntegrationTest(TestCase):
         cleanup()
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
-        empty_dataset_bucket()
 
     def tearDown(self) -> None:
         cleanup()
         pubsub_teardown(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_teardown(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+
 
     def test_dataset_e2e(self):
         """
@@ -397,6 +396,7 @@ class E2EDatasetIntegrationTest(TestCase):
         with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
             file.close()
+
         dataset_invalid_json_filename = create_filepath("integration-test-invalid-json")
         create_dataset_response = create_dataset_as_string(
             dataset_invalid_json_filename, dataset_invalid_json, session, headers
