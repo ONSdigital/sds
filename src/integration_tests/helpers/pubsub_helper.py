@@ -71,7 +71,7 @@ class PubSubHelper:
         print(f"Fail to create subscriber. Subscription path: {subscription_path}")
 
 
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
+    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict|None:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -81,14 +81,21 @@ class PubSubHelper:
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
-        NUM_MESSAGES = 5
+        NUM_MESSAGES = 1
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
         )
 
+        message_count = len(response.received_messages)
+
+        if message_count == 0:
+            print("No messages found in the response")
+            return None
+        
         messages = []
         ack_ids = []
+        
         for received_message in response.received_messages:
             messages.append(self.format_received_message_data(received_message))
             ack_ids.append(received_message.ack_id)

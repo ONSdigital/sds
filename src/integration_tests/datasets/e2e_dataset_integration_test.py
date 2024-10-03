@@ -13,6 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
     pubsub_teardown,
     setup_session,
     create_dataset_as_string,
+    pubsub_flush_messages,
 )
 from src.integration_tests.helpers.pubsub_helper import (
     dataset_error_pubsub_helper,
@@ -26,17 +27,24 @@ from src.test_data.shared_test_data import (
 
 
 class E2EDatasetIntegrationTest(TestCase):
-    def setUp(self) -> None:
+    @classmethod
+    def setup_class(self) -> None:
         cleanup()
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
-    def tearDown(self) -> None:
+    @classmethod
+    def teardown_class(self) -> None:
         cleanup()
         pubsub_teardown(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_teardown(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
-    def test_dataset_e2e(self):
+    def tearDown(self) -> None:
+        cleanup()
+        pubsub_flush_messages(dataset_pubsub_helper, test_dataset_subscriber_id)
+        pubsub_flush_messages(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+
+    def test_s_dataset_e2e(self):
         """
         Test that we can upload 2 datasets of same survey id and period and then retrieve the data.
         This checks the cloud function worked and the datasets are retained according to the retain flag.

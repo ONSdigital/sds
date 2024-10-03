@@ -307,16 +307,18 @@ def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     pubsub_helper.try_create_subscriber(subscriber_id)
 
 
-def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
+def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
 
-def empty_dataset_bucket() -> None:
-    """
-    Method to empty the dataset bucket.
-    """
-    delete_blobs(bucket_loader.get_dataset_bucket())
+def pubsub_flush_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+    """Flushes any messages that may have been sent to a subscriber"""
+    time.sleep(5) # Wait for messages to be sent
+
+    while True:
+        if not pubsub_helper.pull_and_acknowledge_messages(subscriber_id):
+            break
 
 
 def force_run_schedule_job():
