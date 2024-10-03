@@ -312,13 +312,11 @@ def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
 
-def pubsub_flush_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
-    """Flushes any messages that may have been sent to a subscriber"""
+def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+    """Purge any messages that may have been sent to a subscriber"""
     time.sleep(5) # Wait for messages to be sent
-
-    while True:
-        if not pubsub_helper.pull_and_acknowledge_messages(subscriber_id):
-            break
+    
+    pubsub_helper.purge_messages(subscriber_id)
 
 
 def force_run_schedule_job():

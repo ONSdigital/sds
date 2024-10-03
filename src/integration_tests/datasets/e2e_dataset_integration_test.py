@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
     pubsub_teardown,
     setup_session,
     create_dataset_as_string,
-    pubsub_flush_messages,
+    pubsub_purge_messages,
 )
 from src.integration_tests.helpers.pubsub_helper import (
     dataset_error_pubsub_helper,
@@ -41,8 +41,8 @@ class E2EDatasetIntegrationTest(TestCase):
 
     def tearDown(self) -> None:
         cleanup()
-        pubsub_flush_messages(dataset_pubsub_helper, test_dataset_subscriber_id)
-        pubsub_flush_messages(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+        pubsub_purge_messages(dataset_pubsub_helper, test_dataset_subscriber_id)
+        pubsub_purge_messages(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
     def test_s_dataset_e2e(self):
         """

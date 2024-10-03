@@ -81,7 +81,7 @@ class PubSubHelper:
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
         )
-        NUM_MESSAGES = 1
+        NUM_MESSAGES = 5
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
@@ -100,14 +100,27 @@ class PubSubHelper:
             messages.append(self.format_received_message_data(received_message))
             ack_ids.append(received_message.ack_id)
 
-        if ack_ids:
-            self.subscriber_client.acknowledge(
-                request={"subscription": subscription_path, "ack_ids": ack_ids}
-            )
-        else:
-            print("No Ack IDs found in the response, messages cannot be acknowledged")
+        
+        self.subscriber_client.acknowledge(
+            request={"subscription": subscription_path, "ack_ids": ack_ids}
+        )
 
         return messages
+    
+    def purge_messages(self, subscriber_id: str) -> None:
+        """
+        Purges all messages published to a subscriber by seeking through future timestamp.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, subscriber_id
+        )
+
+        self.subscriber_client.seek(
+            request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
+        )
 
     def format_received_message_data(self, received_message) -> dict:
         """
