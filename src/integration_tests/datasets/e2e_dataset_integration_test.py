@@ -36,7 +36,6 @@ class E2EDatasetIntegrationTest(TestCase):
         pubsub_teardown(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_teardown(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
-
     def test_dataset_e2e(self):
         """
         Test that we can upload 2 datasets of same survey id and period and then retrieve the data.
@@ -350,7 +349,7 @@ class E2EDatasetIntegrationTest(TestCase):
             json_response.pop("dataset_id")
             assert dataset_test_data.unit_response.items() == json_response.items()
 
-    def test_dataset_errors(self):
+    def test_dataset_error_invalid_extension(self):
         """
         Test that when we upload three datasets with errors, the correct error is published to the error topic.
         This checks the cloud function works when there are errors in the dataset.
@@ -392,6 +391,10 @@ class E2EDatasetIntegrationTest(TestCase):
         ) in dataset_test_data.incorrect_file_extension_message.items():
             assert received_messages[0][key] == value
 
+    def test_dataset_error_invalid_json(self):
+        session = setup_session()
+        headers = generate_headers()
+
         # Upload dataset with invalid json
         with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
@@ -412,6 +415,10 @@ class E2EDatasetIntegrationTest(TestCase):
             value,
         ) in dataset_test_data.invalid_json_message.items():
             assert received_messages[0][key] == value
+
+    def test_dataset_error_missing_keys(self):
+        session = setup_session()
+        headers = generate_headers()
 
         # Upload dataset with missing keys
         dataset_missing_keys = load_json(
