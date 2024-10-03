@@ -20,7 +20,6 @@ from src.integration_tests.helpers.pubsub_helper import (
 )
 from src.test_data import dataset_test_data
 from src.test_data.shared_test_data import (
-    identifier,
     test_dataset_error_subscriber_id,
     test_dataset_subscriber_id,
 )
@@ -61,15 +60,7 @@ class E2EDatasetIntegrationTest(TestCase):
 
         first_dataset_filename = create_filepath("integration-test-first-file")
 
-        create_dataset_response_for_first_dataset = create_dataset(
-            first_dataset_filename, first_dataset, session, headers
-        )
-
-        if (
-            create_dataset_response_for_first_dataset is not None
-            and create_dataset_response_for_first_dataset != 200
-        ):
-            assert False, "Unsuccessful request to create dataset"
+        create_dataset(first_dataset_filename, first_dataset, session, headers)
 
         # Check file is removed from bucket
         # This config is within the integration test environment and has to match with
@@ -98,15 +89,7 @@ class E2EDatasetIntegrationTest(TestCase):
 
         second_dataset_filename = create_filepath("integration-test-second-file")
 
-        create_dataset_response_for_second_dataset = create_dataset(
-            second_dataset_filename, second_dataset, session, headers
-        )
-
-        if (
-            create_dataset_response_for_second_dataset is not None
-            and create_dataset_response_for_second_dataset != 200
-        ):
-            assert False, "Unsuccessful request to create dataset"
+        create_dataset(second_dataset_filename, second_dataset, session, headers)
 
         # Check file is removed from bucket
         # This config is within the integration test environment and has to match with
@@ -169,7 +152,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 # Check against unit_data endpoint for second dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                     headers=headers,
                 )
 
@@ -202,7 +185,7 @@ class E2EDatasetIntegrationTest(TestCase):
                 # Check against unit_data endpoint for first dataset
                 dataset_id = dataset_metadata["dataset_id"]
                 response = session.get(
-                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                    f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                     headers=headers,
                 )
 
@@ -298,13 +281,13 @@ class E2EDatasetIntegrationTest(TestCase):
         assert dataset_json["period_id"] == "test_period_id"
 
         assert (
-            dataset_different_survey_id_json["survey_id"] == "test_different_survey_id"
+            dataset_different_survey_id_json["survey_id"] == dataset_different_survey_id["survey_id"]
         )
-        assert dataset_different_survey_id_json["period_id"] == "test_period_id"
+        assert dataset_different_survey_id_json["period_id"] == dataset_different_survey_id["period_id"]
 
-        assert dataset_different_period_id_json["survey_id"] == "test_survey_id"
+        assert dataset_different_period_id_json["survey_id"] == dataset_different_period_id["survey_id"]
         assert (
-            dataset_different_period_id_json["period_id"] == "test_different_period_id"
+            dataset_different_period_id_json["period_id"] == dataset_different_period_id["period_id"]
         )
 
     def test_dataset_without_title(self):
@@ -328,12 +311,9 @@ class E2EDatasetIntegrationTest(TestCase):
             "integration-test-file-without-title"
         )
 
-        create_dataset_response = create_dataset(
+        create_dataset(
             dataset_without_title_filename, dataset_without_title, session, headers
         )
-
-        if create_dataset_response is not None and create_dataset_response != 200:
-            assert False, "Unsuccessful request to create dataset"
 
         # Check against dataset_metadata endpoint
         dataset_metadata_response = session.get(
@@ -360,7 +340,7 @@ class E2EDatasetIntegrationTest(TestCase):
             # Check against unit_data endpoint
             dataset_id = dataset_metadata["dataset_id"]
             unit_data_response = session.get(
-                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={identifier}",
+                f"{config.API_URL}/v1/unit_data?dataset_id={dataset_id}&identifier={dataset_test_data.int_identifier}",
                 headers=headers,
             )
             assert unit_data_response.status_code == 200

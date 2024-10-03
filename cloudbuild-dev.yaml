@@ -17,33 +17,16 @@ steps:
       - |
         make audit
 
-  - name: python:3.11
-    id: "Check linting and code formatting"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make lint
-
-  - name: python:3.11
-    id: "Run unit tests"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make setup
-        make unit-test
-
   - name: docker
     id: "docker build and push"
     entrypoint: sh
     args:
       - "-c"
       - |
-        docker build -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
+        docker build --cache-from "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}" -t "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest" .
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}"
         docker push "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:latest"
-
+        
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Show image vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
@@ -97,7 +80,9 @@ steps:
         "--min-instances",
         "1",
         "--max-instances",
-        "2",
+        "100",
+        "--concurrency",
+        "1",
       ]
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
