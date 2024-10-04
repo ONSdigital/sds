@@ -27,7 +27,7 @@ test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
     **{
         "dataset_guid": test_guid,
         "survey_id": test_survey_id,
-        "period": test_period_id,
+        "period_id": test_period_id,
     }
 )
 
@@ -35,7 +35,7 @@ test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
 test_data_collection_end_input: CollectionExerciseEndData = {
     "dataset_guid": test_guid,
     "survey_id": test_survey_id,
-    "period": test_period_id,
+    "period_id": test_period_id,
 }
 
 # unit tests - service - test data
@@ -44,7 +44,7 @@ test_data_collection_end_missing_id: CollectionExerciseEndData = (
         **{
             "dataset_guid": "",
             "survey_id": test_survey_id,
-            "period": test_period_id,
+            "period_id": test_period_id,
         }
     )
 )

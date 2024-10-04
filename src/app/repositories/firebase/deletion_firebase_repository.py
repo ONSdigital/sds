@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from models.deletion_models import DeleteMetadata
 from repositories.firebase.firebase_loader import firebase_loader
 
@@ -18,4 +20,4 @@ class DeletionMetadataFirebaseRepository:
         Parameters:
         delete_metadata (DeleteMetadata): The deletion metadata being added to firestore.
         """
-        self.deletion_collection.document().set(delete_metadata)
+        self.deletion_collection.document().set(asdict(delete_metadata))

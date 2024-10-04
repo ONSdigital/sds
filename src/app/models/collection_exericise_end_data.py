@@ -5,5 +5,5 @@ from typing import Optional
 @dataclass
 class CollectionExerciseEndData:
     survey_id: str
-    period: str
+    period_id: str
     dataset_guid: Optional[str] = ""
