@@ -7,20 +7,16 @@ from services.shared.byte_conversion_service import ByteConversionService
 class TestByteConversionService:
     
     def test_get_serialized_size(self):
-        obj = {"key": "value", "number": 123}
-        expected_size = len(json.dumps(obj).encode('utf-8'))
-        assert ByteConversionService.get_serialized_size(obj) == expected_size
+        input = "cat"
+        expected_size = 5
+        assert expected_size == ByteConversionService.get_serialized_size(input) 
 
-        #
-        obj = ["item1", "item2", "item3"]
-        expected_size = len(json.dumps(obj).encode('utf-8'))
-        assert ByteConversionService.get_serialized_size(obj) == expected_size
+        
+        input = {"key": "cat"}
+        expected_size = 14
+        assert expected_size == ByteConversionService.get_serialized_size(input) 
 
     def test_get_serialized_size_empty(self):
-        obj = {}
-        expected_size = len(json.dumps(obj).encode('utf-8'))
-        assert ByteConversionService.get_serialized_size(obj) == expected_size
-
-        obj = []
-        expected_size = len(json.dumps(obj).encode('utf-8'))
-        assert ByteConversionService.get_serialized_size(obj) == expected_size
+        input = {}
+        expected_size = 2
+        assert expected_size == ByteConversionService.get_serialized_size(input) 
