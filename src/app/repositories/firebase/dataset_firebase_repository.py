@@ -127,19 +127,28 @@ class DatasetFirebaseRepository:
         sub_collection_ref (firestore.CollectionReference): The reference to the sub collection
         """
         try:
-            docs = sub_collection_ref.limit(self.DELETE_BATCH_SIZE).get()
-            doc_count = 0
-
+            # docs = sub_collection_ref.limit(self.DELETE_BATCH_SIZE).get()
+            docs = sub_collection_ref.get()
             batch = self.client.batch()
+            batch_size_bytes = 0
+            # doc_count = 0
 
             for doc in docs:
-                doc_count += 1
+                doc_size_bytes = ByteConversionService.get_serialized_size(doc.to_dict())
+
+                if batch_size_bytes + doc_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
+                    batch.commit()
+                    batch = self.client.batch()
+                    batch_size_bytes = 0
+
+                # doc_count += 1
                 batch.delete(doc.reference)
+                batch_size_bytes += doc_size_bytes
 
-            batch.commit()
+            if batch_size_bytes > 0:
+                batch.commit()
 
-            if doc_count < self.DELETE_BATCH_SIZE:
-                return None
+                
 
             return self.delete_sub_collection_in_batches(sub_collection_ref)
 
