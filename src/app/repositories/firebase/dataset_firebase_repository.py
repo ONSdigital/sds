@@ -150,7 +150,7 @@ class DatasetFirebaseRepository:
 
                 
 
-            return self.delete_sub_collection_in_batches(sub_collection_ref)
+            # return self.delete_sub_collection_in_batches(sub_collection_ref)
 
         except Exception as e:
             logger.error(f"Error deleting sub collection in batches: {e}")
