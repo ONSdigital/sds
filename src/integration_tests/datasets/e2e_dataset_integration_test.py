@@ -14,6 +14,7 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_session,
     create_dataset_as_string,
     pubsub_purge_messages,
+    inject_wait_time,
 )
 from src.integration_tests.helpers.pubsub_helper import (
     dataset_error_pubsub_helper,
@@ -32,6 +33,7 @@ class E2EDatasetIntegrationTest(TestCase):
         cleanup()
         pubsub_setup(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_setup(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
+        inject_wait_time(3) # Inject wait time to allow resources properly set up
 
     @classmethod
     def teardown_class(self) -> None:
@@ -41,10 +43,11 @@ class E2EDatasetIntegrationTest(TestCase):
 
     def tearDown(self) -> None:
         cleanup()
+        inject_wait_time(3) # Inject wait time to allow all message to be processed
         pubsub_purge_messages(dataset_pubsub_helper, test_dataset_subscriber_id)
         pubsub_purge_messages(dataset_error_pubsub_helper, test_dataset_error_subscriber_id)
 
-    def test_s_dataset_e2e(self):
+    def test_dataset_e2e(self):
         """
         Test that we can upload 2 datasets of same survey id and period and then retrieve the data.
         This checks the cloud function worked and the datasets are retained according to the retain flag.
@@ -399,10 +402,6 @@ class E2EDatasetIntegrationTest(TestCase):
         ) in dataset_test_data.incorrect_file_extension_message.items():
             assert received_messages[0][key] == value
 
-    def test_dataset_error_invalid_json(self):
-        session = setup_session()
-        headers = generate_headers()
-
         # Upload dataset with invalid json
         with open(f"{config.TEST_DATASET_PATH}dataset_invalid_json.json", "r") as file:
             dataset_invalid_json = file.read()
@@ -423,10 +422,6 @@ class E2EDatasetIntegrationTest(TestCase):
             value,
         ) in dataset_test_data.invalid_json_message.items():
             assert received_messages[0][key] == value
-
-    def test_dataset_error_missing_keys(self):
-        session = setup_session()
-        headers = generate_headers()
 
         # Upload dataset with missing keys
         dataset_missing_keys = load_json(
