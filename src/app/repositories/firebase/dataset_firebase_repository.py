@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 class DatasetFirebaseRepository:
     MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
+    DELETE_BATCH_SIZE = 100
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -84,6 +85,8 @@ class DatasetFirebaseRepository:
             if batch_size_bytes > 0:
                 batch.commit()
 
+            raise RuntimeError("Stimulated error to test deletion process")
+            
         except Exception as e:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
@@ -126,20 +129,40 @@ class DatasetFirebaseRepository:
         sub_collection_ref (firestore.CollectionReference): The reference to the sub collection
         """
         try:
-            docs = sub_collection_ref.get()
+            cursor = None
+            limit = 10
+
             batch = self.client.batch()
             batch_size_bytes = 0
 
-            for doc in docs:
-                doc_size_bytes = ByteConversionService.get_serialized_size(doc.to_dict())
+            while True:
 
-                if batch_size_bytes + doc_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
-                    batch.commit()
-                    batch = self.client.batch()
-                    batch_size_bytes = 0
+                if cursor:
+                    docs = list(sub_collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .start_after(cursor)
+                    .stream())
+                    
+                else:
+                    docs = list(sub_collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .stream())
 
-                batch.delete(doc.reference)
-                batch_size_bytes += doc_size_bytes
+                if not docs:
+                    break
+
+                for doc in docs:
+                    doc_size_bytes = ByteConversionService.get_serialized_size(doc.to_dict())
+                    
+                    if batch_size_bytes + doc_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
+                        batch.commit()
+                        batch = self.client.batch()
+                        batch_size_bytes = 0
+
+                    batch.delete(doc.reference)
+                    batch_size_bytes += doc_size_bytes
+            
+                cursor = docs[-1]
 
             if batch_size_bytes > 0:
                 batch.commit()
