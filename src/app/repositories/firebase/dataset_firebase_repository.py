@@ -84,8 +84,6 @@ class DatasetFirebaseRepository:
             if batch_size_bytes > 0:
                 batch.commit()
 
-            raise RuntimeError("Stimulated error to test deletion process")
-
         except Exception as e:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
