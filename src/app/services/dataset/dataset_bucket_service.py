@@ -40,11 +40,11 @@ class DatasetBucketService:
         """
         try:
             self.dataset_bucket_repository.delete_bucket_file(filename)
-        except Exception as e:
+        except Exception as exc:
             logger.debug(
-                f"Failed to delete file {filename} from bucket {config.DATASET_BUCKET_NAME} with error: {e}"
+                f"Failed to delete file {filename} from bucket {config.DATASET_BUCKET_NAME} with error: {exc}"
             )
-            raise RuntimeError("Failed to delete file from dataset bucket.")
+            raise RuntimeError("Failed to delete file from dataset bucket.") from exc
 
     def try_fetch_oldest_filename_from_bucket(self) -> str | None:
         """
@@ -60,8 +60,8 @@ class DatasetBucketService:
 
             return filename
 
-        except Exception as e:
+        except Exception as exc:
             logger.debug(
-                f"Failed to fetch first filename from bucket {config.DATASET_BUCKET_NAME} with error: {e}"
+                f"Failed to fetch first filename from bucket {config.DATASET_BUCKET_NAME} with error: {exc}"
             )
-            raise RuntimeError("Failed to fetch first filename from dataset bucket.")
+            raise RuntimeError("Failed to fetch first filename from dataset bucket.") from exc

@@ -37,8 +37,8 @@ class BucketLoader:
             bucket = __storage_client.get_bucket(
                 bucket_name,
             )
-        except exceptions.NotFound:
-            raise exception.ExceptionBucketNotFound
+        except exceptions.NotFound as exc:
+            raise exception.ExceptionBucketNotFound from exc
 
         return bucket
 

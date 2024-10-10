@@ -35,6 +35,6 @@ class SchemaBucketRepository(BucketRepository):
         """
         try:
             return self.get_bucket_file_as_json(filename)
-        except Exception:
+        except Exception as exc:
             logger.error("Schema not found")
-            raise exceptions.ExceptionNoSchemaFound
+            raise exceptions.ExceptionNoSchemaFound from exc

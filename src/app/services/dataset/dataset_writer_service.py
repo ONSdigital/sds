@@ -87,12 +87,12 @@ class DatasetWriterService:
                 f"Dataset response {dataset_publish_response} published to topic {config.PUBLISH_DATASET_TOPIC_ID}"
             )
             logger.info("Dataset response published successfully.")
-        except Exception as e:
+        except Exception as exc:
             logger.debug(
                 f"Dataset response {dataset_publish_response} failed to publish to topic {config.PUBLISH_DATASET_TOPIC_ID} "
-                f"with error {e}"
+                f"with error {exc}"
             )
-            raise RuntimeError("Error publishing dataset response to the topic.")
+            raise RuntimeError("Error publishing dataset response to the topic.") from exc
 
     def try_perform_delete_previous_version_dataset_batch(
         self, survey_id: str, period_id: str, previous_version: int
@@ -127,10 +127,10 @@ class DatasetWriterService:
 
             logger.info("Previous version of dataset deleted succesfully.")
 
-        except Exception as e:
+        except Exception as exc:
             logger.error(
-                f"Failed to delete previous version of dataset from firestore.: {e}"
+                f"Failed to delete previous version of dataset from firestore.: {exc}"
             )
             raise RuntimeError(
                 "Failed to delete previous version of dataset from firestore."
-            )
+            ) from exc

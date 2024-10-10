@@ -27,10 +27,10 @@ class QueryParameterValidatorService:
         """
         if version is not None:
             try:
-                version = int(version)
-            except ValueError:
+                int(version)
+            except ValueError as exc:
                 logger.error("Invalid version")
-                raise exceptions.ExceptionIncorrectSchemaKey
+                raise exceptions.ExceptionIncorrectSchemaKey from exc
 
     @staticmethod
     def validate_survey_id_from_get_schema(survey_id: str) -> None:

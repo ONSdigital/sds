@@ -76,9 +76,9 @@ class DatasetFirebaseRepository:
 
             batch.commit()
 
-        except Exception as e:
+        except Exception as exc:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
-            logger.error(f"Error performing batched dataset write: {e}")
+            logger.error(f"Error performing batched dataset write: {exc}")
             logger.info("Performing clean up of dataset and sub collections")
             logger.debug(f"Deleting dataset with id: {dataset_id}")
 
@@ -86,7 +86,7 @@ class DatasetFirebaseRepository:
 
             logger.info("Dataset clean up is completed")
 
-            raise RuntimeError("Error performing batched dataset write.")
+            raise RuntimeError("Error performing batched dataset write.") from exc
 
     def delete_dataset_with_dataset_id(self, dataset_id: str) -> None:
         """
@@ -103,9 +103,9 @@ class DatasetFirebaseRepository:
 
             doc.reference.delete()
 
-        except Exception as e:
-            logger.error(f"Error deleting dataset: {e}")
-            raise RuntimeError("Error deleting dataset.")
+        except Exception as exc:
+            logger.error(f"Error deleting dataset: {exc}")
+            raise RuntimeError("Error deleting dataset.") from exc
 
     def delete_sub_collection_in_batches(
         self,
@@ -134,9 +134,9 @@ class DatasetFirebaseRepository:
 
             return self.delete_sub_collection_in_batches(sub_collection_ref)
 
-        except Exception as e:
-            logger.error(f"Error deleting sub collection in batches: {e}")
-            raise RuntimeError("Error deleting sub collection in batches.")
+        except Exception as exc:
+            logger.error(f"Error deleting sub collection in batches: {exc}")
+            raise RuntimeError("Error deleting sub collection in batches.") from exc
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
