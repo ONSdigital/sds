@@ -13,6 +13,15 @@ updated_dataset_version = 2
 """
 Test data:
 """
+
+# unit test - dataset - test data
+string_cat = "cat"
+string_byte_size_cat = 5
+
+# unit test - dataset - test data
+empty_dict = {}
+empty_dict_byte_size = 2
+
 # unit tests - dataset - test data
 identifier = "test_identifier"
 
