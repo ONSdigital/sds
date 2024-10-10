@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 class DatasetFirebaseRepository:
     MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
-    DELETE_BATCH_SIZE = 100
 
     def __init__(self):
         self.client = firebase_loader.get_client()
