@@ -85,7 +85,7 @@ class DatasetFirebaseRepository:
                 batch.commit()
 
             raise RuntimeError("Stimulated error to test deletion process")
-            
+
         except Exception as e:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
             logger.error(f"Error performing batched dataset write: {e}")
@@ -141,7 +141,7 @@ class DatasetFirebaseRepository:
                     .order_by("__name__")
                     .start_after(cursor)
                     .stream())
-                    
+
                 else:
                     docs = list(sub_collection_ref.limit(limit)
                     .order_by("__name__")
@@ -152,7 +152,7 @@ class DatasetFirebaseRepository:
 
                 for doc in docs:
                     doc_size_bytes = ByteConversionService.get_serialized_size(doc.to_dict())
-                    
+
                     if batch_size_bytes + doc_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
                         batch.commit()
                         batch = self.client.batch()
@@ -160,7 +160,7 @@ class DatasetFirebaseRepository:
 
                     batch.delete(doc.reference)
                     batch_size_bytes += doc_size_bytes
-            
+
                 cursor = docs[-1]
 
             if batch_size_bytes > 0:
