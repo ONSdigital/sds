@@ -8,6 +8,8 @@ from src.integration_tests.helpers.integration_helpers import (
     pubsub_setup,
     pubsub_teardown,
     setup_session,
+    pubsub_purge_messages,
+    inject_wait_time,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.schema_test_data import test_survey_id, test_survey_id_map
@@ -15,13 +17,21 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
-    def setUp(self) -> None:
+    @classmethod
+    def setup_class(self) -> None:
         cleanup()
         pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
+        inject_wait_time(3) # Inject wait time to allow resources properly set up
+
+    @classmethod
+    def teardown_class(self) -> None:
+        cleanup()
+        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     def tearDown(self) -> None:
         cleanup()
-        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
+        inject_wait_time(3) # Inject wait time to allow all message to be processed
+        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
     def test_schema_e2e(self):
         """

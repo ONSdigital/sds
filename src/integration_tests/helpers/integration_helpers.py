@@ -168,6 +168,25 @@ def _create_remote_dataset(
         )
 
 
+def create_dataset_as_string(
+    filename: str, file_content: str, session: requests.Session, headers: dict[str, str]
+) -> int:
+    """
+    Method to create a remote dataset without parsing it as JSON.
+    Parameters:
+        filename: the filename to use for the file
+        file_content: the content of the file to be uploaded
+        session: a session instance for http/s connections
+        headers: the relevant headers for authentication for http/s calls
+    Returns:
+        None
+    """
+    if config.OAUTH_CLIENT_ID.__contains__("local"):
+        _create_local_dataset_as_string(session, filename, file_content)
+    else:
+        _create_remote_dataset_as_string(session, filename, file_content, headers)
+
+
 def _create_local_dataset_as_string(
     session: requests.Session, filename: str, file_content: str
 ) -> None:
@@ -288,16 +307,27 @@ def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     pubsub_helper.try_create_subscriber(subscriber_id)
 
 
-def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str):
+def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
     """Deletes subscribers that may have been used in tests"""
     pubsub_helper.try_delete_subscriber(subscriber_id)
 
 
-def empty_dataset_bucket() -> None:
+def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
+    """Purge any messages that may have been sent to a subscriber"""   
+    pubsub_helper.purge_messages(subscriber_id)
+
+
+def inject_wait_time(seconds: int) -> None:
     """
-    Method to empty the dataset bucket.
+    Method to inject a wait time into the test to allow resources properly spin up and tear down.
+
+    Parameters:
+        seconds: the number of seconds to wait
+
+    Returns:
+        None
     """
-    delete_blobs(bucket_loader.get_dataset_bucket())
+    time.sleep(seconds)
 
 
 def force_run_schedule_job():

@@ -40,7 +40,7 @@ class PubSubHelper:
         except Exception:
             return False
 
-    def try_create_subscriber(self, subscriber_id: str) -> None:
+    def try_create_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
         """
         Creates a subscriber with a unique subscriber id if one does not already exist.
 
@@ -62,9 +62,16 @@ class PubSubHelper:
                 }
             )
 
-            self._wait_and_check_subscription_exists(subscriber_id)
+        while attempts != 0:
+            if self._wait_and_check_subscription_exists(subscriber_id):
+                return
+            
+            attempts -= 1
+        
+        print(f"Fail to create subscriber. Subscription path: {subscription_path}")
 
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict:
+
+    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict|None:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -78,23 +85,42 @@ class PubSubHelper:
 
         response = self.subscriber_client.pull(
             request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
-            timeout=5.0,
         )
 
+        message_count = len(response.received_messages)
+
+        if message_count == 0:
+            print("No messages found in the response")
+            return None
+        
         messages = []
         ack_ids = []
+        
         for received_message in response.received_messages:
             messages.append(self.format_received_message_data(received_message))
             ack_ids.append(received_message.ack_id)
 
-        if ack_ids:
-            self.subscriber_client.acknowledge(
-                request={"subscription": subscription_path, "ack_ids": ack_ids}
-            )
-        else:
-            print("No Ack IDs found in the response, messages cannot be acknowledged")
+        
+        self.subscriber_client.acknowledge(
+            request={"subscription": subscription_path, "ack_ids": ack_ids}
+        )
 
         return messages
+    
+    def purge_messages(self, subscriber_id: str) -> None:
+        """
+        Purges all messages published to a subscriber by seeking through future timestamp.
+
+        Parameters:
+        subscriber_id: the unique id of the subscriber being created.
+        """
+        subscription_path = self.subscriber_client.subscription_path(
+            config.PROJECT_ID, subscriber_id
+        )
+
+        self.subscriber_client.seek(
+            request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
+        )
 
     def format_received_message_data(self, received_message) -> dict:
         """
@@ -107,7 +133,7 @@ class PubSubHelper:
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
 
-    def try_delete_subscriber(self, subscriber_id: str) -> None:
+    def try_delete_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
         subscriber = pubsub_v1.SubscriberClient()
         subscription_path = self.subscriber_client.subscription_path(
             config.PROJECT_ID, subscriber_id
@@ -118,8 +144,14 @@ class PubSubHelper:
                 subscriber.delete_subscription(
                     request={"subscription": subscription_path}
                 )
+        while attempts != 0:
+            if self._wait_and_check_subscription_deleted(subscriber_id):
+                return
+            
+            attempts -= 1
+        
+        print(f"Fail to delete subscriber. Subscription path: {subscription_path}")
 
-            self._wait_and_check_subscription_deleted(subscriber_id)
 
     def _subscription_exists(self, subscriber_id: str) -> None:
         """
@@ -145,7 +177,7 @@ class PubSubHelper:
         subscriber_id: str,
         attempts: int = 5,
         backoff: int = 0.5,
-    ) -> None:
+    ) -> bool:
         """
         Waits for a subscription to be created and checks if it exists.
 
@@ -156,18 +188,20 @@ class PubSubHelper:
         """
         while attempts != 0:
             if self._subscription_exists(subscriber_id):
-                return
+                return True
 
             attempts -= 1
             time.sleep(backoff)
             backoff += backoff
+
+        return False
 
     def _wait_and_check_subscription_deleted(
         self,
         subscriber_id: str,
         attempts: int = 5,
         backoff: int = 0.5,
-    ) -> None:
+    ) -> bool:
         """
         Waits for a subscription to be created and checks if it is deleted.
 
@@ -178,11 +212,13 @@ class PubSubHelper:
         """
         while attempts != 0:
             if not self._subscription_exists(subscriber_id):
-                return
+                return True
 
             attempts -= 1
             time.sleep(backoff)
             backoff += backoff
+
+        return False
 
 
 dataset_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_TOPIC_ID)
