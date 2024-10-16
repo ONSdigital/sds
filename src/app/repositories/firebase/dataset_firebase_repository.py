@@ -1,14 +1,15 @@
+
 from firebase_admin import firestore
 from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from repositories.firebase.firebase_loader import firebase_loader
+from services.shared.byte_conversion_service import ByteConversionService
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    WRITE_BATCH_SIZE = 100
-    DELETE_BATCH_SIZE = 100
+    MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
 
     def __init__(self):
         self.client = firebase_loader.get_client()
@@ -65,16 +66,23 @@ class DatasetFirebaseRepository:
             batch.commit()
 
             batch = self.client.batch()
+            batch_size_bytes = 0
 
-            for batch_counter, (unit_data, unit_identifier) in enumerate(zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers)):
-                if batch_counter > 0 and batch_counter % self.WRITE_BATCH_SIZE == 0:
+            for (unit_data, unit_identifier) in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
+
+                unit_data_size_bytes = ByteConversionService.get_serialized_size(unit_data)
+
+                if batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
                     batch.commit()
                     batch = self.client.batch()
+                    batch_size_bytes = 0
 
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
                 batch.set(new_unit, unit_data, merge=True)
+                batch_size_bytes += unit_data_size_bytes
 
-            batch.commit()
+            if batch_size_bytes > 0:
+                batch.commit()
 
         except Exception as exc:
             # If an error occurs during the batch write, the dataset and all its sub collections are deleted
@@ -118,25 +126,48 @@ class DatasetFirebaseRepository:
         sub_collection_ref (firestore.CollectionReference): The reference to the sub collection
         """
         try:
-            docs = sub_collection_ref.limit(self.DELETE_BATCH_SIZE).get()
-            doc_count = 0
+            cursor = None
+            limit = 10
 
             batch = self.client.batch()
+            batch_size_bytes = 0
 
-            for doc in docs:
-                doc_count += 1
-                batch.delete(doc.reference)
+            while True:
 
-            batch.commit()
+                if cursor:
+                    docs = list(sub_collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .start_after(cursor)
+                    .stream())
 
-            if doc_count < self.DELETE_BATCH_SIZE:
-                return None
+                else:
+                    docs = list(sub_collection_ref.limit(limit)
+                    .order_by("__name__")
+                    .stream())
 
-            return self.delete_sub_collection_in_batches(sub_collection_ref)
+                if not docs:
+                    break
+
+                for doc in docs:
+                    doc_size_bytes = ByteConversionService.get_serialized_size(doc.to_dict())
+
+                    if batch_size_bytes + doc_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
+                        batch.commit()
+                        batch = self.client.batch()
+                        batch_size_bytes = 0
+
+                    batch.delete(doc.reference)
+                    batch_size_bytes += doc_size_bytes
+
+                cursor = docs[-1]
+
+            if batch_size_bytes > 0:
+                batch.commit()
 
         except Exception as exc:
             logger.error(f"Error deleting sub collection in batches: {exc}")
             raise RuntimeError("Error deleting sub collection in batches.") from exc
+
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
