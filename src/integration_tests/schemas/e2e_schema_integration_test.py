@@ -17,7 +17,6 @@ from src.test_data.shared_test_data import test_schema_subscriber_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
-    schema_guid = None
     schema_metadatas = None
     test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
     session = None
@@ -51,7 +50,6 @@ class E2ESchemaIntegrationTest(TestCase):
 
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
-        self.schema_guid = schema_post_response.json()["guid"]
 
         received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
             test_schema_subscriber_id
