@@ -24,12 +24,12 @@ class E2ESchemaIntegrationTest(TestCase):
     headers = None
 
     @classmethod
-    def setup_class(cls) -> None:
+    def setup_class(self) -> None:
         cleanup()
         pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
         inject_wait_time(3) # Inject wait time to allow resources properly set up
-        cls.session = setup_session()
-        cls.headers = generate_headers()
+        self.session = setup_session()
+        self.headers = generate_headers()
 
     @classmethod
     def teardown_class(self) -> None:
@@ -39,19 +39,19 @@ class E2ESchemaIntegrationTest(TestCase):
         pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     @pytest.mark.order(1)
-    def test_post_schema_v1(cls):
+    def test_post_schema_v1(self):
         """
         Test the POST /v1/schema endpoint by publishing a schema and checking the response and the pub/sub message.
         """
-        schema_post_response = cls.session.post(
+        schema_post_response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
-            json=cls.test_schema,
-            headers=cls.headers,
+            json=self.test_schema,
+            headers=self.headers,
         )
 
         assert schema_post_response.status_code == 200
         assert "guid" in schema_post_response.json()
-        cls.schema_guid = schema_post_response.json()["guid"]
+        self.schema_guid = schema_post_response.json()["guid"]
 
         received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
             test_schema_subscriber_id
@@ -63,14 +63,14 @@ class E2ESchemaIntegrationTest(TestCase):
 
 
     @pytest.mark.order(2)
-    def test_get_schema_metadata_v1(cls):
+    def test_get_schema_metadata_v1(self):
         """
         Test the GET /v1/schema_metadata endpoint by retrieving the schema metadata and checking the response.
         """
         # Retrieve and verify schema metadata
-        test_schema_get_response = cls.session.get(
+        test_schema_get_response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
-            headers=cls.headers,
+            headers=self.headers,
         )
 
         assert test_schema_get_response.status_code == 200
@@ -85,149 +85,62 @@ class E2ESchemaIntegrationTest(TestCase):
                 "schema_location": f"{test_survey_id}/{schema_metadata['guid']}.json",
                 "sds_schema_version": schema_metadata["sds_schema_version"],
                 "sds_published_at": schema_metadata["sds_published_at"],
-                "schema_version": cls.test_schema["properties"]["schema_version"]["const"],
-                "title": cls.test_schema["title"],
+                "schema_version": self.test_schema["properties"]["schema_version"]["const"],
+                "title": self.test_schema["title"],
             }
 
 
     @pytest.mark.order(3)
-    def test_get_schema_v1(cls):
+    def test_get_schema_v1(self):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
         """
         for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by version
-            set_version_schema_response = cls.session.get(
+            set_version_schema_response = self.session.get(
                 f"{config.API_URL}/v1/schema?"
                 f"survey_id={schema_metadata['survey_id']}&version={schema_metadata['sds_schema_version']}",
-                headers=cls.headers,
+                headers=self.headers,
             )
 
             assert set_version_schema_response.status_code == 200
-            assert set_version_schema_response.json() == cls.test_schema
+            assert set_version_schema_response.json() == self.test_schema
 
             # Verify schema retrieval by the latest version
-            latest_version_schema_response = cls.session.get(
+            latest_version_schema_response = self.session.get(
                 f"{config.API_URL}/v1/schema?survey_id={schema_metadata['survey_id']}",
-                headers=cls.headers,
+                headers=self.headers,
             )
 
             assert latest_version_schema_response.status_code == 200
-            assert latest_version_schema_response.json() == cls.test_schema
+            assert latest_version_schema_response.json() == self.test_schema
 
 
     @pytest.mark.order(4)
-    def test_get_schema_v2(cls):
+    def test_get_schema_v2(self):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
         """
         for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by GUID
-            set_guid_schema_response = cls.session.get(
+            set_guid_schema_response = self.session.get(
                 f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
-                headers=cls.headers,
+                headers=self.headers,
             )
 
             assert set_guid_schema_response.status_code == 200
-            assert set_guid_schema_response.json() == cls.test_schema
+            assert set_guid_schema_response.json() == self.test_schema
 
-
-
-    # def test_schema_e2e(self):
-    #     """
-    #     Post a schema using the /schema api endpoint and check the metadata
-    #     can be retrieved. Also check that schema can be retrieved directly from storage.
-
-    #     * We post the schema and check the response
-    #     * We retrieve and verify received messages from Pub/Sub
-    #     * We retrieve and verify schema metadata
-    #     * We verify schema retrieval by version
-    #     * We verify schema retrieval by GUID
-    #     """
-    #     session = setup_session()
-    #     headers = generate_headers()
-
-    #     test_schema = load_json(f"{config.TEST_SCHEMA_PATH}schema.json")
-
-    #     # Post the schema and check the response
-    #     schema_post_response = session.post(
-    #         f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
-    #         json=test_schema,
-    #         headers=headers,
-    #     )
-
-    #     assert schema_post_response.status_code == 200
-    #     assert "guid" in schema_post_response.json()
-
-    #     received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
-    #         test_schema_subscriber_id
-    #     )
-
-    #     # Retrieve and verify received messages from Pub/Sub
-    #     received_messages_json = received_messages[0]
-    #     assert received_messages_json == schema_post_response.json()
-
-    #     # Retrieve and verify schema metadata
-    #     test_schema_get_response = session.get(
-    #         f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
-    #         headers=headers,
-    #     )
-
-    #     assert test_schema_get_response.status_code == 200
-
-    #     response_as_json = test_schema_get_response.json()
-    #     assert len(response_as_json) > 0
-
-    #     for schema_metadata in response_as_json:
-    #         assert schema_metadata == {
-    #             "guid": schema_metadata["guid"],
-    #             "survey_id": test_survey_id,
-    #             "schema_location": f"{test_survey_id}/{schema_metadata['guid']}.json",
-    #             "sds_schema_version": schema_metadata["sds_schema_version"],
-    #             "sds_published_at": schema_metadata["sds_published_at"],
-    #             "schema_version": test_schema["properties"]["schema_version"]["const"],
-    #             "title": test_schema["title"],
-    #         }
-
-    #         # Verify schema retrieval by version
-    #         set_version_schema_response = session.get(
-    #             f"{config.API_URL}/v1/schema?"
-    #             f"survey_id={schema_metadata['survey_id']}&version={schema_metadata['sds_schema_version']}",
-    #             headers=headers,
-    #         )
-
-    #         assert set_version_schema_response.status_code == 200
-    #         assert set_version_schema_response.json() == test_schema
-
-    #         # Verify schema retrieval by the latest version
-    #         latest_version_schema_response = session.get(
-    #             f"{config.API_URL}/v1/schema?survey_id={schema_metadata['survey_id']}",
-    #             headers=headers,
-    #         )
-
-    #         assert latest_version_schema_response.status_code == 200
-    #         assert latest_version_schema_response.json() == test_schema
-
-    #         # Verify schema retrieval by GUID
-    #         set_guid_schema_response = session.get(
-    #             f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
-    #             headers=headers,
-    #         )
-
-    #         assert set_guid_schema_response.status_code == 200
-    #         assert set_guid_schema_response.json() == test_schema
-
-    def test_survey_id_map(self):
+    @pytest.mark.order(5)
+    def test_survey_id_map(cls):
         """
         Retrieve survey mapping data using the /survey_list endpoint.
         Verify that the retrieved data matches the expected survey mapping data.
         """
-        session = setup_session()
-        headers = generate_headers()
 
-        set_survey_id_map_response = session.get(
+        set_survey_id_map_response = cls.session.get(
             f"{config.API_URL}/v1/survey_list",
-            headers=headers,
+            headers=cls.headers,
         )
 
         assert set_survey_id_map_response.status_code == 200
