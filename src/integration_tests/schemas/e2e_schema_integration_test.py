@@ -75,10 +75,10 @@ class E2ESchemaIntegrationTest(TestCase):
 
         assert test_schema_get_response.status_code == 200
 
-        cls.schema_metadatas = test_schema_get_response.json()
-        assert len(cls.schema_metadatas) > 0
+        E2ESchemaIntegrationTest.schema_metadatas = test_schema_get_response.json()
+        assert len(E2ESchemaIntegrationTest.schema_metadatas) > 0
 
-        for schema_metadata in cls.schema_metadatas:
+        for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             assert schema_metadata == {
                 "guid": schema_metadata["guid"],
                 "survey_id": test_survey_id,
@@ -95,7 +95,7 @@ class E2ESchemaIntegrationTest(TestCase):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
         """
-        for schema_metadata in cls.schema_metadatas:
+        for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by version
             set_version_schema_response = cls.session.get(
                 f"{config.API_URL}/v1/schema?"
@@ -121,7 +121,7 @@ class E2ESchemaIntegrationTest(TestCase):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
         """
-        for schema_metadata in cls.schema_metadatas:
+        for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by GUID
             set_guid_schema_response = cls.session.get(
                 f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
