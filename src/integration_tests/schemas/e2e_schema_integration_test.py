@@ -1,5 +1,5 @@
 from unittest import TestCase
-
+import pytest
 from src.app.config.config_factory import config
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
@@ -42,6 +42,7 @@ class E2ESchemaIntegrationTest(TestCase):
         pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
 
+    @pytest.mark.order(1)
     def test_post_schema_v1(cls):
         """
         Test the POST /v1/schema endpoint by publishing a schema and checking the response and the pub/sub message.
@@ -65,6 +66,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert received_messages_json == schema_post_response.json()
 
 
+    @pytest.mark.order(2)
     def test_get_schema_metadata_v1(cls):
         """
         Test the GET /v1/schema_metadata endpoint by retrieving the schema metadata and checking the response.
@@ -91,6 +93,8 @@ class E2ESchemaIntegrationTest(TestCase):
                 "title": cls.test_schema["title"],
             }
 
+
+    @pytest.mark.order(3)
     def test_get_schema_v1(cls):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
@@ -115,6 +119,8 @@ class E2ESchemaIntegrationTest(TestCase):
             assert latest_version_schema_response.status_code == 200
             assert latest_version_schema_response.json() == cls.test_schema
 
+
+    @pytest.mark.order(4)
     def test_get_schema_v2(cls):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
