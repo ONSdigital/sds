@@ -41,6 +41,9 @@ class E2ESchemaIntegrationTest(TestCase):
     def test_post_schema_v1(self):
         """
         Test the POST /v1/schema endpoint by publishing a schema and checking the response and the pub/sub message.
+
+        * We post the schema and check the response
+        * We retrieve and verify received messages from Pub/Sub
         """
         schema_post_response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
@@ -64,6 +67,8 @@ class E2ESchemaIntegrationTest(TestCase):
     def test_get_schema_metadata_v1(self):
         """
         Test the GET /v1/schema_metadata endpoint by retrieving the schema metadata and checking the response.
+
+        * We retrieve and verify schema metadata
         """
         # Retrieve and verify schema metadata
         test_schema_get_response = self.session.get(
@@ -92,6 +97,8 @@ class E2ESchemaIntegrationTest(TestCase):
     def test_get_schema_v1(self):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
+
+        * We retrieve the schema by version and check the response
         """
         for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by version
@@ -118,6 +125,8 @@ class E2ESchemaIntegrationTest(TestCase):
     def test_get_schema_v2(self):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
+
+        * We retrieve the schema by GUID and check the response
         """
         for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas:
             # Verify schema retrieval by GUID
@@ -134,6 +143,8 @@ class E2ESchemaIntegrationTest(TestCase):
         """
         Retrieve survey mapping data using the /survey_list endpoint.
         Verify that the retrieved data matches the expected survey mapping data.
+
+        * We retrieve the survey mapping data and check the response
         """
 
         set_survey_id_map_response = cls.session.get(
