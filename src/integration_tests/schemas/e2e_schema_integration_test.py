@@ -72,7 +72,7 @@ class E2ESchemaIntegrationTest(TestCase):
         Test the GET /v1/schema_metadata endpoint by retrieving the schema metadata and checking the response.
         """
         # Retrieve and verify schema metadata
-        test_schema_get_response = cls.get(
+        test_schema_get_response = cls.session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
             headers=cls.headers,
         )
