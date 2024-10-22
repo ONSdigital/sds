@@ -34,13 +34,9 @@ class E2ESchemaIntegrationTest(TestCase):
     @classmethod
     def teardown_class(self) -> None:
         cleanup()
-        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
-
-    def tearDown(self) -> None:
-        cleanup()
         inject_wait_time(3) # Inject wait time to allow all message to be processed
         pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
-
+        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     @pytest.mark.order(1)
     def test_post_schema_v1(cls):
