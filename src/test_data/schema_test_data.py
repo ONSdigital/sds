@@ -1,5 +1,5 @@
 from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
-from src.test_data.shared_test_data import test_survey_id, test_guid, test_survey_id_2, test_survey_id_list
+from src.test_data.shared_test_data import test_survey_id, test_guid
 
 """
 Local variables:
