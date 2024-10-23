@@ -43,7 +43,7 @@ class E2ESchemaIntegrationTest(TestCase):
     @pytest.mark.order(1)
     def test_post_schema_v1(self):
         """
-        Test the POST /v1/schema endpoint by publishing 2 schemas and checking the response and the pub/sub message.
+        Test the POST /v1/schema endpoint by publishing schemas from test_survey_id_list and checking the response and the pub/sub message.
 
         * We post a schema for each survey_id in survey_id_list and check the response
         * We retrieve and verify received messages from Pub/Sub
