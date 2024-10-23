@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.schema_test_data import test_survey_id_map
-from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
+from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list, test_survey_id
 
 
 class E2ESchemaIntegrationTest(TestCase):
@@ -126,6 +126,10 @@ class E2ESchemaIntegrationTest(TestCase):
 
                 assert latest_version_schema_response.status_code == 200
                 assert latest_version_schema_response.json() == self.test_schema
+                
+                number_of_versions = test_survey_id_list.count(survey_id)
+                if survey_id == test_survey_id:
+                    assert latest_version_schema_response.json().get("sds_schema_version") == number_of_versions # Check if the returned sds_schema_version matches the number of schemas posted (i.e. latest version)
 
 
     @pytest.mark.order(4)
