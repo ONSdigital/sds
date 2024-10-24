@@ -1,6 +1,7 @@
 # Universal test data for all tests
 test_guid = "test_guid"
 test_survey_id = "test_survey_id"
+test_survey_id_list = ["test_survey_id", "test_survey_id", "test_survey_id_2"]
 test_period_id = "test_period_id"
 
 
