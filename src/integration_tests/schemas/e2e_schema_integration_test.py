@@ -105,6 +105,7 @@ class E2ESchemaIntegrationTest(TestCase):
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
 
         * We retrieve the schema by version and check the response
+        * We POST a different schema for the same survey_id to test the latest version retrieval
         """
         for survey_id in test_survey_id_list:
             for schema_metadata in E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]:
@@ -127,9 +128,25 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert latest_version_schema_response.status_code == 200
                 assert latest_version_schema_response.json() == self.test_schema
                 
-                number_of_versions = test_survey_id_list.count(survey_id)
-                if survey_id == test_survey_id:
-                    assert latest_version_schema_response.json().get("sds_schema_version") == number_of_versions # Check if the returned sds_schema_version matches the number of schemas posted (i.e. latest version)
+        test_schema_2 = load_json(f"{config.TEST_SCHEMA_2_PATH}schema_2.json")
+        schema_post_response = self.session.post(
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
+            json=test_schema_2,
+            headers=self.headers,
+        )
+
+        assert schema_post_response.status_code == 200
+
+        latest_version_schema_response = self.session.get(
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
+            headers=self.headers,
+        )
+
+        assert latest_version_schema_response.status_code == 200
+        assert latest_version_schema_response.json() == test_schema_2
+        
+
+
 
 
     @pytest.mark.order(4)
