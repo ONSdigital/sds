@@ -291,18 +291,16 @@ def cleanup() -> None:
 
         client = firebase_loader.get_client()
 
-        for survey_id in test_survey_id_list:
-            perform_delete_on_collection_with_test_survey_id(
-                client,
-                firebase_loader.get_datasets_collection(),
-                survey_id
-            )
-        for survey_id in test_survey_id_list:
-            perform_delete_on_collection_with_test_survey_id(
-                client,
-                firebase_loader.get_schemas_collection(),
-                survey_id
-            )
+        perform_delete_on_collection_with_test_survey_id(
+            client,
+            firebase_loader.get_datasets_collection(),
+            test_survey_id
+        )
+        perform_delete_on_collection_with_test_survey_id(
+            client,
+            firebase_loader.get_schemas_collection(),
+            test_survey_id
+        )
 
 
 def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
