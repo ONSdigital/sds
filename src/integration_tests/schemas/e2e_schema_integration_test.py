@@ -128,7 +128,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 assert latest_version_schema_response.status_code == 200
                 assert latest_version_schema_response.json() == self.test_schema
                 
-        test_schema_2 = load_json(f"{config.TEST_SCHEMA_2_PATH}schema_2.json")
+        test_schema_2 = load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json")
         schema_post_response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             json=test_schema_2,
