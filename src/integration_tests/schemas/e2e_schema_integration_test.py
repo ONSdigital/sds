@@ -110,9 +110,9 @@ class E2ESchemaIntegrationTest(TestCase):
             # Add json to dict with survey_id as key
             E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id] = schema_metadata_response.json()
             # Verify there are 2 metadata entries for each survey_id
-            assert len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]) == 2
-        
             total_versions = len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id])
+            assert total_versions == 2
+        
             # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected
             for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
                 expected_schema = self.test_schemas[index]
