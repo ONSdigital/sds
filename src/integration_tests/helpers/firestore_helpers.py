@@ -1,6 +1,17 @@
 import requests
 from config.config_factory import config
 from firebase_admin import firestore
+from services.dataset.dataset_writer_service import DatasetWriterService
+from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from services.dataset.dataset_processor_service import DatasetProcessorService
+from models.dataset_models import RawDataset
+import uuid
+from logging_config import logging
+# from src.test_data.dataset_test_data import dataset_metadata_collection, 
+# from src.test_data.dataset_test_data import dataset_unit_data_collection
+# from src.test_data.dataset_test_data import dataset_unit_data_id
+from src.test_data.dataset_test_data import dataset_metadata_collection, dataset_unit_data_collection, dataset_unit_data_id
+
 
 
 def perform_delete_on_collection_with_test_survey_id(
@@ -88,3 +99,32 @@ def delete_local_firestore_data():
     requests.delete(
         f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
     )
+
+def upload_dataset(firestore_client, metadata_collection, unit_data_collection):
+    """
+    Helper function to upload a dataset 
+    """
+    # firestore_client = firestore.Client(project=project_id, database=f"{project_id}-sds")
+    dataset_collection = firestore_client.collection("datasets")
+    uploaded_dataset = []
+
+    for index, dataset_metadata in enumerate(metadata_collection):
+        document_id = str(index)
+
+        dataset_collection.document(document_id).set(dataset_metadata)
+
+        unit_collection = dataset_collection.document(document_id).collection("units")
+
+        for index, unit_data in enumerate(unit_data_collection):
+            unit_document_id = dataset_unit_data_id[index] 
+            unit_data["dataset_id"] =  document_id
+            unit_collection.document(unit_document_id).set(unit_data)
+    
+        uploaded_dataset.append(dataset_metadata)
+    
+    return uploaded_dataset
+
+
+
+
+
