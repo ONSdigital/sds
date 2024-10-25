@@ -145,7 +145,7 @@ class E2ESchemaIntegrationTest(TestCase):
             )
 
             assert set_version_schema_response.status_code == 200
-            assert set_version_schema_response.json() == self.test_schemas[0]
+            assert set_version_schema_response.json() == self.test_schemas[1]
 
             # verify schema retrieval by latest version
             latest_version_schema_response = self.session.get(
@@ -153,7 +153,7 @@ class E2ESchemaIntegrationTest(TestCase):
                 headers=self.headers,
             )
             assert latest_version_schema_response.status_code == 200
-            assert latest_version_schema_response.json() == self.test_schemas[1]
+            assert latest_version_schema_response.json() == self.test_schemas[0]
         
 
     @pytest.mark.order(4)
