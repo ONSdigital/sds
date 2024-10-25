@@ -31,8 +31,8 @@ class E2ESchemaIntegrationTest(TestCase):
         self.session = setup_session()
         self.headers = generate_headers()
         self.test_schemas = []
-        self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
+        self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
         self.schema_metadatas_dict = {}
 
 
@@ -112,6 +112,7 @@ class E2ESchemaIntegrationTest(TestCase):
             # Verify there are 2 metadata entries for each survey_id
             assert len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]) == 2
         
+            total_versions = len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id])
             # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected
             for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
                 expected_schema = self.test_schemas[index]
@@ -119,7 +120,7 @@ class E2ESchemaIntegrationTest(TestCase):
                     "guid": schema_metadata["guid"],
                     "survey_id": survey_id,
                     "schema_location": f"{survey_id}/{schema_metadata['guid']}.json",
-                    "sds_schema_version": index + 1,
+                    "sds_schema_version": total_versions - index,
                     "sds_published_at": schema_metadata["sds_published_at"],
                     "schema_version": expected_schema["properties"]["schema_version"]["const"],
                     "title": expected_schema["title"],
