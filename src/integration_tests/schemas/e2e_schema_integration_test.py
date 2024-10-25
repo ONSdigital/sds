@@ -30,7 +30,9 @@ class E2ESchemaIntegrationTest(TestCase):
         # initialise class attributes
         self.session = setup_session()
         self.headers = generate_headers()
-        self.test_schemas = [load_json(f"{config.TEST_SCHEMA_PATH}schema.json"), load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json")] # Load the test schemas into a list
+        self.test_schemas = []
+        self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
+        self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
         self.schema_metadatas_dict = {}
 
 
