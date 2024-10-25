@@ -57,7 +57,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
             schema_post_response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={survey_id}",
-            json=self.test_schemas[0],
+            json=self.test_schemas[1],
             headers=self.headers,
             )
 
@@ -77,7 +77,7 @@ class E2ESchemaIntegrationTest(TestCase):
 
             schema_post_response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={survey_id}",
-            json=self.test_schemas[1],
+            json=self.test_schemas[0],
             headers=self.headers,
             )
 
