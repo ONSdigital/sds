@@ -8,7 +8,7 @@ class ByteConversionService:
         Calculate the size of serialized object in bytes.
 
         Parameters:
-        obj (Any): The object to be serialized and measured
+        obj (Any): The object to be serilaized and measured
 
         Returns:
         int: The size of the serialized object in bytes
