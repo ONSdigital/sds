@@ -5,12 +5,8 @@ from fastapi import APIRouter, Depends
 from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_deletion_service import DatasetDeletionService
-from services.dataset.dataset_processor_service import DatasetProcessorService
-from services.validators.query_parameter_validator_service import (
-    QueryParameterValidatorService,
-)
+from services.dataset.dataset_service import DatasetService
 
 router = APIRouter()
 
@@ -54,7 +50,7 @@ async def post_collection_exercise_end_message(
 async def get_unit_supplementary_data(
     dataset_id: str,
     identifier: str,
-    dataset_repository: DatasetFirebaseRepository = Depends(),
+    dataset_service: DatasetService = Depends(),
 ):
     """
     Retrieve supplementary data for a particular unit given the dataset id and identifier, return 404 if no data is returned.
@@ -66,9 +62,7 @@ async def get_unit_supplementary_data(
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, identifier={identifier}")
 
-    unit_supplementary_data = dataset_repository.get_unit_supplementary_data(
-        dataset_id, identifier
-    )
+    unit_supplementary_data = dataset_service.get_dataset_metadata_collection(dataset_id, identifier)
 
     if not unit_supplementary_data:
         logger.error("Item not found")
@@ -107,7 +101,7 @@ async def get_unit_supplementary_data(
 async def get_dataset_metadata_collection(
     survey_id: str | None = None,
     period_id: str | None = None,
-    dataset_processor_service: DatasetProcessorService = Depends(),
+    dataset_service: DatasetService = Depends(),
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
@@ -116,15 +110,12 @@ async def get_dataset_metadata_collection(
     survey_id (str): The survey id of the dataset being queried.
     period_id (str): The period id of the dataset being queried.
     """
-    QueryParameterValidatorService.validate_survey_and_period_id_from_dataset_metadata(
-        survey_id, period_id
-    )
 
     logger.info("Getting dataset metadata collection...")
     logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
 
     dataset_metadata_collection = (
-        dataset_processor_service.get_dataset_metadata_collection(survey_id, period_id)
+        dataset_service.get_dataset_metadata_collection(survey_id, period_id)
     )
 
     if not dataset_metadata_collection:
