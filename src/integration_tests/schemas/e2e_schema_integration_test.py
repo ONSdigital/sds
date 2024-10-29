@@ -13,7 +13,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.schema_test_data import test_survey_id_map
-from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list, test_survey_id
+from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
 
 
 class E2ESchemaIntegrationTest(TestCase):

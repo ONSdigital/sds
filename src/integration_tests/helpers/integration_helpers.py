@@ -22,7 +22,6 @@ from src.integration_tests.helpers.firestore_helpers import (
 )
 from src.integration_tests.helpers.pubsub_helper import PubSubHelper
 from src.test_data.dataset_test_data import test_survey_id
-from src.test_data.shared_test_data import test_survey_id_list
 
 storage_client = storage.Client()
 
