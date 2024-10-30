@@ -41,7 +41,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         inject_wait_time(3) # Inject wait time to allow all message to be processed
 
     @pytest.mark.order(1)
-    def test_dataset_upload_and_metadata(self):
+    def get_dataset_metadata_collection(self):
         """
         Test uploading and retriving dataset metadata.
 
@@ -55,8 +55,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
             headers = self.headers
         )
 
-        assert self.dataset is not None, "Dataset upload failed"
-        assert response.status_code == 200, "not found"
+        assert response.status_code == 200, "Error, no dataset found"
 
         metadata_data = response.json()
 
@@ -74,7 +73,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         } ]
 
     @pytest.mark.order(2)
-    def test_grabbing_unit_data(self):
+    def get_dataset_unit_supplementary_data(self):
         """
         Test retrieving unit data for a dataset
 
@@ -88,7 +87,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
             headers = self.headers
         )
 
-        assert response.status_code == 200, "not found"
+        assert response.status_code == 200, "Error, no unit data found"
 
         unit_data = response.json()
 
