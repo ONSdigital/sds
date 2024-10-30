@@ -7,9 +7,6 @@ from services.dataset.dataset_processor_service import DatasetProcessorService
 from models.dataset_models import RawDataset
 import uuid
 from logging_config import logging
-# from src.test_data.dataset_test_data import dataset_metadata_collection, 
-# from src.test_data.dataset_test_data import dataset_unit_data_collection
-# from src.test_data.dataset_test_data import dataset_unit_data_id
 from src.test_data.dataset_test_data import dataset_metadata_collection, dataset_unit_data_collection, dataset_unit_data_id
 
 
@@ -104,7 +101,6 @@ def upload_dataset(firestore_client, metadata_collection, unit_data_collection):
     """
     Helper function to upload a dataset 
     """
-    # firestore_client = firestore.Client(project=project_id, database=f"{project_id}-sds")
     dataset_collection = firestore_client.collection("datasets")
     uploaded_dataset = []
 
