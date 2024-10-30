@@ -12,6 +12,7 @@ from src.integration_tests.helpers.integration_helpers import (
 )
 from src.integration_tests.helpers.firestore_helpers import upload_dataset
 from google.cloud import firestore
+import logging
 
 class DatasetEndpointsIntegrationTest(TestCase):
     session = None
@@ -51,7 +52,28 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
         """
 
-        assert self.dataset is not None, "first dataset upload failed"
+        response = self.session.get(
+            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id&period_id=test_period_id_2",
+            headers = self.headers
+        )
+
+        assert self.dataset is not None, "Dataset upload failed"
+        assert response.status_code == 200, "not found"
+
+        metadata_data = response.json()
+
+        assert metadata_data == [{
+        "dataset_id": "3",
+        "survey_id": "test_survey_id",
+        "period_id": "test_period_id_2",
+        "form_types": ["knj", "okn", "ojdw"],
+        "title": "Which side was better?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": 1,
+        "filename": "test_filename.json",
+        } ]
 
     @pytest.mark.order(2)
     def test_grabbing_unit_data(self):
@@ -74,24 +96,35 @@ class DatasetEndpointsIntegrationTest(TestCase):
         "schema_version": "v1.0.0",
         "form_types": ["jke", "als", "sma"],
         "data": "test",
-    }
+        }
 
-    # @pytest.mark.order()
-    # def test_dataset_without_title(self):
-    #     """
-    #     """
+    @pytest.mark.order(3)
+    def test_dataset_without_title(self):
+        """
+        """
 
-    
-    # @pytest.mark.order()
-    # def test_dataset_with_different_period_id(self):
-    #     """
-    #     """
+        response = self.session.get(
+            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id&period_id=test_period_id",
+            headers = self.headers
+        )
+
+        assert response.status_code == 200, "not found"
+
+        metadata_without_title = response.json()
+
+        assert metadata_without_title == [{
+        "dataset_id": "1",
+        "survey_id": "test_survey_id",
+        "period_id": "test_period_id",
+        "form_types": ["oas", "alm", "lma"],
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": 1,
+        "filename": "test_filename.json",
+        }]
 
 
-    # @pytest.mark.order()
-    # def test_dataset_with_different_period_id(self):
-    #     """
-    #     """
 
     
 
