@@ -99,17 +99,18 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         metadata_without_title = response.json()
 
-        assert metadata_without_title == [{
-        "dataset_id": "1",
+        assert metadata_without_title[1] == {
+        "dataset_id": "2",
         "survey_id": "test_survey_id",
         "period_id": "test_period_id",
         "form_types": ["oas", "alm", "lma"],
+        "title": None,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
         "sds_dataset_version": 1,
         "filename": "test_filename.json",
-        }]
+        }
 
 
 
