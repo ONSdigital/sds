@@ -15,6 +15,12 @@ from google.cloud import firestore
 import logging
 
 class DatasetEndpointsIntegrationTest(TestCase):
+    """
+    Integration tests for the Dataset Endpoints.
+
+    This test covers uploading datasets, fetching metdata and unit data from firestore,
+    and checking that dataset metadata is handled correctly.
+    """
     session = None
     headers = None
     firestore_client = None
@@ -37,6 +43,11 @@ class DatasetEndpointsIntegrationTest(TestCase):
     @pytest.mark.order(1)
     def test_dataset_upload_and_metadata(self):
         """
+        Test uploading and retriving dataset metadata.
+
+        - Sends a GET request to retrieve metadata for a dataset
+        - Verifies that the dataset was uploaded successfully
+        - Asserts the metadata retrieved matches the expected structure.
         """
 
         response = self.session.get(
@@ -65,6 +76,11 @@ class DatasetEndpointsIntegrationTest(TestCase):
     @pytest.mark.order(2)
     def test_grabbing_unit_data(self):
         """
+        Test retrieving unit data for a dataset
+
+        - Get request to retrieve unit data for a dataset
+        - Asserts the status code, if its found (200) or not (404)
+        - Asserts if unit data matches the expected structure
         """
 
         response = self.session.get(
@@ -88,6 +104,11 @@ class DatasetEndpointsIntegrationTest(TestCase):
     @pytest.mark.order(3)
     def test_dataset_without_title(self):
         """
+        Test retrieving a dataset metadata without a title
+
+        - Get request to retrieve a metadata missing a title
+        - Assert status code is 200
+        - Checks if the metadata matches the expected structure without a title
         """
 
         response = self.session.get(
@@ -111,11 +132,4 @@ class DatasetEndpointsIntegrationTest(TestCase):
         "sds_dataset_version": 1,
         "filename": "test_filename.json",
         }
-
-
-
-    
-
-
-
-
+        
