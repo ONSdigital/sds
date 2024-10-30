@@ -31,6 +31,7 @@ class E2ESchemaIntegrationTest(TestCase):
         self.session = setup_session()
         self.headers = generate_headers()
         self.test_schemas = []
+        # We add the 2nd version of the schema first to ease the testing of the schema as metadata endpoint lists newest schema versions first
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
         self.schema_metadatas_dict = {}
@@ -52,7 +53,7 @@ class E2ESchemaIntegrationTest(TestCase):
         * We post a schema for each survey_id in survey_id_list and check the response
         * We retrieve and verify received messages from Pub/Sub
         """
-        # Post v1 schema for each survey_id
+        # Post v1 schema for each survey_id - v1 is stored in the second index of the test_schemas list
         for survey_id in test_survey_id_list:
 
             schema_post_response = self.session.post(
@@ -72,7 +73,7 @@ class E2ESchemaIntegrationTest(TestCase):
             received_messages_json = received_messages[0]
             assert received_messages_json == schema_post_response.json()
 
-        # Post v2 schema for each survey_id
+        # Post v2 schema for each survey_id - v2 is stored in the first index of the test_schemas list
         for survey_id in test_survey_id_list:
 
             schema_post_response = self.session.post(
