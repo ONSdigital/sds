@@ -17,14 +17,7 @@ import logging
 class DatasetEndpointsIntegrationTest(TestCase):
     session = None
     headers = None
-    first_dataset = None
-    second_dataset = None
     firestore_client = None
-    dataset_without_title = None
-    dataset_different_period_id = None
-    # 3 datasets - 2 with same survey n period id. 1 with same survey id but different period id
-    # each dataset more than 1 unit data (2)...
-    #
     
     @classmethod
     def setup_class(self) -> None:
@@ -34,18 +27,12 @@ class DatasetEndpointsIntegrationTest(TestCase):
         self.headers = generate_headers()
         self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=f"{config.PROJECT_ID}-sds")
         self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_endpoints, dataset_unit_data_collection_endpoints)
-        # self.second_dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_endpoints[1], dataset_unit_data_collection_endpoints)
-        # self.dataset_without_title = upload_dataset(self.firestore_client, [dataset_metadata_collection[2]], dataset_unit_data_collection)
-        # self.dataset_different_period_id = upload_dataset(self.firestore_client, [dataset_metadata_collection[3]], dataset_unit_data_collection)
         
 
     @classmethod
     def teardown_class(self) -> None:
-        # cleanup()
+        cleanup()
         inject_wait_time(3) # Inject wait time to allow all message to be processed
-    
-
-    # method for grabbing unit data, dataset metadata and uploading 3 but return 2 wth same survey id
 
     @pytest.mark.order(1)
     def test_dataset_upload_and_metadata(self):
