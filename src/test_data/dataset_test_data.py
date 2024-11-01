@@ -94,7 +94,8 @@ dataset_metadata_updated_version: DatasetMetadata = {
 # integration test - datasets - test data
 dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
     {
-        "survey_id": test_survey_id,
+        "dataset_id": "0",
+        "survey_id": f"{test_survey_id}_1",
         "period_id": test_period_id,
         "form_types": ["sda", "ajk", "iwu"],
         "title": "Which side was better?",
@@ -105,7 +106,8 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
         "filename": "test_filename.json",
     },
     {
-        "survey_id": test_survey_id,
+         "dataset_id": "0",
+        "survey_id": f"{test_survey_id}_2",
         "period_id": test_period_id,
         "form_types": ["390", "219", "12O"],
         "title": "Which side was better?",
@@ -115,27 +117,6 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
         "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
     },
-    {# without title
-        "survey_id": test_survey_id,
-        "period_id": test_period_id,
-        "form_types": ["oas", "alm", "lma"],
-        "sds_published_at": "2023-04-20T12:00:00Z",
-        "total_reporting_units": 2,
-        "schema_version": "v1.0.0",
-        "sds_dataset_version": first_dataset_version,
-        "filename": "test_filename.json",
-    },
-    { # with different period id
-        "survey_id": test_survey_id,
-        "period_id": f"{test_period_id}_2",
-        "form_types": ["knj", "okn", "ojdw"],
-        "title": "Which side was better?",
-        "sds_published_at": "2023-04-20T12:00:00Z",
-        "total_reporting_units": 2,
-        "schema_version": "v1.0.0",
-        "sds_dataset_version": first_dataset_version,
-        "filename": "test_filename.json",
-    }
 ]
 
 # unit tests - dataset - test data

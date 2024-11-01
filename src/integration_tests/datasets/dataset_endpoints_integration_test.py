@@ -57,7 +57,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         metadata_data = response.json() 
 
-        assert dataset_metadata_collection_endpoints[0] in metadata_data
+        assert metadata_data[0] == dataset_metadata_collection_endpoints[0]
 
 
 
@@ -100,5 +100,5 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         metadata_without_title = response.json()
 
-        assert dataset_metadata_collection_endpoints[1] in metadata_without_title
+        assert metadata_without_title[0] == dataset_metadata_collection_endpoints[1]
         
