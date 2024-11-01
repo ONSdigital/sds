@@ -106,11 +106,11 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
         "filename": "test_filename.json",
     },
     {
-         "dataset_id": "0",
+         "dataset_id": "1",
         "survey_id": f"{test_survey_id}_2",
         "period_id": test_period_id,
         "form_types": ["390", "219", "12O"],
-        "title": "Which side was better?",
+        "title": None,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 2,
         "schema_version": "v1.0.0",
