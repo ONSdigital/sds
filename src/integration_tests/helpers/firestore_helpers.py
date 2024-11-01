@@ -9,8 +9,6 @@ import uuid
 from logging_config import logging
 from src.test_data.dataset_test_data import dataset_metadata_collection, dataset_unit_data_collection, dataset_unit_data_id
 
-
-
 def perform_delete_on_collection_with_test_survey_id(
     client: firestore.Client, collection_ref: firestore.CollectionReference, test_survey_id: str
 ) -> None:
@@ -119,8 +117,3 @@ def upload_dataset(firestore_client, metadata_collection, unit_data_collection):
         uploaded_dataset.append(dataset_metadata)
     
     return uploaded_dataset
-
-
-
-
-
