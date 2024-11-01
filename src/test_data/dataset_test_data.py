@@ -106,7 +106,7 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
         "filename": "test_filename.json",
     },
     {
-         "dataset_id": "1",
+        "dataset_id": "1",
         "survey_id": f"{test_survey_id}_2",
         "period_id": test_period_id,
         "form_types": ["390", "219", "12O"],
