@@ -96,7 +96,7 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
     {
         "dataset_id": "0",
         "survey_id": f"{test_survey_id}_1",
-        "period_id": test_period_id,
+        "period_id": f"{test_period_id}_1",
         "form_types": ["sda", "ajk", "iwu"],
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
@@ -108,7 +108,7 @@ dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
     {
         "dataset_id": "1",
         "survey_id": f"{test_survey_id}_2",
-        "period_id": test_period_id,
+        "period_id": f"{test_period_id}_2",
         "form_types": ["390", "219", "12O"],
         "title": None,
         "sds_published_at": "2023-04-20T12:00:00Z",

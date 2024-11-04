@@ -49,15 +49,15 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_1&period_id=test_period_id",
+            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_1&period_id=test_period_id_1",
             headers = self.headers
         )
 
         assert response.status_code == 200
 
-        metadata_data = response.json() 
+        expected_metadata = dataset_metadata_collection_endpoints[0]
 
-        assert metadata_data[0] == dataset_metadata_collection_endpoints[0]
+        assert response.json() == [expected_metadata]
 
 
 
@@ -92,13 +92,13 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_2&period_id=test_period_id",
+            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_2&period_id=test_period_id_2",
             headers = self.headers
         )
 
         assert response.status_code == 200
 
-        metadata_without_title = response.json()
+        expected_metadata_without_title =  dataset_metadata_collection_endpoints[1]
 
-        assert metadata_without_title[0] == dataset_metadata_collection_endpoints[1]
+        assert response.json() == [expected_metadata_without_title]
         
