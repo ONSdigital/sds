@@ -55,9 +55,13 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         assert response.status_code == 200
 
-        expected_metadata = dataset_metadata_collection_endpoints[0]
+        expected_data = [
+            {
+                **dataset_metadata_collection_endpoints[0],
+            }
+        ]
 
-        assert response.json() == [expected_metadata]
+        assert response.json() == expected_data
 
 
 
@@ -77,9 +81,8 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         assert response.status_code == 200
 
-        unit_data = response.json()
 
-        assert unit_data in dataset_unit_data_collection_endpoints 
+        assert response.json() == dataset_unit_data_collection_endpoints[0]
 
     @pytest.mark.order(3)
     def test_dataset_without_title(self):
@@ -98,7 +101,11 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         assert response.status_code == 200
 
-        expected_metadata_without_title =  dataset_metadata_collection_endpoints[1]
+        expected_data = [
+            {
+                **dataset_metadata_collection_endpoints[1],
+            }
+        ]
 
-        assert response.json() == [expected_metadata_without_title]
+        assert response.json() == expected_data
         
