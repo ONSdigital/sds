@@ -52,15 +52,14 @@ class DatasetEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_1&period_id=test_period_id_1",
             headers = self.headers
         )
-
-        assert response.status_code == 200
-
+        
         expected_data = [
             {
                 **dataset_metadata_collection_endpoints[0],
             }
         ]
 
+        assert response.status_code == 200
         assert response.json() == expected_data
 
 
@@ -80,8 +79,6 @@ class DatasetEndpointsIntegrationTest(TestCase):
         )
 
         assert response.status_code == 200
-
-
         assert response.json() == dataset_unit_data_collection_endpoints[0]
 
     @pytest.mark.order(3)
@@ -99,13 +96,12 @@ class DatasetEndpointsIntegrationTest(TestCase):
             headers = self.headers
         )
 
-        assert response.status_code == 200
-
         expected_data = [
             {
                 **dataset_metadata_collection_endpoints[1],
             }
         ]
 
+        assert response.status_code == 200
         assert response.json() == expected_data
         
