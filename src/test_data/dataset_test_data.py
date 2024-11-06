@@ -91,8 +91,8 @@ dataset_metadata_updated_version: DatasetMetadata = {
     "filename": "test_filename.json",
 }
 
-# integration test - datasets - test data
-dataset_metadata_collection_endpoints: list[DatasetMetadata] = [
+# integration test - dataset endpoints - test data
+dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
     {
         "dataset_id": "0",
         "survey_id": f"{test_survey_id}_1",
@@ -208,8 +208,8 @@ updated_dataset_metadata: DatasetMetadata = {
     "dataset_id": test_guid,
 }
 
-# integration test - dataset - test data
-dataset_unit_data_collection_endpoints: list[UnitDataset] = [
+# integration test - dataset endpoints - test data
+dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
     {
         "dataset_id": "",
         "survey_id": test_survey_id,

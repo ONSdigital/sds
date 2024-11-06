@@ -2,8 +2,8 @@ import pytest
 from unittest import TestCase
 from src.app.config.config_factory import config
 from src.test_data.dataset_test_data import ( 
-    dataset_metadata_collection_endpoints, 
-    dataset_unit_data_collection_endpoints 
+    dataset_metadata_collection_for_endpoints_test, 
+    dataset_unit_data_collection_for_endpoints_test 
 )
 from repositories.firebase.firebase_loader import firebase_loader
 from src.integration_tests.helpers.integration_helpers import (
@@ -33,7 +33,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         self.session = setup_session()
         self.headers = generate_headers()
         self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=f"{config.PROJECT_ID}-sds")
-        self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_endpoints, dataset_unit_data_collection_endpoints)
+        self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_for_endpoints_test, dataset_unit_data_collection_for_endpoints_test)
         
 
     @classmethod
@@ -57,7 +57,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         
         expected_data = [
             {
-                **dataset_metadata_collection_endpoints[0],
+                **dataset_metadata_collection_for_endpoints_test[0],
             }
         ]
 
@@ -81,7 +81,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         )
 
         assert response.status_code == 200
-        assert response.json() == dataset_unit_data_collection_endpoints[0]
+        assert response.json() == dataset_unit_data_collection_for_endpoints_test[0]
 
     @pytest.mark.order(3)
     def test_dataset_without_title(self):
@@ -100,7 +100,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         expected_data = [
             {
-                **dataset_metadata_collection_endpoints[1],
+                **dataset_metadata_collection_for_endpoints_test[1],
             }
         ]
 
