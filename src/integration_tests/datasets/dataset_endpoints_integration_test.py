@@ -39,7 +39,6 @@ class DatasetEndpointsIntegrationTest(TestCase):
     @classmethod
     def teardown_class(self) -> None:
         cleanup()
-        inject_wait_time(3) # Inject wait time to allow all message to be processed
 
     @pytest.mark.order(1)
     def test_get_dataset_metadata_collection(self):
