@@ -51,7 +51,9 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_1&period_id=test_period_id_1",
+            f"{config.API_URL}/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}&"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
             headers = self.headers
         )
         
@@ -76,7 +78,8 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?dataset_id=1&identifier=43532",
+            f"{config.API_URL}/v1/unit_data?"
+            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&identifier=43532",
             headers = self.headers
         )
 
@@ -94,7 +97,9 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?survey_id=test_survey_id_2&period_id=test_period_id_2",
+            f"{config.API_URL}/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[1]['survey_id']}&"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[1]['period_id']}",
             headers = self.headers
         )
 
