@@ -32,7 +32,7 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     @classmethod
     def teardown_class(cls) -> None:
         cleanup()
-        inject_wait_time(3) # Allow all messages to process
+        inject_wait_time(3) # Allow all messages to process.
         pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     @pytest.mark.order(1)
