@@ -32,7 +32,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         inject_wait_time(3) # Inject wait time to allow resources properly set up
         self.session = setup_session()
         self.headers = generate_headers()
-        self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=f"{config.PROJECT_ID}-sds")
+        self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=config.FIRESTORE_DB_NAME)
         self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_for_endpoints_test, dataset_unit_data_collection_for_endpoints_test)
         
 
