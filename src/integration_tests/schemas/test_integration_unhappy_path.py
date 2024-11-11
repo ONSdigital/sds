@@ -94,7 +94,7 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
         * Expected: 400 Bad Request.
         """
         response = self.session.get(
-            f"{config.API_URL}/v1/schema?survey_id=",
+            f"{config.API_URL}/v1/schema",
             headers=self.headers,
         )
         assert response.status_code == 400
@@ -118,7 +118,7 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
         * Expected: 400 Bad Request.
         """
         response = self.session.get(
-            f"{config.API_URL}/v1/schema_metadata?survey_id=",
+            f"{config.API_URL}/v1/schema_metadata",
             headers=self.headers,
         )
         assert response.status_code == 400
@@ -154,7 +154,7 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
         * Expected: 400 Bad Request.
         """
         response = self.session.get(
-            f"{config.API_URL}/v2/schema?guid=",
+            f"{config.API_URL}/v2/schema",
             headers=self.headers,
         )
         assert response.status_code == 400
