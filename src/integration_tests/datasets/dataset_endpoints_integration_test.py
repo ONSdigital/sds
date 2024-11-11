@@ -3,7 +3,8 @@ from unittest import TestCase
 from src.app.config.config_factory import config
 from src.test_data.dataset_test_data import ( 
     dataset_metadata_collection_for_endpoints_test, 
-    dataset_unit_data_collection_for_endpoints_test 
+    dataset_unit_data_collection_for_endpoints_test,
+    dataset_unit_data_id
 )
 from repositories.firebase.firebase_loader import firebase_loader
 from src.integration_tests.helpers.integration_helpers import (
@@ -78,7 +79,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         response = self.session.get(
             f"{config.API_URL}/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&identifier=43532",
+            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&identifier={dataset_unit_data_id[0]}",
             headers = self.headers
         )
 
