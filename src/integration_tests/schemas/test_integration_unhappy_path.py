@@ -1,5 +1,7 @@
 from unittest import TestCase
 import pytest
+from urllib.parse import urlencode
+from fastapi import status
 from src.app.config.config_factory import config
 from src.integration_tests.helpers.integration_helpers import (
     cleanup,
