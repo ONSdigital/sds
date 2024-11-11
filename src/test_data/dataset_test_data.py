@@ -14,6 +14,8 @@ updated_dataset_version = 2
 Test data:
 """
 
+
+
 # unit test - dataset - test data
 string_cat = "cat"
 string_byte_size_cat = 5
@@ -30,6 +32,9 @@ int_identifier = "43532"
 
 # unit tests - cloud new dataset - test data
 dataset_unit_data_identifier: list[str] = ["43532", "65871"]
+
+# integration test tests - dataset - test data
+dataset_unit_data_id: list[str] = ["43532", "65871"]
 
 # unit tests - service - test data
 test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
@@ -85,6 +90,34 @@ dataset_metadata_updated_version: DatasetMetadata = {
     "sds_dataset_version": updated_dataset_version,
     "filename": "test_filename.json",
 }
+
+# integration test - dataset endpoints - test data
+dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
+    {
+        "dataset_id": "0",
+        "survey_id": f"{test_survey_id}_1",
+        "period_id": f"{test_period_id}_1",
+        "form_types": ["sda", "ajk", "iwu"],
+        "title": "Which side was better?",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+    },
+    {
+        "dataset_id": "1",
+        "survey_id": f"{test_survey_id}_2",
+        "period_id": f"{test_period_id}_2",
+        "form_types": ["390", "219", "12O"],
+        "title": None,
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "schema_version": "v1.0.0",
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+    },
+]
 
 # unit tests - dataset - test data
 dataset_metadata_collection: list[DatasetMetadata] = [
@@ -174,6 +207,26 @@ updated_dataset_metadata: DatasetMetadata = {
     **updated_dataset_metadata_without_id,
     "dataset_id": test_guid,
 }
+
+# integration test - dataset endpoints - test data
+dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
+    {
+        "dataset_id": "",
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "schema_version": "v1.0.0",
+        "form_types": ["jke", "als", "sma"],
+        "data": "test",
+    },
+    {
+        "dataset_id": "",
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "schema_version": "v1.0.0",
+        "form_types": ["skn", "qwd", "qkw"],
+        "data": "test"
+    },
+]
 
 # unit tests - dataset - test data
 unit_supplementary_data: UnitDataset = {
