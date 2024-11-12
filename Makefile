@@ -161,7 +161,7 @@ integration-test-cloudbuild:
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
+	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
 	export CONF=cloud-dev && \

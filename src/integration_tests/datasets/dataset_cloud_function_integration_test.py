@@ -26,8 +26,7 @@ from src.test_data.shared_test_data import (
     test_dataset_subscriber_id,
 )
 
-
-class E2EDatasetIntegrationTest(TestCase):
+class DatasetCloudFunctionIntegrationTest(TestCase):
     @classmethod
     def setup_class(self) -> None:
         cleanup()
