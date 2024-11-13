@@ -13,7 +13,6 @@ from src.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     setup_session,
-    inject_wait_time,
 )
 from src.integration_tests.helpers.firestore_helpers import upload_dataset
 from google.cloud import firestore
@@ -35,7 +34,6 @@ class DatasetEndpointsIntegrationTest(TestCase):
     @classmethod
     def setup_class(self) -> None:
         cleanup()
-        inject_wait_time(3) # Inject wait time to allow resources properly set up
         self.session = setup_session()
         self.headers = generate_headers()
         self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=config.FIRESTORE_DB_NAME)
