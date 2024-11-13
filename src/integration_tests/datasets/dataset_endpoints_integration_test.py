@@ -5,7 +5,7 @@ from src.test_data.dataset_test_data import (
     dataset_metadata_collection_for_endpoints_test, 
     dataset_unit_data_collection_for_endpoints_test,
     dataset_unit_data_id,
-    dataset_metadata_404,
+    dataset_404_test_data,
 )
 from repositories.firebase.firebase_loader import firebase_loader
 from src.integration_tests.helpers.integration_helpers import (
@@ -170,7 +170,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
             
         response = self.session.get(
             f"{config.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_404['survey_id']}&period_id={dataset_metadata_404['period_id']}",
+            f"survey_id={dataset_404_test_data['survey_id']}&period_id={dataset_404_test_data['period_id']}",
             headers = self.headers
         )
 
@@ -248,7 +248,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
             
         response = self.session.get(
             f"{config.API_URL}/v1/unit_data?"
-            f"dataset_id={dataset_metadata_404['dataset_id']}&identifier={dataset_metadata_404['identifier']}",
+            f"dataset_id={dataset_404_test_data['dataset_id']}&identifier={dataset_404_test_data['identifier']}",
             headers = self.headers
         )
 

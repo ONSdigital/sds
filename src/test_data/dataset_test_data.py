@@ -381,7 +381,7 @@ unit_response_amended = {
 }
 
 # e2e dataset integration test - test data for testing 404 response of dataset endpoints
-dataset_metadata_404 = {
+dataset_404_test_data = {
     "survey_id": "111",
     "period_id": "222",
     "dataset_id": "333",
