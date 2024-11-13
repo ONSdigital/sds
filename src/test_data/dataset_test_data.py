@@ -380,6 +380,14 @@ unit_response_amended = {
     "data": "<encrypted data>",
 }
 
+# e2e dataset integration test - test data for testing 404 response of dataset endpoints
+dataset_metadata_404 = {
+    "survey_id": "111",
+    "period_id": "222",
+    "dataset_id": "333",
+    "identifier": "444",
+}
+
 # unused
 incorrect_file_extension_message = {
     "error": "Filetype error",
