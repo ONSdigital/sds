@@ -6,6 +6,7 @@ from src.test_data.dataset_test_data import (
     dataset_unit_data_collection_for_endpoints_test,
     dataset_unit_data_id,
     dataset_404_test_data,
+    random_string,
 )
 from repositories.firebase.firebase_loader import firebase_loader
 from src.integration_tests.helpers.integration_helpers import (
@@ -119,7 +120,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
     
 
     @pytest.mark.order(4)
-    def test_dataset_without_survey_id(self):
+    def test_dataset_metadata_without_survey_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing survey_id parameter
         
@@ -139,7 +140,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
 
     @pytest.mark.order(5)
-    def test_dataset_without_period_id(self):
+    def test_dataset_metadata_without_period_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing period_id parameter
         
@@ -157,8 +158,45 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
 
-
     @pytest.mark.order(6)
+    def test_dataset_metadata_no_valid_query_params(self):
+        """
+        Test for /v1/dataset_metadata endpoint without passing valid query parameters
+        
+        - Get request to retrieve metadata without passing valid query parameters
+        - Assert status code is 400
+        - Checks the error message in the response
+        """
+            
+        response = self.session.get(
+            f"{config.API_URL}/v1/dataset_metadata",
+            headers = self.headers
+        )
+
+        assert response.status_code == 400
+        assert response.json()["message"] == "Invalid search parameters provided"
+    
+    @pytest.mark.order(7)
+    def test_dataset_metadata_garbage_query_params(self):
+        """
+        Test for /v1/dataset_metadata endpoint with garbage query parameters
+        
+        - Get request to retrieve metadata with garbage query parameters
+        - Assert status code is 400
+        - Checks the error message in the response
+        """
+            
+        response = self.session.get(
+            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{random_string}",
+            headers = self.headers
+        )
+
+        assert response.status_code == 400
+        assert response.json()["message"] == "Invalid search parameters provided"
+
+
+    @pytest.mark.order(8)
     def test_dataset_metadata_404_response(self):
         """
         Test for /v1/dataset_metadata endpoint when no dataset metadata is retrieved
@@ -177,7 +215,8 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 404
         assert response.json()["message"] == "No datasets found"
 
-    @pytest.mark.order(7)
+
+    @pytest.mark.order(9)
     def test_dataset_metadata_unauthorised(self):
         """
         Test the /v1/dataset_metadata endpoint with an unauthorized token
@@ -196,7 +235,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 401
 
 
-    @pytest.mark.order(8)
+    @pytest.mark.order(10)
     def test_dataset_unit_data_without_dataset_id(self):
         """
         Test for /v1/unit_data endpoint without passing dataset_id parameter
@@ -216,7 +255,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Validation has failed"
 
 
-    @pytest.mark.order(9)
+    @pytest.mark.order(11)
     def test_dataset_unit_data_without_identifier(self):
         """
         Test for /v1/unit_data endpoint without passing identifier parameter
@@ -236,7 +275,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Validation has failed"
     
 
-    @pytest.mark.order(10)
+    @pytest.mark.order(12)
     def test_dataset_unit_data_404_response(self):
         """
         Test for /v1/unit_data endpoint when no unit data is retrieved
@@ -255,7 +294,8 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 404
         assert response.json()["message"] == "No unit data found"
 
-    @pytest.mark.order(11)
+
+    @pytest.mark.order(13)
     def test_dataset_unit_data_unauthorised(self):
         """
         Test the /v1/unit_data endpoint with an unauthorized token
@@ -272,4 +312,43 @@ class DatasetEndpointsIntegrationTest(TestCase):
         )
 
         assert response.status_code == 401
+
+
+    @pytest.mark.order(14)
+    def test_dataset_unit_data_no_valid_query_params(self):
+        """
+        Test for /v1/unit_data endpoint without passing valid query parameters
+        
+        - Get request to retrieve unit data without passing valid query parameters
+        - Assert status code is 400
+        - Checks the error message in the response
+        """
+            
+        response = self.session.get(
+            f"{config.API_URL}/v1/unit_data",
+            headers = self.headers
+        )
+
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
+
+    
+    @pytest.mark.order(15)
+    def test_dataset_unit_data_garbage_query_params(self):
+        """
+        Test for /v1/unit_data endpoint with garbage query parameters
+        
+        - Get request to retrieve unit data with garbage query parameters
+        - Assert status code is 400
+        - Checks the error message in the response
+        """
+            
+        response = self.session.get(
+            f"{config.API_URL}/v1/unit_data?"
+            f"{random_string}",
+            headers = self.headers
+        )
+
+        assert response.status_code == 400
+        assert response.json()["message"] == "Validation has failed"
         

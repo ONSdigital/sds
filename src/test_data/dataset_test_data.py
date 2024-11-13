@@ -388,6 +388,9 @@ dataset_404_test_data = {
     "identifier": "444",
 }
 
+# e2e dataset integration test - random string to test invalid query params
+random_string = "random_string"
+
 # unused
 incorrect_file_extension_message = {
     "error": "Filetype error",
