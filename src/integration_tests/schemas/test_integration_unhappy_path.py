@@ -88,15 +88,27 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
 
     @pytest.mark.order(5)
     def test_get_schema_validation_error(self):
+        """
+        Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema.
+        * Expected: 400 Bad Request.
+        """
+        # Case 1: Missing survey_id
         response = self.session.get(
             f"{config.API_URL}/v1/schema",
             headers=self.headers,
         )
         assert response.status_code == 400
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Invalid survey_id format"
-        else:
-            print("Response JSON:", response.json())
+        if response.status_code == 400 and is_json_response(self, response):
+            assert "Missing required parameter" in response.json()["detail"]
+
+        # Case 2: Nonsensical parameter
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema?randomparam=nonsense",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if response.status_code == 400 and is_json_response(self, response):
+            assert "Invalid parameter" in response.json()["detail"]
 
     @pytest.mark.order(6)
     def test_get_schema_metadata_unauthorized(self):
@@ -113,21 +125,45 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
             assert response.json()["detail"] == "Unauthorized access"
         else:
             print("Non-JSON Response:", response.text)  
+
     @pytest.mark.order(7)
     def test_get_schema_metadata_validation_error(self):
         """
-        Test validation issue by providing an invalid survey_id for GET /v1/schema_metadata.
+        Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema_metadata.
         * Expected: 400 Bad Request.
         """
+        # Case 1: Missing survey_id
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata",
             headers=self.headers,
         )
         assert response.status_code == 400
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Invalid survey_id format"
+        if is_json_response(self, response):
+            json_response = response.json()
+            if "status" in json_response and "message" in json_response:
+                assert json_response["status"] == "error"
+                assert json_response["message"] == "Invalid search provided"
+            else:
+                print("Unexpected response structure:", json_response)
         else:
-            print("Response JSON:", response.json())
+            print("Non-JSON Response:", response.text)
+
+        # Case 2: Nonsensical parameter
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema_metadata?invalidparam=123",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if is_json_response(self, response):
+            json_response = response.json()
+            if "status" in json_response and "message" in json_response:
+                assert json_response["status"] == "error"
+                assert json_response["message"] == "Invalid search provided"
+            else:
+                print("Unexpected response structure:", json_response)
+        else:
+            print("Non-JSON Response:", response.text)
+
 
     @pytest.mark.order(8)
     def test_get_schema_metadata_404_not_found(self):
