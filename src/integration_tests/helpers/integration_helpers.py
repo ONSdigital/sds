@@ -339,3 +339,10 @@ def force_run_schedule_job():
         name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
     client.run_job(request=request)
+
+def is_json_response(self, response):
+    try:
+        response.json()
+        return True
+    except ValueError:
+        return False
