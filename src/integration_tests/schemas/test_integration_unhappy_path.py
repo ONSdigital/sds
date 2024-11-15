@@ -37,6 +37,12 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
 
     @pytest.mark.order(1)
     def test_post_schema_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for POST /v1/schema.
+
+        * Send a request to POST /v1/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
         response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             json=invalid_data,
@@ -51,6 +57,12 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
         
     @pytest.mark.order(2)
     def test_post_schema_validation_error(self):
+        """
+        Test validation issue by providing invalid data for POST /v1/schema.
+
+        * We test the POST /v1/schema endpoint by providing invalid data.
+        * Assert status code: 400 Bad Request.
+        """
         response = self.session.post(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             json=invalid_data,
@@ -64,6 +76,12 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
 
     @pytest.mark.order(3)
     def test_get_schema_404_not_found(self):
+        """
+        Test data not found by requesting nonexistent schema for GET /v1/schema.
+        
+        * We send a request to the GET /v1/schema endpoint providing an invalid survey_id.
+        * Assert status code: 404 Not Found.
+        """
         response = self.session.get(
             f"{config.API_URL}/v1/schema?survey_id={invalid_survey_id}",
             headers=self.headers,
@@ -76,6 +94,12 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
 
     @pytest.mark.order(4)
     def test_get_schema_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for GET /v1/schema.
+
+        * Send a request to GET /v1/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
         response = self.session.get(
             f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
             headers=self.invalid_token_headers,
@@ -90,9 +114,13 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     def test_get_schema_validation_error(self):
         """
         Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema.
-        * Expected: 400 Bad Request.
+
+        * We test the GET /v1/schema endpoint by providing invalid data (missing survey_id) 
+        * Assert status code: 400 Bad Request.
+        * We test the GET /v1/schema endpoint by providing invalid data (nonsensical parameter)
+        * Assert status code: 400 Bad Request.
         """
-        # Case 1: Missing survey_id
+        # Test missing survey_id
         response = self.session.get(
             f"{config.API_URL}/v1/schema",
             headers=self.headers,
@@ -103,7 +131,7 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
         else:
             print("Non-JSON Response:", response.text)
 
-        # Case 2: Nonsensical parameter
+        # Test Nonsensical parameter
             response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?randomparam=nonsense",
             headers=self.headers,
@@ -118,7 +146,9 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     def test_get_schema_metadata_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v1/schema_metadata.
-        * Expected: 401 Unauthorized.
+
+        * Send a request to GET /v1/schema_metadata with an invalid token.
+        * Assert status code: 401 Unauthorized.
         """
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
@@ -133,38 +163,40 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     @pytest.mark.order(7)
     def test_get_schema_metadata_validation_error(self):
         """
-        Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema_metadata.
-        * Expected: 400 Bad Request.
+        Test validation issue by providing an invalid data for GET /v1/schema_metadata.
+        * Assert status code: 400 Bad Request.
+        Test the GET /v1/schema_metadata endpoint by providing nonsensical parameter
+        * Assert status code: 400 Bad Request.
         """
-        # Case 1: Missing survey_id
+        #Missing survey_id
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata",
             headers=self.headers,
         )
         assert response.status_code == 400
         if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Invalid search provided"  # Adjust based on actual API response
+            assert response.json()["detail"] == "Invalid search provided" 
         else:
             print("Non-JSON Response:", response.text)
 
-        # Case 2: Nonsensical parameter
+        #Nonsensical parameter
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?invalidparam=123",
             headers=self.headers,
         )
         assert response.status_code == 400
         if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Invalid search provided"  # Adjust if necessary
+            assert response.json()["detail"] == "Invalid search provided"
         else:
             print("Non-JSON Response:", response.text)
-
-
 
     @pytest.mark.order(8)
     def test_get_schema_metadata_404_not_found(self):
         """
         Test data not found by requesting nonexistent schema metadata for GET /v1/schema_metadata.
-        * Expected: 404 Not Found.
+
+        * We send a request to the GET /v1/schema_metadata endpoint providing an invalid survey_id.
+        * Assert status code: 404 Not Found.
         """
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?survey_id={invalid_survey_id}",
@@ -180,7 +212,9 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     def test_get_schema_v2_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v2/schema.
-        * Expected: 401 Unauthorized.
+
+        * Send a request to GET /v2/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
         """
         response = self.session.get(
             f"{config.API_URL}/v2/schema?guid=invalid_guid",
@@ -196,7 +230,9 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     def test_get_schema_v2_validation_error(self):
         """
         Test validation issue by providing an invalid GUID for GET /v2/schema.
-        * Expected: 400 Bad Request.
+
+        * We test the GET /v2/schema endpoint by providing an invalid GUID.
+        * Assert status code: 400 Bad Request.
         """
         response = self.session.get(
             f"{config.API_URL}/v2/schema",
@@ -212,7 +248,9 @@ class E2ESchemaIntegrationUnhappyPaths(TestCase):
     def test_get_schema_v2_404_not_found(self):
         """
         Test data not found by requesting a nonexistent GUID for GET /v2/schema.
-        * Expected: 404 Not Found.
+
+        * We send a request to the GET /v2/schema endpoint providing an invalid GUID.
+        * Assert status code: 404 Not Found.
         """
         response = self.session.get(
             f"{config.API_URL}/v2/schema?guid=nonexistent_guid",
