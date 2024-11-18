@@ -204,6 +204,8 @@ class SchemaEndpointsIntegrationTest(TestCase):
     @classmethod
     def setup_class(self) -> None:
         cleanup()
+        pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
+        inject_wait_time(3) 
         self.session = setup_session()
         self.headers = generate_headers()
         self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}
@@ -211,6 +213,8 @@ class SchemaEndpointsIntegrationTest(TestCase):
     @classmethod
     def teardown_class(self) -> None:
         cleanup()
+        inject_wait_time(3) 
+        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
 
     @pytest.mark.order(1)
     def test_post_schema_unauthorized(self):
