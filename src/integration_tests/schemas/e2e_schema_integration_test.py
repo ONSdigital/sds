@@ -17,10 +17,11 @@ from src.test_data.schema_test_data import test_survey_id_map
 from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
 from src.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
 
-class E2ESchemaIntegrationTest(TestCase):
+class SchemaEndpointsIntegrationTest(TestCase):
     session = None
     headers = None
     test_schemas = None
+    invalid_token_headers = None
     schema_metadatas_dict = None
 
     @classmethod
@@ -36,6 +37,7 @@ class E2ESchemaIntegrationTest(TestCase):
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
         self.schema_metadatas_dict = {}
+        self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}
 
 
     @classmethod
@@ -195,28 +197,7 @@ class E2ESchemaIntegrationTest(TestCase):
         assert set_survey_id_map_response.json() == test_survey_id_map
 
 
-class SchemaEndpointsIntegrationTest(TestCase):
-
-    session = None
-    headers = None
-    invalid_token_headers = None
-
-    @classmethod
-    def setup_class(self) -> None:
-        cleanup()
-        pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
-        inject_wait_time(3) 
-        self.session = setup_session()
-        self.headers = generate_headers()
-        self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}
-
-    @classmethod
-    def teardown_class(self) -> None:
-        cleanup()
-        inject_wait_time(3) 
-        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
-
-    @pytest.mark.order(1)
+    @pytest.mark.order(6)
     def test_post_schema_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for POST /v1/schema.
@@ -236,7 +217,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
             print("Non-JSON Response:", response.text) 
 
         
-    @pytest.mark.order(2)
+    @pytest.mark.order(7)
     def test_post_schema_validation_error(self):
         """
         Test validation issue by providing invalid data for POST /v1/schema.
@@ -255,7 +236,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Response JSON:", response.json())
 
-    @pytest.mark.order(3)
+    @pytest.mark.order(8)
     def test_get_schema_404_not_found(self):
         """
         Test data not found by requesting nonexistent schema for GET /v1/schema.
@@ -273,7 +254,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Response JSON:", response.json())
 
-    @pytest.mark.order(4)
+    @pytest.mark.order(9)
     def test_get_schema_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v1/schema.
@@ -291,7 +272,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Non-JSON Response:", response.text)  
 
-    @pytest.mark.order(5)
+    @pytest.mark.order(10)
     def test_get_schema_validation_error(self):
         """
         Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema.
@@ -323,7 +304,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Non-JSON Response:", response.text)
 
-    @pytest.mark.order(6)
+    @pytest.mark.order(11)
     def test_get_schema_metadata_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v1/schema_metadata.
@@ -341,7 +322,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Non-JSON Response:", response.text)  
 
-    @pytest.mark.order(7)
+    @pytest.mark.order(12)
     def test_get_schema_metadata_validation_error(self):
         """
         Test validation issue by providing an invalid data for GET /v1/schema_metadata.
@@ -371,7 +352,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Non-JSON Response:", response.text)
 
-    @pytest.mark.order(8)
+    @pytest.mark.order(13)
     def test_get_schema_metadata_404_not_found(self):
         """
         Test data not found by requesting nonexistent schema metadata for GET /v1/schema_metadata.
@@ -389,7 +370,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Response JSON:", response.json())        
 
-    @pytest.mark.order(9)
+    @pytest.mark.order(14)
     def test_get_schema_v2_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v2/schema.
@@ -407,7 +388,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Non-JSON Response:", response.text)
 
-    @pytest.mark.order(10)
+    @pytest.mark.order(15)
     def test_get_schema_v2_validation_error(self):
         """
         Test validation issue by providing an invalid GUID for GET /v2/schema.
@@ -425,7 +406,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         else:
             print("Response JSON:", response.json())
 
-    @pytest.mark.order(11)
+    @pytest.mark.order(16)
     def test_get_schema_v2_404_not_found(self):
         """
         Test data not found by requesting a nonexistent GUID for GET /v2/schema.

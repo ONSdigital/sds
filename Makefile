@@ -118,7 +118,7 @@ integration-test-local:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
+	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
 	export CONF=int-test && \
@@ -139,7 +139,7 @@ integration-test-sandbox:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest src/integration_tests -vv -W ignore::DeprecationWarning
+	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
