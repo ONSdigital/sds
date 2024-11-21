@@ -112,13 +112,13 @@ class SchemaEndpointsIntegrationTest(TestCase):
             )
             assert schema_metadata_response.status_code == 200
             # Add json to dict with survey_id as key
-            E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id] = schema_metadata_response.json()
+            SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id] = schema_metadata_response.json()
             # Verify there are 2 metadata entries for each survey_id
-            total_versions = len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id])
+            total_versions = len(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id])
             assert total_versions == 2
         
-            # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected
-            for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
+            # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected.
+            for index, schema_metadata in enumerate(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id]):
                 expected_schema = self.test_schemas[index]
                 assert schema_metadata == {
                     "guid": schema_metadata["guid"],
@@ -168,7 +168,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         * We retrieve the schema by GUID and check the response compared to the expected schema
         """
         for survey_id in test_survey_id_list:
-            for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
+            for index, schema_metadata in enumerate(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id]):
                 # Verify schema retrieval by GUID
                 set_guid_schema_response = self.session.get(
                     f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
