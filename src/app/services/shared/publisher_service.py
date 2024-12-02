@@ -44,9 +44,9 @@ class PublisherService:
             if config.CONF == "docker-dev":
                 self._create_topic(topic_path)
                 return
-            
+
             raise exceptions.ExceptionTopicNotFound from exc
-        
+
     def _create_topic(self, topic_path) -> None:
         self.publisher.create_topic(request={"name": topic_path})
 

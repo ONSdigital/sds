@@ -99,7 +99,6 @@ dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
         "title": "Which side was better?",
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 2,
-        "schema_version": "v1.0.0",
         "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
     },
@@ -111,7 +110,6 @@ dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
         "title": None,
         "sds_published_at": "2023-04-20T12:00:00Z",
         "total_reporting_units": 2,
-        "schema_version": "v1.0.0",
         "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
     },
@@ -206,7 +204,6 @@ dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
         "dataset_id": "",
         "survey_id": test_survey_id,
         "period_id": test_period_id,
-        "schema_version": "v1.0.0",
         "form_types": ["jke", "als", "sma"],
         "data": "test",
     },
@@ -214,7 +211,6 @@ dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
         "dataset_id": "",
         "survey_id": test_survey_id,
         "period_id": test_period_id,
-        "schema_version": "v1.0.0",
         "form_types": ["skn", "qwd", "qkw"],
         "data": "test"
     },
@@ -225,7 +221,6 @@ unit_supplementary_data: UnitDataset = {
     "dataset_id": test_guid,
     "survey_id": test_survey_id,
     "period_id": test_period_id,
-    "schema_version": "v1.0.0",
     "form_types": ["klk", "xyz", "tzr"],
     "data": {
         "identifier": identifier,
@@ -321,7 +316,6 @@ dataset_unit_data_collection: list[UnitDataset] = [
 # unit tests - cloud new dataset - test data
 missing_keys_dataset_metadata = {
     "period_id": test_period_id,
-    "schema_version": 1,
     "form_types": [
         "abc",
         "def",
@@ -337,7 +331,6 @@ nonrandom_pubsub_first_dataset_metadata = {
     "form_types": ["klk", "xyz", "tzr"],
     "title": "Which side was better?",
     "total_reporting_units": 2,
-    "schema_version": "v1.0.0",
     "sds_dataset_version": first_dataset_version,
 }
 
@@ -348,13 +341,11 @@ nonrandom_pubsub_second_dataset_metadata = {
     "form_types": ["abc", "fgg", "ynm"],
     "title": "Which side was better? - Amended",
     "total_reporting_units": 3,
-    "schema_version": "v2.0.0",
     "sds_dataset_version": updated_dataset_version,
 }
 
 # e2e dataset integration test - test data
 unit_response = {
-    "schema_version": "v1.0.0",
     "survey_id": test_survey_id,
     "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
@@ -363,7 +354,6 @@ unit_response = {
 
 # e2e dataset integration test - test data
 unit_response_amended = {
-    "schema_version": "v2.0.0",
     "survey_id": test_survey_id,
     "period_id": test_period_id,
     "form_types": ["abc", "fgg", "ynm"],

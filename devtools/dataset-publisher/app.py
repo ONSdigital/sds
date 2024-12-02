@@ -67,7 +67,7 @@ def setup_local_storage(bucket_name, storage_client):
                 blob.delete()
 
             return bucket
-        
+
         return storage_client.create_bucket(bucket_name)
     else:
         raise Exception("You need to set a name for the bucket")
