@@ -20,8 +20,6 @@ async def dev_simulate_publish_dataset(request: Request, filename: str | None = 
 
     # Check if the dataset bucket exists.
     dataset_bucket = setup_local_storage(config.DATASET_BUCKET_NAME, storage_client)
-    # Supporting to ensure schema bucket is created for docker enviroment.
-    setup_local_storage(config.SCHEMA_BUCKET_NAME, storage_client)
 
     # If filename is not provided, create a guid as the filename before we publish it
     if filename in (None, ""):
@@ -57,13 +55,19 @@ async def dev_simulate_publish_dataset(request: Request, filename: str | None = 
 
 def setup_local_storage(bucket_name, storage_client):
     """
+    This is to setup the dataset bucket in the local storage emulator.
     This is to check if the buckets exists and if it doe not, then it will create it. This is due to the fact that the
-    storage emulator requires a 'bucket' to be created on start.
+    storage emulator requires a 'bucket' to be created on start. If bucket exist, all files are deleted to ensure
     """
     if bucket_name:
         bucket = storage_client.bucket(bucket_name)
-        if not bucket.exists():
-            return storage_client.create_bucket(bucket_name)
-        return bucket
+        if bucket.exists():
+            blobs = bucket.list_blobs()
+            for blob in blobs:
+                blob.delete()
+
+            return bucket
+        
+        return storage_client.create_bucket(bucket_name)
     else:
         raise Exception("You need to set a name for the bucket")
