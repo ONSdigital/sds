@@ -2,7 +2,6 @@
   "survey_id": "test_survey_id",
   "period_id": "test_period_id",
   "title": "Which side was better?",
-  "schema_version": "v1.0.0",
   "data": [
     {
       "identifier": "43532",
