@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends
 from logging_config import logging
 from models.collection_exericise_end_data import CollectionExerciseEndData
 from models.dataset_models import DatasetMetadata
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset.dataset_deletion_service import DatasetDeletionService
 from services.dataset.dataset_processor_service import DatasetProcessorService
 from services.validators.query_parameter_validator_service import (
@@ -54,7 +53,7 @@ async def post_collection_exercise_end_message(
 async def get_unit_supplementary_data(
     dataset_id: str,
     identifier: str,
-    dataset_repository: DatasetFirebaseRepository = Depends(),
+    dataset_process_service: DatasetProcessorService = Depends(),
 ):
     """
     Retrieve supplementary data for a particular unit given the dataset id and identifier, return 404 if no data is returned.
@@ -66,7 +65,7 @@ async def get_unit_supplementary_data(
     logger.info("Getting unit supplementary data...")
     logger.debug(f"Input data: dataset_id={dataset_id}, identifier={identifier}")
 
-    unit_supplementary_data = dataset_repository.get_unit_supplementary_data(
+    unit_supplementary_data = dataset_process_service.get_unit_supplementary_data(
         dataset_id, identifier
     )
 
