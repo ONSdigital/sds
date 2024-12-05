@@ -189,3 +189,7 @@ test_survey_id_map = [
     {"survey_id": "066", "survey_name": "Sand & Gravel (Land Won)"},
     {"survey_id": "076", "survey_name": "Sand & Gravel (Marine Dredged)"},
 ]
+
+# schema_test_data.py
+invalid_survey_id = "nonexistent_survey"
+invalid_data = {"invalid": "data"}

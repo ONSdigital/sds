@@ -10,16 +10,18 @@ from src.integration_tests.helpers.integration_helpers import (
     setup_session,
     pubsub_purge_messages,
     inject_wait_time,
+    is_json_response,
 )
 from src.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from src.test_data.schema_test_data import test_survey_id_map
 from src.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
+from src.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
 
-
-class E2ESchemaIntegrationTest(TestCase):
+class SchemaEndpointsIntegrationTest(TestCase):
     session = None
     headers = None
     test_schemas = None
+    invalid_token_headers = None
     schema_metadatas_dict = None
 
     @classmethod
@@ -35,6 +37,7 @@ class E2ESchemaIntegrationTest(TestCase):
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema.json"))
         self.schema_metadatas_dict = {}
+        self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}
 
 
     @classmethod
@@ -109,13 +112,13 @@ class E2ESchemaIntegrationTest(TestCase):
             )
             assert schema_metadata_response.status_code == 200
             # Add json to dict with survey_id as key
-            E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id] = schema_metadata_response.json()
+            SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id] = schema_metadata_response.json()
             # Verify there are 2 metadata entries for each survey_id
-            total_versions = len(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id])
+            total_versions = len(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id])
             assert total_versions == 2
         
-            # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected
-            for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
+            # Verify schema metadata - ensure that the sds_schema_version is incremented by 1 for each schema and the title and schema_version is as expected.
+            for index, schema_metadata in enumerate(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id]):
                 expected_schema = self.test_schemas[index]
                 assert schema_metadata == {
                     "guid": schema_metadata["guid"],
@@ -165,7 +168,7 @@ class E2ESchemaIntegrationTest(TestCase):
         * We retrieve the schema by GUID and check the response compared to the expected schema
         """
         for survey_id in test_survey_id_list:
-            for index, schema_metadata in enumerate(E2ESchemaIntegrationTest.schema_metadatas_dict[survey_id]):
+            for index, schema_metadata in enumerate(SchemaEndpointsIntegrationTest.schema_metadatas_dict[survey_id]):
                 # Verify schema retrieval by GUID
                 set_guid_schema_response = self.session.get(
                     f"{config.API_URL}/v2/schema?guid={schema_metadata['guid']}",
@@ -192,3 +195,231 @@ class E2ESchemaIntegrationTest(TestCase):
 
         assert set_survey_id_map_response.status_code == 200
         assert set_survey_id_map_response.json() == test_survey_id_map
+
+
+    @pytest.mark.order(6)
+    def test_post_schema_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for POST /v1/schema.
+
+        * Send a request to POST /v1/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
+        response = self.session.post(
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
+            json=invalid_data,
+            headers=self.invalid_token_headers,
+        )
+        assert response.status_code == 401
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Unauthorized access"
+        else:
+            print("Non-JSON Response:", response.text) 
+
+        
+    @pytest.mark.order(7)
+    def test_post_schema_validation_error(self):
+        """
+        Test validation issue by providing invalid data for POST /v1/schema.
+
+        * We test the POST /v1/schema endpoint by providing invalid data.
+        * Assert status code: 400 Bad Request.
+        """
+        response = self.session.post(
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
+            json=invalid_data,
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if "detail" in response.json():
+            assert response.json()["detail"] == "Invalid data format"
+        else:
+            print("Response JSON:", response.json())
+
+    @pytest.mark.order(8)
+    def test_get_schema_404_not_found(self):
+        """
+        Test data not found by requesting nonexistent schema for GET /v1/schema.
+        
+        * We send a request to the GET /v1/schema endpoint providing an invalid survey_id.
+        * Assert status code: 404 Not Found.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema?survey_id={invalid_survey_id}",
+            headers=self.headers,
+        )
+        assert response.status_code == 404
+        if "detail" in response.json():
+            assert response.json()["detail"] == "Schema not found"
+        else:
+            print("Response JSON:", response.json())
+
+    @pytest.mark.order(9)
+    def test_get_schema_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for GET /v1/schema.
+
+        * Send a request to GET /v1/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema?survey_id={test_survey_id}",
+            headers=self.invalid_token_headers,
+        )
+        assert response.status_code == 401
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Unauthorized access"
+        else:
+            print("Non-JSON Response:", response.text)  
+
+    @pytest.mark.order(10)
+    def test_get_schema_validation_error(self):
+        """
+        Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema.
+
+        * We test the GET /v1/schema endpoint by providing invalid data (missing survey_id) 
+        * Assert status code: 400 Bad Request.
+        * We test the GET /v1/schema endpoint by providing invalid data (nonsensical parameter)
+        * Assert status code: 400 Bad Request.
+        """
+        # Test missing survey_id
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Missing required parameter"
+        else:
+            print("Non-JSON Response:", response.text)
+
+        # Test Nonsensical parameter
+        response = self.session.get(
+        f"{config.API_URL}/v1/schema_metadata?randomparam=nonsense",
+        headers=self.headers,
+        )
+        assert response.status_code == 400
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Invalid search" 
+        else:
+            print("Non-JSON Response:", response.text)
+
+    @pytest.mark.order(11)
+    def test_get_schema_metadata_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for GET /v1/schema_metadata.
+
+        * Send a request to GET /v1/schema_metadata with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema_metadata?survey_id={test_survey_id}",
+            headers=self.invalid_token_headers,
+        )
+        assert response.status_code == 401
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Unauthorized access"
+        else:
+            print("Non-JSON Response:", response.text)  
+
+    @pytest.mark.order(12)
+    def test_get_schema_metadata_validation_error(self):
+        """
+        Test validation issue by providing an invalid data for GET /v1/schema_metadata.
+        * Assert status code: 400 Bad Request.
+        Test the GET /v1/schema_metadata endpoint by providing nonsensical parameter
+        * Assert status code: 400 Bad Request.
+        """
+        #Missing survey_id
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema_metadata",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Invalid search provided" 
+        else:
+            print("Non-JSON Response:", response.text)
+
+        #Nonsensical parameter
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema_metadata?invalidparam=123",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Invalid search provided"
+        else:
+            print("Non-JSON Response:", response.text)
+
+    @pytest.mark.order(13)
+    def test_get_schema_metadata_404_not_found(self):
+        """
+        Test data not found by requesting nonexistent schema metadata for GET /v1/schema_metadata.
+
+        * We send a request to the GET /v1/schema_metadata endpoint providing an invalid survey_id.
+        * Assert status code: 404 Not Found.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v1/schema_metadata?survey_id={invalid_survey_id}",
+            headers=self.headers,
+        )
+        assert response.status_code == 404
+        if "detail" in response.json():
+            assert response.json()["detail"] == "Schema metadata not found"
+        else:
+            print("Response JSON:", response.json())        
+
+    @pytest.mark.order(14)
+    def test_get_schema_v2_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for GET /v2/schema.
+
+        * Send a request to GET /v2/schema with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v2/schema?guid=invalid_guid",
+            headers=self.invalid_token_headers,
+        )
+        assert response.status_code == 401
+        if is_json_response(self, response) and "detail" in response.json():
+            assert response.json()["detail"] == "Unauthorized access"
+        else:
+            print("Non-JSON Response:", response.text)
+
+    @pytest.mark.order(15)
+    def test_get_schema_v2_validation_error(self):
+        """
+        Test validation issue by providing an invalid GUID for GET /v2/schema.
+
+        * We test the GET /v2/schema endpoint by providing an invalid GUID.
+        * Assert status code: 400 Bad Request.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v2/schema",
+            headers=self.headers,
+        )
+        assert response.status_code == 400
+        if "detail" in response.json():
+            assert response.json()["detail"] == "Invalid guid format"
+        else:
+            print("Response JSON:", response.json())
+
+    @pytest.mark.order(16)
+    def test_get_schema_v2_404_not_found(self):
+        """
+        Test data not found by requesting a nonexistent GUID for GET /v2/schema.
+
+        * We send a request to the GET /v2/schema endpoint providing an invalid GUID.
+        * Assert status code: 404 Not Found.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v2/schema?guid=nonexistent_guid",
+            headers=self.headers,
+        )
+        assert response.status_code == 404
+        if "detail" in response.json():
+            assert response.json()["detail"] == "Schema not found"
+        else:
+            print("Response JSON:", response.json())
