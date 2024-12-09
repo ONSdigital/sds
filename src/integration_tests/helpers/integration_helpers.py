@@ -1,10 +1,11 @@
 import json
 import time
-from datetime import datetime
 
 import google.oauth2.id_token
 import requests
 from config.config_factory import config
+from repositories.buckets.bucket_loader import bucket_loader
+from repositories.firebase.firebase_loader import firebase_loader
 from google.cloud import storage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -99,7 +100,6 @@ def cleanup() -> None:
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        delete_blobs(bucket_loader.get_dataset_bucket())
         delete_blobs_with_test_survey_id(bucket_loader.get_schema_bucket(), test_survey_id)
 
         client = firebase_loader.get_client()
