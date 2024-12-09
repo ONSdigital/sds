@@ -30,9 +30,6 @@ identifier = "test_identifier"
 # e2e dataset integration test - test data
 int_identifier = "43532"
 
-# unit tests - cloud new dataset - test data
-dataset_unit_data_identifier: list[str] = ["43532", "65871"]
-
 # integration test tests - dataset - test data
 dataset_unit_data_id: list[str] = ["43532", "65871"]
 
@@ -62,32 +59,6 @@ test_data_collection_end_missing_id: CollectionExerciseEndData = (
         }
     )
 )
-
-# unit tests - cloud new dataset - test data
-dataset_metadata_first_version: DatasetMetadata = {
-    "dataset_id": test_guid,
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["klk", "xyz", "tzr"],
-    "title": "Which side was better?",
-    "sds_published_at": "2023-04-20T12:00:00Z",
-    "total_reporting_units": 2,
-    "sds_dataset_version": first_dataset_version,
-    "filename": "test_filename.json",
-}
-
-# unit tests - cloud new dataset - test data
-dataset_metadata_updated_version: DatasetMetadata = {
-    "dataset_id": test_guid,
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["klk", "xyz", "tzr"],
-    "title": "Which side was better?",
-    "sds_published_at": "2023-04-20T12:00:00Z",
-    "total_reporting_units": 2,
-    "sds_dataset_version": updated_dataset_version,
-    "filename": "test_filename.json",
-}
 
 # integration test - dataset endpoints - test data
 dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
@@ -324,42 +295,6 @@ missing_keys_dataset_metadata = {
     "data": [{"unit_data": "test_data", "identifier": "12345"}],
 }
 
-# e2e dataset integration test - test data
-nonrandom_pubsub_first_dataset_metadata = {
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["klk", "xyz", "tzr"],
-    "title": "Which side was better?",
-    "total_reporting_units": 2,
-    "sds_dataset_version": first_dataset_version,
-}
-
-# e2e dataset integration test - test data
-nonrandom_pubsub_second_dataset_metadata = {
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["abc", "fgg", "ynm"],
-    "title": "Which side was better? - Amended",
-    "total_reporting_units": 3,
-    "sds_dataset_version": updated_dataset_version,
-}
-
-# e2e dataset integration test - test data
-unit_response = {
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["klk", "xyz", "tzr"],
-    "data": "<encrypted data>",
-}
-
-# e2e dataset integration test - test data
-unit_response_amended = {
-    "survey_id": test_survey_id,
-    "period_id": test_period_id,
-    "form_types": ["abc", "fgg", "ynm"],
-    "data": "<encrypted data>",
-}
-
 # e2e dataset integration test - test data for testing 404 response of dataset endpoints
 dataset_404_test_data = {
     "survey_id": "111",
@@ -371,20 +306,3 @@ dataset_404_test_data = {
 # e2e dataset integration test - random string to test invalid query params
 random_string = "random_string"
 
-# integration test - dataset cloud function - test pubsub messages for invalid dataset
-incorrect_file_extension_message = {
-    "error": "Filetype error",
-    "message": "Invalid filetype received.",
-}
-
-# integration test - dataset cloud function - test pubsub messages for invalid dataset
-invalid_json_message = {
-    "error": "File content error",
-    "message": "Invalid JSON content received.",
-}
-
-# integration test - dataset cloud function - test pubsub messages for invalid dataset
-missing_keys_message = {
-    "error": "Mandatory key(s) error",
-    "message": "Mandatory key(s) missing from JSON.",
-}

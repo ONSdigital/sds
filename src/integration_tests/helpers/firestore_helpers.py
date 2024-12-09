@@ -1,13 +1,7 @@
 import requests
 from config.config_factory import config
 from firebase_admin import firestore
-from services.dataset.dataset_writer_service import DatasetWriterService
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.dataset.dataset_service import DatasetService
-from models.dataset_models import RawDataset
-import uuid
-from logging_config import logging
-from src.test_data.dataset_test_data import dataset_metadata_collection, dataset_unit_data_collection, dataset_unit_data_id
+from src.test_data.dataset_test_data import dataset_unit_data_id
 
 def perform_delete_on_collection_with_test_survey_id(
     client: firestore.Client, collection_ref: firestore.CollectionReference, test_survey_id: str
