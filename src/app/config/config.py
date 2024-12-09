@@ -36,9 +36,6 @@ class IntegrationTestConfig(BaseSettings):
         self.SCHEMA_BUCKET_NAME = get_value_from_env(
             "SCHEMA_BUCKET_NAME", "test_schema_bucket"
         )
-        self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
-        )
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
         )
@@ -59,7 +56,6 @@ class IntegrationTestConfig(BaseSettings):
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
     SCHEMA_BUCKET_NAME: str
-    TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
@@ -157,8 +153,6 @@ class CloudDevelopmentConfig(Config):
 class UnitTestingConfig(Config):
     def __init__(self):
         super().__init__()
-        self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
 
-    TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str

@@ -1,19 +1,14 @@
-import uuid
-
-from config.config_factory import config
 from logging_config import logging
 from models.dataset_models import (
     DatasetMetadata,
     UnitDataset,
 )
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.shared.datetime_service import DatetimeService
-from services.shared.document_version_service import DocumentVersionService
 
 logger = logging.getLogger(__name__)
 
 
-class DatasetProcessorService:
+class DatasetService:
     def __init__(self) -> None:
         self.dataset_repository = DatasetFirebaseRepository()
 

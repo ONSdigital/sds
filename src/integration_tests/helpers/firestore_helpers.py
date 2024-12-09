@@ -3,7 +3,7 @@ from config.config_factory import config
 from firebase_admin import firestore
 from services.dataset.dataset_writer_service import DatasetWriterService
 from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from services.dataset.dataset_processor_service import DatasetProcessorService
+from services.dataset.dataset_service import DatasetService
 from models.dataset_models import RawDataset
 import uuid
 from logging_config import logging
