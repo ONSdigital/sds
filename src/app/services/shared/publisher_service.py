@@ -4,7 +4,7 @@ from config.config_factory import config
 from exception import exceptions
 from google.cloud.pubsub_v1 import PublisherClient
 from logging_config import logging
-from models.dataset_models import DatasetError, DatasetMetadata
+from models.dataset_models import DatasetMetadata
 from models.schema_models import SchemaMetadata
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class PublisherService:
 
     def publish_data_to_topic(
         self,
-        publish_data: DatasetMetadata | SchemaMetadata | DatasetError,
+        publish_data: DatasetMetadata | SchemaMetadata,
         topic_id: str,
     ) -> None:
         """

@@ -6,7 +6,7 @@ from repositories.firebase.deletion_firebase_repository import (
     DeletionMetadataFirebaseRepository,
 )
 from services.dataset.dataset_deletion_service import DatasetDeletionService
-from services.dataset.dataset_processor_service import DatasetProcessorService
+from services.dataset.dataset_service import DatasetService
 
 from src.test_data import dataset_test_data
 
@@ -30,8 +30,8 @@ class PostSchemaTest(TestCase):
             dataset_test_data.dataset_metadata_collection_deletion
         )
 
-        DatasetProcessorService.get_dataset_metadata_collection = MagicMock()
-        DatasetProcessorService.get_dataset_metadata_collection.return_value = (
+        DatasetService.get_dataset_metadata_collection = MagicMock()
+        DatasetService.get_dataset_metadata_collection.return_value = (
             dataset_test_data.dataset_metadata_collection_deletion
         )
 
@@ -69,8 +69,8 @@ class PostSchemaTest(TestCase):
         assert not result
 
     def test_collect_metadata_for_period_and_survey_returns_list_metadata(self):
-        DatasetProcessorService.get_dataset_metadata_collection = MagicMock()
-        DatasetProcessorService.get_dataset_metadata_collection.return_value = (
+        DatasetService.get_dataset_metadata_collection = MagicMock()
+        DatasetService.get_dataset_metadata_collection.return_value = (
             dataset_test_data.dataset_metadata_collection_deletion
         )
 
