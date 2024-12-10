@@ -4,6 +4,22 @@ info:
   description: Open api schema for SDS
   version: 1.0.0
 paths:
+  /collection-exercise-end:
+    post:
+      summary: Post Collection Exercise End Message
+      operationId: post_collection_exercise_end_message_collection_exercise_end_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionExerciseEndData'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
   /v1/unit_data:
     get:
       summary: Get Unit Supplementary Data
@@ -437,8 +453,30 @@ components:
       required:
       - message
       title: BadRequest
+    CollectionExerciseEndData:
+      properties:
+        survey_id:
+          type: string
+          title: Survey Id
+        period_id:
+          type: string
+          title: Period Id
+        dataset_guid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dataset Guid
+          default: ''
+      type: object
+      required:
+      - survey_id
+      - period_id
+      title: CollectionExerciseEndData
     DatasetMetadata:
       properties:
+        dataset_id:
+          type: string
+          title: Dataset Id
         survey_id:
           type: string
           title: Survey Id
@@ -456,18 +494,12 @@ components:
         total_reporting_units:
           type: integer
           title: Total Reporting Units
-        schema_version:
-          type: string
-          title: Schema Version
         sds_dataset_version:
           type: integer
           title: Sds Dataset Version
         filename:
           type: string
           title: Filename
-        dataset_id:
-          type: string
-          title: Dataset Id
         title:
           anyOf:
           - type: string
@@ -475,15 +507,14 @@ components:
           title: Title
       type: object
       required:
+      - dataset_id
       - survey_id
       - period_id
       - form_types
       - sds_published_at
       - total_reporting_units
-      - schema_version
       - sds_dataset_version
       - filename
-      - dataset_id
       title: DatasetMetadata
     DeploymentStatus:
       properties:
