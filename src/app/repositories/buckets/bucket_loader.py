@@ -6,19 +6,12 @@ from google.cloud import exceptions, storage
 class BucketLoader:
     def __init__(self):
         self.schema_bucket = self._initialise_bucket(config.SCHEMA_BUCKET_NAME)
-        self.dataset_bucket = self._initialise_bucket(config.DATASET_BUCKET_NAME)
 
     def get_schema_bucket(self) -> storage.Bucket:
         """
         Get the schema bucket from Google cloud
         """
         return self.schema_bucket
-
-    def get_dataset_bucket(self) -> storage.Bucket:
-        """
-        Get the dataset bucket from Google cloud
-        """
-        return self.dataset_bucket
 
     def _initialise_bucket(self, bucket_name) -> storage.Bucket:
         """

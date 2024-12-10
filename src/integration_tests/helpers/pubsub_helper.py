@@ -221,6 +221,4 @@ class PubSubHelper:
         return False
 
 
-dataset_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_TOPIC_ID)
-dataset_error_pubsub_helper = PubSubHelper(config.PUBLISH_DATASET_ERROR_TOPIC_ID)
 schema_pubsub_helper = PubSubHelper(config.PUBLISH_SCHEMA_TOPIC_ID)
