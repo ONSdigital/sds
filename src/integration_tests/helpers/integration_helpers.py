@@ -143,3 +143,10 @@ def inject_wait_time(seconds: int) -> None:
     """
     time.sleep(seconds)
 
+
+def is_json_response(self, response):
+    try:
+        response.json()
+        return True
+    except ValueError:
+        return False
