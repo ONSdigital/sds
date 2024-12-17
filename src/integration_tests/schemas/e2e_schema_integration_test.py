@@ -355,7 +355,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert is_json_response(response), "Response is not valid JSON"
         response_data = response.json()
         assert "message" in response_data, f"Response JSON: {response_data}"
-        assert response_data["message"] == "No schema found", f"Unexpected message: {response_data['message']}"
+        assert response_data["message"] == "No results found", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(14)
     def test_get_schema_v2_unauthorized(self):
@@ -387,7 +387,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert is_json_response(response), "Response is not valid JSON"
         response_data = response.json()
         assert "message" in response_data, f"Response JSON: {response_data}"
-        assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
+        assert response_data["message"] == "Invalid parameter provided", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(16)
     def test_get_schema_v2_404_not_found(self):
