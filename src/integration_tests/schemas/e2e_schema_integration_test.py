@@ -211,11 +211,6 @@ class SchemaEndpointsIntegrationTest(TestCase):
             headers=self.invalid_token_headers,
         )
         assert response.status_code == 401
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Unauthorized access"
-        else:
-            print("Non-JSON Response:", response.text) 
-
         
     @pytest.mark.order(7)
     def test_post_schema_validation_error(self):
@@ -230,11 +225,11 @@ class SchemaEndpointsIntegrationTest(TestCase):
             json=invalid_data,
             headers=self.headers,
         )
-        assert response.status_code == 400
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Invalid data format"
-        else:
-            print("Response JSON:", response.json())
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Validation has failed", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(8)
     def test_get_schema_404_not_found(self):
@@ -248,11 +243,11 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema?survey_id={invalid_survey_id}",
             headers=self.headers,
         )
-        assert response.status_code == 404
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Schema not found"
-        else:
-            print("Response JSON:", response.json())
+        assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "No schema found", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(9)
     def test_get_schema_unauthorized(self):
@@ -267,11 +262,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
             headers=self.invalid_token_headers,
         )
         assert response.status_code == 401
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Unauthorized access"
-        else:
-            print("Non-JSON Response:", response.text)  
-
+    
     @pytest.mark.order(10)
     def test_get_schema_validation_error(self):
         """
@@ -287,22 +278,22 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema",
             headers=self.headers,
         )
-        assert response.status_code == 400
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Missing required parameter"
-        else:
-            print("Non-JSON Response:", response.text)
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
-        # Test Nonsensical parameter
+        # Test nonsensical parameter
         response = self.session.get(
-        f"{config.API_URL}/v1/schema_metadata?randomparam=nonsense",
-        headers=self.headers,
+            f"{config.API_URL}/v1/schema_metadata?randomparam=nonsense",
+            headers=self.headers,
         )
-        assert response.status_code == 400
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Invalid search" 
-        else:
-            print("Non-JSON Response:", response.text)
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(11)
     def test_get_schema_metadata_unauthorized(self):
@@ -317,10 +308,6 @@ class SchemaEndpointsIntegrationTest(TestCase):
             headers=self.invalid_token_headers,
         )
         assert response.status_code == 401
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Unauthorized access"
-        else:
-            print("Non-JSON Response:", response.text)  
 
     @pytest.mark.order(12)
     def test_get_schema_metadata_validation_error(self):
@@ -335,22 +322,22 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema_metadata",
             headers=self.headers,
         )
-        assert response.status_code == 400
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Invalid search provided" 
-        else:
-            print("Non-JSON Response:", response.text)
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
         #Nonsensical parameter
         response = self.session.get(
             f"{config.API_URL}/v1/schema_metadata?invalidparam=123",
             headers=self.headers,
         )
-        assert response.status_code == 400
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Invalid search provided"
-        else:
-            print("Non-JSON Response:", response.text)
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(13)
     def test_get_schema_metadata_404_not_found(self):
@@ -364,11 +351,11 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v1/schema_metadata?survey_id={invalid_survey_id}",
             headers=self.headers,
         )
-        assert response.status_code == 404
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Schema metadata not found"
-        else:
-            print("Response JSON:", response.json())        
+        assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "No results found", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(14)
     def test_get_schema_v2_unauthorized(self):
@@ -383,10 +370,6 @@ class SchemaEndpointsIntegrationTest(TestCase):
             headers=self.invalid_token_headers,
         )
         assert response.status_code == 401
-        if is_json_response(self, response) and "detail" in response.json():
-            assert response.json()["detail"] == "Unauthorized access"
-        else:
-            print("Non-JSON Response:", response.text)
 
     @pytest.mark.order(15)
     def test_get_schema_v2_validation_error(self):
@@ -400,11 +383,11 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v2/schema",
             headers=self.headers,
         )
-        assert response.status_code == 400
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Invalid guid format"
-        else:
-            print("Response JSON:", response.json())
+        assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "Invalid parameter provided", f"Unexpected message: {response_data['message']}"
 
     @pytest.mark.order(16)
     def test_get_schema_v2_404_not_found(self):
@@ -418,8 +401,8 @@ class SchemaEndpointsIntegrationTest(TestCase):
             f"{config.API_URL}/v2/schema?guid=nonexistent_guid",
             headers=self.headers,
         )
-        assert response.status_code == 404
-        if "detail" in response.json():
-            assert response.json()["detail"] == "Schema not found"
-        else:
-            print("Response JSON:", response.json())
+        assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
+        assert is_json_response(response), "Response is not valid JSON"
+        response_data = response.json()
+        assert "message" in response_data, f"Response JSON: {response_data}"
+        assert response_data["message"] == "No schema found", f"Unexpected message: {response_data['message']}"

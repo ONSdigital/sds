@@ -340,9 +340,9 @@ def force_run_schedule_job():
     )
     client.run_job(request=request)
 
-def is_json_response(self, response):
+def is_json_response(response):
     try:
         response.json()
         return True
-    except ValueError:
+    except Exception:
         return False
