@@ -6,7 +6,7 @@ from models.deletion_models import DeleteMetadata
 from repositories.firebase.deletion_firebase_repository import (
     DeletionMetadataFirebaseRepository,
 )
-from services.dataset.dataset_processor_service import DatasetProcessorService
+from services.dataset.dataset_service import DatasetService
 from services.shared.datetime_service import DatetimeService
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class DatasetDeletionService:
 
     def __init__(self) -> None:
         self.delete_repository = DeletionMetadataFirebaseRepository()
-        self.dataset_processor_service = DatasetProcessorService()
+        self.dataset_service = DatasetService()
 
     def process_collection_exercise_end_message(
         self, collection_exercise_end_data: CollectionExerciseEndData
@@ -54,7 +54,7 @@ class DatasetDeletionService:
     ) -> list[DatasetMetadata]:
         logger.info("Collecting all dataset versions for period and survey")
         logger.info(f"Collecting all dataset versions for survey_id: {collection_exercise_end_data.survey_id} and period_id: {collection_exercise_end_data.period_id}")
-        return self.dataset_processor_service.get_dataset_metadata_collection(
+        return self.dataset_service.get_dataset_metadata_collection(
             collection_exercise_end_data.survey_id, collection_exercise_end_data.period_id
         )
 

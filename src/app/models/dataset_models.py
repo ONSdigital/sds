@@ -28,23 +28,6 @@ class DatasetMetadata:
 
 
 @dataclass
-class RawDatasetWithoutData:
-    survey_id: str
-    period_id: str
-    form_types: list[str]
-    title: Optional[str] = None
-
-
-@dataclass
-class RawDataset:
-    survey_id: str
-    period_id: str
-    form_types: list[str]
-    data: object
-    title: Optional[str] = None
-
-
-@dataclass
 class UnitDataset:
     dataset_id: str
     survey_id: str
@@ -52,14 +35,3 @@ class UnitDataset:
     form_types: list[str]
     data: object
 
-
-@dataclass
-class DatasetPublishResponse:
-    status: str
-    message: str
-
-
-@dataclass
-class DatasetError:
-    error: str
-    message: str

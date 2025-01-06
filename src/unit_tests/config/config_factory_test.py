@@ -15,7 +15,6 @@ from config.config_factory import ConfigFactory
 from src.unit_tests.config.config_test import testConfigVars
 
 INITIAL_CONF = os.environ.get("CONF")
-INITIAL_DATASET_BUCKET_NAME = os.environ.get("DATASET_BUCKET_NAME")
 INITIAL_TEST_DATASET_PATH = os.environ.get("TEST_DATASET_PATH")
 INITIAL_TEST_SCHEMA_PATH = os.environ.get("TEST_SCHEMA_PATH")
 
@@ -23,8 +22,6 @@ INITIAL_TEST_SCHEMA_PATH = os.environ.get("TEST_SCHEMA_PATH")
 class ConfigFactoryTest(TestCase):
     def setUp(self):
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
-        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
         os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
@@ -37,8 +34,6 @@ class ConfigFactoryTest(TestCase):
 
     def tearDown(self):
         os.environ["CONF"] = INITIAL_CONF
-        os.environ["DATASET_BUCKET_NAME"] = INITIAL_DATASET_BUCKET_NAME
-        os.environ["TEST_DATASET_PATH"] = INITIAL_TEST_DATASET_PATH
         os.environ["TEST_SCHEMA_PATH"] = INITIAL_TEST_SCHEMA_PATH
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
         os.environ["FIRESTORE_EMULATOR_HOST"] = ""
