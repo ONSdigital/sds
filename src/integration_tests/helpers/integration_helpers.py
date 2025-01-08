@@ -144,9 +144,20 @@ def inject_wait_time(seconds: int) -> None:
     time.sleep(seconds)
 
 
-def is_json_response(self, response):
+
+def force_run_schedule_job():
+    """
+    Method to force run the schedule job to trigger the new dataset upload function.
+    """
+    client = scheduler_v1.CloudSchedulerClient()
+    request = scheduler_v1.RunJobRequest(
+        name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
+    )
+    client.run_job(request=request)
+
+def is_json_response(response):
     try:
         response.json()
         return True
-    except ValueError:
+    except Exception:
         return False
