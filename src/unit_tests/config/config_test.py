@@ -6,13 +6,11 @@ from config import config
 
 class testConfigVars:
     conf = "unit"
-    datset_bucket_name = "test_dataset_bucket"
     schema_bucket_name = "test_schema_bucket_name"
     firestore_host = "test_firestore_emulator_host"
     storage_host = "test_storage_emulator_host"
     pubsub_emulator_host = "test_pubsub_emulator_host"
     app_credentials = "test_app_credentials"
-    dataset_path = "test_dataset_path"
     schema_path = "test_schema_path"
     api_url = "test_api_url"
     oauth_client_id = "test_oauth_client_id"
@@ -73,17 +71,14 @@ class ConfigTest(TestCase):
         Test that setting the default config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
 
         testConfig = config.Config()
 
-        del os.environ["DATASET_BUCKET_NAME"]
         os.environ["CONF"] = "unit"
 
         assert (
             testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
         )
 
     def test_set_CloudBuildConfig(self):
@@ -106,7 +101,6 @@ class ConfigTest(TestCase):
         Test that setting the service emulator for development config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["FIRESTORE_EMULATOR_HOST"] = testConfigVars.firestore_host
         os.environ["STORAGE_EMULATOR_HOST"] = testConfigVars.storage_host
@@ -116,7 +110,6 @@ class ConfigTest(TestCase):
         assert (
             testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
             and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
             and testConfigVars.firestore_host == testConfig.FIRESTORE_EMULATOR_HOST
             and testConfigVars.storage_host == testConfig.STORAGE_EMULATOR_HOST
@@ -127,7 +120,6 @@ class ConfigTest(TestCase):
         Test that setting the cloud development config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
 
@@ -136,7 +128,6 @@ class ConfigTest(TestCase):
         assert (
             testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
             and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
             and testConfigVars.app_credentials
             == testConfig.GOOGLE_APPLICATION_CREDENTIALS
@@ -147,8 +138,6 @@ class ConfigTest(TestCase):
         Test that setting the unit testing config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
-        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
@@ -158,8 +147,6 @@ class ConfigTest(TestCase):
         assert (
             testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
-            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
             and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
             and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
         )
@@ -169,9 +156,7 @@ class ConfigTest(TestCase):
         Test that setting the unit testing config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
-        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = testConfigVars.app_credentials
 
@@ -180,8 +165,6 @@ class ConfigTest(TestCase):
         assert (
             testConfigVars.conf == testConfig.CONF
             and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
-            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
             and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
             and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
             and testConfigVars.app_credentials
@@ -193,18 +176,13 @@ class ConfigTest(TestCase):
         Test that setting the unit testing config object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
-        os.environ["DATASET_BUCKET_NAME"] = testConfigVars.datset_bucket_name
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
-        os.environ["TEST_DATASET_PATH"] = testConfigVars.dataset_path
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
 
         testConfig = config.IntegrationTestCloudbuildConfig()
 
         assert (
             testConfigVars.conf == testConfig.CONF
-            and testConfig.TIME_FORMAT == "%Y-%m-%dT%H:%M:%SZ"
-            and testConfigVars.datset_bucket_name == testConfig.DATASET_BUCKET_NAME
-            and testConfigVars.dataset_path == testConfig.TEST_DATASET_PATH
             and testConfigVars.schema_path == testConfig.TEST_SCHEMA_PATH
             and testConfigVars.schema_bucket_name == testConfig.SCHEMA_BUCKET_NAME
         )

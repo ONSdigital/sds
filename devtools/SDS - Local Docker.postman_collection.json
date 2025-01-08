@@ -104,31 +104,6 @@
       "response": []
     },
     {
-      "name": "Simulate SDX Dataset Publish",
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"survey_id\": \"NRX\",\n    \"period_id\": \"ttt\",\n    \"form_types\": [\n    \"klk\",\n    \"xyz\",\n    \"tzr\"\n    ],\n    \"title\": \"Which side was better?\",\n    \"schema_version\": \"v1.0.0\",\n    \"data\": [\n        {\n            \"identifier\": \"43532\",\n            \"unit_data\": {\n                \"identifier\": \"43532\",\n                \"runame\": \"Pipes and Maps Ltd\",\n                \"local_unit\": [\n                    {\n                        \"identifier\": \"2012763A\",\n                        \"luname\": \"Maps Factory\"\n                    },\n                    {\n                        \"identifier\": \"20127364B\",\n                        \"luname\": \"Pipes R Us Subsidiary\"\n                    }\n                ]\n            }\n        },\n        {\n            \"identifier\": \"65871\",\n            \"unit_data\": {\n                \"identifier\": \"65871\",\n                \"runame\": \"Boats and Floats Ltd\",\n                \"local_unit\": [\n                    {\n                        \"identifier\": \"2012763A\",\n                        \"luname\": \"Arms Factory\"\n                    },\n                    {\n                        \"identifier\": \"20127364B\",\n                        \"luname\": \"Swords Subsidiary\"\n                    },\n                    {\n                        \"identifier\": \"20127365C\",\n                        \"luname\": \"Armor N Things\"\n                    }\n                ]\n            }\n        }\n    ]\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:3006",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3006"
-        }
-      },
-      "response": []
-    },
-    {
       "name": "Dataset Metadata",
       "request": {
         "method": "GET",
