@@ -9,34 +9,20 @@ class Config(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
-        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
-            "AUTODELETE_DATASET_BUCKET_FILE"
-        )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
-        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
-            "PUBLISH_DATASET_ERROR_TOPIC_ID"
-        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
-    DATASET_BUCKET_NAME: str
     SCHEMA_BUCKET_NAME: str
-    AUTODELETE_DATASET_BUCKET_FILE: bool
-    RETAIN_DATASET_FIRESTORE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
-    PUBLISH_DATASET_TOPIC_ID: str
-    PUBLISH_DATASET_ERROR_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
     SDS_APPLICATION_VERSION: str
@@ -47,18 +33,8 @@ class IntegrationTestConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.DATASET_BUCKET_NAME = get_value_from_env(
-            "DATASET_BUCKET_NAME", "test_dataset_bucket"
-        )
         self.SCHEMA_BUCKET_NAME = get_value_from_env(
             "SCHEMA_BUCKET_NAME", "test_schema_bucket"
-        )
-        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
-            "AUTODELETE_DATASET_BUCKET_FILE"
-        )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
-        self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
@@ -68,10 +44,6 @@ class IntegrationTestConfig(BaseSettings):
         )
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
-        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
-            "PUBLISH_DATASET_ERROR_TOPIC_ID"
-        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -83,17 +55,11 @@ class IntegrationTestConfig(BaseSettings):
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
-    DATASET_BUCKET_NAME: str
     SCHEMA_BUCKET_NAME: str
-    AUTODELETE_DATASET_BUCKET_FILE: bool
-    RETAIN_DATASET_FIRESTORE: bool
-    TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
     GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
-    PUBLISH_DATASET_TOPIC_ID: str
-    PUBLISH_DATASET_ERROR_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
@@ -106,28 +72,14 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
         super().__init__()
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.DATASET_BUCKET_NAME = get_value_from_env(
-            "DATASET_BUCKET_NAME", "testDatasetBucket"
-        )
         self.SCHEMA_BUCKET_NAME = get_value_from_env(
             "SCHEMA_BUCKET_NAME", "testSchemaBucket"
-        )
-        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
-            "AUTODELETE_DATASET_BUCKET_FILE"
-        )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
-        self.TEST_DATASET_PATH = get_value_from_env(
-            "TEST_DATASET_PATH", "src/test_data/json/dataset.json"
         )
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "src/test_data/json/schema.json"
         )
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
-        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
-            "PUBLISH_DATASET_ERROR_TOPIC_ID"
-        )
         self.API_URL = get_value_from_env("API_URL", "localhost")
         self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
         self.SURVEY_MAP_URL = get_value_from_env(
@@ -139,16 +91,10 @@ class IntegrationTestCloudbuildConfig(BaseSettings):
 
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
-    DATASET_BUCKET_NAME: str
     SCHEMA_BUCKET_NAME: str
-    AUTODELETE_DATASET_BUCKET_FILE: bool
-    RETAIN_DATASET_FIRESTORE: bool
-    TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
-    PUBLISH_DATASET_TOPIC_ID: str
-    PUBLISH_DATASET_ERROR_TOPIC_ID: str
     API_URL: str
     OAUTH_CLIENT_ID: str
     SURVEY_MAP_URL: str
@@ -162,18 +108,9 @@ class CloudBuildConfig(BaseSettings):
         self.CONF = get_value_from_env("CONF")
         self.TIME_FORMAT = TIME_FORMAT_STRING
         self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
-        self.DATASET_BUCKET_NAME = get_value_from_env("DATASET_BUCKET_NAME")
-        self.AUTODELETE_DATASET_BUCKET_FILE = get_value_from_env(
-            "AUTODELETE_DATASET_BUCKET_FILE"
-        )
-        self.RETAIN_DATASET_FIRESTORE = get_value_from_env("RETAIN_DATASET_FIRESTORE")
         self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
-        self.PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID")
-        self.PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env(
-            "PUBLISH_DATASET_ERROR_TOPIC_ID"
-        )
         self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
         self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
         self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
@@ -181,14 +118,9 @@ class CloudBuildConfig(BaseSettings):
     CONF: str
     TIME_FORMAT: str = TIME_FORMAT_STRING
     SCHEMA_BUCKET_NAME: str
-    DATASET_BUCKET_NAME: str
-    AUTODELETE_DATASET_BUCKET_FILE: bool
-    RETAIN_DATASET_FIRESTORE: bool
     LOG_LEVEL: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
-    PUBLISH_DATASET_TOPIC_ID: str
-    PUBLISH_DATASET_ERROR_TOPIC_ID: str
     SURVEY_MAP_URL: str
     FIRESTORE_DB_NAME: str
     SDS_APPLICATION_VERSION: str
@@ -221,8 +153,6 @@ class CloudDevelopmentConfig(Config):
 class UnitTestingConfig(Config):
     def __init__(self):
         super().__init__()
-        self.TEST_DATASET_PATH = get_value_from_env("TEST_DATASET_PATH")
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
 
-    TEST_DATASET_PATH: str
     TEST_SCHEMA_PATH: str
