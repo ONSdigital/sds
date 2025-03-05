@@ -151,12 +151,7 @@ paths:
   /v1/all_dataset_metadata:
     get:
       summary: Get All Dataset Metadata Collection
-      description: 'Retrieve all dataset metadata.
-
-
-        Parameters:
-
-        dataset_service (DatasetService): The service used to retrieve the metadata.'
+      description: Retrieve all dataset metadata.
       operationId: get_all_dataset_metadata_collection_v1_all_dataset_metadata_get
       responses:
         '200':
@@ -451,13 +446,7 @@ paths:
   /v1/all_schema_metadata:
     get:
       summary: Get All Schema Metadata Collection
-      description: 'Retrieve all schema metadata from the schema collection.
-
-
-        Parameters:
-
-        schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the schema metadata collection.'
+      description: Retrieve all schema metadata from the schema collection.
       operationId: get_all_schema_metadata_collection_v1_all_schema_metadata_get
       responses:
         '200':
@@ -499,27 +488,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-  /v1/joint_metadata:
-    get:
-      summary: Get All Metadata
-      description: Retrieve metadata for all datasets and schemas.
-      operationId: get_all_metadata_v1_joint_metadata_get
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JointMetadata'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: Unable to process request
 components:
   schemas:
     BadRequest:
@@ -633,23 +601,6 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    JointMetadata:
-      properties:
-        datasets:
-          items:
-            $ref: '#/components/schemas/DatasetMetadata'
-          type: array
-          title: Datasets
-        schemas:
-          items:
-            $ref: '#/components/schemas/SchemaMetadata'
-          type: array
-          title: Schemas
-      type: object
-      required:
-      - datasets
-      - schemas
-      title: JointMetadata
     SchemaMetadata:
       properties:
         survey_id:

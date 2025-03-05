@@ -228,29 +228,6 @@
         }
       },
       "response": []
-    },
-    {
-      "name": "Joint Metadata",
-        "request": {
-          "method": "GET",
-          "header": [],
-          "url": {
-            "raw": "http://127.0.0.1:3033/v1/joint_metadata",
-            "protocol": "http",
-            "host": [
-              "127",
-              "0",
-              "0",
-              "1"
-            ],
-            "port": "3033",
-            "path": [
-              "v1",
-              "joint_metadata"
-            ]
-          },
-          "response": []
-        }
     }
   ]
 }
