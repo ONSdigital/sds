@@ -130,8 +130,24 @@ class SchemaEndpointsIntegrationTest(TestCase):
                     "title": expected_schema["title"],
                 }
 
-
     @pytest.mark.order(3)
+    def test_get_all_schema_metadata_v1(self):
+        """
+        Test the GET /v1/schema_metadata endpoint by retrieving all schema metadata and checking the response.
+
+        * We retrieve and verify all schema metadata
+        """
+        all_schema_metadata_response = self.session.get(
+            f"{config.API_URL}/v1/all_schema_metadata",
+            headers=self.headers,
+        )
+        expected_schema_count = len(self.test_schemas) * len(test_survey_id_list)
+        assert all_schema_metadata_response.status_code == 200
+        # Verify there are the expected number of schema metadata entries
+        assert len(all_schema_metadata_response.json()) == expected_schema_count
+
+
+    @pytest.mark.order(4)
     def test_get_schema_v1(self):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and checking the response.
@@ -160,7 +176,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
             assert latest_version_schema_response.json() == self.test_schemas[0]
         
 
-    @pytest.mark.order(4)
+    @pytest.mark.order(5)
     def test_get_schema_v2(self):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
@@ -179,7 +195,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
                 assert set_guid_schema_response.json() == self.test_schemas[index]
 
 
-    @pytest.mark.order(5)
+    @pytest.mark.order(6)
     def test_survey_id_map(self):
         """
         Retrieve survey mapping data using the /survey_list endpoint.
@@ -197,7 +213,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert set_survey_id_map_response.json() == test_survey_id_map
 
 
-    @pytest.mark.order(6)
+    @pytest.mark.order(7)
     def test_post_schema_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for POST /v1/schema.
@@ -212,7 +228,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         )
         assert response.status_code == 401
         
-    @pytest.mark.order(7)
+    @pytest.mark.order(8)
     def test_post_schema_validation_error(self):
         """
         Test validation issue by providing invalid data for POST /v1/schema.
@@ -231,7 +247,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "Validation has failed", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(8)
+    @pytest.mark.order(9)
     def test_get_schema_404_not_found(self):
         """
         Test data not found by requesting nonexistent schema for GET /v1/schema.
@@ -249,7 +265,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "No schema found", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(9)
+    @pytest.mark.order(10)
     def test_get_schema_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v1/schema.
@@ -263,7 +279,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         )
         assert response.status_code == 401
     
-    @pytest.mark.order(10)
+    @pytest.mark.order(11)
     def test_get_schema_validation_error(self):
         """
         Test validation issue by providing an invalid or nonsensical survey_id for GET /v1/schema.
@@ -295,7 +311,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(11)
+    @pytest.mark.order(12)
     def test_get_schema_metadata_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v1/schema_metadata.
@@ -309,7 +325,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         )
         assert response.status_code == 401
 
-    @pytest.mark.order(12)
+    @pytest.mark.order(13)
     def test_get_schema_metadata_validation_error(self):
         """
         Test validation issue by providing an invalid data for GET /v1/schema_metadata.
@@ -339,7 +355,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(13)
+    @pytest.mark.order(14)
     def test_get_schema_metadata_404_not_found(self):
         """
         Test data not found by requesting nonexistent schema metadata for GET /v1/schema_metadata.
@@ -357,7 +373,21 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "No results found", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(14)
+    @pytest.mark.order(15)
+    def test_get_all_schema_metadata_unauthorized(self):
+        """
+        Test unauthorized access by providing incorrect authorization token for GET /v1/all_schema_metadata.
+
+        * Send a request to GET /v1/all_schema_metadata with an invalid token.
+        * Assert status code: 401 Unauthorized.
+        """
+        response = self.session.get(
+            f"{config.API_URL}/v1/all_schema_metadata",
+            headers=self.invalid_token_headers,
+        )
+        assert response.status_code == 401
+
+    @pytest.mark.order(16)
     def test_get_schema_v2_unauthorized(self):
         """
         Test unauthorized access by providing incorrect authorization token for GET /v2/schema.
@@ -371,7 +401,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         )
         assert response.status_code == 401
 
-    @pytest.mark.order(15)
+    @pytest.mark.order(17)
     def test_get_schema_v2_validation_error(self):
         """
         Test validation issue by providing an invalid GUID for GET /v2/schema.
@@ -389,7 +419,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         assert "message" in response_data, f"Response JSON: {response_data}"
         assert response_data["message"] == "Invalid parameter provided", f"Unexpected message: {response_data['message']}"
 
-    @pytest.mark.order(16)
+    @pytest.mark.order(18)
     def test_get_schema_v2_404_not_found(self):
         """
         Test data not found by requesting a nonexistent GUID for GET /v2/schema.

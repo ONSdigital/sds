@@ -69,9 +69,32 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 200
         assert response.json() == expected_data
 
-
-
     @pytest.mark.order(2)
+    def test_get_all_dataset_metadata_collection(self):
+        """
+        Test the GET /v1/dataset_metadata endpoint by retrieving all dataset metadata.
+
+        - Sends a GET request to retrieve all metadata for a dataset
+        - Asserts the metadata retrieved matches the expected structure.
+        """
+
+        response = self.session.get(
+            f"{config.API_URL}/v1/all_dataset_metadata",
+            headers = self.headers
+        )
+
+        expected_data = [
+            {
+                **dataset_metadata_collection_for_endpoints_test,
+            }
+        ]
+
+        assert response.status_code == 200
+        assert response.json() == expected_data
+
+
+
+    @pytest.mark.order(3)
     def test_get_dataset_unit_supplementary_data(self):
         """
         Test the /v1/unit_data endpoint by retrieving unit data for a dataset
@@ -90,7 +113,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json() == dataset_unit_data_collection_for_endpoints_test[0]
 
 
-    @pytest.mark.order(3)
+    @pytest.mark.order(4)
     def test_dataset_without_title(self):
         """
         Test the /v1/dataset_metadata endpoint retrieving a dataset metadata without a title
@@ -117,7 +140,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json() == expected_data
     
 
-    @pytest.mark.order(4)
+    @pytest.mark.order(5)
     def test_dataset_metadata_without_survey_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing survey_id parameter
@@ -137,7 +160,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Invalid search parameters provided"
 
 
-    @pytest.mark.order(5)
+    @pytest.mark.order(6)
     def test_dataset_metadata_without_period_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing period_id parameter
@@ -156,7 +179,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
 
-    @pytest.mark.order(6)
+    @pytest.mark.order(7)
     def test_dataset_metadata_no_valid_query_params(self):
         """
         Test for /v1/dataset_metadata endpoint without passing valid query parameters
@@ -174,7 +197,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
     
-    @pytest.mark.order(7)
+    @pytest.mark.order(8)
     def test_dataset_metadata_garbage_query_params(self):
         """
         Test for /v1/dataset_metadata endpoint with garbage query parameters
@@ -194,7 +217,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Invalid search parameters provided"
 
 
-    @pytest.mark.order(8)
+    @pytest.mark.order(9)
     def test_dataset_metadata_404_response(self):
         """
         Test for /v1/dataset_metadata endpoint when no dataset metadata is retrieved
@@ -214,7 +237,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "No datasets found"
 
 
-    @pytest.mark.order(9)
+    @pytest.mark.order(10)
     def test_dataset_metadata_unauthorised(self):
         """
         Test the /v1/dataset_metadata endpoint with an unauthorized token
@@ -232,8 +255,24 @@ class DatasetEndpointsIntegrationTest(TestCase):
 
         assert response.status_code == 401
 
+    @pytest.mark.order(11)
+    def test_all_dataset_metadata_unauthorised(self):
+        """
+        Test the /v1/all_dataset_metadata endpoint with an unauthorized token
 
-    @pytest.mark.order(10)
+        - Get request to retrieve all metadata with an unauthorized token
+        - Assert status code is 401
+        """
+
+        response = self.session.get(
+            f"{config.API_URL}/v1/all_dataset_metadata",
+            headers = self.invalid_token_headers
+        )
+
+        assert response.status_code == 401
+
+
+    @pytest.mark.order(12)
     def test_dataset_unit_data_without_dataset_id(self):
         """
         Test for /v1/unit_data endpoint without passing dataset_id parameter
@@ -253,7 +292,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Validation has failed"
 
 
-    @pytest.mark.order(11)
+    @pytest.mark.order(13)
     def test_dataset_unit_data_without_identifier(self):
         """
         Test for /v1/unit_data endpoint without passing identifier parameter
@@ -273,7 +312,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Validation has failed"
     
 
-    @pytest.mark.order(12)
+    @pytest.mark.order(14)
     def test_dataset_unit_data_404_response(self):
         """
         Test for /v1/unit_data endpoint when no unit data is retrieved
@@ -293,7 +332,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "No unit data found"
 
 
-    @pytest.mark.order(13)
+    @pytest.mark.order(15)
     def test_dataset_unit_data_unauthorised(self):
         """
         Test the /v1/unit_data endpoint with an unauthorized token
@@ -312,7 +351,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.status_code == 401
 
 
-    @pytest.mark.order(14)
+    @pytest.mark.order(16)
     def test_dataset_unit_data_no_valid_query_params(self):
         """
         Test for /v1/unit_data endpoint without passing valid query parameters
@@ -331,7 +370,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         assert response.json()["message"] == "Validation has failed"
 
     
-    @pytest.mark.order(15)
+    @pytest.mark.order(17)
     def test_dataset_unit_data_garbage_query_params(self):
         """
         Test for /v1/unit_data endpoint with garbage query parameters
