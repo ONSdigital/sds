@@ -438,6 +438,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
+  /v1/baddy_data:
+    get:
+      summary: Get Baddy Data
+      description: Retrieve all datasets and schemas.
+      operationId: get_baddy_data_v1_baddy_data_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DatasetMetadata'
+                type: array
+                title: Response Get Baddy Data V1 Baddy Data Get
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Invalid search parameters provided
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No datasets found
 components:
   schemas:
     BadRequest:

@@ -128,6 +128,22 @@ class DatasetFirebaseRepository:
 
         return dataset_metadata_list
 
+    def get_all_dataset_metadata_collection(self) -> list[DatasetMetadata]:
+        """Get the collection of dataset metadata from firestore for all datasets.
+        """
+        returned_dataset_metadata = (
+            self.datasets_collection
+            .order_by("survey_id")
+            .order_by("sds_dataset_version", direction=firestore.Query.DESCENDING)
+            .stream()
+        )
+        dataset_metadata_list: list[DatasetMetadata] = []
+        for dataset_metadata in returned_dataset_metadata:
+            metadata: DatasetMetadata = {**dataset_metadata.to_dict(), "dataset_id": dataset_metadata.id}
+            dataset_metadata_list.append(metadata)
+
+        return dataset_metadata_list
+
     def get_dataset_metadata_with_survey_id_period_id_and_version(
         self, survey_id: str, period_id: str, version: int
     ) -> DatasetMetadata | None:
