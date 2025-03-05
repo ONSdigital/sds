@@ -148,11 +148,7 @@ async def get_dataset_metadata_collection(
 async def get_all_dataset_metadata_collection(
     dataset_service: DatasetService = Depends(),
 ) -> list[DatasetMetadata]:
-    """
-    Retrieve all dataset metadata.
-
-    Parameters:
-    dataset_service (DatasetService): The service used to retrieve the metadata.
+    """Retrieve all dataset metadata.
     """
     logger.info("Getting all dataset metadata collection...")
 

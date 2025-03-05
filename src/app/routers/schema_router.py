@@ -281,11 +281,7 @@ async def get_survey_id_map(
 async def get_all_schema_metadata_collection(
     schema_processor_service: SchemaProcessorService = Depends(),
 ) -> list[SchemaMetadata]:
-    """
-    Retrieve all schema metadata from the schema collection.
-
-    Parameters:
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the schema metadata collection.
+    """Retrieve all schema metadata from the schema collection.
     """
     logger.info("Getting all schema metadata collection...")
 
