@@ -83,14 +83,8 @@ class DatasetEndpointsIntegrationTest(TestCase):
             headers = self.headers
         )
 
-        expected_data = [
-            {
-                **dataset_metadata_collection_for_endpoints_test,
-            }
-        ]
-
         assert response.status_code == 200
-        assert response.json() == expected_data
+        assert response.json() == dataset_metadata_collection_for_endpoints_test
 
 
 

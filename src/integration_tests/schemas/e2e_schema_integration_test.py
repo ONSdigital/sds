@@ -143,8 +143,13 @@ class SchemaEndpointsIntegrationTest(TestCase):
         )
         expected_schema_count = len(self.test_schemas) * len(test_survey_id_list)
         assert all_schema_metadata_response.status_code == 200
-        # Verify there are the expected number of schema metadata entries
-        assert len(all_schema_metadata_response.json()) == expected_schema_count
+
+        all_schema_metadata_response = all_schema_metadata_response.json()
+        schemas = []
+        for schema in all_schema_metadata_response:
+            if schema["survey_id"] in test_survey_id_list:
+                schemas.append(schema)
+        assert len(schemas) == expected_schema_count
 
 
     @pytest.mark.order(4)
