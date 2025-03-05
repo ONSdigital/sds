@@ -162,7 +162,7 @@ class SchemaFirebaseRepository:
 
         schema_metadata_list: list[SchemaMetadata] = []
         for schema_metadata in returned_schema_metadata:
-            metadata: SchemaMetadata = {**(schema_metadata.to_dict())}
+            metadata: SchemaMetadata = SchemaMetadata(**schema_metadata.to_dict())
             schema_metadata_list.append(metadata)
 
         return schema_metadata_list

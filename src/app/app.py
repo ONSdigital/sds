@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from logging_config import logging
-from routers import dataset_router, schema_router, status_router, baddy_router
+from routers import dataset_router, schema_router, status_router, joint_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
@@ -109,4 +109,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.include_router(dataset_router.router)
 app.include_router(schema_router.router)
 app.include_router(status_router.router)
-app.include_router(baddy_router.router)
+app.include_router(joint_router.router)

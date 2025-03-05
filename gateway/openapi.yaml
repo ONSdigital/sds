@@ -438,30 +438,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
-  /v1/baddy_data:
+  /v1/all_metadata:
     get:
-      summary: Get Baddy Data
-      description: Retrieve all datasets and schemas.
-      operationId: get_baddy_data_v1_baddy_data_get
+      summary: Get All Metadata
+      description: Retrieve metadata for all datasets and schemas.
+      operationId: get_all_metadata_v1_all_metadata_get
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/DatasetMetadata'
-                type: array
-                title: Response Get Baddy Data V1 Baddy Data Get
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: Invalid search parameters provided
+                $ref: '#/components/schemas/JointMetadata'
         '500':
           description: Internal Server Error
           content:
@@ -471,15 +459,6 @@ paths:
               example:
                 status: error
                 message: Unable to process request
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponseModel'
-              example:
-                status: error
-                message: No datasets found
 components:
   schemas:
     BadRequest:
@@ -593,6 +572,23 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    JointMetadata:
+      properties:
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetMetadata'
+          type: array
+          title: Datasets
+        schemas:
+          items:
+            $ref: '#/components/schemas/SchemaMetadata'
+          type: array
+          title: Schemas
+      type: object
+      required:
+      - datasets
+      - schemas
+      title: JointMetadata
     SchemaMetadata:
       properties:
         survey_id:

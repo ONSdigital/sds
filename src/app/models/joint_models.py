@@ -4,6 +4,6 @@ from src.app.models.schema_models import SchemaMetadata
 
 
 @dataclass
-class BaddyData:
+class JointMetadata:
     datasets: list[DatasetMetadata]
     schemas: list[SchemaMetadata]
