@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.get(
-    "/v1/all_metadata",
+    "/v1/joint_metadata",
     response_model=JointMetadata,
     responses={
         500: {
