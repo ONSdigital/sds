@@ -84,7 +84,12 @@ class DatasetEndpointsIntegrationTest(TestCase):
         )
 
         assert response.status_code == 200
-        assert response.json() == dataset_metadata_collection_for_endpoints_test
+
+        # Filter out the metadata that are not for one of the test survey_ids (existing Firestore data is unpredictable)
+        test_survey_ids = [metadata['survey_id'] for metadata in dataset_metadata_collection_for_endpoints_test]
+        filtered_response = [metadata for metadata in response.json() if metadata['survey_id'] in test_survey_ids]
+
+        self.assertEqual(filtered_response, dataset_metadata_collection_for_endpoints_test)
 
 
 
