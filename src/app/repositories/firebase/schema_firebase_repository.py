@@ -150,8 +150,7 @@ class SchemaFirebaseRepository:
         return schema_metadata_list
 
     def get_all_schema_metadata_collection(self) -> list[SchemaMetadata]:
-        """
-        Gets the collection of all schema metadata.
+        """Gets the collection of schema metadata for all surveys.
         """
         returned_schema_metadata = (
             self.schemas_collection

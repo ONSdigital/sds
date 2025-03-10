@@ -158,7 +158,7 @@ class SchemaProcessorService:
 
         return schema_metadata_collection
 
-    def get_all_schema_metadata_collection_with_guid(self) -> list[SchemaMetadata]:
+    def get_all_schema_metadata_collection(self) -> list[SchemaMetadata]:
         """
         Gets the collection of all schema metadata from firestore.
         """

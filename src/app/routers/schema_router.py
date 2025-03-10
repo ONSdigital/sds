@@ -285,7 +285,7 @@ async def get_all_schema_metadata_collection(
     """
     logger.info("Getting all schema metadata collection...")
 
-    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection_with_guid()
+    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection()
 
     if not schema_metadata_collection:
         logger.error("Schema metadata collection not found.")
