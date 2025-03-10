@@ -134,3 +134,31 @@ async def get_dataset_metadata_collection(
     logger.debug(f"Dataset metadata collection: {dataset_metadata_collection}")
 
     return dataset_metadata_collection
+
+@router.get(
+    "/v1/all_dataset_metadata",
+    response_model=list[DatasetMetadata],
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
+async def get_all_dataset_metadata_collection(
+    dataset_service: DatasetService = Depends(),
+) -> list[DatasetMetadata]:
+    """Retrieve all dataset metadata.
+    """
+    logger.info("Getting all dataset metadata collection...")
+
+    dataset_metadata_collection = dataset_service.get_all_dataset_metadata_collection()
+
+    if not dataset_metadata_collection:
+        logger.error("Dataset metadata collection not found.")
+        raise exceptions.ExceptionNoDatasetMetadata
+
+    logger.info("All dataset metadata collection successfully retrieved.")
+    logger.debug(f"All dataset metadata collection: {dataset_metadata_collection}")
+
+    return dataset_metadata_collection

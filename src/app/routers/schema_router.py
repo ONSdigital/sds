@@ -267,3 +267,31 @@ async def get_survey_id_map(
         logger.error("No Survey IDs found")
         raise exceptions.ExceptionNoSurveyIDs
     return survey_id_map
+
+@router.get(
+    "/v1/all_schema_metadata",
+    response_model=list[SchemaMetadata],
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
+async def get_all_schema_metadata_collection(
+    schema_processor_service: SchemaProcessorService = Depends(),
+) -> list[SchemaMetadata]:
+    """Retrieve all schema metadata from the schema collection.
+    """
+    logger.info("Getting all schema metadata collection...")
+
+    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection()
+
+    if not schema_metadata_collection:
+        logger.error("Schema metadata collection not found.")
+        raise exceptions.ExceptionNoSchemaMetadataCollection
+
+    logger.info("Schema metadata collection successfully retrieved.")
+    logger.debug(f"Schema metadata collection: {schema_metadata_collection}")
+
+    return schema_metadata_collection

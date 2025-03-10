@@ -158,6 +158,16 @@ class SchemaProcessorService:
 
         return schema_metadata_collection
 
+    def get_all_schema_metadata_collection(self) -> list[SchemaMetadata]:
+        """
+        Gets the collection of all schema metadata from firestore.
+        """
+        schema_metadata_collection = (
+            self.schema_firebase_repository.get_all_schema_metadata_collection()
+        )
+
+        return schema_metadata_collection
+
     def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
         """
         Gets the filename of the schema in bucket. If version is omitted,

@@ -26,6 +26,11 @@ class DatasetService:
             survey_id, period_id
         )
 
+    def get_all_dataset_metadata_collection(self) -> list[DatasetMetadata]:
+        """Gets the collection of dataset metadata for all surveys held in SDS.
+        """
+        return self.dataset_repository.get_all_dataset_metadata_collection()
+
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
     ) -> UnitDataset:

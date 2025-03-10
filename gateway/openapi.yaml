@@ -148,6 +148,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Not Found
+  /v1/all_dataset_metadata:
+    get:
+      summary: Get All Dataset Metadata Collection
+      description: Retrieve all dataset metadata.
+      operationId: get_all_dataset_metadata_collection_v1_all_dataset_metadata_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DatasetMetadata'
+                type: array
+                title: Response Get All Dataset Metadata Collection V1 All Dataset
+                  Metadata Get
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
   /v1/schema:
     post:
       summary: Post Schema
@@ -418,6 +443,31 @@ paths:
               example:
                 status: error
                 message: No Survey IDs found
+  /v1/all_schema_metadata:
+    get:
+      summary: Get All Schema Metadata Collection
+      description: Retrieve all schema metadata from the schema collection.
+      operationId: get_all_schema_metadata_collection_v1_all_schema_metadata_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SchemaMetadata'
+                type: array
+                title: Response Get All Schema Metadata Collection V1 All Schema Metadata
+                  Get
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
   /status:
     get:
       summary: Http Get Status

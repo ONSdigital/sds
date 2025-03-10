@@ -148,3 +148,20 @@ class SchemaFirebaseRepository:
             schema_metadata_list.append(metadata)
 
         return schema_metadata_list
+
+    def get_all_schema_metadata_collection(self) -> list[SchemaMetadata]:
+        """Gets the collection of schema metadata for all surveys.
+        """
+        returned_schema_metadata = (
+            self.schemas_collection
+            .order_by("survey_id")
+            .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+            .stream()
+        )
+
+        schema_metadata_list: list[SchemaMetadata] = []
+        for schema_metadata in returned_schema_metadata:
+            metadata: SchemaMetadata = SchemaMetadata(**schema_metadata.to_dict())
+            schema_metadata_list.append(metadata)
+
+        return schema_metadata_list

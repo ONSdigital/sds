@@ -57,6 +57,29 @@
       },
       "response": []
     },
+        {
+      "name": "All Schema Metadata",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3033/v1/all_schema_metadata",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3033",
+          "path": [
+            "v1",
+            "all_schema_metadata"
+          ],
+          "response": []
+        }
+      }
+    },
     {
       "name": "Schema",
       "request": {
@@ -127,6 +150,29 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "All Dataset Metadata",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3033/v1/all_dataset_metadata",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "3033",
+          "path": [
+            "v1",
+            "all_dataset_metadata"
+          ],
+          "response": []
+        }
+      }
     },
     {
       "name": "Dataset Unit Data",
