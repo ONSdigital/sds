@@ -10,8 +10,8 @@ steps:
     args:
       - "-c"
       - |
-        pip install uv --user
-        uv pip install -r requirements.txt --user
+        pip install uv
+        uv sync
 
   - name: python:3.11
     id: "Audit packages"
