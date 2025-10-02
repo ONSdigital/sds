@@ -1,10 +1,19 @@
 steps:
-  - name: "ghcr.io/astral-sh/uv:python3.13-alpine"
-    id: "Install app requirements with UV"
-    entrypoint: sh
-    args: ["uv", "sync"]
+  - name: python:3.11
+    id: "Upgrade pip"
+    entrypoint: "python"
+    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
 
-  - name: "ghcr.io/astral-sh/uv:python3.13-alpine"
+  - name: python:3.11
+    id: "Install app requirements"
+    entrypoint: sh
+    args:
+      - "-c"
+      - |
+        pip install uv --user
+        uv pip install -r requirements.txt --user
+
+  - name: python:3.11
     id: "Audit packages"
     entrypoint: sh
     args:
