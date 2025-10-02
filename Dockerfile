@@ -35,4 +35,4 @@ EXPOSE $PORT
 ENTRYPOINT []
 
 # Start SDS app with Uvicorn
-CMD ["uv", "run", "uvicorn src.app:app --host 0.0.0.0 --port $PORT"]
+CMD ["uv", "run", "uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "$PORT"]
