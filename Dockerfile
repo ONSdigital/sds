@@ -1,5 +1,5 @@
-FROM python:3.11-alpine
-COPY requirements.txt .
+FROM ghcr.io/astral-sh/uv:python3.13-alpine
+COPY pyproject.toml .
 RUN pip install -r requirements.txt
 COPY src/app src
 ENV PYTHONPATH=src

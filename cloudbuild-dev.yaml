@@ -1,13 +1,13 @@
 steps:
-  - name: python:3.11
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
+  - name: python:3.13
+    id: "Install UV"
+    entrypoint: "sh"
+    args: ["curl", "-LsSf", "https://astral.sh/uv/install.sh", "|", "sh"]
 
   - name: python:3.11
-    id: "Install app requirements"
-    entrypoint: python
-    args: ["-m", "pip", "install", "-r", "requirements.txt", "--user"]
+    id: "Install app requirements with UV"
+    entrypoint: sh
+    args: ["uv", "sync"]
 
   - name: python:3.11
     id: "Audit packages"

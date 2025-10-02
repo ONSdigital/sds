@@ -35,7 +35,7 @@ start-cloud-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m uvicorn src.app.app:app --reload --port 3033
+	uv run python -m uvicorn src.app.app:app --reload --port 3033
 
 start-docker-dev:
 	export CONF=docker-dev && \
@@ -55,7 +55,7 @@ start-docker-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m uvicorn src.app.app:app --reload --port 3033
+	uv run python -m uvicorn src.app.app:app --reload --port 3033
 
 lint-and-unit-test:
 	python -m ruff check .
@@ -75,8 +75,8 @@ lint-and-unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
-	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
+	uv run python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
 unit-test:
 	export PYTHONPATH=${PYTHONPATH} && \
@@ -95,8 +95,8 @@ unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
-	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
+	uv run python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
 
 
 integration-test-local:
@@ -118,7 +118,7 @@ integration-test-local:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
 	export CONF=int-test && \
@@ -139,7 +139,7 @@ integration-test-sandbox:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
@@ -161,7 +161,7 @@ integration-test-cloudbuild:
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
 	export CONF=cloud-dev && \
@@ -179,16 +179,16 @@ generate-spec:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
+	uv run python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
 
 lint:
-	python -m ruff check .
+	uv run python -m ruff check .
 
 audit:
-	python -m pip_audit
+	uv run python -m pip_audit
 
 lint-fix:
-	python -m ruff check --fix .
+	uv run python -m ruff check --fix .
 
-setup: requirements.txt
-	pip install -r requirements.txt
+setup:
+	uv sync
