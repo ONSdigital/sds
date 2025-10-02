@@ -1,15 +1,10 @@
 steps:
-  - name: python:3.13
-    id: "Install UV"
-    entrypoint: "sh"
-    args: ["wget", "--qO-", "https://astral.sh/uv/install.sh", "|", "sh"]
-
-  - name: python:3.13
+  - name: "ghcr.io/astral-sh/uv:python3.13-alpine"
     id: "Install app requirements with UV"
     entrypoint: sh
     args: ["uv", "sync"]
 
-  - name: python:3.13
+  - name: "ghcr.io/astral-sh/uv:python3.13-alpine"
     id: "Audit packages"
     entrypoint: sh
     args:
