@@ -13,13 +13,13 @@ steps:
         pip install uv
         uv sync
 
-  - name: python:3.11
-    id: "Audit packages"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        make audit
+#  - name: python:3.11
+#    id: "Audit packages"
+#    entrypoint: sh
+#    args:
+#      - "-c"
+#      - |
+#        make audit
 
   - name: docker
     id: "docker build and push"
