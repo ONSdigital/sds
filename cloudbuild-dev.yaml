@@ -48,7 +48,7 @@ steps:
   - name: "gcr.io/cloud-builders/gcloud"
     id: "Check for critical vulnerabilities (ons-sds-dev only)"
     entrypoint: bash
-    args:ja
+    args:
       - "-c"
       - |
         if [ ${PROJECT_ID} == "ons-sds-dev" ]
