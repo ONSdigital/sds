@@ -34,4 +34,4 @@ EXPOSE 3033
 # i.e ENTRYPOINT ["python"] + CMD ["python", "run.py"] will result in ENTRYPOINT ["python", "python", "run.py"]
 ENTRYPOINT []
 
-CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "$PORT"]
+CMD uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
