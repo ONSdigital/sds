@@ -193,7 +193,7 @@ PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
 gcloud config set project $PROJECT_NAME
 
-cd src/app/
+cd app/
 gcloud functions deploy new-dataset-function \
 --no-allow-unauthenticated \
 --gen2 \

@@ -37,7 +37,7 @@ services:
       - FIRESTORE_DB_NAME=(default)
       - SDS_APPLICATION_VERSION=development
     volumes:
-      - ./src/app:/src
+      - ./app:/src
       - ./devtools:/devtools
     restart: on-failure
     depends_on:

@@ -30,7 +30,7 @@ dependencies = [
 [tool.ruff]
 line-length = 120
 indent-width = 4
-exclude = ["src/integration_tests", "src/unit_tests", "src/test_data"]
+exclude = ["integration_tests", "unit_tests", "test_data"]
 
 [tool.ruff.lint]
 select = [

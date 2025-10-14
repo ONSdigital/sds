@@ -20,7 +20,7 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
-ADD . /src/app
+ADD . /app
 RUN uv sync --frozen --no-dev
 
 
@@ -34,7 +34,4 @@ EXPOSE 3033
 # i.e ENTRYPOINT ["python"] + CMD ["python", "run.py"] will result in ENTRYPOINT ["python", "python", "run.py"]
 ENTRYPOINT []
 
-ENV PYTHONPATH="/src"
-
-# Start SDS app with Uvicorn
-CMD uv run uvicorn app:app --host 0.0.0.0 --port 3033
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3033"]
