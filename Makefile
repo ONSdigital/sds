@@ -192,9 +192,25 @@ lint-fix:
 setup:
 	uv sync
 
-.PHONY: increment
-increment:
-	@echo "🔼 Bumping project version..."
-	uv run --only-group version-check python .github/scripts/increment_version.py
+.PHONY:  bump bump-patch bump-minor bump-major
+bump:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
 	@echo "🔄 Generating new lock file..."
 	uv lock
+bump-patch:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
+	@echo "🔄 Generating new lock file..."
+	uv lock
+bump-minor:
+	@echo "🔼 Bumping project version (minor)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py minor
+	@echo "🔄 Generating new lock file..."
+	uv lock
+bump-major:
+	@echo "🔼 Bumping project version (major)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py major
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
