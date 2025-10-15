@@ -6,7 +6,7 @@ from uvicorn.importer import import_from_string
 
 parser = argparse.ArgumentParser(prog="generate_openapi.py")
 parser.add_argument(
-    "app", help='App import string. Eg. "app.app:app"', default="app.app:app"
+    "app", help='App import string. Eg. "app.main:app"', default="app.main:app"
 )
 parser.add_argument(
     "--out", help="Output file ending in .yaml", default="gateway/openapi.yaml"
