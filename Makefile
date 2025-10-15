@@ -37,26 +37,6 @@ start-cloud-dev:
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
 	uv run python -m uvicorn main:app --reload --port 3033
 
-build-and-start-docker-dev:
-	export CONF=cloud-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=${PROJECT_ID} && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
-	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	docker build -f Dockerfile.develop -t test-sds-dockerfile-2:latest . && \
-	docker run --rm -p 3033:3033 test-sds-dockerfile-2
-
-
 start-docker-dev:
 	export CONF=docker-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
@@ -75,7 +55,7 @@ start-docker-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m uvicorn app.app:app --reload --port 3033
+	uv run python -m uvicorn main:app --reload --port 3033
 
 lint-and-unit-test:
 	python -m ruff check .
@@ -164,7 +144,6 @@ integration-test-sandbox:
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
 	export CONF=int-test-cloudbuild && \
-	export PYTHONPATH=${PYTHONPATH} && \
     export DATASET_BUCKET_NAME=${INT_DATASET_BUCKET_NAME} && \
     export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
@@ -199,7 +178,7 @@ generate-spec:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m scripts.generate_openapi app.app:app --out gateway/openapi.yaml
+	uv run python -m scripts.generate_openapi app.main:app --out gateway/openapi.yaml
 
 lint:
 	uv run python -m ruff check .
@@ -212,3 +191,10 @@ lint-fix:
 
 setup:
 	uv sync
+
+.PHONY: increment
+increment:
+	@echo "🔼 Bumping project version..."
+	uv run --only-group version-check python .github/scripts/increment_version.py
+	@echo "🔄 Generating new lock file..."
+	uv lock
