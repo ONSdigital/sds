@@ -20,7 +20,7 @@ RUN uv sync --frozen --no-install-project --no-dev
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
-ADD . /src/app
+ADD . /app
 RUN uv sync --frozen --no-dev
 
 
@@ -28,11 +28,10 @@ RUN uv sync --frozen --no-dev
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the port the app runs on
-EXPOSE $PORT
+EXPOSE 3033
 
 # Reset the entrypoint to avoid potentially prefixing the command from other based images.
 # i.e ENTRYPOINT ["python"] + CMD ["python", "run.py"] will result in ENTRYPOINT ["python", "python", "run.py"]
 ENTRYPOINT []
 
-# Start SDS app with Uvicorn
-CMD ["uv", "run", "uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "$PORT"]
+CMD uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
