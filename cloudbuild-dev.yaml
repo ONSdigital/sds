@@ -1,10 +1,10 @@
 steps:
-  - name: python:3.11
+  - name: python:3.13
     id: "Upgrade pip"
     entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
 
-  - name: python:3.11
+  - name: python:3.13
     id: "Install app requirements"
     entrypoint: sh
     args:
@@ -12,14 +12,6 @@ steps:
       - |
         pip install uv
         uv sync
-
-#  - name: python:3.11
-#    id: "Audit packages"
-#    entrypoint: sh
-#    args:
-#      - "-c"
-#      - |
-#        make audit
 
   - name: docker
     id: "docker build and push"
@@ -108,7 +100,7 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python:3.11
+  - name: python:3.13
     id: "Run integration test"
     entrypoint: sh
     args:
