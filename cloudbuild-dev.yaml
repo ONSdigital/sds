@@ -1,10 +1,10 @@
 steps:
-  - name: python:3.13
+  - name: python:3.11
     id: "Upgrade pip"
     entrypoint: "python"
     args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
 
-  - name: python:3.13
+  - name: python:3.11
     id: "Install app requirements"
     entrypoint: sh
     args:
@@ -100,7 +100,7 @@ steps:
         --limit=1 \
         > /workspace/oauth_client_name
 
-  - name: python:3.13
+  - name: python:3.11
     id: "Run integration test"
     entrypoint: sh
     args:
