@@ -118,7 +118,7 @@ integration-test-local:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest --order-scope=module integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
 	export CONF=int-test && \
@@ -139,7 +139,7 @@ integration-test-sandbox:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest --order-scope=module integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
@@ -160,7 +160,7 @@ integration-test-cloudbuild:
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest --order-scope=module integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
 	export CONF=cloud-dev && \
@@ -198,16 +198,19 @@ bump:
 	uv run --only-group version-check python .github/scripts/bump_version.py patch
 	@echo "🔄 Generating new lock file..."
 	uv lock
+
 bump-patch:
 	@echo "🔼 Bumping project version (patch)..."
 	uv run --only-group version-check python .github/scripts/bump_version.py patch
 	@echo "🔄 Generating new lock file..."
 	uv lock
+
 bump-minor:
 	@echo "🔼 Bumping project version (minor)..."
 	uv run --only-group version-check python .github/scripts/bump_version.py minor
 	@echo "🔄 Generating new lock file..."
 	uv lock
+
 bump-major:
 	@echo "🔼 Bumping project version (major)..."
 	uv run --only-group version-check python .github/scripts/bump_version.py major
