@@ -1,5 +1,7 @@
 # Supplementary Data Service (sds)
 
+![Version](https://ons-badges-752336435892.europe-west2.run.app/api/badge/custom?left=Python&right=3.13)
+
 More information on this service can be found on Confluence:
 
 - https://officefornationalstatistics.atlassian.net/wiki/spaces/SDC/pages/48739999/SDS+Supplementary+Data+Service
