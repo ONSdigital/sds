@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass
@@ -11,7 +10,7 @@ class DatasetMetadataWithoutId:
     total_reporting_units: int
     sds_dataset_version: int
     filename: str
-    title: Optional[str] = ""
+    title: str | None = ""
 
 
 @dataclass
