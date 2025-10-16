@@ -164,7 +164,7 @@ integration-test-cloudbuild:
 
 generate-spec:
 	export CONF=cloud-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
+	export PYTHONPATH=. && \
 	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
@@ -178,7 +178,7 @@ generate-spec:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m scripts.generate_openapi app.main:app --out gateway/openapi.yaml
+	uv run python .github/scripts/generate_openapi.py app.main:app --out gateway/openapi.yaml
 
 lint:
 	uv run python -m ruff check .
