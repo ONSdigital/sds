@@ -1280,7 +1280,7 @@ wheels = [
 
 [[package]]
 name = "sds"
-version = "3.0.0"
+version = "2.2.2"
 source = { virtual = "." }
 dependencies = [
     { name = "coverage" },
