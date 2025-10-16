@@ -1,5 +1,7 @@
-from tomlkit import parse, dumps
 import sys
+
+from tomlkit import dumps, parse
+
 
 def bump_major(version: str) -> str:
     major, minor, patch = map(int, version.split("."))
@@ -27,7 +29,7 @@ actions  = {
 }
 
 # --- read TOML ---
-with open("pyproject.toml", "r") as f:
+with open("pyproject.toml") as f:
     pyproject = parse(f.read())
 
 # --- get action from args ---

@@ -1,5 +1,6 @@
-from app.config.config_factory import config
 from google.cloud import firestore
+
+from app.config.config_factory import config
 
 
 class FirebaseLoader:

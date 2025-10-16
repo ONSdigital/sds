@@ -58,7 +58,7 @@ start-docker-dev:
 	uv run python -m uvicorn main:app --reload --port 3033
 
 lint-and-unit-test:
-	python -m ruff check .
+	uv run python -m ruff check .
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
@@ -190,6 +190,10 @@ lint-fix:
 	uv run python -m ruff check --fix .
 
 setup:
+	@command -v uv >/dev/null 2>&1 || { \
+		echo "uv not found – installing..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	}
 	uv sync
 
 .PHONY:  bump bump-patch bump-minor bump-major

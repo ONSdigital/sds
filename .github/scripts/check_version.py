@@ -1,7 +1,8 @@
-import toml
 import re
 import subprocess
 import sys
+
+import toml
 
 
 def compare_versions(new_version: str, current_version: str) -> int:
@@ -26,7 +27,7 @@ def compare_versions(new_version: str, current_version: str) -> int:
 
 
 # --- PR version ---
-with open("pyproject.toml", "r") as file:
+with open("pyproject.toml") as file:
     pyproject = toml.load(file)
     pr_version = pyproject["project"]["version"]
 
@@ -35,10 +36,10 @@ print(f"PR Version: {pr_version}")
 # --- Fetch main branch ---
 try:
     subprocess.run(
-        ["git", "fetch", "origin", "main"],
+        ["/usr/bin/git", "fetch", "origin", "main"],
         check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        text=True,
+        capture_output=True,
     )
 except subprocess.CalledProcessError:
     print("⚠️  Could not fetch origin/main. Skipping version comparison.")
@@ -47,7 +48,7 @@ except subprocess.CalledProcessError:
 # --- Main branch version (without checkout) ---
 try:
     git_show = subprocess.run(
-        ["git", "show", "origin/main:pyproject.toml"],
+        ["/usr/bin/git", "show", "origin/main:pyproject.toml"],
         check=True,
         text=True,
         capture_output=True,

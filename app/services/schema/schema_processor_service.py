@@ -1,6 +1,7 @@
 import uuid
 
 import requests
+
 from app.config.config_factory import config
 from app.exception import exceptions
 from app.logging_config import logging

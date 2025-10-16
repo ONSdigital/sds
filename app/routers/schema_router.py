@@ -1,7 +1,8 @@
+from fastapi import APIRouter, Body, Depends
+
 import app.exception.exception_response_models as erm
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
-from fastapi import APIRouter, Body, Depends
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository

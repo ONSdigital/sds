@@ -1,5 +1,6 @@
-from app.config.config_helpers import get_value_from_env
 from pydantic_settings import BaseSettings
+
+from app.config.config_helpers import get_value_from_env
 
 TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%SZ"
 

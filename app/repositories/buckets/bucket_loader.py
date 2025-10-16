@@ -1,6 +1,7 @@
+from google.cloud import exceptions, storage
+
 import app.exception.exceptions as exception
 from app.config.config_factory import config
-from google.cloud import exceptions, storage
 
 
 class BucketLoader:

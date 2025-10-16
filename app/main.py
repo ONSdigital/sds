@@ -1,8 +1,9 @@
-from app.exception import exceptions
-from app.exception.exception_interceptor import ExceptionInterceptor
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
+
+from app.exception import exceptions
+from app.exception.exception_interceptor import ExceptionInterceptor
 from app.logging_config import logging
 from app.routers import dataset_router, schema_router, status_router
 

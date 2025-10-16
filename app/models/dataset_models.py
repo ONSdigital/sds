@@ -11,7 +11,7 @@ class DatasetMetadataWithoutId:
     total_reporting_units: int
     sds_dataset_version: int
     filename: str
-    title: str | None
+    title: Optional[str] = ""
 
 
 @dataclass
@@ -24,7 +24,7 @@ class DatasetMetadata:
     total_reporting_units: int
     sds_dataset_version: int
     filename: str
-    title: Optional[str] = None
+    title: str | None = None
 
 
 @dataclass

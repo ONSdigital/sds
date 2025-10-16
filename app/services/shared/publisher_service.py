@@ -1,8 +1,9 @@
 import json
 
+from google.cloud.pubsub_v1 import PublisherClient
+
 from app.config.config_factory import config
 from app.exception import exceptions
-from google.cloud.pubsub_v1 import PublisherClient
 from app.logging_config import logging
 from app.models.dataset_models import DatasetMetadata
 from app.models.schema_models import SchemaMetadata
