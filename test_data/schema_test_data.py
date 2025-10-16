@@ -1,4 +1,4 @@
-from models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
+from app.models.schema_models import SchemaMetadata, SchemaMetadataWithoutGuid
 from test_data.shared_test_data import test_survey_id, test_guid
 
 """

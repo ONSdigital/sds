@@ -117,7 +117,7 @@ steps:
         export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         pip install --upgrade pip --user
         pip install uv
-        make setup
+        uv sync
         make integration-test-cloudbuild
 
 options:
