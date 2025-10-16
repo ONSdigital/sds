@@ -1,18 +1,4 @@
 steps:
-  - name: python:3.11
-    id: "Upgrade pip"
-    entrypoint: "python"
-    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
-
-  - name: python:3.11
-    id: "Install app requirements"
-    entrypoint: sh
-    args:
-      - "-c"
-      - |
-        pip install uv
-        uv sync
-
   - name: docker
     id: "docker build and push"
     entrypoint: sh
