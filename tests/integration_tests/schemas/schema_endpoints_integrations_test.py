@@ -1,7 +1,7 @@
 from unittest import TestCase
 import pytest
 from app.config.config_factory import config
-from integration_tests.helpers.integration_helpers import (
+from tests.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     load_json,
@@ -12,10 +12,10 @@ from integration_tests.helpers.integration_helpers import (
     inject_wait_time,
     is_json_response,
 )
-from integration_tests.helpers.pubsub_helper import schema_pubsub_helper
-from test_data.schema_test_data import test_survey_id_map
-from test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
-from test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
+from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
+from tests.test_data.schema_test_data import test_survey_id_map
+from tests.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
+from tests.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
 
 class SchemaEndpointsIntegrationTest(TestCase):
     session = None

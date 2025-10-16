@@ -4,7 +4,7 @@ from fastapi import status
 import pytest
 
 from app.config.config_factory import config
-from integration_tests.helpers.integration_helpers import (
+from tests.integration_tests.helpers.integration_helpers import (
     generate_headers,
     setup_session,
 )

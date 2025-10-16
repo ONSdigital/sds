@@ -1,7 +1,7 @@
 import requests
 from app.config.config_factory import config
 from firebase_admin import firestore
-from test_data.dataset_test_data import dataset_unit_data_id
+from tests.test_data.dataset_test_data import dataset_unit_data_id
 
 def perform_delete_on_collection_with_test_survey_id(
     client: firestore.Client, collection_ref: firestore.CollectionReference, test_survey_id: str

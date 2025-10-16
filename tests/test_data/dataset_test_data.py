@@ -1,7 +1,7 @@
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
-from test_data.shared_test_data import test_guid, test_survey_id, test_period_id
+from tests.test_data.shared_test_data import test_guid, test_survey_id, test_period_id
 
 """
 Local variables:

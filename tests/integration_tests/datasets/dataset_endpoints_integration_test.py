@@ -1,19 +1,19 @@
 import pytest
 from unittest import TestCase
 from app.config.config_factory import config
-from test_data.dataset_test_data import (
+from tests.test_data.dataset_test_data import (
     dataset_metadata_collection_for_endpoints_test, 
     dataset_unit_data_collection_for_endpoints_test,
     dataset_unit_data_id,
     dataset_404_test_data,
     random_string,
 )
-from integration_tests.helpers.integration_helpers import (
+from tests.integration_tests.helpers.integration_helpers import (
     cleanup,
     generate_headers,
     setup_session,
 )
-from integration_tests.helpers.firestore_helpers import upload_dataset
+from tests.integration_tests.helpers.firestore_helpers import upload_dataset
 from google.cloud import firestore
 
 

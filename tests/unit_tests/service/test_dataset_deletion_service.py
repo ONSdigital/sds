@@ -8,7 +8,7 @@ from app.repositories.firebase.deletion_firebase_repository import (
 from app.services.dataset.dataset_deletion_service import DatasetDeletionService
 from app.services.dataset.dataset_service import DatasetService
 
-from test_data import dataset_test_data
+from tests.test_data import dataset_test_data
 
 
 class PostSchemaTest(TestCase):

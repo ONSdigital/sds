@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 
-from test_data import schema_test_data
+from tests.test_data import schema_test_data
 
 
 def test_get_schema_metadata_collection_200_response(test_client):

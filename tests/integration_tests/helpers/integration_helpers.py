@@ -10,16 +10,16 @@ from google.cloud import storage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from integration_tests.helpers.bucket_helpers import (
+from tests.integration_tests.helpers.bucket_helpers import (
     delete_blobs_with_test_survey_id,
     delete_local_bucket_data,
 )
-from integration_tests.helpers.firestore_helpers import (
+from tests.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_on_collection_with_test_survey_id,
 )
-from integration_tests.helpers.pubsub_helper import PubSubHelper
-from test_data.dataset_test_data import test_survey_id
+from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
+from tests.test_data.dataset_test_data import test_survey_id
 
 storage_client = storage.Client()
 

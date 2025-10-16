@@ -4,7 +4,7 @@ from app.repositories.buckets.schema_bucket_repository import SchemaBucketReposi
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.schema.schema_processor_service import SchemaProcessorService
 
-from test_data import schema_test_data
+from tests.test_data import schema_test_data
 
 
 def test_get_schema_from_bucket_200_response(test_client):

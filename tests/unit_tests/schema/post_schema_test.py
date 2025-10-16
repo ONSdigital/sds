@@ -7,7 +7,7 @@ from app.repositories.buckets.schema_bucket_repository import SchemaBucketReposi
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.publisher_service import PublisherService
 
-from test_data import schema_test_data
+from tests.test_data import schema_test_data
 
 
 class PostSchemaTest(TestCase):

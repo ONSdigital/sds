@@ -12,7 +12,7 @@ from app.config.config import (
 )
 from app.config.config_factory import ConfigFactory
 
-from unit_tests.config.config_test import testConfigVars
+from tests.unit_tests.config.config_test import testConfigVars
 
 INITIAL_CONF = os.environ.get("CONF")
 INITIAL_TEST_DATASET_PATH = os.environ.get("TEST_DATASET_PATH")

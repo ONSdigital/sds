@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 from app.repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
 
-from test_data import dataset_test_data
+from tests.test_data import dataset_test_data
 
 
 def test_get_dataset_metadata_collection_200_response(test_client):

@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from google.cloud import firestore, storage
 from app.services.shared.datetime_service import DatetimeService
 
-from test_data import shared_test_data
+from tests.test_data import shared_test_data
 
 
 @pytest.fixture(autouse=True)

@@ -75,7 +75,7 @@ lint-and-unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest -vv --cov=app ./unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m pytest -vv --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
 	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
 
 unit-test:
@@ -95,7 +95,7 @@ unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest -vv  --cov=app ./unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
 	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
 
 
