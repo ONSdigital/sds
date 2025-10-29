@@ -1,7 +1,7 @@
 # Global Variables
-PYTHONPATH=src/app
-TEST_DATASET_PATH=src/test_data/json/
-TEST_SCHEMA_PATH=src/test_data/json/
+PYTHONPATH=app
+TEST_DATASET_PATH=tests/test_data/json/
+TEST_SCHEMA_PATH=tests/test_data/json/
 GOOGLE_APPLICATION_CREDENTIALS=sandbox-key.json
 AUTODELETE_DATASET_BUCKET_FILE=True
 RETAIN_DATASET_FIRESTORE=True
@@ -35,7 +35,7 @@ start-cloud-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m uvicorn src.app.app:app --reload --port 3033
+	uv run python -m uvicorn main:app --reload --port 3033
 
 start-docker-dev:
 	export CONF=docker-dev && \
@@ -55,10 +55,10 @@ start-docker-dev:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m uvicorn src.app.app:app --reload --port 3033
+	uv run python -m uvicorn main:app --reload --port 3033
 
 lint-and-unit-test:
-	python -m ruff check .
+	uv run python -m ruff check .
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=unit && \
 	export DATASET_BUCKET_NAME=my-schema-bucket && \
@@ -75,8 +75,8 @@ lint-and-unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest -vv --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
-	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
+	uv run python -m pytest -vv --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
 
 unit-test:
 	export PYTHONPATH=${PYTHONPATH} && \
@@ -95,8 +95,8 @@ unit-test:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest -vv  --cov=src/app ./src/unit_tests/ -W ignore::DeprecationWarning
-	python -m coverage report --omit="./src/app/repositories/*" --fail-under=90  -m
+	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
+	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
 
 
 integration-test-local:
@@ -118,7 +118,7 @@ integration-test-local:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
 	export CONF=int-test && \
@@ -139,12 +139,11 @@ integration-test-sandbox:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
 	export CONF=int-test-cloudbuild && \
-	export PYTHONPATH=${PYTHONPATH} && \
     export DATASET_BUCKET_NAME=${INT_DATASET_BUCKET_NAME} && \
     export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
@@ -161,11 +160,11 @@ integration-test-cloudbuild:
 	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
 	export CONF=cloud-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
+	export PYTHONPATH=. && \
 	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
 	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
@@ -179,16 +178,46 @@ generate-spec:
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	python -m scripts.generate_openapi src.app.app:app --out gateway/openapi.yaml
+	uv run python .github/scripts/generate_openapi.py app.main:app --out gateway/openapi.yaml
 
 lint:
-	python -m ruff check .
+	uv run python -m ruff check .
 
 audit:
-	python -m pip_audit
+	uv run python -m pip_audit
 
 lint-fix:
-	python -m ruff check --fix .
+	uv run python -m ruff check --fix .
 
-setup: requirements.txt
-	pip install -r requirements.txt
+setup:
+	@command -v uv >/dev/null 2>&1 || { \
+		echo "uv not found – installing..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	}
+	uv sync
+
+.PHONY:  bump bump-patch bump-minor bump-major
+bump:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-patch:
+	@echo "🔼 Bumping project version (patch)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py patch
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-minor:
+	@echo "🔼 Bumping project version (minor)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py minor
+	@echo "🔄 Generating new lock file..."
+	uv lock
+
+bump-major:
+	@echo "🔼 Bumping project version (major)..."
+	uv run --only-group version-check python .github/scripts/bump_version.py major
+	@echo "🔄 Generating new lock file..."
+	uv lock
+

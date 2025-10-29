@@ -201,6 +201,7 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: true
               title: Schema
       responses:
         '200':
@@ -262,6 +263,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
                 title: Response Get Schema From Bucket V1 Schema Get
         '400':
           content:
@@ -316,6 +318,7 @@ paths:
             application/json:
               schema:
                 type: object
+                additionalProperties: true
                 title: Response Get Schema From Bucket With Guid V2 Schema Get
         '400':
           content:
@@ -422,6 +425,7 @@ paths:
             application/json:
               schema:
                 items:
+                  additionalProperties: true
                   type: object
                 type: array
                 title: Response Get Survey Id Map V1 Survey List Get
@@ -516,11 +520,11 @@ components:
           - type: string
           - type: 'null'
           title: Dataset Guid
-          default: ''
       type: object
       required:
       - survey_id
       - period_id
+      - dataset_guid
       title: CollectionExerciseEndData
     DatasetMetadata:
       properties:
