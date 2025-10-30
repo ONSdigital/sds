@@ -7,7 +7,7 @@ steps:
     - |
       gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-  - name: docker
+  - name: gcr.io/cloud-builders/docker
     id: "Docker build and push"
     entrypoint: sh
     args:
