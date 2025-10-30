@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = "==3.13.*"
 
 [[package]]
@@ -1280,7 +1280,7 @@ wheels = [
 
 [[package]]
 name = "sds"
-version = "2.2.2"
+version = "2.2.3"
 source = { virtual = "." }
 dependencies = [
     { name = "coverage" },
