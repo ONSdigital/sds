@@ -30,6 +30,7 @@ steps:
         "--region",
         "europe-west2",
         "--allow-unauthenticated",
+        "--no-invoker-iam-check",
         "--ingress",
         "internal-and-cloud-load-balancing",
         "--update-env-vars",
