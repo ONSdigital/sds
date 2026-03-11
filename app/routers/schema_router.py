@@ -269,6 +269,7 @@ async def get_survey_id_map(
         raise exceptions.ExceptionNoSurveyIDs
     return survey_id_map
 
+
 @router.get(
     "/v1/all_schema_metadata",
     response_model=list[SchemaMetadata],
