@@ -5,9 +5,9 @@ import pytest
 
 from app.config.config_factory import config
 from tests.integration_tests.helpers.integration_helpers import (
-    generate_headers,
     setup_session,
 )
+from sds_common.services.http_service import HttpService
 
 
 class TestHttpGetDeploymentStatus(TestCase):
@@ -22,7 +22,7 @@ class TestHttpGetDeploymentStatus(TestCase):
         - Asserts the response body contains the right version and status
         """
         session = setup_session()
-        headers = generate_headers()
+        headers = HttpService.generate_authentication_headers()
 
         status_response = session.get(
             f"{config.API_URL}/status",

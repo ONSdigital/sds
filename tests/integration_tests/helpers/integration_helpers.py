@@ -1,7 +1,6 @@
 import json
 import time
 
-import google.oauth2.id_token
 import requests
 from app.config.config_factory import config
 from app.repositories.buckets.bucket_loader import bucket_loader
@@ -41,31 +40,6 @@ def setup_session() -> requests.Session:
     session.mount("https://", adapter)
 
     return session
-
-
-def generate_headers() -> dict[str, str]:
-    """
-    Method to create headers for authentication if connecting to a remote version of the API.
-
-    Parameters:
-        None
-
-    Returns:
-        dict[str, str]: the headers required for remote authentication.
-    """
-    headers = {}
-
-    auth_req = google.auth.transport.requests.Request()
-    auth_token = google.oauth2.id_token.fetch_id_token(
-        auth_req, audience=config.OAUTH_CLIENT_ID
-    )
-
-    headers = {
-        "Authorization": f"Bearer {auth_token}",
-        "Content-Type": "application/json",
-    }
-
-    return headers
 
 
 def load_json(filepath: str) -> dict:

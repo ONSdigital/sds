@@ -3,7 +3,6 @@ import pytest
 from app.config.config_factory import config
 from tests.integration_tests.helpers.integration_helpers import (
     cleanup,
-    generate_headers,
     load_json,
     pubsub_setup,
     pubsub_teardown,
@@ -16,6 +15,8 @@ from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from tests.test_data.schema_test_data import test_survey_id_map
 from tests.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
 from tests.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
+from sds_common.services.http_service import HttpService
+
 
 class SchemaEndpointsIntegrationTest(TestCase):
     session = None
@@ -31,7 +32,7 @@ class SchemaEndpointsIntegrationTest(TestCase):
         inject_wait_time(3) # Inject wait time to allow resources properly set up
         # initialise class attributes
         self.session = setup_session()
-        self.headers = generate_headers()
+        self.headers = HttpService.generate_authentication_headers()
         self.test_schemas = []
         # We add the 2nd version of the schema first to ease the testing of the schema as metadata endpoint lists newest schema versions first
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))
