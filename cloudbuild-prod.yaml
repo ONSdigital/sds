@@ -25,6 +25,7 @@ steps:
         "run",
         "deploy",
         "sds",
+        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/ons-sds-ci/sds-perm/${PROJECT_ID}:latest",
         "--region",
