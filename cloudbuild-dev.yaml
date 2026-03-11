@@ -48,7 +48,6 @@ steps:
         "run",
         "deploy",
         "sds",
-        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}",
         "--region",
