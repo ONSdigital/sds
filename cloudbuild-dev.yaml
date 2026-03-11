@@ -1,5 +1,5 @@
 steps:
-  - name: docker
+  - name: gcr.io/cloud-builders/docker
     id: "docker build and push"
     entrypoint: sh
     args:
@@ -48,6 +48,7 @@ steps:
         "run",
         "deploy",
         "sds",
+        "--no-invoker-iam-check",
         "--image",
         "europe-west2-docker.pkg.dev/${PROJECT_ID}/sds/sds:${SHORT_SHA}",
         "--region",
