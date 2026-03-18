@@ -31,7 +31,7 @@ class PublisherService:
         self._verify_topic_exists(topic_path)
 
         self.publisher.publish(
-            topic_path, data=json.dumps(publish_data).encode("utf-8")
+            topic_path, data=json.dumps(publish_data.__dict__).encode("utf-8")
         )
 
     def _verify_topic_exists(self, topic_path: str) -> None:

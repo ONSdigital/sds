@@ -22,6 +22,7 @@ services:
       - STORAGE_EMULATOR_HOST=http://storage:9023
       - FIRESTORE_EMULATOR_HOST=firestore:8080
       - PUBSUB_EMULATOR_HOST=firestore:8085
+      - PUBSUB_PROJECT_ID=mock-project-id
       - FIRESTORE_PROJECT_ID=mock-project-id
       - SCHEMA_BUCKET_NAME=schema_bucket
       - DATASET_BUCKET_NAME=dataset_bucket
@@ -35,6 +36,7 @@ services:
       - PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error
       - SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json
       - FIRESTORE_DB_NAME=(default)
+      - SERVICE_ACCOUNT_JSON_FILE=test
       - SDS_APPLICATION_VERSION=development
     volumes:
       - ./app:/src

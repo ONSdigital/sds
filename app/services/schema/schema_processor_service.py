@@ -1,3 +1,4 @@
+import json
 import uuid
 
 import requests
@@ -5,7 +6,7 @@ import requests
 from app.config.config_factory import config
 from app.exception import exceptions
 from app.logging_config import logging
-from app.models.schema_models import SchemaMetadata
+from app.models.schema_models import SchemaMetadata, SchemaModel
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
@@ -34,8 +35,10 @@ class SchemaProcessorService:
             schema_id, stored_schema_filename, schema, survey_id
         )
 
+        schema__model = self.build_schema_model(schema)
+
         self.process_raw_schema_in_transaction(
-            schema_id, next_version_schema_metadata, schema, stored_schema_filename
+            schema_id, next_version_schema_metadata, schema__model
         )
 
         self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
@@ -46,12 +49,11 @@ class SchemaProcessorService:
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
-        schema: dict,
-        stored_schema_filename: str,
+        schema_model: SchemaModel,
     ):
         """
         Process the new schema by calling a transactional function that wrap the procedures
-        Commit if the function is sucessful, rolling back otherwise.
+        Commit if the function is successful, rolling back otherwise.
 
         Parameters:
         schema_id (str): The unique id of the new schema.
@@ -62,7 +64,7 @@ class SchemaProcessorService:
         try:
             logger.info("Beginning schema transaction...")
             self.schema_firebase_repository.perform_new_schema_transaction(
-                schema_id, next_version_schema_metadata, schema, stored_schema_filename
+                schema_id, next_version_schema_metadata, schema_model
             )
 
             logger.info("Schema transaction committed successfully.")
@@ -71,6 +73,19 @@ class SchemaProcessorService:
             logger.error(f"Performing schema transaction: exception raised: {exc}")
             logger.error("Rolling back schema transaction")
             raise exceptions.GlobalException from exc
+
+    def build_schema_model(self, schema: dict) -> SchemaModel:
+        """
+        Builds the schema model
+
+        Parameters:
+        schema (dict): the schema being processed.
+        """
+        schema_str = json.dumps(schema)
+        schema_model: SchemaModel = SchemaModel(**{
+            "schema": schema_str
+        })
+        return schema_model
 
     def build_next_version_schema_metadata(
         self,
@@ -88,7 +103,7 @@ class SchemaProcessorService:
         schema (dict): schema being processed.
         survey_id (str): the survey id of the schema.
         """
-        next_version_schema_metadata = {
+        next_version_schema_metadata: SchemaMetadata = SchemaMetadata(**{
             "guid": schema_id,
             "schema_location": stored_schema_filename,
             "sds_schema_version": self.calculate_next_schema_version(survey_id),
@@ -98,7 +113,7 @@ class SchemaProcessorService:
             ),
             "schema_version": self.get_schema_version_from_properties(schema),
             "title": schema["title"],
-        }
+        })
         return next_version_schema_metadata
 
     def calculate_next_schema_version(self, survey_id: str) -> int:
@@ -187,6 +202,24 @@ class SchemaProcessorService:
                 survey_id, version
             )
 
+    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
+        """
+        Gets the filename of the schema in bucket. If version is omitted,
+        the latest schema filename is retrieved
+
+        Parameters:
+        survey_id (str): the survey id of the schema
+        version (str): the sds schema version of the schema
+        """
+        if version is None:
+            return self.schema_firebase_repository.get_latest_schema_guid(
+                survey_id
+            )
+        else:
+            return self.schema_firebase_repository.get_guid_with_survey_id_and_version(
+                survey_id, version
+            )
+
     def get_schema_bucket_filename_from_guid(self, guid: str) -> str:
         """
         Gets the filename of the schema in bucket from guid
@@ -246,3 +279,12 @@ class SchemaProcessorService:
             raise exceptions.GlobalException from exc
 
         return survey_map_dict
+
+    def get_schema_from_guid(self, guid: str) -> dict:
+        """
+        Gets the schema from the schema bucket using the guid of the schema.
+
+        Parameters:
+        guid (str): the guid of the schema
+        """
+        return self.schema_firebase_repository.get_schema_from_guid(guid)

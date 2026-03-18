@@ -40,9 +40,6 @@ class IntegrationTestConfig(BaseSettings):
         self.TEST_SCHEMA_PATH = get_value_from_env(
             "TEST_SCHEMA_PATH", "test_data/json/schema.json"
         )
-        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        )
         self.PROJECT_ID = get_value_from_env("PROJECT_ID")
         self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
         self.API_URL = get_value_from_env("API_URL", "localhost")
@@ -58,7 +55,6 @@ class IntegrationTestConfig(BaseSettings):
     TIME_FORMAT: str = TIME_FORMAT_STRING
     SCHEMA_BUCKET_NAME: str
     TEST_SCHEMA_PATH: str
-    GOOGLE_APPLICATION_CREDENTIALS: str
     PROJECT_ID: str
     PUBLISH_SCHEMA_TOPIC_ID: str
     API_URL: str
@@ -139,16 +135,6 @@ class ServiceEmulatorDevelopmentConfig(Config):
     STORAGE_EMULATOR_HOST: str
     PUBSUB_EMULATOR_HOST: str
     FIRESTORE_DB_NAME: str
-
-
-class CloudDevelopmentConfig(Config):
-    def __init__(self):
-        super().__init__()
-        self.GOOGLE_APPLICATION_CREDENTIALS = get_value_from_env(
-            "GOOGLE_APPLICATION_CREDENTIALS"
-        )
-
-    GOOGLE_APPLICATION_CREDENTIALS: str
 
 
 class UnitTestingConfig(Config):

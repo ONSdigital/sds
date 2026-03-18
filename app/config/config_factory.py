@@ -1,6 +1,5 @@
 from app.config.config import (
     CloudBuildConfig,
-    CloudDevelopmentConfig,
     Config,
     IntegrationTestCloudbuildConfig,
     IntegrationTestConfig,
@@ -16,7 +15,7 @@ class ConfigFactory:
 
         config_mapping = {
             "docker-dev": ServiceEmulatorDevelopmentConfig,
-            "cloud-dev": CloudDevelopmentConfig,
+            "cloud-dev": Config,
             "unit": UnitTestingConfig,
             "cloud-build": CloudBuildConfig,
             "int-test": IntegrationTestConfig,
