@@ -34,7 +34,13 @@ class DatasetEndpointsIntegrationTest(TestCase):
     def setup_class(self) -> None:
         cleanup()
         self.session = setup_session()
-        self.headers = HttpService.generate_authentication_headers()
+        if config.CONF != "local-int-test":
+            self.headers = HttpService.generate_authentication_headers()
+        else:
+            self.headers = {
+                "Authorization": f"Bearer default",
+                "Content-Type": "application/json",
+            }
         self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=config.FIRESTORE_DB_NAME)
         self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_for_endpoints_test, dataset_unit_data_collection_for_endpoints_test)
         self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}

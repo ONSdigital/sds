@@ -2,10 +2,20 @@ from google.cloud import exceptions, storage
 
 import app.exception.exceptions as exception
 from app.config.config_factory import config
+from app.logging_config import logging
 
+logger = logging.getLogger(__name__)
 
 class BucketLoader:
-    def __init__(self):
+    schema_bucket: storage.Bucket | None = None
+    __storage_client: storage.Client
+
+    def __init__(self, storage_client: storage.Client) -> None:
+        self.__storage_client = storage_client
+
+        if config.CONF == "unit":
+            return
+
         self.schema_bucket = self._initialise_bucket(config.SCHEMA_BUCKET_NAME)
 
     def get_schema_bucket(self) -> storage.Bucket:
@@ -17,24 +27,30 @@ class BucketLoader:
     def _initialise_bucket(self, bucket_name) -> storage.Bucket:
         """
         Connect to google cloud storage client using PROJECT_ID
-        If bucket does not exists, then create the bucket
+        For local environment, if bucket does not exist, then create the bucket
         Else connect to the bucket
 
         Parameters:
         bucket_name (str): The bucket name
-        """
-        if config.CONF == "unit":
-            return None
 
-        __storage_client = storage.Client(project=config.PROJECT_ID)
+        Returns:
+        storage.Bucket: The bucket object
+        """
         try:
-            bucket = __storage_client.get_bucket(
+            bucket = self.__storage_client.get_bucket(
                 bucket_name,
             )
         except exceptions.NotFound as exc:
-            raise exception.ExceptionBucketNotFound from exc
+            logger.debug("Error getting bucket")
+
+            if config.CONF != "docker-dev":
+                raise exception.ExceptionBucketNotFound from exc
+
+            # For local environment, if bucket does not exist, create it
+            bucket = self.__storage_client.create_bucket(bucket_name)
 
         return bucket
 
 
-bucket_loader = BucketLoader()
+client = storage.Client(project=config.PROJECT_ID)
+bucket_loader = BucketLoader(client)

@@ -19,6 +19,7 @@ SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitio
 SDS_APPLICATION_VERSION=development
 
 start-cloud-dev:
+	gcloud auth application-default login && \
 	export CONF=cloud-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
@@ -98,24 +99,27 @@ unit-test:
 
 
 integration-test-local:
-	export CONF=int-test && \
+	export CONF=local-int-test && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
+    export DATASET_BUCKET_NAME=dataset_bucket && \
+    export SCHEMA_BUCKET_NAME=schema_bucket && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
 	export PROJECT_ID=mock-project-id && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
+	export PUBLISH_SCHEMA_TOPIC_ID=ons-sds-publish-schema && \
+	export PUBLISH_DATASET_TOPIC_ID=ons-sds-publish-dataset && \
+	export PUBLISH_DATASET_ERROR_TOPIC_ID=ons-sds-publish-dataset-error && \
 	export API_URL=${LOCAL_URL} && \
 	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
+	export SDS_APPLICATION_VERSION=development && \
+	export FIRESTORE_EMULATOR_HOST=firestore:8080 && \
+	export STORAGE_EMULATOR_HOST=http://storage:9023 && \
+	export PUBSUB_EMULATOR_HOST=firestore:8085 && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+
 
 integration-test-sandbox:
 	export CONF=int-test && \

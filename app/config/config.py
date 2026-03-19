@@ -64,6 +64,46 @@ class IntegrationTestConfig(BaseSettings):
     SDS_APPLICATION_VERSION: str
 
 
+class LocalIntegrationTestConfig(BaseSettings):
+    def __init__(self):
+        super().__init__()
+        self.CONF = get_value_from_env("CONF")
+        self.TIME_FORMAT = TIME_FORMAT_STRING
+        self.SCHEMA_BUCKET_NAME = get_value_from_env(
+            "SCHEMA_BUCKET_NAME", "test_schema_bucket"
+        )
+        self.TEST_SCHEMA_PATH = get_value_from_env(
+            "TEST_SCHEMA_PATH", "test_data/json/schema.json"
+        )
+        self.PROJECT_ID = get_value_from_env("PROJECT_ID")
+        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
+        self.API_URL = get_value_from_env("API_URL", "localhost")
+        self.OAUTH_CLIENT_ID = get_value_from_env("OAUTH_CLIENT_ID", "localhost")
+        self.SURVEY_MAP_URL = get_value_from_env(
+            "SURVEY_MAP_URL",
+            "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json",
+        )
+        self.FIRESTORE_EMULATOR_HOST = get_value_from_env("FIRESTORE_EMULATOR_HOST")
+        self.STORAGE_EMULATOR_HOST = get_value_from_env("STORAGE_EMULATOR_HOST")
+        self.PUBSUB_EMULATOR_HOST = get_value_from_env("PUBSUB_EMULATOR_HOST")
+        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
+
+    CONF: str
+    TIME_FORMAT: str = TIME_FORMAT_STRING
+    SCHEMA_BUCKET_NAME: str
+    TEST_SCHEMA_PATH: str
+    PROJECT_ID: str
+    PUBLISH_SCHEMA_TOPIC_ID: str
+    API_URL: str
+    OAUTH_CLIENT_ID: str
+    SURVEY_MAP_URL: str
+    FIRESTORE_DB_NAME: str = "(default)"
+    SDS_APPLICATION_VERSION: str
+    FIRESTORE_EMULATOR_HOST: str
+    STORAGE_EMULATOR_HOST: str
+    PUBSUB_EMULATOR_HOST: str
+
+
 class IntegrationTestCloudbuildConfig(BaseSettings):
     def __init__(self):
         super().__init__()

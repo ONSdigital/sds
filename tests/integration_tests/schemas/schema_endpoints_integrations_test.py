@@ -32,7 +32,13 @@ class SchemaEndpointsIntegrationTest(TestCase):
         inject_wait_time(3) # Inject wait time to allow resources properly set up
         # initialise class attributes
         self.session = setup_session()
-        self.headers = HttpService.generate_authentication_headers()
+        if config.CONF != "local-int-test":
+            self.headers = HttpService.generate_authentication_headers()
+        else:
+            self.headers = {
+                "Authorization": f"Bearer default",
+                "Content-Type": "application/json",
+            }
         self.test_schemas = []
         # We add the 2nd version of the schema first to ease the testing of the schema as metadata endpoint lists newest schema versions first
         self.test_schemas.append(load_json(f"{config.TEST_SCHEMA_PATH}schema_2.json"))

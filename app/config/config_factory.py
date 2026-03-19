@@ -5,6 +5,7 @@ from app.config.config import (
     IntegrationTestConfig,
     ServiceEmulatorDevelopmentConfig,
     UnitTestingConfig,
+    LocalIntegrationTestConfig,
 )
 from app.config.config_helpers import get_value_from_env
 
@@ -19,6 +20,7 @@ class ConfigFactory:
             "unit": UnitTestingConfig,
             "cloud-build": CloudBuildConfig,
             "int-test": IntegrationTestConfig,
+            "local-int-test": LocalIntegrationTestConfig,
             "int-test-cloudbuild": IntegrationTestCloudbuildConfig,
         }
 
