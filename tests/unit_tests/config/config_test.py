@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from app.config import config
+from app import config
 
 
 class testConfigVars:
@@ -68,7 +68,7 @@ class ConfigTest(TestCase):
 
     def test_set_Config(self):
         """
-        Test that setting the default config object works as intended.
+        Test that setting the default config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
 
@@ -83,7 +83,7 @@ class ConfigTest(TestCase):
 
     def test_set_CloudBuildConfig(self):
         """
-        Test that setting the cloud build config object works as intended.
+        Test that setting the cloud build config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
@@ -98,7 +98,7 @@ class ConfigTest(TestCase):
 
     def test_set_ServiceEmulatorDevelopementConfig(self):
         """
-        Test that setting the service emulator for development config object works as intended.
+        Test that setting the service emulator for development config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
@@ -117,7 +117,7 @@ class ConfigTest(TestCase):
 
     def test_set_CloudDevelopmentConfig(self):
         """
-        Test that setting the cloud development config object works as intended.
+        Test that setting the cloud development config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
@@ -135,7 +135,7 @@ class ConfigTest(TestCase):
 
     def test_set_UnitTestingConfig(self):
         """
-        Test that setting the unit testing config object works as intended.
+        Test that setting the unit testing config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["TEST_SCHEMA_PATH"] = testConfigVars.schema_path
@@ -153,7 +153,7 @@ class ConfigTest(TestCase):
 
     def test_set_IntegrationTestConfig(self):
         """
-        Test that setting the unit testing config object works as intended.
+        Test that setting the unit testing config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name
@@ -173,7 +173,7 @@ class ConfigTest(TestCase):
 
     def test_set_IntegrationTestCloudBuildConfig(self):
         """
-        Test that setting the unit testing config object works as intended.
+        Test that setting the unit testing config-to-be-deleted object works as intended.
         """
         os.environ["CONF"] = testConfigVars.conf
         os.environ["SCHEMA_BUCKET_NAME"] = testConfigVars.schema_bucket_name

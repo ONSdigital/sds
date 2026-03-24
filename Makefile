@@ -20,7 +20,6 @@ SURVEY_MAP_URL=https://raw.githubusercontent.com/ONSdigital/sds-schema-definitio
 SDS_APPLICATION_VERSION=development
 
 start-cloud-dev:
-	export CONF=cloud-dev && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
@@ -29,26 +28,6 @@ start-cloud-dev:
 	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
 	export LOG_LEVEL=${LOG_LEVEL} && \
 	export PROJECT_ID=${PROJECT_ID} && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
-	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m uvicorn main:app --reload --port 3033
-
-start-docker-dev:
-	export CONF=docker-dev && \
-	export PYTHONPATH=${PYTHONPATH} && \
-	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
-	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
-	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
-	export DATASET_BUCKET_NAME=my-dataset-bucket && \
-	export SCHEMA_BUCKET_NAME=my-schema-bucket && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
 	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
@@ -98,30 +77,24 @@ unit-test:
 	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
 	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
 
-
+# Spinning up emulators in docker is required to run the local integration tests.
 integration-test-local:
-	export CONF=int-test && \
+	export CONF='local-int-tests' && \
+	export PROJECT_ID='emulated-project-id' && \
+	export SCHEMA_BUCKET_NAME='emulated-schema-bucket' && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
 	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
 	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
 	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	export PROJECT_ID=mock-project-id && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
+	export PUBLISH_SCHEMA_TOPIC_ID='emulated-sds-schema-topic' && \
 	export API_URL=${LOCAL_URL} && \
-	export OAUTH_CLIENT_ID=${LOCAL_URL} && \
 	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
+	export FIRESTORE_DB_NAME="sds-firestore" && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 integration-test-sandbox:
-	export CONF=int-test && \
+	export CONF='sandbox-int-tests' && \
 	export PYTHONPATH=${PYTHONPATH} && \
     export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
     export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
@@ -143,7 +116,7 @@ integration-test-sandbox:
 
 #For use only by automated cloudbuild, is not intended to work locally.
 integration-test-cloudbuild:
-	export CONF=int-test-cloudbuild && \
+	export CONF='cloudbuild-int-tests' && \
     export DATASET_BUCKET_NAME=${INT_DATASET_BUCKET_NAME} && \
     export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
 	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
@@ -163,7 +136,6 @@ integration-test-cloudbuild:
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 generate-spec:
-	export CONF=cloud-dev && \
 	export PYTHONPATH=. && \
 	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
 	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \

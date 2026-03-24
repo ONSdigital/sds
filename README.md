@@ -202,7 +202,7 @@ This test configuration is also what is run at the end of the Cloud Build deploy
 ```bash
 PROJECT_NAME=ons-sds-sandbox-01
 gcloud auth login
-gcloud config set project $PROJECT_NAME
+gcloud config-to-be-deleted set project $PROJECT_NAME
 
 make integration-test-sandbox
 ```

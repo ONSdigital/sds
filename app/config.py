@@ -1,32 +1,26 @@
 from pydantic_settings import BaseSettings
 
-from app.config.config_helpers import get_value_from_env
-
 TIME_FORMAT_STRING = "%Y-%m-%dT%H:%M:%SZ"
 
 
-class Config(BaseSettings):
-    def __init__(self):
-        super().__init__()
-        self.CONF = get_value_from_env("CONF")
-        self.TIME_FORMAT = TIME_FORMAT_STRING
-        self.SCHEMA_BUCKET_NAME = get_value_from_env("SCHEMA_BUCKET_NAME")
-        self.LOG_LEVEL = get_value_from_env("LOG_LEVEL")
-        self.PROJECT_ID = get_value_from_env("PROJECT_ID")
-        self.PUBLISH_SCHEMA_TOPIC_ID = get_value_from_env("PUBLISH_SCHEMA_TOPIC_ID")
-        self.SURVEY_MAP_URL = get_value_from_env("SURVEY_MAP_URL")
-        self.FIRESTORE_DB_NAME = get_value_from_env("FIRESTORE_DB_NAME")
-        self.SDS_APPLICATION_VERSION = get_value_from_env("SDS_APPLICATION_VERSION")
+class Settings(BaseSettings):
+    """Application settings"""
 
-    CONF: str
+    CONF: str = ""
     TIME_FORMAT: str = TIME_FORMAT_STRING
-    SCHEMA_BUCKET_NAME: str
-    LOG_LEVEL: str
-    PROJECT_ID: str
-    PUBLISH_SCHEMA_TOPIC_ID: str
-    SURVEY_MAP_URL: str
-    FIRESTORE_DB_NAME: str
-    SDS_APPLICATION_VERSION: str
+    SCHEMA_BUCKET_NAME: str = "sds-bucket-name"
+    LOG_LEVEL: str = "INFO"
+    PROJECT_ID: str = "ons-sds-ci"
+    PUBLISH_SCHEMA_TOPIC_ID: str = "ons-sds-publish-schema"
+    SURVEY_MAP_URL: str = "https://raw.githubusercontent.com/ONSdigital/sds-schema-definitions/main/mapping/survey_map.json"
+    FIRESTORE_DB_NAME: str = "(default)"
+    SDS_APPLICATION_VERSION: str = "development"
+    TEST_SCHEMA_PATH: str = "test_data/json/schema.json"
+    API_URL: str = "only required for integration tests"
+    URL_SCHEME: str = "only required for integration tests"
+
+
+settings = Settings()
 
 
 class IntegrationTestConfig(BaseSettings):
