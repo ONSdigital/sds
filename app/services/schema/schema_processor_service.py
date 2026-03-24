@@ -2,7 +2,7 @@ import uuid
 
 import requests
 
-from app.config.config_factory import config
+from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata
@@ -88,17 +88,17 @@ class SchemaProcessorService:
         schema (dict): schema being processed.
         survey_id (str): the survey id of the schema.
         """
-        next_version_schema_metadata = {
+        next_version_schema_metadata = SchemaMetadata(**{
             "guid": schema_id,
             "schema_location": stored_schema_filename,
             "sds_schema_version": self.calculate_next_schema_version(survey_id),
             "survey_id": survey_id,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
+                DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
             ),
             "schema_version": self.get_schema_version_from_properties(schema),
             "title": schema["title"],
-        }
+        })
         return next_version_schema_metadata
 
     def calculate_next_schema_version(self, survey_id: str) -> int:
@@ -211,16 +211,16 @@ class SchemaProcessorService:
             logger.info("Publishing schema metadata to topic...")
             publisher_service.publish_data_to_topic(
                 next_version_schema_metadata,
-                config.PUBLISH_SCHEMA_TOPIC_ID,
+                settings.PUBLISH_SCHEMA_TOPIC_ID,
             )
             logger.debug(
-                f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
+                f"Schema metadata {next_version_schema_metadata} published to topic {settings.PUBLISH_SCHEMA_TOPIC_ID}"
             )
             logger.info("Schema metadata published successfully.")
         except Exception as exc:
             logger.debug(
                 f"Schema metadata {next_version_schema_metadata} failed to publish to topic "
-                f"{config.PUBLISH_SCHEMA_TOPIC_ID} with error {exc}"
+                f"{settings.PUBLISH_SCHEMA_TOPIC_ID} with error {exc}"
             )
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException from exc
@@ -232,7 +232,7 @@ class SchemaProcessorService:
         try:
             logger.info("Fetching the survey mapping data")
 
-            url = config.SURVEY_MAP_URL
+            url = settings.SURVEY_MAP_URL
             response = requests.get(url, timeout=30)
             logger.debug(f"Response is {response}")
 

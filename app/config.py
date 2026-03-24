@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-
+'''
 class IntegrationTestConfig(BaseSettings):
     def __init__(self):
         super().__init__()
@@ -151,3 +151,4 @@ class UnitTestingConfig(Config):
         self.TEST_SCHEMA_PATH = get_value_from_env("TEST_SCHEMA_PATH")
 
     TEST_SCHEMA_PATH: str
+'''

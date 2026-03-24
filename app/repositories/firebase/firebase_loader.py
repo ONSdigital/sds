@@ -1,6 +1,6 @@
 from google.cloud import firestore
 
-from app.config.config_factory import config
+from app.config import settings
 
 
 class FirebaseLoader:
@@ -38,17 +38,17 @@ class FirebaseLoader:
         """
         Connect to the firestore client using PROJECT_ID
         """
-        if config.CONF == "unit":
+        if settings.CONF == "unit":
             return None
         return firestore.Client(
-            project=config.PROJECT_ID, database=config.FIRESTORE_DB_NAME
+            project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME
         )
 
     def _set_collection(self, collection) -> firestore.CollectionReference:
         """
         Setup the collection reference for schemas and datasets
         """
-        if config.CONF == "unit":
+        if settings.CONF == "unit":
             return None
         return self.client.collection(collection)
 
