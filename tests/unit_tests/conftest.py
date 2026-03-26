@@ -57,8 +57,8 @@ def test_client():
     """
     from app.main import app
 
-    dataset_client = TestClient(app)
-    yield dataset_client
+    client = TestClient(app)
+    yield client
 
 
 @pytest.fixture

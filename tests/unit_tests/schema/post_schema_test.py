@@ -1,8 +1,10 @@
 from unittest import TestCase
 from unittest.mock import MagicMock
 
-import pytest
-from app.config.config_factory import config
+from fastapi.testclient import TestClient
+from app.main import app
+from app.config import settings
+from app.models.schema_models import SchemaMetadata
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.publisher_service import PublisherService
@@ -11,11 +13,8 @@ from tests.test_data import schema_test_data
 
 
 class PostSchemaTest(TestCase):
-    @pytest.fixture(autouse=True)
-    def prepare_fixture(self, test_client):
-        self.test_client = test_client
-
     def setUp(self):
+        self.test_client = TestClient(app)
         self.store_schema_json_stash = SchemaBucketRepository.store_schema_json
         self.get_latest_schema_metadata_with_survey_id_stash = (
             SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id
@@ -94,13 +93,13 @@ class PostSchemaTest(TestCase):
         )
 
         PublisherService.publish_data_to_topic.assert_called_once_with(
-            schema_test_data.test_post_schema_metadata_updated_version_response,
-            config.PUBLISH_SCHEMA_TOPIC_ID,
+            SchemaMetadata(**schema_test_data.test_post_schema_metadata_updated_version_response),
+            settings.PUBLISH_SCHEMA_TOPIC_ID,
         )
 
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
-            schema_test_data.test_post_schema_metadata_updated_version_response,
+            SchemaMetadata(**schema_test_data.test_post_schema_metadata_updated_version_response),
             schema_test_data.test_post_schema_body,
             f"{schema_test_data.test_survey_id}/{schema_test_data.test_guid}.json",
         )
