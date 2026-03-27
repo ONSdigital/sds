@@ -5,7 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 from google.cloud import firestore, storage
+
+from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
+from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
+from app.services.shared.publisher_service import PublisherService
 
 from tests.test_data import shared_test_data
 

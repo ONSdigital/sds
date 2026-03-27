@@ -1,6 +1,6 @@
 import pytest
 from unittest import TestCase
-from app.config.config_factory import config
+from app.config import settings
 from tests.test_data.dataset_test_data import (
     dataset_metadata_collection_for_endpoints_test, 
     dataset_unit_data_collection_for_endpoints_test,
@@ -53,7 +53,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}&"
             f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
             headers = self.headers
@@ -78,7 +78,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/all_dataset_metadata",
+            f"{settings.API_URL}/v1/all_dataset_metadata",
             headers = self.headers
         )
 
@@ -102,7 +102,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&identifier={dataset_unit_data_id[0]}",
             headers = self.headers
         )
@@ -122,7 +122,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset_metadata_collection_for_endpoints_test[1]['survey_id']}&"
             f"period_id={dataset_metadata_collection_for_endpoints_test[1]['period_id']}",
             headers = self.headers
@@ -149,7 +149,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
             headers = self.headers
         )
@@ -169,7 +169,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}",
             headers = self.headers
         )
@@ -188,7 +188,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata",
+            f"{settings.API_URL}/v1/dataset_metadata",
             headers = self.headers
         )
 
@@ -206,7 +206,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"{random_string}",
             headers = self.headers
         )
@@ -226,7 +226,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset_404_test_data['survey_id']}&period_id={dataset_404_test_data['period_id']}",
             headers = self.headers
         )
@@ -245,7 +245,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/dataset_metadata?"
+            f"{settings.API_URL}/v1/dataset_metadata?"
             f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}&"
             f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
             headers = self.invalid_token_headers
@@ -263,7 +263,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/all_dataset_metadata",
+            f"{settings.API_URL}/v1/all_dataset_metadata",
             headers = self.invalid_token_headers
         )
 
@@ -281,7 +281,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"identifier={dataset_unit_data_id[0]}",
             headers = self.headers
         )
@@ -301,7 +301,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}",
             headers = self.headers
         )
@@ -321,7 +321,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"dataset_id={dataset_404_test_data['dataset_id']}&identifier={dataset_404_test_data['identifier']}",
             headers = self.headers
         )
@@ -340,7 +340,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
 
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&"
             f"identifier={dataset_unit_data_id[0]}",
             headers = self.invalid_token_headers
@@ -360,7 +360,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data",
+            f"{settings.API_URL}/v1/unit_data",
             headers = self.headers
         )
 
@@ -379,7 +379,7 @@ class DatasetEndpointsIntegrationTest(TestCase):
         """
             
         response = self.session.get(
-            f"{config.API_URL}/v1/unit_data?"
+            f"{settings.API_URL}/v1/unit_data?"
             f"{random_string}",
             headers = self.headers
         )

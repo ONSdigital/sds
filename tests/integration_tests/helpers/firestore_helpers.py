@@ -1,5 +1,5 @@
 import requests
-from app.config.config_factory import config
+from app.config import settings
 from firebase_admin import firestore
 from tests.test_data.dataset_test_data import dataset_unit_data_id
 
@@ -86,7 +86,7 @@ def delete_local_firestore_data():
         None
     """
     requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
+        f"http://localhost:8080/emulator/v1/projects/{settings.PROJECT_ID}/databases/(default)/documents"
     )
 
 def upload_dataset(firestore_client, metadata_collection, unit_data_collection):

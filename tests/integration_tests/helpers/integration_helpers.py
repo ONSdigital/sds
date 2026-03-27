@@ -2,7 +2,7 @@ import json
 import time
 
 import requests
-from app.config.config_factory import config
+from app.config import settings
 from app.repositories.buckets.bucket_loader import bucket_loader
 from app.repositories.firebase.firebase_loader import firebase_loader
 from google.cloud import storage
@@ -67,7 +67,7 @@ def cleanup() -> None:
     Returns:
         None
     """
-    if config.OAUTH_CLIENT_ID.__contains__("local"):
+    if settings.API_URL.__contains__("local"):
         delete_local_firestore_data()
 
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
@@ -114,7 +114,8 @@ def inject_wait_time(seconds: int) -> None:
     Returns:
         None
     """
-    time.sleep(seconds)
+    if not settings.API_URL.__contains__("local"):
+        time.sleep(seconds)
 
 
 
@@ -124,7 +125,7 @@ def force_run_schedule_job():
     """
     client = scheduler_v1.CloudSchedulerClient()
     request = scheduler_v1.RunJobRequest(
-        name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
+        name=f"projects/{settings.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
     )
     client.run_job(request=request)
 

@@ -3,7 +3,7 @@ from unittest import TestCase
 from fastapi import status
 import pytest
 
-from app.config.config_factory import config
+from app.config import settings
 from tests.integration_tests.helpers.integration_helpers import (
     setup_session,
 )
@@ -25,12 +25,12 @@ class TestHttpGetDeploymentStatus(TestCase):
         headers = HttpService.generate_authentication_headers()
 
         status_response = session.get(
-            f"{config.API_URL}/status",
+            f"{settings.API_URL}/status",
             headers=headers,
         )
         response_as_json = status_response.json()
         assert status_response.status_code == status.HTTP_200_OK
-        assert response_as_json["version"] == config.SDS_APPLICATION_VERSION
+        assert response_as_json["version"] == settings.SDS_APPLICATION_VERSION
         assert response_as_json["status"] == "OK"
 
 
@@ -42,7 +42,7 @@ class TestHttpGetDeploymentStatus(TestCase):
         - Sends a GET request to the /status endpoint with an unauthorized token
         - Asserts the response status code is 401
         """
-        if config.OAUTH_CLIENT_ID.__contains__("local"):
+        if settings.API_URL.__contains__("local"):
             pass
         else:
             session = setup_session()
@@ -52,7 +52,7 @@ class TestHttpGetDeploymentStatus(TestCase):
             }
 
             status_response = session.get(
-                f"{config.API_URL}/status",
+                f"{settings.API_URL}/status",
                 headers=headers,
             )
 

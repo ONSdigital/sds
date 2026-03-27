@@ -25,6 +25,31 @@ class BucketLoader:
         """
         return self.schema_bucket
 
+    def _create_bucket(self, bucket_name: str) -> storage.Bucket | None:
+        """
+        Create a bucket in Google cloud storage
+
+        Parameters:
+        bucket_name (str): The bucket name to create
+
+        Returns:
+        storage.Bucket | None: The created bucket object or None if the bucket already exists
+        """
+        try:
+            bucket = self.__storage_client.create_bucket(
+                bucket_name,
+                project=settings.PROJECT_ID,
+            )
+
+            logger.debug(f"Bucket created: {bucket_name}")
+
+            return bucket
+
+        except exceptions.Conflict:
+            logger.debug("Bucket already exists. Creation is skipped")
+
+            return None
+
     def _initialise_bucket(self, bucket_name) -> storage.Bucket:
         """
         Connect to google cloud storage client using PROJECT_ID
@@ -45,7 +70,7 @@ class BucketLoader:
                 raise ExceptionBucketNotFound from exc
 
             # For local environment, if bucket does not exist, create it
-            bucket = self.__storage_client.create_bucket(bucket_name)
+            bucket = self._create_bucket(bucket_name)
 
         return bucket
 
