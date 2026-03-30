@@ -167,6 +167,8 @@ class TestSchemaEndpoints:
 
             assert latest_version_schema_response.status_code == 200
             assert latest_version_schema_response.json() == test_schema_list[0]
+
+        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
         
 
     def test_get_schema_v2(self, post_schema, test_schema_list):
@@ -192,6 +194,8 @@ class TestSchemaEndpoints:
 
                 assert set_guid_schema_response.status_code == 200
                 assert set_guid_schema_response.json() == test_schema_list[index]
+
+        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
 
     def test_survey_id_map(self):

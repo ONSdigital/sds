@@ -1,6 +1,8 @@
 import pytest
-from unittest import TestCase
+
 from app.config import settings
+
+from tests.integration_tests.helpers.utils import make_iap_request
 from tests.test_data.dataset_test_data import (
     dataset_metadata_collection_for_endpoints_test, 
     dataset_unit_data_collection_for_endpoints_test,
@@ -8,43 +10,17 @@ from tests.test_data.dataset_test_data import (
     dataset_404_test_data,
     random_string,
 )
-from tests.integration_tests.helpers.integration_helpers import (
-    cleanup,
-    setup_session,
-)
-from tests.integration_tests.helpers.firestore_helpers import upload_dataset
-from google.cloud import firestore
-from sds_common.services.http_service import HttpService
 
 
-class DatasetEndpointsIntegrationTest(TestCase):
+class TestDatasetEndpoints:
     """
     Integration tests for the Dataset Endpoints.
 
     This test covers fetching metadata and unit data from firestore,
     and checking that dataset metadata and unit data is handled correctly.
     """
-    session = None
-    headers = None
-    firestore_client = None
-    dataset = None
-    invalid_token_headers = None
-    
-    @classmethod
-    def setup_class(self) -> None:
-        cleanup()
-        self.session = setup_session()
-        self.headers = HttpService.generate_authentication_headers()
-        self.firestore_client = firestore.Client(project=config.PROJECT_ID, database=config.FIRESTORE_DB_NAME)
-        self.dataset = upload_dataset(self.firestore_client, dataset_metadata_collection_for_endpoints_test, dataset_unit_data_collection_for_endpoints_test)
-        self.invalid_token_headers = {"Authorization": "Bearer invalid_token"}
 
-    @classmethod
-    def teardown_class(self) -> None:
-        cleanup()
-
-    @pytest.mark.order(1)
-    def test_get_dataset_metadata_collection(self):
+    def test_get_dataset_metadata_collection(self, setup_dataset):
         """
         Test the GET /v1/dataset_metadata endpoint by retrieving dataset metadata.
 
@@ -52,24 +28,20 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Asserts the metadata retrieved matches the expected structure.
         """
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}&"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
         )
         
-        expected_data = [
-            {
-                **dataset_metadata_collection_for_endpoints_test[0],
-            }
-        ]
+        expected_data = [dataset_metadata_collection_for_endpoints_test[0].__dict__]
 
         assert response.status_code == 200
         assert response.json() == expected_data
 
-    @pytest.mark.order(2)
-    def test_get_all_dataset_metadata_collection(self):
+
+    def test_get_all_dataset_metadata_collection(self, setup_dataset):
         """
         Test the GET /v1/dataset_metadata endpoint by retrieving all dataset metadata.
 
@@ -77,23 +49,21 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Asserts the metadata retrieved matches the expected structure.
         """
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/all_dataset_metadata",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/all_dataset_metadata",
         )
 
         assert response.status_code == 200
 
         # Filter out the metadata that are not for one of the test survey_ids (existing Firestore data is unpredictable)
-        test_survey_ids = [metadata['survey_id'] for metadata in dataset_metadata_collection_for_endpoints_test]
-        filtered_response = [metadata for metadata in response.json() if metadata['survey_id'] in test_survey_ids]
+        test_survey_ids = [dataset_metadata.survey_id for dataset_metadata in dataset_metadata_collection_for_endpoints_test]
+        filtered_response = [dataset_metadata for dataset_metadata in response.json() if dataset_metadata['survey_id'] in test_survey_ids]
 
-        self.assertEqual(filtered_response, dataset_metadata_collection_for_endpoints_test)
+        assert filtered_response == [dataset_metadata.__dict__ for dataset_metadata in dataset_metadata_collection_for_endpoints_test]
 
 
-
-    @pytest.mark.order(3)
-    def test_get_dataset_unit_supplementary_data(self):
+    def test_get_dataset_unit_supplementary_data(self, setup_dataset):
         """
         Test the /v1/unit_data endpoint by retrieving unit data for a dataset
 
@@ -101,18 +71,17 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Asserts if unit data matches the expected structure
         """
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&identifier={dataset_unit_data_id[0]}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
+            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}&identifier={dataset_unit_data_id[0]}",
         )
 
         assert response.status_code == 200
-        assert response.json() == dataset_unit_data_collection_for_endpoints_test[0]
+        assert response.json() == dataset_unit_data_collection_for_endpoints_test[0].__dict__
 
 
-    @pytest.mark.order(4)
-    def test_dataset_without_title(self):
+    def test_dataset_without_title(self, setup_dataset):
         """
         Test the /v1/dataset_metadata endpoint retrieving a dataset metadata without a title
 
@@ -121,24 +90,19 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks if the metadata matches the expected structure without a title
         """
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[1]['survey_id']}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[1]['period_id']}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[1].survey_id}&"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[1].period_id}",
         )
 
-        expected_data = [
-            {
-                **dataset_metadata_collection_for_endpoints_test[1],
-            }
-        ]
+        expected_data = [dataset_metadata_collection_for_endpoints_test[1].__dict__]
 
         assert response.status_code == 200
         assert response.json() == expected_data
     
 
-    @pytest.mark.order(5)
     def test_dataset_metadata_without_survey_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing survey_id parameter
@@ -148,17 +112,16 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
 
 
-    @pytest.mark.order(6)
     def test_dataset_metadata_without_period_id(self):
         """
         Test for /v1/dataset_metadata endpoint without passing period_id parameter
@@ -168,16 +131,16 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}",
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
 
-    @pytest.mark.order(7)
+
     def test_dataset_metadata_no_valid_query_params(self):
         """
         Test for /v1/dataset_metadata endpoint without passing valid query parameters
@@ -187,15 +150,15 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata",
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
     
-    @pytest.mark.order(8)
+
     def test_dataset_metadata_garbage_query_params(self):
         """
         Test for /v1/dataset_metadata endpoint with garbage query parameters
@@ -205,18 +168,17 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
             f"{random_string}",
-            headers = self.headers
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
 
 
-    @pytest.mark.order(9)
-    def test_dataset_metadata_404_response(self):
+    def test_dataset_metadata_404_response(self, setup_dataset):
         """
         Test for /v1/dataset_metadata endpoint when no dataset metadata is retrieved
         
@@ -225,17 +187,16 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
             f"survey_id={dataset_404_test_data['survey_id']}&period_id={dataset_404_test_data['period_id']}",
-            headers = self.headers
         )
 
         assert response.status_code == 404
         assert response.json()["message"] == "No datasets found"
 
 
-    @pytest.mark.order(10)
     def test_dataset_metadata_unauthorised(self):
         """
         Test the /v1/dataset_metadata endpoint with an unauthorized token
@@ -243,17 +204,20 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Get request to retrieve metadata with an unauthorized token
         - Assert status code is 401
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_dataset_metadata_unauthorised on local environment")
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0]['survey_id']}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0]['period_id']}",
-            headers = self.invalid_token_headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/dataset_metadata?"
+            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}&"
+            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
+            unauthenticated=True
         )
 
         assert response.status_code == 401
 
-    @pytest.mark.order(11)
+
     def test_all_dataset_metadata_unauthorised(self):
         """
         Test the /v1/all_dataset_metadata endpoint with an unauthorized token
@@ -261,16 +225,18 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Get request to retrieve all metadata with an unauthorized token
         - Assert status code is 401
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_all_dataset_metadata_unauthorised on local environment")
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/all_dataset_metadata",
-            headers = self.invalid_token_headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/all_dataset_metadata",
+            unauthenticated=True
         )
 
         assert response.status_code == 401
 
 
-    @pytest.mark.order(12)
     def test_dataset_unit_data_without_dataset_id(self):
         """
         Test for /v1/unit_data endpoint without passing dataset_id parameter
@@ -280,17 +246,16 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
             f"identifier={dataset_unit_data_id[0]}",
-            headers = self.headers
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
 
-    @pytest.mark.order(13)
     def test_dataset_unit_data_without_identifier(self):
         """
         Test for /v1/unit_data endpoint without passing identifier parameter
@@ -300,18 +265,17 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
+            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}",
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
     
 
-    @pytest.mark.order(14)
-    def test_dataset_unit_data_404_response(self):
+    def test_dataset_unit_data_404_response(self, setup_dataset):
         """
         Test for /v1/unit_data endpoint when no unit data is retrieved
         
@@ -320,17 +284,16 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
             f"dataset_id={dataset_404_test_data['dataset_id']}&identifier={dataset_404_test_data['identifier']}",
-            headers = self.headers
         )
 
         assert response.status_code == 404
         assert response.json()["message"] == "No unit data found"
 
 
-    @pytest.mark.order(15)
     def test_dataset_unit_data_unauthorised(self):
         """
         Test the /v1/unit_data endpoint with an unauthorized token
@@ -338,18 +301,20 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Get request to retrieve unit data with an unauthorized token
         - Assert status code is 401
         """
+        if settings.CONF == "local-int-tests":
+            pytest.skip("Skipping test_dataset_unit_data_unauthorised on local environment")
 
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0]['dataset_id']}&"
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
+            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}&"
             f"identifier={dataset_unit_data_id[0]}",
-            headers = self.invalid_token_headers
+            unauthenticated=True
         )
 
         assert response.status_code == 401
 
 
-    @pytest.mark.order(16)
     def test_dataset_unit_data_no_valid_query_params(self):
         """
         Test for /v1/unit_data endpoint without passing valid query parameters
@@ -359,16 +324,15 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data",
-            headers = self.headers
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data",
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
 
-    
-    @pytest.mark.order(17)
+
     def test_dataset_unit_data_garbage_query_params(self):
         """
         Test for /v1/unit_data endpoint with garbage query parameters
@@ -378,12 +342,11 @@ class DatasetEndpointsIntegrationTest(TestCase):
         - Checks the error message in the response
         """
             
-        response = self.session.get(
-            f"{settings.API_URL}/v1/unit_data?"
+        response = make_iap_request(
+            "GET",
+            f"/v1/unit_data?"
             f"{random_string}",
-            headers = self.headers
         )
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
-        

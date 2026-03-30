@@ -1,8 +1,13 @@
 import pytest
+from google.cloud import firestore
 
 from app.config import settings
-from tests.integration_tests.helpers.integration_helpers import load_json
+from app.models.dataset_models import DatasetMetadata
+from tests.integration_tests.helpers.firestore_helpers import upload_dataset
+from tests.integration_tests.helpers.integration_helpers import load_json, cleanup
 from tests.integration_tests.helpers.utils import make_iap_request
+from tests.test_data.dataset_test_data import dataset_metadata_collection_for_endpoints_test, \
+    dataset_unit_data_collection_for_endpoints_test
 from tests.test_data.shared_test_data import test_survey_id_list
 
 
@@ -28,3 +33,18 @@ def post_schema(test_schema_list):
             f"/v1/schema?survey_id={survey_id}",
             json=test_schema_list[0]
         )
+
+@pytest.fixture
+def setup_dataset():
+    cleanup()
+
+    firestore_client = firestore.Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
+    dataset_metadata: list[DatasetMetadata] = upload_dataset(
+        firestore_client,
+        dataset_metadata_collection_for_endpoints_test,
+        dataset_unit_data_collection_for_endpoints_test
+    )
+
+    yield dataset_metadata
+
+    cleanup()

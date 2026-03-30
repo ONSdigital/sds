@@ -62,7 +62,7 @@ test_data_collection_end_missing_id: CollectionExerciseEndData = (
 
 # integration test - dataset endpoints - test data
 dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
-    {
+    DatasetMetadata(**{
         "dataset_id": "0",
         "survey_id": f"{test_survey_id}_1",
         "period_id": f"{test_period_id}_1",
@@ -72,8 +72,8 @@ dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
         "total_reporting_units": 2,
         "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
-    },
-    {
+    }),
+    DatasetMetadata(**{
         "dataset_id": "1",
         "survey_id": f"{test_survey_id}_2",
         "period_id": f"{test_period_id}_2",
@@ -83,7 +83,7 @@ dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
         "total_reporting_units": 2,
         "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
-    },
+    }),
 ]
 
 # unit tests - dataset - test data
@@ -171,20 +171,20 @@ updated_dataset_metadata: DatasetMetadata = {
 
 # integration test - dataset endpoints - test data
 dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
-    {
+    UnitDataset(**{
         "dataset_id": "",
         "survey_id": test_survey_id,
         "period_id": test_period_id,
         "form_types": ["jke", "als", "sma"],
         "data": "test",
-    },
-    {
+    }),
+    UnitDataset(**{
         "dataset_id": "",
         "survey_id": test_survey_id,
         "period_id": test_period_id,
         "form_types": ["skn", "qwd", "qkw"],
         "data": "test"
-    },
+    }),
 ]
 
 # unit tests - dataset - test data
