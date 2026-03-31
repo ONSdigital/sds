@@ -39,7 +39,7 @@ class TestPostSchema:
         )
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once()
 
-    def test_200_response_updated_schema_version(self, test_client):
+    def test_200_response_updated_schema_version(self, test_client, pubsub_mock):
         """
         Tests when a schema is posted, a 200 response and the schema metadata will be received
         and the appropriate message will be sent to publisher
@@ -57,7 +57,7 @@ class TestPostSchema:
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_data_to_topic = MagicMock()
+        #PublisherService.publish_data_to_topic = MagicMock()
 
         response = test_client.post(
             f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
@@ -70,7 +70,7 @@ class TestPostSchema:
                 == schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_data_to_topic.assert_called_once_with(
+        pubsub_mock.publish_data_to_topic.assert_called_once_with(
             SchemaMetadata(**schema_test_data.test_post_schema_metadata_updated_version_response),
             settings.PUBLISH_SCHEMA_TOPIC_ID,
         )
@@ -237,7 +237,7 @@ class TestPostSchema:
         assert response.status_code == 500
         assert response.json()["message"] == "Unable to process request"
 
-    def test_publish_schema_exception_500_response(self, caplog, test_client):
+    def test_publish_schema_exception_500_response(self, caplog, test_client, pubsub_mock):
         """
         Tests when a schema is posted and the publisher raised an exception
         a 500 response will be receieved with appropriate error message and
@@ -256,7 +256,7 @@ class TestPostSchema:
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        PublisherService.publish_data_to_topic = MagicMock(side_effect=Exception)
+        pubsub_mock.publish_data_to_topic = MagicMock(side_effect=Exception)
 
         with caplog.at_level(logging.ERROR, logger="app.services.schema.schema_processor_service"):
             response = test_client.post(

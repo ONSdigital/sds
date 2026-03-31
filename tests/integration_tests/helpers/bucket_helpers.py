@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from app.repositories.buckets.bucket_loader import bucket_loader
+from app.dependencies import get_bucket_loader
 
 
 def delete_local_bucket_data(filepath: str):
@@ -34,7 +34,3 @@ def delete_blobs_with_test_survey_id(bucket, test_survey_id: str) -> None:
 
     for blob in blobs:
         blob.delete()
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()

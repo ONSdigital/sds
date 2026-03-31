@@ -19,9 +19,6 @@ class PublisherService:
     def __init__(self, publisher_client: PublisherClient) -> None:
         self.publisher_client = publisher_client
 
-        if settings.CONF == "unit":
-            return
-
         topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, settings.PUBLISH_SCHEMA_TOPIC_ID)
 
         # In local docker, we create the topic if it does not exist
@@ -76,6 +73,3 @@ class PublisherService:
     def _create_topic(self, topic_path) -> None:
         self.publisher_client.create_topic(request={"name": topic_path})
         logger.debug(f"Topic created: {topic_path}")
-
-
-publisher_service = PublisherService(PublisherClient())

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Body, Depends
 
 import app.exception.exception_response_models as erm
+from app.dependencies import get_schema_processor_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.services.schema.schema_processor_service import SchemaProcessorService
 from app.services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 async def post_schema(
     survey_id: str,
     schema: dict = Body(...),
-    schema_processor_service: SchemaProcessorService = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> SchemaMetadata:
     """
     Posts the schema metadata to be processed.
@@ -86,8 +86,7 @@ async def post_schema(
 async def get_schema_from_bucket(
     survey_id: str | None = None,
     version: str | None = None,
-    schema_bucket_repository: SchemaBucketRepository = Depends(),
-    schema_processor_service: SchemaProcessorService = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> dict:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
@@ -119,7 +118,7 @@ async def get_schema_from_bucket(
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
     logger.info("Bucket schema location successfully retrieved. Getting schema...")
 
-    schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
+    schema = schema_processor_service.schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")
@@ -150,8 +149,7 @@ async def get_schema_from_bucket(
 )
 async def get_schema_from_bucket_with_guid(
     guid: str | None = None,
-    schema_bucket_repository: SchemaBucketRepository = Depends(),
-    schema_processor_service: SchemaProcessorService = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> dict:
     """
     Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
@@ -180,7 +178,7 @@ async def get_schema_from_bucket_with_guid(
     logger.debug(f"Bucket schema location: {bucket_schema_filename}")
     logger.info("Bucket schema location successfully retrieved. Getting schema...")
 
-    schema = schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
+    schema = schema_processor_service.schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")
@@ -211,7 +209,8 @@ async def get_schema_from_bucket_with_guid(
     },
 )
 async def get_schema_metadata_collection(
-    survey_id: str | None = None, schema_processor_service: SchemaProcessorService = Depends()
+    survey_id: str | None = None,
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service)
 ) -> list[SchemaMetadata]:
     """
     Get all schema metadata associated with a specific survey id.
@@ -255,8 +254,8 @@ async def get_schema_metadata_collection(
     },
 )
 async def get_survey_id_map(
-    schema_processor_service: SchemaProcessorService = Depends(),
-) -> list[dict]:
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
+) -> list[str]:
     """
     Gets the Survey mapping data from the survey_map.json file in GitHub repository.
     Parameters:
@@ -281,7 +280,7 @@ async def get_survey_id_map(
     },
 )
 async def get_all_schema_metadata_collection(
-    schema_processor_service: SchemaProcessorService = Depends(),
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> list[SchemaMetadata]:
     """Retrieve all schema metadata from the schema collection.
     """

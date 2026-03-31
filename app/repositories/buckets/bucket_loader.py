@@ -9,13 +9,9 @@ logger = logging.getLogger(__name__)
 
 class BucketLoader:
     schema_bucket: storage.Bucket | None = None
-    __storage_client = storage.Client
 
     def __init__(self, storage_client: storage.Client) -> None:
         self.__storage_client = storage_client
-
-        if settings.CONF == "unit":
-            return
 
         self.schema_bucket = self._initialise_bucket(settings.SCHEMA_BUCKET_NAME)
 
@@ -73,6 +69,3 @@ class BucketLoader:
             bucket = self._create_bucket(bucket_name)
 
         return bucket
-
-client = storage.Client(project=settings.PROJECT_ID)
-bucket_loader = BucketLoader(client)

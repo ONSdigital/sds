@@ -2,15 +2,16 @@ from firebase_admin import firestore
 from google.cloud.firestore import Transaction
 
 from app.models.schema_models import SchemaMetadata
+from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.firebase_loader import firebase_loader
 
 
 class SchemaFirebaseRepository:
-    def __init__(self):
+    def __init__(self, bucket_loader: BucketLoader):
         self.client = firebase_loader.get_client()
         self.schemas_collection = firebase_loader.get_schemas_collection()
-        self.schema_bucket_repository = SchemaBucketRepository()
+        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
 
     def get_latest_schema_metadata_with_survey_id(
         self, survey_id: str

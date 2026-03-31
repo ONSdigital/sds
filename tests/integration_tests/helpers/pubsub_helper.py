@@ -11,6 +11,10 @@ class PubSubHelper:
         self.publisher_client = pubsub_v1.PublisherClient()
         self.topic_id = topic_id
 
+        # In local docker, we create the topic if it does not exist
+        if settings.CONF == "local-int-tests":
+            self._try_create_topic()
+
     def _try_create_topic(self) -> None:
         """
         Try to create a topic for publisher if not exists

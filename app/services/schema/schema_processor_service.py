@@ -6,19 +6,21 @@ from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata
+from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
-from app.services.shared.publisher_service import publisher_service
+from app.services.shared.publisher_service import PublisherService
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaProcessorService:
-    def __init__(self) -> None:
-        self.schema_firebase_repository = SchemaFirebaseRepository()
-        self.schema_bucket_repository = SchemaBucketRepository()
+    def __init__(self, bucket_loader: BucketLoader, publisher_service: PublisherService) -> None:
+        self.schema_firebase_repository = SchemaFirebaseRepository(bucket_loader)
+        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
+        self.publisher_service = publisher_service
 
     def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:
         """
@@ -209,7 +211,7 @@ class SchemaProcessorService:
         """
         try:
             logger.info("Publishing schema metadata to topic...")
-            publisher_service.publish_data_to_topic(
+            self.publisher_service.publish_data_to_topic(
                 next_version_schema_metadata,
                 settings.PUBLISH_SCHEMA_TOPIC_ID,
             )
