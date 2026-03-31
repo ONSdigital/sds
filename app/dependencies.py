@@ -7,6 +7,7 @@ from app.repositories.buckets.bucket_loader import BucketLoader
 from app.services.schema.schema_processor_service import SchemaProcessorService
 from app.services.shared.publisher_service import PublisherService
 
+
 def get_publisher_service() -> PublisherService:
     return PublisherService(PublisherClient())
 
