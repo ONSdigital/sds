@@ -27,7 +27,7 @@ def perform_delete_on_collection_with_test_survey_id(
         _delete_document(client, doc.reference)
 
 
-def _delete_document(client: firestore.Client, doc_ref: firestore.DocumentReference) -> None:
+def _delete_document(client: firestore.Client, doc_ref: firestore.DocumentReference) -> bool:
     """
     Deletes the dataset with Document Reference
 
@@ -79,10 +79,7 @@ def _delete_sub_collection_in_batches(
 
 def delete_local_firestore_data():
     """
-    Method to cleanup local test data in the emulated firestore instance.
-
-    Parameters:
-        None
+    Method to clean up local test data in the emulated firestore instance.
 
     Returns:
         None

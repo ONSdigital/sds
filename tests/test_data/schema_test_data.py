@@ -154,7 +154,7 @@ test_schema_response = {
 
 # unit tests - schema - test data
 test_schema_metadata_collection: list[SchemaMetadata] = [
-    {
+    SchemaMetadata(**{
         "survey_id": "test_survey_id",
         "schema_location": "test_schema_location",
         "sds_schema_version": 1,
@@ -162,8 +162,8 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
         "schema_version": "v1",
         "guid": "id_0",
         "title": test_title,
-    },
-    {
+    }),
+    SchemaMetadata(**{
         "survey_id": "test_survey_id",
         "schema_location": "test_schema_location",
         "sds_schema_version": 2,
@@ -171,7 +171,7 @@ test_schema_metadata_collection: list[SchemaMetadata] = [
         "schema_version": "v1",
         "guid": "id_1",
         "title": test_title,
-    },
+    }),
 ]
 
 # e2e schema integration test - test data

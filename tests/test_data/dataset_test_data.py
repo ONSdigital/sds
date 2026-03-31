@@ -14,8 +14,6 @@ updated_dataset_version = 2
 Test data:
 """
 
-
-
 # unit test - dataset - test data
 string_cat = "cat"
 string_byte_size_cat = 5
@@ -43,7 +41,7 @@ test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
 )
 
 # unit tests - service - test data
-test_data_collection_end_input: CollectionExerciseEndData = {
+test_data_collection_end_input = {
     "dataset_guid": test_guid,
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -88,7 +86,7 @@ dataset_metadata_collection_for_endpoints_test: list[DatasetMetadata] = [
 
 # unit tests - dataset - test data
 dataset_metadata_collection: list[DatasetMetadata] = [
-    {
+    DatasetMetadata(**{
         "survey_id": f"{test_survey_id}_1",
         "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
@@ -98,8 +96,8 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "0",
-    },
-    {
+    }),
+    DatasetMetadata(**{
         "survey_id": f"{test_survey_id}_2",
         "period_id": test_period_id,
         "form_types": ["abc", "def", "hij"],
@@ -109,12 +107,12 @@ dataset_metadata_collection: list[DatasetMetadata] = [
         "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "1",
-    },
+    }),
 ]
 
 # unit tests - service - test data
 dataset_metadata_collection_deletion: list[DatasetMetadata] = [
-    {
+    DatasetMetadata(**{
         "survey_id": test_survey_id,
         "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
@@ -124,8 +122,8 @@ dataset_metadata_collection_deletion: list[DatasetMetadata] = [
         "sds_dataset_version": first_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "0",
-    },
-    {
+    }),
+    DatasetMetadata(**{
         "survey_id": test_survey_id,
         "period_id": test_period_id,
         "form_types": ["123", "456", "789"],
@@ -135,12 +133,12 @@ dataset_metadata_collection_deletion: list[DatasetMetadata] = [
         "sds_dataset_version": updated_dataset_version,
         "filename": "test_filename.json",
         "dataset_id": "1",
-    },
+    }),
 ]
 
 
 # unit tests - cloud new dataset - test data
-first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+first_dataset_metadata_without_id: DatasetMetadataWithoutId = DatasetMetadataWithoutId(**{
     "survey_id": test_survey_id,
     "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
@@ -149,10 +147,10 @@ first_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "total_reporting_units": 2,
     "sds_dataset_version": first_dataset_version,
     "filename": "test_filename.json",
-}
+})
 
 # unit tests - cloud new dataset - test data
-updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
+updated_dataset_metadata_without_id: DatasetMetadataWithoutId = DatasetMetadataWithoutId(**{
     "survey_id": test_survey_id,
     "period_id": test_period_id,
     "form_types": ["klk", "xyz", "tzr"],
@@ -161,13 +159,13 @@ updated_dataset_metadata_without_id: DatasetMetadataWithoutId = {
     "total_reporting_units": 2,
     "sds_dataset_version": updated_dataset_version,
     "filename": "test_filename.json",
-}
+})
 
 # unit tests - cloud new dataset - test data
-updated_dataset_metadata: DatasetMetadata = {
-    **updated_dataset_metadata_without_id,
-    "dataset_id": test_guid,
-}
+updated_dataset_metadata: DatasetMetadata = DatasetMetadata(**{
+    **updated_dataset_metadata_without_id.__dict__,
+    **{"dataset_id": test_guid},
+})
 
 # integration test - dataset endpoints - test data
 dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
@@ -188,7 +186,7 @@ dataset_unit_data_collection_for_endpoints_test: list[UnitDataset] = [
 ]
 
 # unit tests - dataset - test data
-unit_supplementary_data: UnitDataset = {
+unit_supplementary_data: UnitDataset = UnitDataset(**{
     "dataset_id": test_guid,
     "survey_id": test_survey_id,
     "period_id": test_period_id,
@@ -225,75 +223,7 @@ unit_supplementary_data: UnitDataset = {
             },
         ],
     },
-}
-
-# unit tests - cloud new dataset - test data
-dataset_unit_data_collection: list[UnitDataset] = [
-    {
-        "dataset_id": test_guid,
-        "survey_id": test_survey_id,
-        "period_id": test_period_id,
-        "form_types": ["klk", "xyz", "tzr"],
-        "data": "<encrypted data>",
-    },
-    {
-        "dataset_id": test_guid,
-        "survey_id": test_survey_id,
-        "period_id": test_period_id,
-        "form_types": ["klk", "xyz", "tzr"],
-        "data": {
-            "identifier": "65871",
-            "runame": "Boats and Floats Ltd",
-            "ruaddr1": "111 Upper Hill",
-            "ruaddr2": "Mordor",
-            "rupostcode": "HO10 1AA",
-            "payeref": "8888",
-            "busdesc": "Provision of equipment for the bad guys.",
-            "local_unit": [
-                {
-                    "identifier": "2012763A",
-                    "luname": "Arms Factory",
-                    "luaddr1": "1 Bag End",
-                    "luaddr2": "Underhill",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AA",
-                    "tradstyle": "Also Does Adventures Ltd",
-                    "busdesc": "Creates old fashioned looking paper maps",
-                },
-                {
-                    "identifier": "20127364B",
-                    "luname": "Swords Subsidiary",
-                    "luaddr1": "12 The Farmstead",
-                    "luaddr2": "Maggotsville",
-                    "luaddr3": "Hobbiton",
-                    "lupostcode": "HO1 1AB",
-                    "busdesc": "Quality pipe manufacturer",
-                    "buslref": "pipe123",
-                },
-                {
-                    "identifier": "20127365C",
-                    "luname": "Armor N Things",
-                    "luaddr1": "5 Barrow Lane",
-                    "luaddr2": "Striderton",
-                    "luaddr3": "Bree",
-                    "lupostcode": "BR1 1AC",
-                    "busdesc": "Magic ring foundry",
-                },
-            ],
-        },
-    },
-]
-
-# unit tests - cloud new dataset - test data
-missing_keys_dataset_metadata = {
-    "period_id": test_period_id,
-    "form_types": [
-        "abc",
-        "def",
-        "ghi",
-    ],
-    "data": [{"unit_data": "test_data", "identifier": "12345"}],
-}
+})
 
 # e2e dataset integration test - test data for testing 404 response of dataset endpoints
 dataset_404_test_data = {
@@ -305,4 +235,3 @@ dataset_404_test_data = {
 
 # e2e dataset integration test - random string to test invalid query params
 random_string = "random_string"
-

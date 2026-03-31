@@ -33,11 +33,11 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        dataset_metadata: DatasetMetadataWithoutId = None
+        dataset_metadata: DatasetMetadataWithoutId
         for dataset in latest_dataset:
-            dataset_metadata: DatasetMetadataWithoutId = {**(dataset.to_dict())}
+            dataset_metadata: DatasetMetadataWithoutId = DatasetMetadataWithoutId(**dataset)
 
-        return dataset_metadata
+            return dataset_metadata
 
 
     def get_unit_supplementary_data(
@@ -123,8 +123,8 @@ class DatasetFirebaseRepository:
 
         dataset_metadata_list: list[DatasetMetadata] = []
         for dataset_metadata in returned_dataset_metadata:
-            metadata: DatasetMetadata = {**dataset_metadata.to_dict()}
-            metadata["dataset_id"] = dataset_metadata.id
+            metadata: DatasetMetadata = DatasetMetadata(**dataset_metadata)
+            metadata.dataset_id = dataset_metadata.id
             dataset_metadata_list.append(metadata)
 
         return dataset_metadata_list
@@ -168,9 +168,10 @@ class DatasetFirebaseRepository:
             .stream()
         )
 
-        dataset_metadata: DatasetMetadata = None
-        for dataset in retrieved_dataset:
-            dataset_metadata: DatasetMetadata = {**(dataset.to_dict())}
-            dataset_metadata["dataset_id"] = dataset.id
+        dataset_metadata: DatasetMetadata
 
-        return dataset_metadata
+        for dataset in retrieved_dataset:
+            dataset_metadata: DatasetMetadata = DatasetMetadata(**dataset)
+            dataset_metadata.dataset_id = dataset.id
+
+            return dataset_metadata

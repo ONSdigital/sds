@@ -67,10 +67,10 @@ class DatasetDeletionService:
             logger.debug(f"Dataset_metadata {dataset_metadata}")
             delete_metadata: DeleteMetadata = DeleteMetadata(
                 **{
-                    "dataset_guid": dataset_metadata["dataset_id"],
-                    "period_id": dataset_metadata["period_id"],
-                    "survey_id": dataset_metadata["survey_id"],
-                    "sds_dataset_version": dataset_metadata["sds_dataset_version"],
+                    "dataset_guid": dataset_metadata.dataset_id,
+                    "period_id": dataset_metadata.period_id,
+                    "survey_id": dataset_metadata.survey_id,
+                    "sds_dataset_version": dataset_metadata.sds_dataset_version,
                     "status": "Pending",
                     "mark_deleted_at": time_now,
                     "deleted_at": "n/a",

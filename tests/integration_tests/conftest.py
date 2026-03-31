@@ -47,7 +47,8 @@ def setup_schema(test_schema_list):
 def setup_post_schema():
     cleanup()
     pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
-    inject_wait_time(3) # Inject wait time to allow resources properly set up
+    if not settings.API_URL.__contains__("local"):
+        inject_wait_time(3) # Inject wait time to allow resources properly set up
 
     yield True
 

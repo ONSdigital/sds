@@ -53,12 +53,8 @@ def test_collect_metadata_for_period_and_survey_returns_list_metadata():
     )
 
     expected = [
-        {
-            **dataset_test_data.dataset_metadata_collection_deletion[0],
-        },
-        {
-            **dataset_test_data.dataset_metadata_collection_deletion[1],
-        },
+        dataset_test_data.dataset_metadata_collection_deletion[0],
+        dataset_test_data.dataset_metadata_collection_deletion[1],
     ]
 
     dataset_delete_service = DatasetDeletionService()

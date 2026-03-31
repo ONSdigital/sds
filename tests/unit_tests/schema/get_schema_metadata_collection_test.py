@@ -17,4 +17,4 @@ def test_get_schema_metadata_collection_200_response(test_client):
     response = test_client.get("/v1/schema_metadata?survey_id=test_survey_id")
 
     assert response.status_code == 200
-    assert response.json() == schema_test_data.test_schema_metadata_collection
+    assert response.json() == [schema_metadata.__dict__ for schema_metadata in schema_test_data.test_schema_metadata_collection]

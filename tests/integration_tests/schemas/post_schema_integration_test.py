@@ -51,4 +51,3 @@ class TestPostSchemaEndpoint:
             # Retrieve and verify received messages from Pub/Sub
             received_messages_json = received_messages[0]
             assert received_messages_json == schema_post_response.json()
-

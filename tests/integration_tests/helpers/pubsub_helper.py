@@ -110,26 +110,7 @@ class PubSubHelper:
                 backoff += backoff
 
         raise RuntimeError("Failed to pull messages after multiple attempts")
-    
-    def purge_messages(self, subscriber_id: str) -> None:
-        """
-        Purges all messages published to a subscriber by seeking through future timestamp.
 
-        Parameters:
-        subscriber_id: the unique id of the subscriber being created.
-        """
-        if settings.API_URL.__contains__("local"):
-             # Pub/Sub emulator does not support seek method, so we pull and acknowledge messages to purge them
-            self.pull_and_acknowledge_messages(subscriber_id)
-            return
-        else:
-            subscription_path = self.subscriber_client.subscription_path(
-                settings.PROJECT_ID, subscriber_id
-            )
-
-            self.subscriber_client.seek(
-                request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
-            )
 
     def try_delete_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
         subscriber = pubsub_v1.SubscriberClient()
