@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
     responses={
         status.HTTP_200_OK: {
             "model": DeploymentStatus,
-            "description": ("Deployment done succuessfully"),
+            "description": "Deployment done successfully",
         },
         status.HTTP_500_INTERNAL_SERVER_ERROR: {
             "model": BadRequest,

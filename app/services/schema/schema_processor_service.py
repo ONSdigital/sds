@@ -110,10 +110,8 @@ class SchemaProcessorService:
         Parameters:
         survey_id (str): the survey id of the schema.
         """
-        current_version_metadata = (
-            self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
-                survey_id
-            )
+        current_version_metadata: SchemaMetadata = self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
+            survey_id
         )
 
         return DocumentVersionService.calculate_survey_version(

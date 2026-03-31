@@ -35,7 +35,7 @@ class TestPostSchema:
         assert response.status_code == 200
         assert (
                 response.json()
-                == schema_test_data.test_post_schema_metadata_first_version_response
+                == schema_test_data.test_post_schema_metadata_first_version_response.__dict__
         )
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once()
 

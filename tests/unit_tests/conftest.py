@@ -46,14 +46,6 @@ def firestore_credentials_mock(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
-def cloud_bucket_credentials_mock(monkeypatch):
-    """
-    Mocks the google bucket credentials.
-    """
-    monkeypatch.setattr(storage, "Client", MagicMock())
-
-
-@pytest.fixture(autouse=True)
 def bucket_mock(test_client):
     app = test_client.app
     mock_bucket_loader = Mock(spec=BucketLoader)

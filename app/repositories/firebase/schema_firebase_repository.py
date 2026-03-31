@@ -17,7 +17,7 @@ class SchemaFirebaseRepository:
         self, survey_id: str
     ) -> SchemaMetadata | None:
         """
-        Gets a stream of the most up to date schema metadata in firestore with a specific survey id.
+        Gets a stream of the most up-to-date schema metadata in firestore with a specific survey id.
 
         Parameters:
         survey_id (str): The survey id of the dataset.
@@ -29,11 +29,11 @@ class SchemaFirebaseRepository:
             .stream()
         )
 
-        schema_metadata: SchemaMetadata = None
+        schema_metadata: SchemaMetadata
         for returned_schema in latest_schema:
-            schema_metadata: SchemaMetadata = {**returned_schema.to_dict()}
+            schema_metadata: SchemaMetadata = SchemaMetadata(**returned_schema.to_dict())
 
-        return schema_metadata
+            return schema_metadata
 
     def perform_new_schema_transaction(
         self,

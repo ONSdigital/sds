@@ -13,7 +13,7 @@ test_title = "test_title"
 Test data:
 """
 # unit tests - schema - test data
-test_post_schema_metadata_first_version_response = {
+test_post_schema_metadata_first_version_response = SchemaMetadata(**{
     "guid": test_guid,
     "schema_location": f"{test_survey_id}/{test_guid}.json",
     "sds_published_at": test_published_at,
@@ -21,7 +21,7 @@ test_post_schema_metadata_first_version_response = {
     "survey_id": test_survey_id,
     "schema_version": test_schema_version,
     "title": test_title,
-}
+})
 
 # unit tests - schema - test data
 test_post_schema_metadata_updated_version_response = {
