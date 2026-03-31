@@ -74,18 +74,20 @@ steps:
     args:
       - "-c"
       - |
-        export INT_LOG_LEVEL=${_LOG_LEVEL}
-        export INT_PROJECT_ID=${PROJECT_ID}
-        export INT_SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
-        export INT_PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
-        export INT_API_URL=${_API_URL}
-        export INT_SURVEY_MAP_URL=${_SURVEY_MAP_URL}
-        export INT_FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
+        export CONF='cloudbuild-int-tests'
+        export LOG_LEVEL=${_LOG_LEVEL}
+        export PROJECT_ID=${PROJECT_ID}
+        export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
+        export PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
+        export API_URL=${_API_URL}
+        export SURVEY_MAP_URL=${_SURVEY_MAP_URL}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export SECRET_ID=iap-secret
+        export URL_SCHEME=''
         pip install --upgrade pip --user
         pip install uv
         uv sync
-        make integration-tests-cloudbuild
+        uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 options:
   logging: CLOUD_LOGGING_ONLY

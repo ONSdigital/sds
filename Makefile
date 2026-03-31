@@ -46,64 +46,25 @@ integration-tests-local:
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 # Please run gcloud auth application-default login before running the following commands that interact with GCP services
+# Please ensure user account has role Service Account Token Creator
 integration-tests-sandbox:
 	export CONF='sandbox-int-tests' && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-    export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
-	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
-	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	export PROJECT_ID=$(PROJECT_ID) && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
-	export API_URL=https://${SANDBOX_IP_ADDRESS}.nip.io && \
-	export OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID} && \
-	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME=${PROJECT_ID}-sds && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
+    export SCHEMA_BUCKET_NAME='${PROJECT_ID}-sds-europe-west2-schema' && \
+	export PROJECT_ID=${PROJECT_ID} && \
+	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
+	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
 	export URL_SCHEME='https' && \
+	export SECRET_ID='iap-secret' && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
-#For use only by automated cloudbuild, is not intended to work locally.
-integration-tests-cloudbuild:
-	export CONF='cloudbuild-int-tests' && \
-    export DATASET_BUCKET_NAME=${INT_DATASET_BUCKET_NAME} && \
-    export SCHEMA_BUCKET_NAME=${INT_SCHEMA_BUCKET_NAME} && \
-	export TEST_DATASET_PATH=${TEST_DATASET_PATH} && \
-	export TEST_SCHEMA_PATH=${TEST_SCHEMA_PATH} && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${INT_AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${INT_RETAIN_DATASET_FIRESTORE} && \
-	export LOG_LEVEL=${INT_LOG_LEVEL} && \
-	export PROJECT_ID=${INT_PROJECT_ID} && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${INT_PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${INT_PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
-	export API_URL=${INT_API_URL} && \
-	export OAUTH_CLIENT_ID=${INT_OAUTH_CLIENT_ID} && \
-	export SURVEY_MAP_URL=${INT_SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME=${INT_FIRESTORE_DB_NAME} && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
-	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
-
+# Spinning up emulators in docker is required to run this command successfully.
 generate-spec:
 	export PYTHONPATH=. && \
-	export SCHEMA_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-schema && \
-	export DATASET_BUCKET_NAME=${PROJECT_ID}-sds-europe-west2-dataset && \
-	export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS} && \
-	export AUTODELETE_DATASET_BUCKET_FILE=${AUTODELETE_DATASET_BUCKET_FILE} && \
-	export RETAIN_DATASET_FIRESTORE=${RETAIN_DATASET_FIRESTORE} && \
-	export LOG_LEVEL=${LOG_LEVEL} && \
-	export PROJECT_ID=${PROJECT_ID} && \
-	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
-	export PUBLISH_DATASET_TOPIC_ID=${PUBLISH_DATASET_TOPIC_ID} && \
-	export PUBLISH_DATASET_ERROR_TOPIC_ID=${PUBLISH_DATASET_ERROR_TOPIC_ID} && \
-	export SURVEY_MAP_URL=${SURVEY_MAP_URL} && \
-	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
-	export SDS_APPLICATION_VERSION=${SDS_APPLICATION_VERSION} && \
+	export PROJECT_ID='mock-project-id' && \
+	export SCHEMA_BUCKET_NAME='emulated-schema-bucket' && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
+	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
 	uv run python .github/scripts/generate_openapi.py app.main:app --out gateway/openapi.yaml
 
 lint:

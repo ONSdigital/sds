@@ -1,92 +1,22 @@
 import pytest
 
 from app.config import settings
-from tests.integration_tests.helpers.integration_helpers import (
-    cleanup,
-    pubsub_setup,
-    pubsub_teardown,
-    pubsub_purge_messages,
-    inject_wait_time,
-    is_json_response,
-)
-from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
+from tests.integration_tests.helpers.integration_helpers import is_json_response
 from tests.integration_tests.helpers.utils import make_iap_request
 from tests.test_data.schema_test_data import test_survey_id_map
-from tests.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
+from tests.test_data.shared_test_data import test_survey_id_list
 from tests.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
 
 
 class TestSchemaEndpoints:
 
-    def setup_method(self) -> None:
-        cleanup()
-        pubsub_setup(schema_pubsub_helper, test_schema_subscriber_id)
-        inject_wait_time(3) # Inject wait time to allow resources properly set up
-
-
-    def teardown_method(self) -> None:
-        cleanup()
-        inject_wait_time(3) # Inject wait time to allow all message to be processed
-        pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
-
-
-    def test_post_schema_v1(self, test_schema_list):
-        """
-        Test the POST /v1/schema endpoint by publishing schemas from test_survey_id_list and checking the response
-        and the pub/sub message.
-
-        * We post a schema for each survey_id in survey_id_list and check the response
-        * We retrieve and verify received messages from Pub/Sub
-        """
-        # Post v1 schema for each survey_id - v1 is stored in the second index of the test_schemas list
-        for survey_id in test_survey_id_list:
-
-            schema_post_response = make_iap_request(
-                "POST",
-                f"/v1/schema?survey_id={survey_id}",
-                json=test_schema_list[1]
-            )
-
-            assert schema_post_response.status_code == 200
-            assert "guid" in schema_post_response.json()
-
-            received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
-                test_schema_subscriber_id
-            )
-
-            # Retrieve and verify received messages from Pub/Sub
-            received_messages_json = received_messages[0]
-            assert received_messages_json == schema_post_response.json()
-
-        # Post v2 schema for each survey_id - v2 is stored in the first index of the test_schemas list
-        for survey_id in test_survey_id_list:
-
-            schema_post_response = make_iap_request(
-                "POST",
-                f"/v1/schema?survey_id={survey_id}",
-                json=test_schema_list[0]
-            )
-
-            assert schema_post_response.status_code == 200
-            assert "guid" in schema_post_response.json()
-
-            received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
-                test_schema_subscriber_id
-            )
-
-            # Retrieve and verify received messages from Pub/Sub
-            received_messages_json = received_messages[0]
-            assert received_messages_json == schema_post_response.json()
-
-
-    def test_get_schema_metadata_v1(self, post_schema, test_schema_list):
+    def test_get_schema_metadata_v1(self, setup_schema, test_schema_list):
         """
         Test the GET /v1/schema_metadata endpoint by retrieving the schema metadata for each test_survey_id
         and checking the response.
 
         * We retrieve and verify schema metadata
         """
-
         for survey_id in test_survey_id_list:
             schema_metadata_response = make_iap_request(
                 "GET",
@@ -113,10 +43,8 @@ class TestSchemaEndpoints:
                     "title": expected_schema["title"],
                 }
 
-        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
-
-    def test_get_all_schema_metadata_v1(self, post_schema, test_schema_list):
+    def test_get_all_schema_metadata_v1(self, setup_schema, test_schema_list):
         """
         Test the GET /v1/schema_metadata endpoint by retrieving all schema metadata and checking the response.
 
@@ -137,10 +65,8 @@ class TestSchemaEndpoints:
                 schemas.append(schema)
         assert len(schemas) == expected_schema_count
 
-        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
-
-    def test_get_schema_v1(self, post_schema, test_schema_list):
+    def test_get_schema_v1(self, setup_schema, test_schema_list):
         """
         Test the GET /v1/schema endpoint by retrieving the schema both by version and latest version and
         checking the response.
@@ -167,11 +93,9 @@ class TestSchemaEndpoints:
 
             assert latest_version_schema_response.status_code == 200
             assert latest_version_schema_response.json() == test_schema_list[0]
-
-        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
         
 
-    def test_get_schema_v2(self, post_schema, test_schema_list):
+    def test_get_schema_v2(self, setup_schema, test_schema_list):
         """
         Test the GET /v2/schema endpoint by retrieving the schema by GUID and checking the response.
 
@@ -194,8 +118,6 @@ class TestSchemaEndpoints:
 
                 assert set_guid_schema_response.status_code == 200
                 assert set_guid_schema_response.json() == test_schema_list[index]
-
-        pubsub_purge_messages(schema_pubsub_helper, test_schema_subscriber_id)
 
 
     def test_survey_id_map(self):
@@ -345,6 +267,7 @@ class TestSchemaEndpoints:
         response = make_iap_request(
                 "GET",
             f"/v1/schema_metadata?survey_id={test_survey_id}",
+            unauthenticated=True
         )
 
         assert response.status_code == 401

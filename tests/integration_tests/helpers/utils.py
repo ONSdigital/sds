@@ -46,7 +46,7 @@ def make_iap_request(method, path, **kwargs):
     else:
         headers = HttpService.generate_authentication_headers()
 
-    url = f"{settings.URL_SCHEME}://{settings.API_URL}{path}"
+    url = f"{settings.URL_SCHEME}://{settings.API_URL}{path}" if len(settings.URL_SCHEME) > 0 else f"{settings.API_URL}{path}"
 
     # Fetch the Identity-Aware Proxy-protected URL, including an
     # Authorization header containing "Bearer " followed by a
