@@ -1,7 +1,7 @@
-from app.config.config_factory import config
+from app.config import settings
 
 
 class UtilityFunctions:
     @staticmethod
     def get_application_version():
-        return config.SDS_APPLICATION_VERSION
+        return settings.SDS_APPLICATION_VERSION

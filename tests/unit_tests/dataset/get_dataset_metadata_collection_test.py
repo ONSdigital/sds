@@ -15,12 +15,8 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     )
 
     expected = [
-        {
-            **dataset_test_data.dataset_metadata_collection[0],
-        },
-        {
-            **dataset_test_data.dataset_metadata_collection[1],
-        },
+        dataset_test_data.dataset_metadata_collection[0].__dict__,
+        dataset_test_data.dataset_metadata_collection[1].__dict__,
     ]
 
     response = test_client.get("/v1/dataset_metadata?survey_id=xzy&period_id=abc")
@@ -44,7 +40,7 @@ def test_get_dataset_metadata_collection_404_response(test_client):
 
 def test_get_dataset_metadata_with_invalid_parameters(test_client):
     """
-    Checks that fastAPI does not accept invalid porameters/
+    Checks that fastAPI does not accept invalid parameters/
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
@@ -56,7 +52,7 @@ def test_get_dataset_metadata_with_invalid_parameters(test_client):
 
 def test_get_dataset_metadata_with_invalid_extra_parameters(test_client):
     """
-    Checks that fastAPI does not accept invalid porameters/
+    Checks that fastAPI does not accept invalid parameters/
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """

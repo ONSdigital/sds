@@ -2,14 +2,14 @@ import json
 
 from app.exception import exceptions
 from app.logging_config import logging
-from app.repositories.buckets.bucket_loader import bucket_loader
+from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.bucket_repository import BucketRepository
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaBucketRepository(BucketRepository):
-    def __init__(self):
+    def __init__(self, bucket_loader: BucketLoader):
         self.bucket = bucket_loader.get_schema_bucket()
 
     def store_schema_json(self, filename: str, schema: dict) -> None:

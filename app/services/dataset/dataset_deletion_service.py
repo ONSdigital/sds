@@ -1,4 +1,4 @@
-from app.config.config_factory import config
+from app.config import settings
 from app.logging_config import logging
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.dataset_models import DatasetMetadata
@@ -62,15 +62,15 @@ class DatasetDeletionService:
     def _mark_collections_for_deletion(
         self, list_dataset_metadata: list[DatasetMetadata]
     ):
-        time_now = DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
+        time_now = DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
         for dataset_metadata in list_dataset_metadata:
             logger.debug(f"Dataset_metadata {dataset_metadata}")
             delete_metadata: DeleteMetadata = DeleteMetadata(
                 **{
-                    "dataset_guid": dataset_metadata["dataset_id"],
-                    "period_id": dataset_metadata["period_id"],
-                    "survey_id": dataset_metadata["survey_id"],
-                    "sds_dataset_version": dataset_metadata["sds_dataset_version"],
+                    "dataset_guid": dataset_metadata.dataset_id,
+                    "period_id": dataset_metadata.period_id,
+                    "survey_id": dataset_metadata.survey_id,
+                    "sds_dataset_version": dataset_metadata.sds_dataset_version,
                     "status": "Pending",
                     "mark_deleted_at": time_now,
                     "deleted_at": "n/a",

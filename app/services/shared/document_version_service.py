@@ -1,12 +1,13 @@
 from typing import Literal
 
 from app.models.dataset_models import DatasetMetadataWithoutId
+from app.models.schema_models import SchemaMetadata
 
 
 class DocumentVersionService:
     @staticmethod
     def calculate_survey_version(
-        document_current_version: dict | DatasetMetadataWithoutId,
+        metadata: SchemaMetadata | DatasetMetadataWithoutId | None,
         version_key: Literal["sds_dataset_version", "sds_schema_version"],
     ) -> int:
         """
@@ -16,11 +17,12 @@ class DocumentVersionService:
         document_current_version: document that the version is being calculated from
         version_key: the key being accessed to find out the document version.
         """
-        if document_current_version is None:
+        if metadata is None:
             return 1
 
-        if version_key not in document_current_version:
+        metadata_dict = metadata.__dict__
+
+        if version_key not in metadata_dict:
             raise RuntimeError("Document must contain version key")
 
-        return document_current_version[version_key] + 1
-
+        return metadata_dict[version_key] + 1

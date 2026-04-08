@@ -24,7 +24,7 @@ def test_get_unit_supplementary_data_200_response(test_client):
     )
 
     assert response.status_code == 200
-    assert response.json() == dataset_test_data.unit_supplementary_data
+    assert response.json() == dataset_test_data.unit_supplementary_data.__dict__
 
 
 def test_get_unit_supplementary_data_404_response(test_client):

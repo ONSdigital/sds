@@ -1,28 +1,25 @@
 import json
-import os
 import time
 
-from app.config.config_factory import config
-from google.cloud import pubsub_v1
+from app.config import settings
+from google.cloud import pubsub_v1, exceptions
 
 
 class PubSubHelper:
     def __init__(self, topic_id: str):
-        if config.OAUTH_CLIENT_ID.__contains__("local"):
-            os.environ["PUBSUB_EMULATOR_HOST"] = "localhost:8085"
-
         self.subscriber_client = pubsub_v1.SubscriberClient()
         self.publisher_client = pubsub_v1.PublisherClient()
         self.topic_id = topic_id
 
-        if config.OAUTH_CLIENT_ID.__contains__("local"):
+        # In local docker, we create the topic if it does not exist
+        if settings.CONF == "local-int-tests":
             self._try_create_topic()
 
     def _try_create_topic(self) -> None:
         """
         Try to create a topic for publisher if not exists
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
+        topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, self.topic_id)
 
         try:
             if not self._topic_exists(topic_path):
@@ -47,10 +44,10 @@ class PubSubHelper:
         Parameters:
         subscriber_id: the unique id of the subscriber being created.
         """
-        topic_path = self.publisher_client.topic_path(config.PROJECT_ID, self.topic_id)
+        topic_path = self.publisher_client.topic_path(settings.PROJECT_ID, self.topic_id)
 
         subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
+            settings.PROJECT_ID, subscriber_id
         )
 
         if not self._subscription_exists(subscriber_id):
@@ -71,7 +68,11 @@ class PubSubHelper:
         print(f"Fail to create subscriber. Subscription path: {subscription_path}")
 
 
-    def pull_and_acknowledge_messages(self, subscriber_id: str) -> dict|None:
+    def pull_and_acknowledge_messages(self,
+                                      subscriber_id: str,
+                                      num_messages: int = 5,
+                                      attempts: int = 5,
+                                      backoff: float = 0.5) -> list[dict] | None:
         """
         Pulls all messages published to a topic via a subscriber.
 
@@ -79,64 +80,46 @@ class PubSubHelper:
         subscriber_id: the unique id of the subscriber being created.
         """
         subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
-        )
-        NUM_MESSAGES = 5
-
-        response = self.subscriber_client.pull(
-            request={"subscription": subscription_path, "max_messages": NUM_MESSAGES},
+            settings.PROJECT_ID, subscriber_id
         )
 
-        message_count = len(response.received_messages)
+        while attempts != 0:
+            try:
+                response = self.subscriber_client.pull(
+                    request={"subscription": subscription_path, "max_messages": num_messages},
+                )
 
-        if message_count == 0:
-            print("No messages found in the response")
-            return None
-        
-        messages = []
-        ack_ids = []
-        
-        for received_message in response.received_messages:
-            messages.append(self.format_received_message_data(received_message))
-            ack_ids.append(received_message.ack_id)
+                message_count = len(response.received_messages)
 
-        
-        self.subscriber_client.acknowledge(
-            request={"subscription": subscription_path, "ack_ids": ack_ids}
-        )
+                if message_count == 0:
+                    print("No messages found in the response")
+                    return None
 
-        return messages
-    
-    def purge_messages(self, subscriber_id: str) -> None:
-        """
-        Purges all messages published to a subscriber by seeking through future timestamp.
+                messages = []
+                ack_ids = []
 
-        Parameters:
-        subscriber_id: the unique id of the subscriber being created.
-        """
-        subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
-        )
+                for received_message in response.received_messages:
+                    messages.append(self._format_received_message_data(received_message))
+                    ack_ids.append(received_message.ack_id)
 
-        self.subscriber_client.seek(
-            request={"subscription": subscription_path, "time": "2999-01-01T00:00:00Z"}
-        )
+                self.subscriber_client.acknowledge(
+                    request={"subscription": subscription_path, "ack_ids": ack_ids}
+                )
 
-    def format_received_message_data(self, received_message) -> dict:
-        """
-        Formats a messages received from a topic.
+                return messages
 
-        Parameters:
-        received_message: The message received from the topic.
-        """
-        return json.loads(
-            received_message.message.data.decode("utf-8").replace("'", '"')
-        )
+            except exceptions.NotFound:
+                attempts -= 1
+                time.sleep(backoff)
+                backoff += backoff
+
+        raise RuntimeError("Failed to pull messages after multiple attempts")
+
 
     def try_delete_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
         subscriber = pubsub_v1.SubscriberClient()
         subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
+            settings.PROJECT_ID, subscriber_id
         )
 
         if self._subscription_exists(subscriber_id):
@@ -153,7 +136,7 @@ class PubSubHelper:
         print(f"Fail to delete subscriber. Subscription path: {subscription_path}")
 
 
-    def _subscription_exists(self, subscriber_id: str) -> None:
+    def _subscription_exists(self, subscriber_id: str) -> bool:
         """
         Checks a subscription exists.
 
@@ -161,7 +144,7 @@ class PubSubHelper:
         subscriber_id: the unique id of the subscriber being checked.
         """
         subscription_path = self.subscriber_client.subscription_path(
-            config.PROJECT_ID, subscriber_id
+            settings.PROJECT_ID, subscriber_id
         )
 
         try:
@@ -220,5 +203,16 @@ class PubSubHelper:
 
         return False
 
+    def _format_received_message_data(self, received_message) -> dict:
+        """
+        Formats a messages received from a topic.
 
-schema_pubsub_helper = PubSubHelper(config.PUBLISH_SCHEMA_TOPIC_ID)
+        Parameters:
+        received_message: The message received from the topic.
+        """
+        return json.loads(
+            received_message.message.data.decode("utf-8").replace("'", '"')
+        )
+
+
+schema_pubsub_helper = PubSubHelper(settings.PUBLISH_SCHEMA_TOPIC_ID)
