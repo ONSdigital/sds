@@ -524,7 +524,6 @@ components:
       required:
       - survey_id
       - period_id
-      - dataset_guid
       title: CollectionExerciseEndData
     DatasetMetadata:
       properties:

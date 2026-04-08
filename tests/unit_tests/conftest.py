@@ -1,12 +1,15 @@
 import uuid
 from datetime import datetime
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from fastapi.testclient import TestClient
 from google.cloud import firestore, storage
-from app.services.shared.datetime_service import DatetimeService
 
+from app.dependencies import get_bucket_loader, get_publisher_service
+from app.repositories.buckets.bucket_loader import BucketLoader
+from app.services.shared.datetime_service import DatetimeService
+from app.services.shared.publisher_service import PublisherService
 from tests.test_data import shared_test_data
 
 
@@ -43,11 +46,24 @@ def firestore_credentials_mock(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
-def cloud_bucket_credentials_mock(monkeypatch):
+def bucket_mock(test_client):
+    app = test_client.app
+    mock_bucket_loader = Mock(spec=BucketLoader)
+    app.dependency_overrides[get_bucket_loader] = lambda: mock_bucket_loader
+
+    yield mock_bucket_loader
+
+
+@pytest.fixture(autouse=True)
+def pubsub_mock(test_client):
     """
-    Mocks the google bucket credentials.
+    Mocks the google pubsub credentials.
     """
-    monkeypatch.setattr(storage, "Client", MagicMock())
+    app = test_client.app
+    mock_pubsub = Mock(spec=PublisherService)
+    app.dependency_overrides[get_publisher_service] = lambda: mock_pubsub
+
+    yield mock_pubsub
 
 
 @pytest.fixture
@@ -57,8 +73,8 @@ def test_client():
     """
     from app.main import app
 
-    dataset_client = TestClient(app)
-    yield dataset_client
+    client = TestClient(app)
+    yield client
 
 
 @pytest.fixture

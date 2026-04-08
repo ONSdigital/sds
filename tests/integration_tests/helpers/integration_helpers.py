@@ -1,13 +1,9 @@
 import json
-import time
 
-import requests
-from app.config.config_factory import config
-from app.repositories.buckets.bucket_loader import bucket_loader
+from app.config import settings
+from app.dependencies import get_bucket_loader
 from app.repositories.firebase.firebase_loader import firebase_loader
 from google.cloud import storage
-from requests.adapters import HTTPAdapter
-from urllib3 import Retry
 
 from tests.integration_tests.helpers.bucket_helpers import (
     delete_blobs_with_test_survey_id,
@@ -17,29 +13,9 @@ from tests.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_on_collection_with_test_survey_id,
 )
-from tests.integration_tests.helpers.pubsub_helper import PubSubHelper
 from tests.test_data.dataset_test_data import test_survey_id
 
 storage_client = storage.Client()
-
-
-def setup_session() -> requests.Session:
-    """
-    Method to setup a http/s session to facilitate testing.
-
-    Parameters:
-        None
-
-    Returns:
-        Session: a http/s session.
-    """
-    session = requests.Session()
-    retry = Retry(connect=3, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
-
-    return session
 
 
 def load_json(filepath: str) -> dict:
@@ -47,7 +23,7 @@ def load_json(filepath: str) -> dict:
     Method to load json from a file.
 
     Parameters:
-        filepath: string specifiing the location of the file to be loaded.
+        filepath: string specifying the location of the file to be loaded.
 
     Returns:
         dict: the json object from the specified file.
@@ -58,21 +34,19 @@ def load_json(filepath: str) -> dict:
 
 def cleanup() -> None:
     """
-    Method to cleanup all test data created depending on local or remote run.
-    Should be ran before and after test to account for test failures.
-
-    Parameters:
-        None
+    Method to clean up all test data created depending on local or remote run.
+    Should be run before and after test to account for test failures.
 
     Returns:
         None
     """
-    if config.OAUTH_CLIENT_ID.__contains__("local"):
+    if settings.API_URL.__contains__("local"):
         delete_local_firestore_data()
 
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
         delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
+        bucket_loader = get_bucket_loader()
         delete_blobs_with_test_survey_id(bucket_loader.get_schema_bucket(), test_survey_id)
 
         client = firebase_loader.get_client()
@@ -88,45 +62,6 @@ def cleanup() -> None:
             test_survey_id
         )
 
-
-def pubsub_setup(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
-    """Creates any subscribers that may be used in tests"""
-    pubsub_helper.try_create_subscriber(subscriber_id)
-
-
-def pubsub_teardown(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
-    """Deletes subscribers that may have been used in tests"""
-    pubsub_helper.try_delete_subscriber(subscriber_id)
-
-
-def pubsub_purge_messages(pubsub_helper: PubSubHelper, subscriber_id: str) -> None:
-    """Purge any messages that may have been sent to a subscriber"""   
-    pubsub_helper.purge_messages(subscriber_id)
-
-
-def inject_wait_time(seconds: int) -> None:
-    """
-    Method to inject a wait time into the test to allow resources properly spin up and tear down.
-
-    Parameters:
-        seconds: the number of seconds to wait
-
-    Returns:
-        None
-    """
-    time.sleep(seconds)
-
-
-
-def force_run_schedule_job():
-    """
-    Method to force run the schedule job to trigger the new dataset upload function.
-    """
-    client = scheduler_v1.CloudSchedulerClient()
-    request = scheduler_v1.RunJobRequest(
-        name=f"projects/{config.PROJECT_ID}/locations/europe-west2/jobs/trigger-new-dataset"
-    )
-    client.run_job(request=request)
 
 def is_json_response(response):
     try:

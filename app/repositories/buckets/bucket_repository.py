@@ -1,8 +1,12 @@
 import json
 
+from google.cloud import storage
+
 
 class BucketRepository:
-    def get_bucket_file_as_json(self, filename: str) -> object:
+    bucket: storage.Bucket
+
+    def get_bucket_file_as_json(self, filename: str) -> dict:
         """
         Gets a file from a google cloud bucket with a specific filename and loads it as json.
 

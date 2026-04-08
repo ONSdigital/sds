@@ -1,6 +1,8 @@
 import requests
-from app.config.config_factory import config
-from firebase_admin import firestore
+from app.config import settings
+from google.cloud import firestore
+
+from app.models.dataset_models import DatasetMetadata, UnitDataset
 from tests.test_data.dataset_test_data import dataset_unit_data_id
 
 def perform_delete_on_collection_with_test_survey_id(
@@ -25,7 +27,7 @@ def perform_delete_on_collection_with_test_survey_id(
         _delete_document(client, doc.reference)
 
 
-def _delete_document(client: firestore.Client, doc_ref: firestore.DocumentReference) -> None:
+def _delete_document(client: firestore.Client, doc_ref: firestore.DocumentReference) -> bool:
     """
     Deletes the dataset with Document Reference
 
@@ -77,36 +79,33 @@ def _delete_sub_collection_in_batches(
 
 def delete_local_firestore_data():
     """
-    Method to cleanup local test data in the emulated firestore instance.
-
-    Parameters:
-        None
+    Method to clean up local test data in the emulated firestore instance.
 
     Returns:
         None
     """
     requests.delete(
-        f"http://localhost:8080/emulator/v1/projects/{config.PROJECT_ID}/databases/(default)/documents"
+        f"http://localhost:8080/emulator/v1/projects/{settings.PROJECT_ID}/databases/(default)/documents"
     )
 
-def upload_dataset(firestore_client, metadata_collection, unit_data_collection):
+def upload_dataset(firestore_client: firestore.Client, metadata_collection: list[DatasetMetadata], unit_data_collection: list[UnitDataset]) -> list[DatasetMetadata]:
     """
     Helper function to upload a dataset 
     """
     dataset_collection = firestore_client.collection("datasets")
-    uploaded_dataset = []
+    uploaded_dataset: list[DatasetMetadata] = []
 
     for index, dataset_metadata in enumerate(metadata_collection):
         document_id = str(index)
 
-        dataset_collection.document(document_id).set(dataset_metadata)
+        dataset_collection.document(document_id).set(dataset_metadata.__dict__)
 
         unit_collection = dataset_collection.document(document_id).collection("units")
 
-        for index, unit_data in enumerate(unit_data_collection):
-            unit_document_id = dataset_unit_data_id[index] 
-            unit_data["dataset_id"] =  document_id
-            unit_collection.document(unit_document_id).set(unit_data)
+        for i, unit_data in enumerate(unit_data_collection):
+            unit_document_id = dataset_unit_data_id[i]
+            unit_data.dataset_id = document_id
+            unit_collection.document(unit_document_id).set(unit_data.__dict__)
     
         uploaded_dataset.append(dataset_metadata)
     

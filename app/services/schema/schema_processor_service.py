@@ -3,23 +3,26 @@ import uuid
 
 import requests
 
-from app.config.config_factory import config
+from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata, SchemaModel
+from app.models.schema_models import SchemaMetadata
+from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
-from app.services.shared.publisher_service import publisher_service
+from app.services.shared.publisher_service import PublisherService
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaProcessorService:
-    def __init__(self) -> None:
-        self.schema_firebase_repository = SchemaFirebaseRepository()
-        self.schema_bucket_repository = SchemaBucketRepository()
+    def __init__(self, bucket_loader: BucketLoader, publisher_service: PublisherService) -> None:
+        self.schema_firebase_repository = SchemaFirebaseRepository(bucket_loader)
+        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
+        self.publisher_service = publisher_service
 
     def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:
         """
@@ -103,13 +106,13 @@ class SchemaProcessorService:
         schema (dict): schema being processed.
         survey_id (str): the survey id of the schema.
         """
-        next_version_schema_metadata: SchemaMetadata = SchemaMetadata(**{
+        next_version_schema_metadata = SchemaMetadata(**{
             "guid": schema_id,
             "schema_location": stored_schema_filename,
             "sds_schema_version": self.calculate_next_schema_version(survey_id),
             "survey_id": survey_id,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
+                DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
             ),
             "schema_version": self.get_schema_version_from_properties(schema),
             "title": schema["title"],
@@ -123,10 +126,8 @@ class SchemaProcessorService:
         Parameters:
         survey_id (str): the survey id of the schema.
         """
-        current_version_metadata = (
-            self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
-                survey_id
-            )
+        current_version_metadata: SchemaMetadata = self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
+            survey_id
         )
 
         return DocumentVersionService.calculate_survey_version(
@@ -242,18 +243,18 @@ class SchemaProcessorService:
         """
         try:
             logger.info("Publishing schema metadata to topic...")
-            publisher_service.publish_data_to_topic(
+            self.publisher_service.publish_data_to_topic(
                 next_version_schema_metadata,
-                config.PUBLISH_SCHEMA_TOPIC_ID,
+                settings.PUBLISH_SCHEMA_TOPIC_ID,
             )
             logger.debug(
-                f"Schema metadata {next_version_schema_metadata} published to topic {config.PUBLISH_SCHEMA_TOPIC_ID}"
+                f"Schema metadata {next_version_schema_metadata} published to topic {settings.PUBLISH_SCHEMA_TOPIC_ID}"
             )
             logger.info("Schema metadata published successfully.")
         except Exception as exc:
             logger.debug(
                 f"Schema metadata {next_version_schema_metadata} failed to publish to topic "
-                f"{config.PUBLISH_SCHEMA_TOPIC_ID} with error {exc}"
+                f"{settings.PUBLISH_SCHEMA_TOPIC_ID} with error {exc}"
             )
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException from exc
@@ -265,7 +266,7 @@ class SchemaProcessorService:
         try:
             logger.info("Fetching the survey mapping data")
 
-            url = config.SURVEY_MAP_URL
+            url = settings.SURVEY_MAP_URL
             response = requests.get(url, timeout=30)
             logger.debug(f"Response is {response}")
 

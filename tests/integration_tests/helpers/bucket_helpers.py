@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from app.repositories.buckets.bucket_loader import bucket_loader
+from app.dependencies import get_bucket_loader
 
 
 def delete_local_bucket_data(filepath: str):
@@ -19,22 +19,6 @@ def delete_local_bucket_data(filepath: str):
         shutil.rmtree(path_instance)
 
 
-def delete_blobs(bucket) -> None:
-    """
-    Method to delete all blobs in the specified bucket.
-
-    Parameters:
-        bucket: the bucket to clean
-
-    Returns:
-        None
-    """
-    blobs = bucket.list_blobs()
-
-    for blob in blobs:
-        blob.delete()
-
-
 def delete_blobs_with_test_survey_id(bucket, test_survey_id: str) -> None:
     """
     Method to delete all blobs related to the test survey id in the specified bucket.
@@ -50,7 +34,3 @@ def delete_blobs_with_test_survey_id(bucket, test_survey_id: str) -> None:
 
     for blob in blobs:
         blob.delete()
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()
