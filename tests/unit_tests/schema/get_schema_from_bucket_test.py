@@ -1,23 +1,22 @@
 from unittest.mock import MagicMock
 
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.schema.schema_processor_service import SchemaProcessorService
 
 from tests.test_data import schema_test_data
 
 
-def test_get_schema_from_bucket_200_response(test_client):
+def test_get_schema_from_firestore_200_response(test_client):
     """
-    When the schema is retrieved successfully from the bucket there should be a 200 status code and expected response.
+    When the schema is retrieved successfully from the firestore there should be a 200 status code and expected response.
     """
-    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename
-    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_bucket_filename.return_value = "test_location"
+    tmp_storage_1 = SchemaFirebaseRepository.get_guid_with_survey_id_and_version
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = MagicMock()
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version.return_value = "test_guid"
 
-    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
-    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+    tmp_storage_2 = SchemaFirebaseRepository.get_schema_from_guid
+    SchemaFirebaseRepository.get_schema_from_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_from_guid.return_value = (
         schema_test_data.test_schema_response
     )
 
@@ -26,24 +25,24 @@ def test_get_schema_from_bucket_200_response(test_client):
     assert response.status_code == 200
     assert response.json() == schema_test_data.test_schema_response
 
-    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage_1
-    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = tmp_storage_1
+    SchemaFirebaseRepository.get_schema_from_guid = tmp_storage_2
 
 
-def test_get_latest_schema_from_bucket_without_version(test_client):
+def test_get_latest_schema_from_firestore_without_version(test_client):
     """
     When the schema is queried without version no, the schema of latest version
     should be returned with a 200 status code
     """
-    tmp_storage_1 = SchemaFirebaseRepository.get_latest_schema_bucket_filename
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename.return_value = (
-        "test_location"
+    tmp_storage_1 = SchemaFirebaseRepository.get_latest_schema_guid
+    SchemaFirebaseRepository.get_latest_schema_guid = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_guid.return_value = (
+        "test_guid"
     )
 
-    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
-    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+    tmp_storage_2 = SchemaFirebaseRepository.get_schema_from_guid
+    SchemaFirebaseRepository.get_schema_from_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_from_guid.return_value = (
         schema_test_data.test_schema_response
     )
 
@@ -52,24 +51,18 @@ def test_get_latest_schema_from_bucket_without_version(test_client):
     assert response.status_code == 200
     assert response.json() == schema_test_data.test_schema_response
 
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename = tmp_storage_1
-    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+    SchemaFirebaseRepository.get_latest_schema_guid = tmp_storage_1
+    SchemaFirebaseRepository.get_schema_from_guid = tmp_storage_2
 
 
-def test_get_schema_from_bucket_with_guid(test_client):
+def test_get_schema_from_firestore_with_guid(test_client):
     """
     When the schema is queried without version no, the schema of latest version
     should be returned with a 200 status code
     """
-    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename_with_guid
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = MagicMock()
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid.return_value = (
-        "test_location"
-    )
-
-    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
-    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = (
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_from_guid
+    SchemaFirebaseRepository.get_schema_from_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_from_guid.return_value = (
         schema_test_data.test_schema_response
     )
 
@@ -78,29 +71,44 @@ def test_get_schema_from_bucket_with_guid(test_client):
     assert response.status_code == 200
     assert response.json() == schema_test_data.test_schema_response
 
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = tmp_storage_1
-    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+    SchemaFirebaseRepository.get_schema_from_guid = tmp_storage_1
 
 
-def test_get_schema_from_bucket_404_response(test_client):
+def test_get_schema_from_firestore_404_response(test_client):
     """
-    When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
+    When the schema is not found from firestore there should be a 404 status code and expected response.
     """
-    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename
-    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_schema_bucket_filename.return_value = None
+    tmp_storage_1 = SchemaFirebaseRepository.get_guid_with_survey_id_and_version
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = MagicMock()
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version.return_value = "test_guid"
 
-    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
-    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = None
+    tmp_storage_2 = SchemaFirebaseRepository.get_schema_from_guid
+    SchemaFirebaseRepository.get_schema_from_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_from_guid.return_value = None
 
     response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
 
     assert response.status_code == 404
     assert response.json()["message"] == "No schema found"
 
-    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage_1
-    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = tmp_storage_1
+    SchemaFirebaseRepository.get_schema_from_guid = tmp_storage_2
+
+
+def test_get_schema_from_firestore_404_response_with_unfound_metadata(test_client):
+    """
+    When the guid is not found from firestore there should be a 404 status code and expected response.
+    """
+    tmp_storage_1 = SchemaFirebaseRepository.get_guid_with_survey_id_and_version
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = MagicMock()
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version.return_value = None
+
+    response = test_client.get("/v1/schema?survey_id=test_survey_id&version=2")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No schema found"
+
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = tmp_storage_1
 
 
 def test_get_latest_schema_from_bucket_without_version_404_response(test_client):
@@ -108,37 +116,32 @@ def test_get_latest_schema_from_bucket_without_version_404_response(test_client)
     When the schema is queried without version but no latest schema version is found,
     there should be a 404 status code and expected response
     """
-    tmp_storage = SchemaFirebaseRepository.get_latest_schema_bucket_filename
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename = MagicMock()
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename.return_value = None
+    tmp_storage = SchemaFirebaseRepository.get_latest_schema_guid
+    SchemaFirebaseRepository.get_latest_schema_guid = MagicMock()
+    SchemaFirebaseRepository.get_latest_schema_guid.return_value = None
 
     response = test_client.get("/v1/schema?survey_id=abcdef")
 
     assert response.status_code == 404
     assert response.json()["message"] == "No schema found"
 
-    SchemaFirebaseRepository.get_latest_schema_bucket_filename = tmp_storage
+    SchemaFirebaseRepository.get_latest_schema_guid = tmp_storage
 
 
 def test_get_schema_from_bucket_with_guid_404_response(test_client):
     """
     When the schema is unsuccessfully from the bucket there should be a 404 status code and expected response.
     """
-    tmp_storage_1 = SchemaFirebaseRepository.get_schema_bucket_filename_with_guid
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = MagicMock()
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid.return_value = None
-
-    tmp_storage_2 = SchemaBucketRepository.get_schema_file_as_json
-    SchemaBucketRepository.get_schema_file_as_json = MagicMock()
-    SchemaBucketRepository.get_schema_file_as_json.return_value = None
+    tmp_storage_1 = SchemaFirebaseRepository.get_schema_from_guid
+    SchemaFirebaseRepository.get_schema_from_guid = MagicMock()
+    SchemaFirebaseRepository.get_schema_from_guid.return_value = None
 
     response = test_client.get("/v2/schema?guid=test_guid")
 
     assert response.status_code == 404
     assert response.json()["message"] == "No schema found"
 
-    SchemaFirebaseRepository.get_schema_bucket_filename_with_guid = tmp_storage_1
-    SchemaBucketRepository.get_schema_file_as_json = tmp_storage_2
+    SchemaFirebaseRepository.get_schema_from_guid = tmp_storage_1
 
 
 def test_global_error(test_client_no_server_exception):
@@ -149,8 +152,8 @@ def test_global_error(test_client_no_server_exception):
     Fixture client_no_server_exception is used to avoid exiting
     the test at exception so that the response can be validated
     """
-    tmp_storage = SchemaFirebaseRepository.get_schema_bucket_filename
-    SchemaFirebaseRepository.get_schema_bucket_filename = MagicMock(
+    tmp_storage = SchemaFirebaseRepository.get_guid_with_survey_id_and_version
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = MagicMock(
         side_effect=Exception
     )
 
@@ -160,7 +163,7 @@ def test_global_error(test_client_no_server_exception):
     assert response.status_code == 500
     assert response.json()["message"] == "Unable to process request"
 
-    SchemaFirebaseRepository.get_schema_bucket_filename = tmp_storage
+    SchemaFirebaseRepository.get_guid_with_survey_id_and_version = tmp_storage
 
 
 def test_get_schema_with_invalid_version_error(test_client):

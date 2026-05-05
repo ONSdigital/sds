@@ -1,8 +1,9 @@
+import json
 from unittest.mock import MagicMock
 import logging
 
 from app.config import settings
-from app.models.schema_models import SchemaMetadata
+from app.models.schema_models import SchemaMetadata, SchemaModel
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.publisher_service import PublisherService
@@ -57,8 +58,6 @@ class TestPostSchema:
             schema_test_data.test_post_schema_metadata_updated_version_response
         )
 
-        #PublisherService.publish_data_to_topic = MagicMock()
-
         response = test_client.post(
             f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
             json=schema_test_data.test_post_schema_body,
@@ -78,8 +77,7 @@ class TestPostSchema:
         SchemaFirebaseRepository.perform_new_schema_transaction.assert_called_once_with(
             schema_test_data.test_guid,
             SchemaMetadata(**schema_test_data.test_post_schema_metadata_updated_version_response),
-            schema_test_data.test_post_schema_body,
-            f"{schema_test_data.test_survey_id}/{schema_test_data.test_guid}.json",
+            SchemaModel(**{"schema": json.dumps(schema_test_data.test_post_schema_body)}),
         )
 
     def test_post_schema_with_invalid_dict(self, test_client):

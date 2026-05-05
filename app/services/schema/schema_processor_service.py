@@ -38,10 +38,10 @@ class SchemaProcessorService:
             schema_id, stored_schema_filename, schema, survey_id
         )
 
-        schema__model = self.build_schema_model(schema)
+        schema_model = self.build_schema_model(schema)
 
         self.process_raw_schema_in_transaction(
-            schema_id, next_version_schema_metadata, schema__model
+            schema_id, next_version_schema_metadata, schema_model
         )
 
         self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
