@@ -191,19 +191,23 @@ class SchemaFirebaseRepository:
 
         return schema_metadata_list
 
-    def get_schema_from_guid(self, guid: str) -> dict:
+    def get_schema_from_guid(self, guid: str) -> dict|None:
         """
-        Gets the schema of a specific guid. Should only ever return one entry.
+        Gets the schema of a specific guid from the sub-collection. Should only ever return one entry.
 
         Parameters:
         guid (str): The guid of the survey being queried.
+
+        Returns:
+        dict: The schema of the survey being queried.
+        None: If no schema is found with the given guid, returns None.
         """
-        return json.loads(self.schemas_collection.document(guid)
-                .collection("schema")
-                .document(guid)
-                .get()
-                .to_dict()["schema"]
-                )
+        returned_schema = self.schemas_collection.document(guid).collection("schema").document(guid).get()
+
+        if not returned_schema.exists:
+            return None
+
+        return json.loads(returned_schema.to_dict()["schema"])
 
     def get_latest_schema_guid(self, survey_id: str) -> str:
         """
