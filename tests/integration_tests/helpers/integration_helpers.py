@@ -1,14 +1,9 @@
 import json
 
 from app.config import settings
-from app.dependencies import get_bucket_loader
 from app.repositories.firebase.firebase_loader import firebase_loader
 from google.cloud import storage
 
-from tests.integration_tests.helpers.bucket_helpers import (
-    delete_blobs_with_test_survey_id,
-    delete_local_bucket_data,
-)
 from tests.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_on_collection_with_test_survey_id,
@@ -42,13 +37,7 @@ def cleanup() -> None:
     """
     if settings.API_URL.__contains__("local"):
         delete_local_firestore_data()
-
-        delete_local_bucket_data("devtools/gcp-storage-emulator/data/schema_bucket/")
-        delete_local_bucket_data("devtools/gcp-storage-emulator/data/dataset_bucket/")
     else:
-        bucket_loader = get_bucket_loader()
-        delete_blobs_with_test_survey_id(bucket_loader.get_schema_bucket(), test_survey_id)
-
         client = firebase_loader.get_client()
 
         perform_delete_on_collection_with_test_survey_id(

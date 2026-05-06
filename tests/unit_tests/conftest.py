@@ -4,10 +4,9 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 from fastapi.testclient import TestClient
-from google.cloud import firestore, storage
+from google.cloud import firestore
 
-from app.dependencies import get_bucket_loader, get_publisher_service
-from app.repositories.buckets.bucket_loader import BucketLoader
+from app.dependencies import get_publisher_service
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.publisher_service import PublisherService
 from tests.test_data import shared_test_data
@@ -43,15 +42,6 @@ def firestore_credentials_mock(monkeypatch):
     mock_client.collection = MagicMock(return_value=MagicMock())
 
     monkeypatch.setattr(firestore, "Client", mock_client)
-
-
-@pytest.fixture(autouse=True)
-def bucket_mock(test_client):
-    app = test_client.app
-    mock_bucket_loader = Mock(spec=BucketLoader)
-    app.dependency_overrides[get_bucket_loader] = lambda: mock_bucket_loader
-
-    yield mock_bucket_loader
 
 
 @pytest.fixture(autouse=True)

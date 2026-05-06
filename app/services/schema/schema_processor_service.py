@@ -7,8 +7,6 @@ from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.repositories.buckets.bucket_loader import BucketLoader
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
@@ -18,9 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class SchemaProcessorService:
-    def __init__(self, bucket_loader: BucketLoader, publisher_service: PublisherService) -> None:
-        self.schema_firebase_repository = SchemaFirebaseRepository(bucket_loader)
-        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
+    def __init__(self, publisher_service: PublisherService) -> None:
+        self.schema_firebase_repository = SchemaFirebaseRepository()
         self.publisher_service = publisher_service
 
     def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:

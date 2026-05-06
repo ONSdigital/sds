@@ -229,16 +229,15 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponseModel'
           description: Internal Server Error
     get:
-      summary: Get Schema From Bucket
-      description: "Gets the filename of the bucket schema metadata and uses that\
-        \ to retrieve the schema metadata\nwith specific survey id and version from\
-        \ the bucket. Latest version schema will be retrieved\nif version is omitted\n\
-        \nParameters:\nsurvey_id (str): survey id of the schema metadata.\nversion\
-        \ (str) (optional): version of the survey.\nschema_firebase_repository (SchemaFirebaseRepository):\
-        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
-        schema_processor_service (SchemaProcessorService): injected dependency for\n\
-        \    interacting with the schema collection in firestore."
-      operationId: get_schema_from_bucket_v1_schema_get
+      summary: Get Schema
+      description: "Gets the guid with specific survey id and version and uses that\
+        \ to retrieve a schema.\nLatest version schema will be retrieved if version\
+        \ is omitted\n\nParameters:\nsurvey_id (str): survey id of the schema metadata.\n\
+        version (str) (optional): version of the survey.\nschema_firebase_repository\
+        \ (SchemaFirebaseRepository): injected dependency for\n    interacting with\
+        \ the schema collection in firestore.\nschema_processor_service (SchemaProcessorService):\
+        \ injected dependency for\n    interacting with the schema collection in firestore."
+      operationId: get_schema_v1_schema_get
       parameters:
       - name: survey_id
         in: query
@@ -264,7 +263,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response Get Schema From Bucket V1 Schema Get
+                title: Response Get Schema V1 Schema Get
         '400':
           content:
             application/json:
@@ -294,14 +293,13 @@ paths:
           description: Not Found
   /v2/schema:
     get:
-      summary: Get Schema From Bucket With Guid
-      description: "Gets the filename of the bucket schema metadata and uses that\
-        \ to retrieve the schema metadata\nwith specific guid from the bucket\n\n\
-        Parameters:\nguid (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
+      summary: Get Schema With Guid
+      description: "Use the guid to retrieve a schema directly\n\nParameters:\nguid\
+        \ (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
         \ injected dependency for\n    interacting with the schema collection in firestore.\n\
         schema_processor_service (SchemaProcessorService): injected dependency for\n\
         \    interacting with the schema collection in firestore."
-      operationId: get_schema_from_bucket_with_guid_v2_schema_get
+      operationId: get_schema_with_guid_v2_schema_get
       parameters:
       - name: guid
         in: query
@@ -319,7 +317,7 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
-                title: Response Get Schema From Bucket With Guid V2 Schema Get
+                title: Response Get Schema With Guid V2 Schema Get
         '400':
           content:
             application/json:
@@ -480,7 +478,7 @@ paths:
       operationId: http_get_status_status_get
       responses:
         '200':
-          description: Deployment done succuessfully
+          description: Deployment done successfully
           content:
             application/json:
               schema:

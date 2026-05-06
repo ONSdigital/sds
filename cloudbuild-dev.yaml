@@ -77,7 +77,6 @@ steps:
         export CONF='cloudbuild-int-tests'
         export LOG_LEVEL=${_LOG_LEVEL}
         export PROJECT_ID=${PROJECT_ID}
-        export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
         export PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
         export API_URL=${_API_URL}
         export SURVEY_MAP_URL=${_SURVEY_MAP_URL}

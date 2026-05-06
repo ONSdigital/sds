@@ -4,7 +4,6 @@ import logging
 
 from app.config import settings
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.publisher_service import PublisherService
 
@@ -17,8 +16,6 @@ class TestPostSchema:
         """
         Tests when there the first version of a schema is posted it should give it version 1 and return 200.
         """
-        SchemaBucketRepository.store_schema_json = MagicMock(return_value=None)
-
         SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock(
             return_value=None
         )
@@ -45,9 +42,6 @@ class TestPostSchema:
         Tests when a schema is posted, a 200 response and the schema metadata will be received
         and the appropriate message will be sent to publisher
         """
-        SchemaBucketRepository.store_schema_json = MagicMock()
-        SchemaBucketRepository.store_schema_json.return_value = None
-
         SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response
@@ -238,12 +232,9 @@ class TestPostSchema:
     def test_publish_schema_exception_500_response(self, caplog, test_client, pubsub_mock):
         """
         Tests when a schema is posted and the publisher raised an exception
-        a 500 response will be receieved with appropriate error message and
+        a 500 response will be received with appropriate error message and
         error log
         """
-        SchemaBucketRepository.store_schema_json = MagicMock()
-        SchemaBucketRepository.store_schema_json.return_value = None
-
         SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id = MagicMock()
         SchemaFirebaseRepository.get_latest_schema_metadata_with_survey_id.return_value = (
             schema_test_data.test_post_schema_metadata_first_version_response

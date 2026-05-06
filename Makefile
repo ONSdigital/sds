@@ -6,7 +6,6 @@ SANDBOX_IP_ADDRESS = $(shell gcloud compute addresses list --global  --filter=na
 
 # Please run gcloud auth application-default login before running the following commands that interact with GCP services
 start-cloud-dev:
-	export SCHEMA_BUCKET_NAME='${PROJECT_ID}-sds-europe-west2-schema' && \
 	export LOG_LEVEL='DEBUG' && \
 	export PROJECT_ID=${PROJECT_ID} && \
 	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
@@ -15,7 +14,6 @@ start-cloud-dev:
 lint-and-unit-tests:
 	uv run python -m ruff check .
 	export CONF='unit' && \
-	export SCHEMA_BUCKET_NAME="the-sds-schema-bucket" && \
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
@@ -24,7 +22,6 @@ lint-and-unit-tests:
 
 unit-tests:
 	export CONF='unit' && \
-	export SCHEMA_BUCKET_NAME="the-sds-schema-bucket" && \
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
@@ -35,14 +32,12 @@ unit-tests:
 integration-tests-local:
 	export CONF='local-int-tests' && \
 	export PROJECT_ID='mock-project-id' && \
-	export SCHEMA_BUCKET_NAME='emulated-schema-bucket' && \
 	export PYTHONPATH=${PYTHONPATH} && \
 	export PUBLISH_SCHEMA_TOPIC_ID='emulated-sds-schema-topic' && \
 	export API_URL=${LOCAL_URL} && \
 	export URL_SCHEME='http' && \
 	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
-	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 # Please run gcloud auth application-default login before running the following commands that interact with GCP services
@@ -50,7 +45,6 @@ integration-tests-local:
 integration-tests-sandbox:
 	export CONF='sandbox-int-tests' && \
 	export PYTHONPATH=${PYTHONPATH} && \
-    export SCHEMA_BUCKET_NAME='${PROJECT_ID}-sds-europe-west2-schema' && \
 	export PROJECT_ID=${PROJECT_ID} && \
 	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
 	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
@@ -62,9 +56,7 @@ integration-tests-sandbox:
 generate-spec:
 	export PYTHONPATH=. && \
 	export PROJECT_ID='mock-project-id' && \
-	export SCHEMA_BUCKET_NAME='emulated-schema-bucket' && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
-	export STORAGE_EMULATOR_HOST=http://localhost:9023 && \
 	uv run python .github/scripts/generate_openapi.py app.main:app --out gateway/openapi.yaml
 
 lint:

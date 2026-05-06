@@ -6,7 +6,6 @@ class Settings(BaseSettings):
 
     CONF: str = ""
     TIME_FORMAT: str = "%Y-%m-%dT%H:%M:%SZ"
-    SCHEMA_BUCKET_NAME: str = "sds-bucket-name"
     LOG_LEVEL: str = "INFO"
     PROJECT_ID: str = "ons-sds-ci"
     PUBLISH_SCHEMA_TOPIC_ID: str = "ons-sds-publish-schema"
@@ -17,7 +16,6 @@ class Settings(BaseSettings):
     API_URL: str = "only required for integration tests"
     URL_SCHEME: str = "only required for integration tests"
     PUBSUB_EMULATOR_HOST: str = "only required for local development environment"
-    STORAGE_EMULATOR_HOST: str = "only required for local development environment"
     FIRESTORE_EMULATOR_HOST: str = "only required for local development environment"
 
 
