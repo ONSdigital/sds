@@ -25,6 +25,39 @@ def test_get_dataset_metadata_collection_200_response(test_client):
     assert response.json() == expected
 
 
+def test_get_all_dataset_metadata_collection_200_response(test_client):
+    """
+    When the dataset metadata collection is retrieved successfully there should be a 200 status code and response data.
+    """
+    DatasetFirebaseRepository.get_all_dataset_metadata_collection = MagicMock()
+    DatasetFirebaseRepository.get_all_dataset_metadata_collection.return_value = (
+        dataset_test_data.dataset_metadata_collection
+    )
+
+    expected = [
+        dataset_test_data.dataset_metadata_collection[0].__dict__,
+        dataset_test_data.dataset_metadata_collection[1].__dict__,
+    ]
+
+    response = test_client.get("/v1/all_dataset_metadata")
+
+    assert response.status_code == 200
+    assert response.json() == expected
+
+
+def test_get_all_dataset_metadata_collection_404_response(test_client):
+    """
+    When no dataset metadata collection is retrieved there should be a 404 response.
+    """
+    DatasetFirebaseRepository.get_all_dataset_metadata_collection = MagicMock()
+    DatasetFirebaseRepository.get_all_dataset_metadata_collection.return_value = []
+
+    response = test_client.get("/v1/all_dataset_metadata")
+
+    assert response.status_code == 404
+    assert response.json()["message"] == "No datasets found"
+
+
 def test_get_dataset_metadata_collection_404_response(test_client):
     """
     When no dataset metadata is retrieved there should be a 404 response.

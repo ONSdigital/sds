@@ -4,7 +4,6 @@ from firebase_admin import firestore
 from google.cloud.firestore import Transaction
 
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.models.schema_models import SchemaMetadata
 from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.firebase_loader import firebase_loader

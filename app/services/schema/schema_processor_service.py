@@ -7,7 +7,6 @@ from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.models.schema_models import SchemaMetadata
 from app.repositories.buckets.bucket_loader import BucketLoader
 from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
@@ -185,23 +184,6 @@ class SchemaProcessorService:
 
         return schema_metadata_collection
 
-    def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
-        """
-        Gets the filename of the schema in bucket. If version is omitted,
-        the latest schema filename is retrieved
-
-        Parameters:
-        survey_id (str): the survey id of the schema
-        version (str): the sds schema version of the schema
-        """
-        if version is None:
-            return self.schema_firebase_repository.get_latest_schema_bucket_filename(
-                survey_id
-            )
-        else:
-            return self.schema_firebase_repository.get_schema_bucket_filename(
-                survey_id, version
-            )
 
     def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
         """
@@ -221,16 +203,6 @@ class SchemaProcessorService:
                 survey_id, version
             )
 
-    def get_schema_bucket_filename_from_guid(self, guid: str) -> str:
-        """
-        Gets the filename of the schema in bucket from guid
-
-        Parameters:
-        guid (str): the guid of the schema
-        """
-        return self.schema_firebase_repository.get_schema_bucket_filename_with_guid(
-            guid
-        )
 
     def try_publish_schema_metadata_to_topic(
         self, next_version_schema_metadata: SchemaMetadata
@@ -259,6 +231,7 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException from exc
 
+
     def get_survey_id_map(self) -> list[str]:
         """
         Gets the Survey mapping data from the survey_map.json file in GitHub repository.
@@ -280,6 +253,7 @@ class SchemaProcessorService:
             raise exceptions.GlobalException from exc
 
         return survey_map_dict
+
 
     def get_schema_from_guid(self, guid: str) -> dict:
         """
