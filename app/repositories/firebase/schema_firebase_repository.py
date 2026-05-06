@@ -1,14 +1,14 @@
 import json
 
-from firebase_admin import firestore
+from google.cloud import firestore
 from google.cloud.firestore import Transaction
 
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.repositories.firebase.firebase_loader import firebase_loader
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 
 class SchemaFirebaseRepository:
-    def __init__(self):
+    def __init__(self, firebase_loader: FirebaseLoader) -> None:
         self.client = firebase_loader.get_client()
         self.schemas_collection = firebase_loader.get_schemas_collection()
 

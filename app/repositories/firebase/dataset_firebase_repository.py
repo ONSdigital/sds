@@ -3,7 +3,7 @@ from firebase_admin import firestore
 
 from app.logging_config import logging
 from app.models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
-from app.repositories.firebase.firebase_loader import firebase_loader
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class DatasetFirebaseRepository:
     MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
 
-    def __init__(self):
+    def __init__(self, firebase_loader: FirebaseLoader) -> None:
         self.client = firebase_loader.get_client()
         self.datasets_collection = firebase_loader.get_datasets_collection()
 

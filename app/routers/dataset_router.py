@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
+from app.dependencies import get_dataset_deletion_service, get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 @router.post("/collection-exercise-end", status_code=200)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
-    dataset_deletion_service: DatasetDeletionService = Depends(),
+    dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
 ):
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data}")
@@ -54,7 +55,7 @@ async def post_collection_exercise_end_message(
 async def get_unit_supplementary_data(
     dataset_id: str,
     identifier: str,
-    dataset_service: DatasetService = Depends(),
+    dataset_service: DatasetService = Depends(get_dataset_service),
 ):
     """
     Retrieve supplementary data for a particular unit given the dataset id and identifier, return 404 if no data is returned.
@@ -107,7 +108,7 @@ async def get_unit_supplementary_data(
 async def get_dataset_metadata_collection(
     survey_id: str | None = None,
     period_id: str | None = None,
-    dataset_service: DatasetService = Depends(),
+    dataset_service: DatasetService = Depends(get_dataset_service),
 ) -> list[DatasetMetadata]:
     """
     Retrieve the matching dataset metadata, given the survey_id and period_id.
@@ -147,7 +148,7 @@ async def get_dataset_metadata_collection(
     },
 )
 async def get_all_dataset_metadata_collection(
-    dataset_service: DatasetService = Depends(),
+    dataset_service: DatasetService = Depends(get_dataset_service),
 ) -> list[DatasetMetadata]:
     """Retrieve all dataset metadata.
     """

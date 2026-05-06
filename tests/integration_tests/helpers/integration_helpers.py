@@ -1,9 +1,9 @@
 import json
 
 from app.config import settings
-from app.repositories.firebase.firebase_loader import firebase_loader
 from google.cloud import storage
 
+from app.dependencies import get_firebase_loader
 from tests.integration_tests.helpers.firestore_helpers import (
     delete_local_firestore_data,
     perform_delete_on_collection_with_test_survey_id,
@@ -38,6 +38,7 @@ def cleanup() -> None:
     if settings.API_URL.__contains__("local"):
         delete_local_firestore_data()
     else:
+        firebase_loader = get_firebase_loader()
         client = firebase_loader.get_client()
 
         perform_delete_on_collection_with_test_survey_id(

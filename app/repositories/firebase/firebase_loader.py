@@ -4,8 +4,8 @@ from app.config import settings
 
 
 class FirebaseLoader:
-    def __init__(self):
-        self.client = self._connect_client()
+    def __init__(self, client: firestore.Client) -> None:
+        self.client = client
         self.datasets_collection = self._set_collection("datasets")
         self.schemas_collection = self._set_collection("schemas")
         self.deletion_collection = self._set_collection("marked_for_deletion")
@@ -51,6 +51,3 @@ class FirebaseLoader:
         if settings.CONF == "unit":
             return None
         return self.client.collection(collection)
-
-
-firebase_loader = FirebaseLoader()

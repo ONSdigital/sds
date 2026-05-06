@@ -4,13 +4,14 @@ from app.models.dataset_models import (
     UnitDataset,
 )
 from app.repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetService:
-    def __init__(self) -> None:
-        self.dataset_repository = DatasetFirebaseRepository()
+    def __init__(self, firebase_loader: FirebaseLoader) -> None:
+        self.dataset_repository = DatasetFirebaseRepository(firebase_loader)
 
     def get_dataset_metadata_collection(
         self, survey_id: str, period_id: str
