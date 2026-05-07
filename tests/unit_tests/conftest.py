@@ -3,10 +3,16 @@ from datetime import datetime
 from unittest.mock import MagicMock, Mock
 
 import pytest
+from fastapi import Depends
 from fastapi.testclient import TestClient
-from google.cloud import firestore
+from google.cloud.firestore import Transaction
+from mockfirestore import MockFirestore
 
-from app.dependencies import get_publisher_service
+from app.dependencies import get_publisher_service, get_firebase_loader, get_dataset_deletion_service, \
+    get_dataset_service
+from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.services.dataset.dataset_deletion_service import DatasetDeletionService
+from app.services.dataset.dataset_service import DatasetService
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.publisher_service import PublisherService
 from tests.test_data import shared_test_data
@@ -33,15 +39,32 @@ def uuid_mock():
 
 
 @pytest.fixture(autouse=True)
-def firestore_credentials_mock(monkeypatch):
-    """
-    Mocks firestore credentials
-    """
-    mock_client = MagicMock()
-    mock_client.transaction = MagicMock(return_value=MagicMock())
-    mock_client.collection = MagicMock(return_value=MagicMock())
+def firestore_mock(test_client):
+    app = test_client.app
+    mock_firestore = Mock(spec=FirebaseLoader)
+    mock_firestore.client = MockFirestore()
+    mock_firestore.get_client.return_value = mock_firestore.client
+    app.dependency_overrides[get_firebase_loader] = lambda: mock_firestore
 
-    monkeypatch.setattr(firestore, "Client", mock_client)
+    yield mock_firestore
+
+    mock_firestore.client.reset()
+
+
+@pytest.fixture(autouse=True)
+def transaction_mock(firestore_mock):
+    """
+    Mock a firestore transaction with default values mimicking google.cloud.firestore.Transaction.
+    This is required as MockFirestore does not support transactions mocking, and this set up enables
+    unit-test without patching the transaction functions
+    """
+    mock_transaction = Mock(spec=Transaction)
+    mock_transaction._read_only = False
+    mock_transaction._max_attempts = 1
+    mock_transaction._id = None
+    firestore_mock.set_transaction.return_value = mock_transaction
+
+    yield mock_transaction
 
 
 @pytest.fixture(autouse=True)
@@ -77,3 +100,16 @@ def test_client_no_server_exception():
 
     client = TestClient(app, raise_server_exceptions=False)
     yield client
+
+
+@pytest.fixture
+def dataset_delete_service_setup(firestore_mock, test_client):
+    """
+    Fixture to set up the DatasetDeletionService with mocked dependencies for unit testing.
+    """
+    app = test_client.app
+
+    setup_dataset_delete_service = DatasetDeletionService(firebase_loader=firestore_mock)
+    app.dependency_overrides[get_dataset_deletion_service] = lambda: setup_dataset_delete_service
+
+    yield setup_dataset_delete_service

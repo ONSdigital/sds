@@ -52,7 +52,6 @@ def cleanup() -> None:
             test_survey_id
         )
 
-
 def is_json_response(response):
     try:
         response.json()

@@ -823,6 +823,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mock-firestore"
+version = "0.11.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/06/b8/08ccd007d29e7560020b7a9654ea6fbbc6eaf672ad21d0fa03b6867d4a9a/mock-firestore-0.11.0.tar.gz", hash = "sha256:4958b983534b890f7cdffe12b651b1deefa6ee202ee46af751c6bdaa44fe3432", size = 13307, upload-time = "2022-01-24T13:43:11.135Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cc/d6/56cfac3ae7563b17117d79b6beaecda495a9805d478e76bc783cba17ad93/mock_firestore-0.11.0-py3-none-any.whl", hash = "sha256:9e847a886a64d490bf13e2d52105745b6618d6a7e7169aeb62d4b895c405d204", size = 18269, upload-time = "2022-01-24T13:43:09.615Z" },
+]
+
+[[package]]
 name = "msgpack"
 version = "1.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1328,6 +1337,7 @@ dependencies = [
     { name = "gunicorn" },
     { name = "httpx" },
     { name = "jsonschema" },
+    { name = "mock-firestore" },
     { name = "pip-audit" },
     { name = "pydantic-settings" },
     { name = "pytest" },
@@ -1360,6 +1370,7 @@ requires-dist = [
     { name = "gunicorn", specifier = "==23.0.0" },
     { name = "httpx", specifier = "==0.28.1" },
     { name = "jsonschema", specifier = "==4.25.1" },
+    { name = "mock-firestore", specifier = ">=0.11.0" },
     { name = "pip-audit", specifier = "==2.10.0" },
     { name = "pydantic-settings", specifier = "==2.13.1" },
     { name = "pytest", specifier = "==8.4.2" },

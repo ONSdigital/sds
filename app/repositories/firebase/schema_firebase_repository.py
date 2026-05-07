@@ -9,7 +9,7 @@ from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 class SchemaFirebaseRepository:
     def __init__(self, firebase_loader: FirebaseLoader) -> None:
-        self.client = firebase_loader.get_client()
+        self.firestore = firebase_loader
         self.schemas_collection = firebase_loader.get_schemas_collection()
 
     def get_latest_schema_metadata_with_survey_id(
@@ -61,11 +61,8 @@ class SchemaFirebaseRepository:
             self.create_schema_in_transaction(
                 transaction, schema_id, schema_model
             )
-            #self.schema_bucket_repository.store_schema_json(
-            #    stored_schema_filename, schema
-            #)
 
-        post_schema_transaction_run(self.client.transaction())
+        post_schema_transaction_run(self.firestore.set_transaction())
 
     def create_schema_metadata_in_transaction(
         self,
