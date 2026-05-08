@@ -23,6 +23,16 @@ async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
 ):
+    """
+    Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
+    if dataset_guid is present in the message.
+
+    Parameters:
+    collection_end_data (CollectionExerciseEndData): The collection exercise end message body, containing the GUID
+    of the dataset to be deleted and the survey_id and period id to find the relevant dataset metadata for deletion.
+
+    This endpoint is currently not being used and is partially built without implementation of unhappy path
+    """
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data}")
     dataset_deletion_service.process_collection_exercise_end_message(

@@ -26,7 +26,7 @@ unit-tests:
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
 	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
-	uv run python -m coverage report --omit="./app/repositories/*" --fail-under=90  -m
+	uv run python -m coverage report --fail-under=90  -m
 
 # Spinning up emulators in docker is required to run the local integration tests.
 integration-tests-local:

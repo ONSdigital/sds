@@ -3,16 +3,13 @@ from datetime import datetime
 from unittest.mock import MagicMock, Mock
 
 import pytest
-from fastapi import Depends
 from fastapi.testclient import TestClient
 from google.cloud.firestore import Transaction
 from mockfirestore import MockFirestore
 
-from app.dependencies import get_publisher_service, get_firebase_loader, get_dataset_deletion_service, \
-    get_dataset_service
+from app.dependencies import get_publisher_service, get_firebase_loader, get_dataset_deletion_service
 from app.repositories.firebase.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_deletion_service import DatasetDeletionService
-from app.services.dataset.dataset_service import DatasetService
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.publisher_service import PublisherService
 from tests.test_data import shared_test_data
@@ -65,6 +62,33 @@ def transaction_mock(firestore_mock):
     firestore_mock.set_transaction.return_value = mock_transaction
 
     yield mock_transaction
+
+
+@pytest.fixture(autouse=True)
+def schema_collection_mock(firestore_mock):
+    collection = firestore_mock.client.collection('schemas')
+    firestore_mock.schemas_collection = collection
+    firestore_mock.get_schemas_collection.return_value = collection
+
+    yield collection
+
+
+@pytest.fixture(autouse=True)
+def dataset_collection_mock(firestore_mock):
+    collection = firestore_mock.client.collection('datasets')
+    firestore_mock.datasets_collection = collection
+    firestore_mock.get_datasets_collection.return_value = collection
+
+    yield collection
+
+
+@pytest.fixture(autouse=True)
+def deletion_collection_mock(firestore_mock):
+    collection = firestore_mock.client.collection('marked_for_deletion')
+    firestore_mock.deletion_collection = collection
+    firestore_mock.get_deletion_collection.return_value = collection
+
+    yield collection
 
 
 @pytest.fixture(autouse=True)
