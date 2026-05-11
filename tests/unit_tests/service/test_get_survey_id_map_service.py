@@ -2,7 +2,6 @@ from unittest.mock import MagicMock, Mock
 from fastapi import status
 import requests
 
-from app.services.schema.schema_processor_service import SchemaProcessorService
 from app.services.shared.utility_functions import UtilityFunctions
 from tests.test_data import schema_test_data
 
@@ -49,7 +48,7 @@ def test_request_survey_id_mapping_empty_list_response(test_client):
 
 def test_request_survey_id_mapping_404_response(test_client):
     """
-    When the list of Survey IDs mapping returns a non 200 response, the API must return the error response with 404 status code
+    When the list of Survey IDs mapping returns a non-200 response, the API must return the error response with 404 status code
     """
     UtilityFunctions.request_survey_id_mapping = MagicMock()
     UtilityFunctions.request_survey_id_mapping.return_value = mock_response(
