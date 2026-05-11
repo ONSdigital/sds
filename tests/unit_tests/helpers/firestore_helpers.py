@@ -1,7 +1,7 @@
-from typing import Any
+from mockfirestore import CollectionReference as MockCollectionReference
 
 def setup_mock_data(
-        mock_collection: Any,
+        mock_collection: MockCollectionReference,
         mock_data: dict,
         mock_guid: str,
         sub_collection_name: str = None,

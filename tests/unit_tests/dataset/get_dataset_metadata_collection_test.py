@@ -1,8 +1,6 @@
 from unittest.mock import MagicMock
 from fastapi import status
 
-from app.repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-
 from tests.test_data import dataset_test_data, shared_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
 
@@ -115,3 +113,28 @@ def test_get_dataset_metadata_with_invalid_extra_parameters(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search parameters provided"
+
+
+def test_global_error(firestore_mock, test_client_no_server_exception):
+    """
+    Checks that if app encounter a global exception error
+    fastAPI will return a 500 exception with appropriate msg
+    Func get_schema_metadata is patched and raised with exception
+    Fixture client_no_server_exception is used to avoid exiting
+    the test at exception so that the response can be validated
+    """
+    firestore_mock.get_datasets_collection = MagicMock(side_effect=Exception)
+
+    response = test_client_no_server_exception.get(
+        f"/v1/dataset_metadata?survey_id={dataset_test_data.test_survey_id}&period_id={dataset_test_data.test_period_id}"
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json()["message"] == "Unable to process request"
+
+    response = test_client_no_server_exception.get(
+        f"/v1/all_dataset_metadata"
+    )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json()["message"] == "Unable to process request"

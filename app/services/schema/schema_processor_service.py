@@ -1,8 +1,6 @@
 import json
 import uuid
 
-import requests
-
 from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
@@ -12,6 +10,7 @@ from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseR
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
 from app.services.shared.publisher_service import PublisherService
+from app.services.shared.utility_functions import UtilityFunctions
 
 logger = logging.getLogger(__name__)
 
@@ -230,29 +229,6 @@ class SchemaProcessorService:
             raise exceptions.GlobalException from exc
 
 
-    def get_survey_id_map(self) -> list[str]:
-        """
-        Gets the Survey mapping data from the survey_map.json file in GitHub repository.
-        """
-        try:
-            logger.info("Fetching the survey mapping data")
-
-            url = settings.SURVEY_MAP_URL
-            response = requests.get(url, timeout=30)
-            logger.debug(f"Response is {response}")
-
-            survey_map_dict = response.json()
-
-            logger.debug(f"Survey map data is {survey_map_dict}")
-            logger.info("Fetched the survey mapping data")
-
-        except Exception as exc:
-            logger.error(f"Error while fetching the survey mapping data: {exc}")
-            raise exceptions.GlobalException from exc
-
-        return survey_map_dict
-
-
     def get_schema_from_guid(self, guid: str) -> dict:
         """
         Gets the schema from the schema bucket using the guid of the schema.
@@ -261,3 +237,25 @@ class SchemaProcessorService:
         guid (str): the guid of the schema
         """
         return self.schema_firebase_repository.get_schema_from_guid(guid)
+
+
+    def get_survey_id_map(self) -> list[str]:
+        """
+        Gets the Survey mapping data from the survey_map.json file in GitHub repository.
+        """
+        logger.info("Fetching the survey mapping data")
+
+        response = UtilityFunctions.request_survey_id_mapping()
+
+        logger.debug(f"Response from survey ID mapping URL: {response}")
+
+        if response.status_code != 200:
+            logger.error(f"Failed to fetch survey mapping data, status code: {response.status_code}")
+            raise exceptions.ExceptionNoSurveyIDs
+
+        survey_map_dict = response.json()
+
+        logger.debug(f"Survey ID mapping: {survey_map_dict}")
+        logger.info("Fetched the survey mapping data")
+
+        return survey_map_dict
