@@ -17,7 +17,7 @@ class DatasetFirebaseRepository:
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
-    ) -> UnitDataset:
+    ) -> UnitDataset | None:
         """
         Get the unit supplementary data of a specified unit from a dataset collection
 
@@ -25,13 +25,12 @@ class DatasetFirebaseRepository:
         dataset_id (str): The unique id of the dataset
         identifier (str): The id of the unit on the dataset
         """
-        return UnitDataset(
-            **self.datasets_collection.document(dataset_id)
-            .collection("units")
-            .document(identifier)
-            .get()
-            .to_dict()
-        )
+        returned_unit_data = self.datasets_collection.document(dataset_id).collection("units").document(identifier).get()
+
+        if not returned_unit_data.exists:
+            return None
+
+        return UnitDataset(**returned_unit_data.to_dict())
 
 
     def get_dataset_metadata_collection(

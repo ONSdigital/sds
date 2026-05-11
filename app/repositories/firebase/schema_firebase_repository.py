@@ -29,8 +29,12 @@ class SchemaFirebaseRepository:
         )
 
         schema_metadata: SchemaMetadata
-        for returned_schema in latest_schema:
-            schema_metadata: SchemaMetadata = SchemaMetadata(**returned_schema.to_dict())
+
+        schema_found = next(latest_schema, None)
+        if schema_found is None:
+            return None
+        else:
+            schema_metadata: SchemaMetadata = SchemaMetadata(**schema_found.to_dict())
 
             return schema_metadata
 
@@ -138,7 +142,7 @@ class SchemaFirebaseRepository:
 
         return schema_metadata_list
 
-    def get_schema_from_guid(self, guid: str) -> dict|None:
+    def get_schema_from_guid(self, guid: str) -> dict | None:
         """
         Gets the schema of a specific guid from the sub-collection. Should only ever return one entry.
 
@@ -156,7 +160,7 @@ class SchemaFirebaseRepository:
 
         return json.loads(returned_schema.to_dict()["schema"])
 
-    def get_latest_schema_guid(self, survey_id: str) -> str:
+    def get_latest_schema_guid(self, survey_id: str) -> str | None:
         """
         Gets the guid of the latest version schema of a specific survey id. Should only ever return one entry.
 
@@ -170,10 +174,14 @@ class SchemaFirebaseRepository:
             .stream()
         )
 
-        for schema in schemas_result:
-            return schema.to_dict()["guid"]
+        schema_found = next(schemas_result, None)
+        if schema_found is None:
+            return None
+        else:
+            return schema_found.to_dict()["guid"]
 
-    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
+
+    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str | None:
         """
         Gets the filename of schema with a specific survey id and version. Should only ever return one entry.
 
@@ -187,6 +195,9 @@ class SchemaFirebaseRepository:
             .stream()
         )
 
-        for schema in schemas_result:
-            return schema.to_dict()["guid"]
+        schema_found = next(schemas_result, None)
+        if schema_found is None:
+            return None
+        else:
+            return schema_found.to_dict()["guid"]
 

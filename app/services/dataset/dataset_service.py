@@ -34,7 +34,7 @@ class DatasetService:
 
     def get_unit_supplementary_data(
         self, dataset_id: str, identifier: str
-    ) -> UnitDataset:
+    ) -> UnitDataset | None:
         """
         Retrieve supplementary data for a particular unit given the dataset id and identifier.
 

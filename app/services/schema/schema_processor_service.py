@@ -231,7 +231,7 @@ class SchemaProcessorService:
             raise exceptions.GlobalException from exc
 
 
-    def get_schema_from_guid(self, guid: str) -> dict:
+    def get_schema_from_guid(self, guid: str) -> dict | None:
         """
         Gets the schema from the schema bucket using the guid of the schema.
 
