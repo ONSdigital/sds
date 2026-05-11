@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from fastapi import status
+
 from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
@@ -249,7 +251,7 @@ class SchemaProcessorService:
 
         logger.debug(f"Response from survey ID mapping URL: {response}")
 
-        if response.status_code != 200:
+        if response.status_code != status.HTTP_200_OK:
             logger.error(f"Failed to fetch survey mapping data, status code: {response.status_code}")
             raise exceptions.ExceptionNoSurveyIDs
 
