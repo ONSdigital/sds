@@ -2,14 +2,13 @@
 from firebase_admin import firestore
 
 from app.logging_config import logging
-from app.models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
+from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
 
 
 class DatasetFirebaseRepository:
-    MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
 
     def __init__(self, firebase_loader: FirebaseLoader) -> None:
         self.client = firebase_loader.get_client()
@@ -26,8 +25,8 @@ class DatasetFirebaseRepository:
         dataset_id (str): The unique id of the dataset
         identifier (str): The id of the unit on the dataset
         """
-        return (
-            self.datasets_collection.document(dataset_id)
+        return UnitDataset(
+            **self.datasets_collection.document(dataset_id)
             .collection("units")
             .document(identifier)
             .get()
