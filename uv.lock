@@ -1379,7 +1379,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = "==1.1.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "ruff", specifier = "==0.13.2" },
-    { name = "sds-common", specifier = "==1.0.17" },
+    { name = "sds-common", specifier = "==1.0.18" },
     { name = "setuptools", specifier = "==80.9.0" },
     { name = "tomlkit", specifier = "==0.13.3" },
     { name = "uvicorn", specifier = "===0.37.0" },
@@ -1393,7 +1393,7 @@ version-check = [
 
 [[package]]
 name = "sds-common"
-version = "1.0.17"
+version = "1.0.18"
 source = { registry = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/simple/" }
 dependencies = [
     { name = "cloudevents" },
@@ -1412,9 +1412,9 @@ dependencies = [
     { name = "requests" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.17.tar.gz", hash = "sha256:7d667f714046d9667239f2120b5c15dbca394c9c5b7eda92cb27fee7f7b59d29" }
+sdist = { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.18.tar.gz", hash = "sha256:cb21a6c60efd72e69b0822419e708a526947a9990cc1e050ce56562189e01ded" }
 wheels = [
-    { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.17-py3-none-any.whl", hash = "sha256:650b0bc3893693fc772ff040e44868313b1d7d87bd9cc154f0f7d780414f37d2" },
+    { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.18-py3-none-any.whl", hash = "sha256:3db57733f0e2f33ae954d0469debc13a4800bc0fe175ac11292707e64a37d72f" },
 ]
 
 [[package]]

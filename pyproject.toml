@@ -25,7 +25,7 @@ dependencies = [
     "ruff==0.13.2",
     "setuptools==80.9.0",
     "tomlkit==0.13.3",
-    "sds-common==1.0.17",
+    "sds-common==1.0.18",
     "mock-firestore>=0.11.0",
 ]
 
