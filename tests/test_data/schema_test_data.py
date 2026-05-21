@@ -1,5 +1,7 @@
-from app.models.schema_models import SchemaMetadata
-from tests.test_data.shared_test_data import test_survey_id, test_guid
+import json
+
+from app.models.schema_models import SchemaMetadata, SchemaModel
+from tests.test_data.shared_test_data import test_survey_id, test_guid, test_guid_2, test_guid_3
 
 """
 Local variables:
@@ -7,13 +9,13 @@ Local variables:
 test_published_at = "2023-04-20T12:00:00Z"
 test_schema_version = "v1"
 test_title = "test_title"
-
+sub_collection_name = "schema"
 
 """
-Test data:
+Unit Test data:
 """
 # unit tests - schema - test data
-test_post_schema_metadata_first_version_response = SchemaMetadata(**{
+test_schema_metadata_1 = SchemaMetadata(**{
     "guid": test_guid,
     "schema_location": f"{test_survey_id}/{test_guid}.json",
     "sds_published_at": test_published_at,
@@ -23,8 +25,7 @@ test_post_schema_metadata_first_version_response = SchemaMetadata(**{
     "title": test_title,
 })
 
-# unit tests - schema - test data
-test_post_schema_metadata_updated_version_response = {
+test_schema_metadata_2 = SchemaMetadata(**{
     "guid": test_guid,
     "schema_location": f"{test_survey_id}/{test_guid}.json",
     "sds_published_at": test_published_at,
@@ -32,10 +33,30 @@ test_post_schema_metadata_updated_version_response = {
     "survey_id": test_survey_id,
     "schema_version": test_schema_version,
     "title": test_title,
-}
+})
 
-# unit tests - schema - test data
-test_post_schema_body = {
+test_schema_metadata_other = SchemaMetadata(**{
+    "guid": test_guid,
+    "schema_location": f"another_survey/{test_guid}.json",
+    "sds_published_at": test_published_at,
+    "sds_schema_version": 2,
+    "survey_id": "another_survey",
+    "schema_version": test_schema_version,
+    "title": test_title,
+})
+
+test_schema_metadata: list[SchemaMetadata] = [
+    test_schema_metadata_2,
+    test_schema_metadata_1,
+]
+
+test_all_schema_metadata: list[SchemaMetadata] = [
+    test_schema_metadata_other,
+    test_schema_metadata_2,
+    test_schema_metadata_1,
+]
+
+test_schema = {
     "$schema": "test-schema",
     "$id": "test-id",
     "title": test_title,
@@ -46,6 +67,10 @@ test_post_schema_body = {
         }
     },
 }
+
+test_schema_model = SchemaModel(**{
+    "schema": json.dumps(test_schema)
+})
 
 # unit tests - schema - test data
 test_post_schema_body_missing_fields = {
@@ -138,41 +163,6 @@ test_post_schema_body_empty_title = {
         }
     },
 }
-
-# unit tests - schema - test data
-test_schema_response = {
-    "title": test_title,
-    "properties": {
-        "schema_version": {
-            "const": test_schema_version,
-            "description": "Version of the schema spec",
-        }
-    },
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "roofing_tiles_and_slate.json",
-}
-
-# unit tests - schema - test data
-test_schema_metadata_collection: list[SchemaMetadata] = [
-    SchemaMetadata(**{
-        "survey_id": "test_survey_id",
-        "schema_location": "test_schema_location",
-        "sds_schema_version": 1,
-        "sds_published_at": "test_published_time",
-        "schema_version": "v1",
-        "guid": "id_0",
-        "title": test_title,
-    }),
-    SchemaMetadata(**{
-        "survey_id": "test_survey_id",
-        "schema_location": "test_schema_location",
-        "sds_schema_version": 2,
-        "sds_published_at": "test_published_time",
-        "schema_version": "v1",
-        "guid": "id_1",
-        "title": test_title,
-    }),
-]
 
 # e2e schema integration test - test data
 # unit tests - schema - test data

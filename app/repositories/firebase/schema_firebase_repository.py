@@ -1,17 +1,16 @@
-from firebase_admin import firestore
+import json
+
+from google.cloud import firestore
 from google.cloud.firestore import Transaction
 
-from app.models.schema_models import SchemaMetadata
-from app.repositories.buckets.bucket_loader import BucketLoader
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
-from app.repositories.firebase.firebase_loader import firebase_loader
+from app.models.schema_models import SchemaMetadata, SchemaModel
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 
 class SchemaFirebaseRepository:
-    def __init__(self, bucket_loader: BucketLoader):
-        self.client = firebase_loader.get_client()
+    def __init__(self, firebase_loader: FirebaseLoader) -> None:
+        self.firestore = firebase_loader
         self.schemas_collection = firebase_loader.get_schemas_collection()
-        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
 
     def get_latest_schema_metadata_with_survey_id(
         self, survey_id: str
@@ -30,8 +29,12 @@ class SchemaFirebaseRepository:
         )
 
         schema_metadata: SchemaMetadata
-        for returned_schema in latest_schema:
-            schema_metadata: SchemaMetadata = SchemaMetadata(**returned_schema.to_dict())
+
+        schema_found = next(latest_schema, None)
+        if schema_found is None:
+            return None
+        else:
+            schema_metadata: SchemaMetadata = SchemaMetadata(**schema_found.to_dict())
 
             return schema_metadata
 
@@ -39,8 +42,7 @@ class SchemaFirebaseRepository:
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
-        schema: dict,
-        stored_schema_filename: str,
+        schema_model: SchemaModel,
     ) -> None:
         """
         A transactional function that wrap schema creation and schema storage processes
@@ -57,16 +59,16 @@ class SchemaFirebaseRepository:
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
         @firestore.transactional
         def post_schema_transaction_run(transaction: Transaction):
-            self.create_schema_in_transaction(
+            self.create_schema_metadata_in_transaction(
                 transaction, schema_id, next_version_schema_metadata
             )
-            self.schema_bucket_repository.store_schema_json(
-                stored_schema_filename, schema
+            self.create_schema_in_transaction(
+                transaction, schema_id, schema_model
             )
 
-        post_schema_transaction_run(self.client.transaction())
+        post_schema_transaction_run(self.firestore.set_transaction())
 
-    def create_schema_in_transaction(
+    def create_schema_metadata_in_transaction(
         self,
         transaction: Transaction,
         schema_id: str,
@@ -85,51 +87,23 @@ class SchemaFirebaseRepository:
             merge=True,
         )
 
-    def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
+    def create_schema_in_transaction(
+        self,
+        transaction: Transaction,
+        schema_id: str,
+        schema_model: SchemaModel,
+    ) -> None:
         """
-        Gets the filename of schema with a specific survey id and version. Should only ever return one entry.
+        Creates a new schema metadata entry in firestore.
 
         Parameters:
-        survey_id (str): The survey id of the survey being queried.
-        version (str): The version of the survey being queried
+        schema_id (str): The unique id of the new schema.
         """
-        schemas_result = (
-            self.schemas_collection.where("survey_id", "==", survey_id)
-            .where("sds_schema_version", "==", int(version))
-            .stream()
+        transaction.set(
+            self.schemas_collection.document(schema_id).collection("schema").document(schema_id),
+            schema_model.__dict__,
+            merge=True,
         )
-
-        for schema in schemas_result:
-            return schema.to_dict()["schema_location"]
-
-    def get_latest_schema_bucket_filename(self, survey_id: str) -> str:
-        """
-        Gets the filename of the latest version schema of a specific survey id. Should only ever return one entry.
-
-        Parameters:
-        survey_id (str): The survey id of the survey being queried.
-        """
-        schemas_result = (
-            self.schemas_collection.where("survey_id", "==", survey_id)
-            .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
-            .limit(1)
-            .stream()
-        )
-
-        for schema in schemas_result:
-            return schema.to_dict()["schema_location"]
-
-    def get_schema_bucket_filename_with_guid(self, guid: str) -> str:
-        """
-        Gets the filename of the schema of a specific guid. Should only ever return one entry.
-
-        Parameters:
-        guid (str): The guid of the survey being queried.
-        """
-        schemas_result = self.schemas_collection.where("guid", "==", guid).stream()
-
-        for schema in schemas_result:
-            return schema.to_dict()["schema_location"]
 
     def get_schema_metadata_collection(self, survey_id: str) -> list[SchemaMetadata]:
         """
@@ -167,3 +141,63 @@ class SchemaFirebaseRepository:
             schema_metadata_list.append(metadata)
 
         return schema_metadata_list
+
+    def get_schema_from_guid(self, guid: str) -> dict | None:
+        """
+        Gets the schema of a specific guid from the sub-collection. Should only ever return one entry.
+
+        Parameters:
+        guid (str): The guid of the survey being queried.
+
+        Returns:
+        dict: The schema of the survey being queried.
+        None: If no schema is found with the given guid, returns None.
+        """
+        returned_schema = self.schemas_collection.document(guid).collection("schema").document(guid).get()
+
+        if not returned_schema.exists:
+            return None
+
+        return json.loads(returned_schema.to_dict()["schema"])
+
+    def get_latest_schema_guid(self, survey_id: str) -> str | None:
+        """
+        Gets the guid of the latest version schema of a specific survey id. Should only ever return one entry.
+
+        Parameters:
+        survey_id (str): The survey id of the survey being queried.
+        """
+        schemas_result = (
+            self.schemas_collection.where("survey_id", "==", survey_id)
+            .order_by("sds_schema_version", direction=firestore.Query.DESCENDING)
+            .limit(1)
+            .stream()
+        )
+
+        schema_found = next(schemas_result, None)
+        if schema_found is None:
+            return None
+        else:
+            return schema_found.to_dict()["guid"]
+
+
+    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str | None:
+        """
+        Gets the filename of schema with a specific survey id and version. Should only ever return one entry.
+
+        Parameters:
+        survey_id (str): The survey id of the survey being queried.
+        version (str): The version of the survey being queried
+        """
+        schemas_result = (
+            self.schemas_collection.where("survey_id", "==", survey_id)
+            .where("sds_schema_version", "==", int(version))
+            .stream()
+        )
+
+        schema_found = next(schemas_result, None)
+        if schema_found is None:
+            return None
+        else:
+            return schema_found.to_dict()["guid"]
+

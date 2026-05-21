@@ -1,12 +1,11 @@
 from dataclasses import asdict
 
 from app.models.deletion_models import DeleteMetadata
-from app.repositories.firebase.firebase_loader import firebase_loader
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 
 
 class DeletionMetadataFirebaseRepository:
-
-    def __init__(self):
+    def __init__(self, firebase_loader: FirebaseLoader):
         self.client = firebase_loader.get_client()
         self.deletion_collection = firebase_loader.get_deletion_collection()
 

@@ -83,15 +83,14 @@ async def post_schema(
         },
     },
 )
-async def get_schema_from_bucket(
+async def get_schema(
     survey_id: str | None = None,
     version: str | None = None,
     schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> dict:
     """
-    Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
-    with specific survey id and version from the bucket. Latest version schema will be retrieved
-    if version is omitted
+    Gets the guid with specific survey id and version and uses that to retrieve a schema.
+    Latest version schema will be retrieved if version is omitted
 
     Parameters:
     survey_id (str): survey id of the schema metadata.
@@ -101,24 +100,28 @@ async def get_schema_from_bucket(
     schema_processor_service (SchemaProcessorService): injected dependency for
         interacting with the schema collection in firestore.
     """
-    logger.info("Getting bucket schema metadata...")
+    logger.info("Getting schema from Survey ID and Version...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
     QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
     QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
 
-    bucket_schema_filename = schema_processor_service.get_schema_bucket_filename(
+    guid = schema_processor_service.get_guid_with_survey_id_and_version(
         survey_id, version
     )
 
-    if not bucket_schema_filename:
-        logger.error("Schema metadata not found")
+    if not guid:
+        logger.error("Schema metadata not found from survey id and version")
         raise exceptions.ExceptionNoSchemaFound
 
-    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
-    logger.info("Bucket schema location successfully retrieved. Getting schema...")
+    logger.info("GUID successfully retrieved. Getting schema from GUID...")
+    logger.debug(f"GUID of the schema to retrieve: {guid}")
 
-    schema = schema_processor_service.schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
+    schema = schema_processor_service.get_schema_from_guid(guid)
+
+    if not schema:
+        logger.error("Schema not found")
+        raise exceptions.ExceptionNoSchemaFound
 
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")
@@ -147,13 +150,12 @@ async def get_schema_from_bucket(
         },
     },
 )
-async def get_schema_from_bucket_with_guid(
+async def get_schema_with_guid(
     guid: str | None = None,
     schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
 ) -> dict:
     """
-    Gets the filename of the bucket schema metadata and uses that to retrieve the schema metadata
-    with specific guid from the bucket
+    Use the guid to retrieve a schema directly
 
     Parameters:
     guid (str): GUID of the schema.
@@ -162,23 +164,16 @@ async def get_schema_from_bucket_with_guid(
     schema_processor_service (SchemaProcessorService): injected dependency for
         interacting with the schema collection in firestore.
     """
-    logger.info("Getting bucket schema metadata...")
+    logger.info("Getting schema from GUID...")
     logger.debug(f"Input data: guid={guid}")
 
     QueryParameterValidatorService.validate_guid_from_get_schema(guid)
 
-    bucket_schema_filename = (
-        schema_processor_service.get_schema_bucket_filename_from_guid(guid)
-    )
+    schema = schema_processor_service.get_schema_from_guid(guid)
 
-    if not bucket_schema_filename:
-        logger.error("Schema metadata not found")
+    if not schema:
+        logger.error("Schema not found")
         raise exceptions.ExceptionNoSchemaFound
-
-    logger.debug(f"Bucket schema location: {bucket_schema_filename}")
-    logger.info("Bucket schema location successfully retrieved. Getting schema...")
-
-    schema = schema_processor_service.schema_bucket_repository.get_schema_file_as_json(bucket_schema_filename)
 
     logger.info("Schema successfully retrieved.")
     logger.debug(f"Schema: {schema}")

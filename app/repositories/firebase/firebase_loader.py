@@ -1,11 +1,9 @@
 from google.cloud import firestore
 
-from app.config import settings
-
 
 class FirebaseLoader:
-    def __init__(self):
-        self.client = self._connect_client()
+    def __init__(self, client: firestore.Client) -> None:
+        self.client = client
         self.datasets_collection = self._set_collection("datasets")
         self.schemas_collection = self._set_collection("schemas")
         self.deletion_collection = self._set_collection("marked_for_deletion")
@@ -34,23 +32,14 @@ class FirebaseLoader:
         """
         return self.deletion_collection
 
-    def _connect_client(self) -> firestore.Client:
+    def set_transaction(self):
         """
-        Connect to the firestore client using PROJECT_ID
+        Set the transaction for firestore client
         """
-        if settings.CONF == "unit":
-            return None
-        return firestore.Client(
-            project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME
-        )
+        return self.client.transaction()
 
     def _set_collection(self, collection) -> firestore.CollectionReference:
         """
-        Setup the collection reference for schemas and datasets
+        Set up the collection reference for schemas and datasets
         """
-        if settings.CONF == "unit":
-            return None
         return self.client.collection(collection)
-
-
-firebase_loader = FirebaseLoader()

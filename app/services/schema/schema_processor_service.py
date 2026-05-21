@@ -1,25 +1,25 @@
+import json
 import uuid
 
-import requests
+from fastapi import status
 
 from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
-from app.models.schema_models import SchemaMetadata
-from app.repositories.buckets.bucket_loader import BucketLoader
-from app.repositories.buckets.schema_bucket_repository import SchemaBucketRepository
+from app.models.schema_models import SchemaMetadata, SchemaModel
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
 from app.services.shared.publisher_service import PublisherService
+from app.services.shared.utility_functions import UtilityFunctions
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaProcessorService:
-    def __init__(self, bucket_loader: BucketLoader, publisher_service: PublisherService) -> None:
-        self.schema_firebase_repository = SchemaFirebaseRepository(bucket_loader)
-        self.schema_bucket_repository = SchemaBucketRepository(bucket_loader)
+    def __init__(self, firebase_loader: FirebaseLoader, publisher_service: PublisherService) -> None:
+        self.schema_firebase_repository = SchemaFirebaseRepository(firebase_loader)
         self.publisher_service = publisher_service
 
     def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:
@@ -36,8 +36,10 @@ class SchemaProcessorService:
             schema_id, stored_schema_filename, schema, survey_id
         )
 
+        schema_model = self.build_schema_model(schema)
+
         self.process_raw_schema_in_transaction(
-            schema_id, next_version_schema_metadata, schema, stored_schema_filename
+            schema_id, next_version_schema_metadata, schema_model
         )
 
         self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
@@ -48,12 +50,11 @@ class SchemaProcessorService:
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
-        schema: dict,
-        stored_schema_filename: str,
+        schema_model: SchemaModel,
     ):
         """
         Process the new schema by calling a transactional function that wrap the procedures
-        Commit if the function is sucessful, rolling back otherwise.
+        Commit if the function is successful, rolling back otherwise.
 
         Parameters:
         schema_id (str): The unique id of the new schema.
@@ -64,7 +65,7 @@ class SchemaProcessorService:
         try:
             logger.info("Beginning schema transaction...")
             self.schema_firebase_repository.perform_new_schema_transaction(
-                schema_id, next_version_schema_metadata, schema, stored_schema_filename
+                schema_id, next_version_schema_metadata, schema_model
             )
 
             logger.info("Schema transaction committed successfully.")
@@ -73,6 +74,19 @@ class SchemaProcessorService:
             logger.error(f"Performing schema transaction: exception raised: {exc}")
             logger.error("Rolling back schema transaction")
             raise exceptions.GlobalException from exc
+
+    def build_schema_model(self, schema: dict) -> SchemaModel:
+        """
+        Builds the schema model
+
+        Parameters:
+        schema (dict): the schema being processed.
+        """
+        schema_str = json.dumps(schema)
+        schema_model: SchemaModel = SchemaModel(**{
+            "schema": schema_str
+        })
+        return schema_model
 
     def build_next_version_schema_metadata(
         self,
@@ -169,7 +183,8 @@ class SchemaProcessorService:
 
         return schema_metadata_collection
 
-    def get_schema_bucket_filename(self, survey_id: str, version: str) -> str:
+
+    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
         """
         Gets the filename of the schema in bucket. If version is omitted,
         the latest schema filename is retrieved
@@ -179,24 +194,14 @@ class SchemaProcessorService:
         version (str): the sds schema version of the schema
         """
         if version is None:
-            return self.schema_firebase_repository.get_latest_schema_bucket_filename(
+            return self.schema_firebase_repository.get_latest_schema_guid(
                 survey_id
             )
         else:
-            return self.schema_firebase_repository.get_schema_bucket_filename(
+            return self.schema_firebase_repository.get_guid_with_survey_id_and_version(
                 survey_id, version
             )
 
-    def get_schema_bucket_filename_from_guid(self, guid: str) -> str:
-        """
-        Gets the filename of the schema in bucket from guid
-
-        Parameters:
-        guid (str): the guid of the schema
-        """
-        return self.schema_firebase_repository.get_schema_bucket_filename_with_guid(
-            guid
-        )
 
     def try_publish_schema_metadata_to_topic(
         self, next_version_schema_metadata: SchemaMetadata
@@ -225,24 +230,34 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException from exc
 
+
+    def get_schema_from_guid(self, guid: str) -> dict | None:
+        """
+        Gets the schema from the schema bucket using the guid of the schema.
+
+        Parameters:
+        guid (str): the guid of the schema
+        """
+        return self.schema_firebase_repository.get_schema_from_guid(guid)
+
+
     def get_survey_id_map(self) -> list[str]:
         """
         Gets the Survey mapping data from the survey_map.json file in GitHub repository.
         """
-        try:
-            logger.info("Fetching the survey mapping data")
+        logger.info("Fetching the survey mapping data")
 
-            url = settings.SURVEY_MAP_URL
-            response = requests.get(url, timeout=30)
-            logger.debug(f"Response is {response}")
+        response = UtilityFunctions.request_survey_id_mapping()
 
-            survey_map_dict = response.json()
+        logger.debug(f"Response from survey ID mapping URL: {response}")
 
-            logger.debug(f"Survey map data is {survey_map_dict}")
-            logger.info("Fetched the survey mapping data")
+        if response.status_code != status.HTTP_200_OK:
+            logger.error(f"Failed to fetch survey mapping data, status code: {response.status_code}")
+            raise exceptions.ExceptionNoSurveyIDs
 
-        except Exception as exc:
-            logger.error(f"Error while fetching the survey mapping data: {exc}")
-            raise exceptions.GlobalException from exc
+        survey_map_dict = response.json()
+
+        logger.debug(f"Survey ID mapping: {survey_map_dict}")
+        logger.info("Fetched the survey mapping data")
 
         return survey_map_dict

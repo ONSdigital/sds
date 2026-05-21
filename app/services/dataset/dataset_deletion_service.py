@@ -6,6 +6,7 @@ from app.models.deletion_models import DeleteMetadata
 from app.repositories.firebase.deletion_firebase_repository import (
     DeletionMetadataFirebaseRepository,
 )
+from app.repositories.firebase.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_service import DatasetService
 from app.services.shared.datetime_service import DatetimeService
 
@@ -14,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 class DatasetDeletionService:
 
-    def __init__(self) -> None:
-        self.delete_repository = DeletionMetadataFirebaseRepository()
-        self.dataset_service = DatasetService()
+    def __init__(self, firebase_loader: FirebaseLoader) -> None:
+        self.delete_repository = DeletionMetadataFirebaseRepository(firebase_loader)
+        self.dataset_service = DatasetService(firebase_loader)
 
     def process_collection_exercise_end_message(
         self, collection_exercise_end_data: CollectionExerciseEndData

@@ -14,3 +14,8 @@ class SchemaMetadataWithoutGuid:
 @dataclass
 class SchemaMetadata(SchemaMetadataWithoutGuid):
     guid: str
+
+
+@dataclass
+class SchemaModel:
+    schema: str
