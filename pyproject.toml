@@ -1,6 +1,6 @@
 [project]
 name = "sds"
-version = "2.4.8"
+version = "2.4.9"
 description = "Supplementary Data Service"
 requires-python = ">=3.13,<3.14"
 dependencies = [

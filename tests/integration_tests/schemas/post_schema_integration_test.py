@@ -1,3 +1,5 @@
+import time
+
 from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from tests.integration_tests.helpers.utils import make_iap_request
 from tests.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
@@ -24,6 +26,8 @@ class TestPostSchemaEndpoint:
             assert schema_post_response.status_code == 200
             assert "guid" in schema_post_response.json()
 
+            time.sleep(5)
+            
             received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
                 test_schema_subscriber_id
             )
