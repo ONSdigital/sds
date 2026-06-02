@@ -27,6 +27,8 @@ class TestPostSchemaEndpoint:
             received_messages = schema_pubsub_helper.pull_and_acknowledge_messages(
                 test_schema_subscriber_id
             )
+            
+            assert len(received_messages) > 0, "No messages received from Pub/Sub"
 
             # Retrieve and verify received messages from Pub/Sub
             received_messages_json = received_messages[0]
