@@ -28,6 +28,7 @@ class TestPostSchemaEndpoint:
                 test_schema_subscriber_id
             )
             
+            assert received_messages is not None, "No messages received from Pub/Sub"
             assert len(received_messages) > 0, "No messages received from Pub/Sub"
 
             # Retrieve and verify received messages from Pub/Sub
