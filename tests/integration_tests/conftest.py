@@ -52,7 +52,7 @@ def setup_post_schema():
 
     yield True
 
-    pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
+    # pubsub_teardown(schema_pubsub_helper, test_schema_subscriber_id)
     cleanup()
 
 
