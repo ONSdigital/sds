@@ -21,5 +21,3 @@ class DatasetDeletionRepositoryInterface(ABC):
         :param delete_metadata: Delete metadata
         """
         raise NotImplementedError
-
-
