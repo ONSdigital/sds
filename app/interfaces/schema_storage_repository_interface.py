@@ -67,3 +67,16 @@ class SchemaStorageRepositoryInterface(ABC):
         Gets the collection of schema metadata for all surveys.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def get_schema_from_guid(
+            self,
+            guid: str
+    ) -> dict | None:
+        """
+        Gets the schema of a specific guid from the sub-collection.
+        Should only ever return one entry.
+
+        :param guid: The guid of the schema being queried.
+        """
+        raise NotImplementedError
