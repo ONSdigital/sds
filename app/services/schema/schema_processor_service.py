@@ -7,7 +7,7 @@ from app.config import settings
 from app.exception import exceptions
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.util.firebase_loader import FirebaseLoader
 from app.repositories.firebase.schema_firebase_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService

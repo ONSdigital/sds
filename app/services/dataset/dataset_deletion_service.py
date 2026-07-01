@@ -3,10 +3,10 @@ from app.logging_config import logging
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.dataset_models import DatasetMetadata
 from app.models.deletion_models import DeleteMetadata
-from app.repositories.firebase.deletion_firebase_repository import (
+from app.repositories.dataset_deletion.firestore_dataset_deletion_repository import (
     DeletionMetadataFirebaseRepository,
 )
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.util.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_service import DatasetService
 from app.services.shared.datetime_service import DatetimeService
 

@@ -3,7 +3,7 @@ from google.cloud import firestore
 from google.cloud.pubsub_v1 import PublisherClient
 
 from app.config import settings
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.util.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_deletion_service import DatasetDeletionService
 from app.services.dataset.dataset_service import DatasetService
 from app.services.schema.schema_processor_service import SchemaProcessorService

@@ -8,7 +8,7 @@ from google.cloud.firestore import Transaction
 from mockfirestore import MockFirestore
 
 from app.dependencies import get_publisher_service, get_firebase_loader, get_dataset_deletion_service
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.util.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_deletion_service import DatasetDeletionService
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.publisher_service import PublisherService

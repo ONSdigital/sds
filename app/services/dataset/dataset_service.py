@@ -3,8 +3,8 @@ from app.models.dataset_models import (
     DatasetMetadata,
     UnitDataset,
 )
-from app.repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.repositories.dataset_storage.firestore_dataset_storage_repository import DatasetFirebaseRepository
+from app.util.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
 

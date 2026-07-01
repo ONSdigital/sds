@@ -4,7 +4,7 @@ from google.cloud import firestore
 from google.cloud.firestore import Transaction
 
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.repositories.firebase.firebase_loader import FirebaseLoader
+from app.util.firebase_loader import FirebaseLoader
 
 
 class SchemaFirebaseRepository:
