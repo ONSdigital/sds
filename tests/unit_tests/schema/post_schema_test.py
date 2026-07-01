@@ -3,18 +3,24 @@ from fastapi import status
 import logging
 
 from app.config import settings
+from tests.test_config.endpoints import ENDPOINTS, POST_SCHEMA
+from tests.test_config.endpoints_loader import EndpointsLoader
 
 from tests.test_data import schema_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_200_response_first_schema_version(test_client):
     """
     Tests when there the first version of a schema is posted it should give it version 1 and return 200.
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_schema,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_schema,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -35,9 +41,11 @@ def test_200_response_updated_schema_version(schema_collection_mock, pubsub_mock
         mock_guid=schema_test_data.test_guid,
     )
 
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_schema,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_schema,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -56,10 +64,13 @@ def test_post_schema_with_invalid_dict(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema is not a valid dictionary.
     """
-    response = test_client.post(
-        "/v1/schema?survey_id=",
-        json="invalid_json",
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body="invalid_json",
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -68,10 +79,13 @@ def test_post_schema_with_missing_survey_id_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema is missing mandatory fields.
     """
-    response = test_client.post(
-        "/v1/schema?survey_id=",
-        json=schema_test_data.test_post_schema_body_missing_fields,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": ""},
+        body=schema_test_data.test_schema,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -80,10 +94,13 @@ def test_post_missing_fields_schema_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema is missing mandatory fields.
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_missing_fields,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_missing_fields,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -92,10 +109,13 @@ def test_post_empty_fields_schema_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema mandatory fields have null value
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_empty_properties,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_empty_properties,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -104,10 +124,13 @@ def test_post_invalid_type_fields_schema_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if the schema required fields are not an object
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_invalid_properties_type,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_invalid_properties_type,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -116,10 +139,13 @@ def test_post_missing_schema_version_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if schema version is missing
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_missing_schema_version,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_missing_schema_version,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -128,10 +154,13 @@ def test_post_invalid_schema_version_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if schema version is not an object
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_invalid_schema_version,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_invalid_schema_version,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -140,10 +169,13 @@ def test_post_invalid_schema_version_const_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if schema version const is not a string
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_invalid_schema_version_const,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_invalid_schema_version_const,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -152,10 +184,13 @@ def test_post_empty_schema_version_const_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if schema version const is empty
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_empty_schema_version_const,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_empty_schema_version_const,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -164,10 +199,13 @@ def test_post_missing_title_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if title is missing
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_missing_title,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_missing_title,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -176,10 +214,13 @@ def test_post_empty_title_400_response(test_client):
     Checks that fastAPI returns a 400 error with appropriate
     message if title is empty
     """
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_post_schema_body_empty_title,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_post_schema_body_empty_title,
     )
+
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
@@ -191,9 +232,11 @@ def test_post_schema_transaction_exception_500_response(firestore_mock, test_cli
     """
     firestore_mock.set_transaction = MagicMock(side_effect=Exception)
 
-    response = test_client.post(
-        f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-        json=schema_test_data.test_schema,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=POST_SCHEMA,
+        params={"survey_id": schema_test_data.test_survey_id},
+        body=schema_test_data.test_schema,
     )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -209,9 +252,11 @@ def test_publish_schema_exception_500_response(
     pubsub_mock.publish_data_to_topic = MagicMock(side_effect=Exception)
 
     with caplog.at_level(logging.ERROR, logger="app.services.schema.schema_processor_service"):
-        response = test_client.post(
-            f"/v1/schema?survey_id={schema_test_data.test_survey_id}",
-            json=schema_test_data.test_schema,
+        response = endpoints_loader.send_request(
+            client=test_client,
+            key=POST_SCHEMA,
+            params={"survey_id": schema_test_data.test_survey_id},
+            body=schema_test_data.test_schema,
         )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

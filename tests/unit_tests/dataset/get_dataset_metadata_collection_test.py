@@ -1,8 +1,12 @@
 from unittest.mock import MagicMock
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, GET_DATASET_METADATA, GET_ALL_DATASET_METADATA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import dataset_test_data, shared_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_get_dataset_metadata_collection_200_response(dataset_collection_mock, test_client):
@@ -30,8 +34,13 @@ def test_get_dataset_metadata_collection_200_response(dataset_collection_mock, t
         mock_guid=shared_test_data.test_guid_3,
     )
 
-    response = test_client.get(
-        f"/v1/dataset_metadata?survey_id={dataset_test_data.test_survey_id}&period_id={dataset_test_data.test_period_id}"
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_DATASET_METADATA,
+        params={
+            "survey_id": dataset_test_data.test_survey_id,
+            "period_id": dataset_test_data.test_period_id
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -63,7 +72,10 @@ def test_get_all_dataset_metadata_collection_200_response(dataset_collection_moc
         mock_guid=shared_test_data.test_guid_3,
     )
 
-    response = test_client.get("/v1/all_dataset_metadata")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_ALL_DATASET_METADATA,
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [dataset_metadata.__dict__ for dataset_metadata in dataset_test_data.test_all_dataset_metadata]
@@ -73,7 +85,10 @@ def test_get_all_dataset_metadata_collection_404_response(test_client):
     """
     When no dataset metadata is retrieved from all dataset metadata endpoint there should be a 404 response.
     """
-    response = test_client.get("/v1/all_dataset_metadata")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_ALL_DATASET_METADATA,
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No datasets found"
@@ -83,8 +98,13 @@ def test_get_dataset_metadata_collection_404_response(test_client):
     """
     When no dataset metadata is retrieved dataset metadata endpoint there should be a 404 response.
     """
-    response = test_client.get(
-        f"/v1/dataset_metadata?survey_id={dataset_test_data.test_survey_id}&period_id={dataset_test_data.test_period_id}"
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_DATASET_METADATA,
+        params={
+            "survey_id": dataset_test_data.test_survey_id,
+            "period_id": dataset_test_data.test_period_id
+        },
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -97,7 +117,13 @@ def test_get_dataset_metadata_with_invalid_parameters(test_client):
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
-    response = test_client.get("/v1/dataset_metadata?invalid_key=076")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_DATASET_METADATA,
+        params={
+            "invalid_key": "076",
+        },
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search parameters provided"
@@ -109,7 +135,14 @@ def test_get_dataset_metadata_with_invalid_extra_parameters(test_client):
     non-numeric version and returns a 400 error with appropriate message at
     dataset_metadata endpoint
     """
-    response = test_client.get("/v1/dataset_metadata?survey_id=076&invalid_key=456")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_DATASET_METADATA,
+        params={
+            "survey_id": "076",
+            "invalid_key": "456",
+        },
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search parameters provided"
@@ -125,15 +158,21 @@ def test_global_error(firestore_mock, test_client_no_server_exception):
     """
     firestore_mock.get_datasets_collection = MagicMock(side_effect=Exception)
 
-    response = test_client_no_server_exception.get(
-        f"/v1/dataset_metadata?survey_id={dataset_test_data.test_survey_id}&period_id={dataset_test_data.test_period_id}"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_DATASET_METADATA,
+        params={
+            "survey_id": dataset_test_data.test_survey_id,
+            "period_id": dataset_test_data.test_period_id
+        },
     )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"
 
-    response = test_client_no_server_exception.get(
-        f"/v1/all_dataset_metadata"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_ALL_DATASET_METADATA,
     )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

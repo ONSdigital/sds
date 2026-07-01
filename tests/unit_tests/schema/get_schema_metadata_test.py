@@ -2,8 +2,12 @@ from unittest.mock import MagicMock
 
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, GET_SCHEMA_METADATA, GET_ALL_SCHEMA_METADATA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import schema_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_get_schema_metadata_collection_200_response(schema_collection_mock, test_client):
@@ -31,7 +35,13 @@ def test_get_schema_metadata_collection_200_response(schema_collection_mock, tes
         mock_guid=schema_test_data.test_guid_3,
     )
 
-    response = test_client.get(f"/v1/schema_metadata?survey_id={schema_test_data.test_survey_id}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA_METADATA,
+        params={
+            "survey_id": schema_test_data.test_survey_id
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [schema_metadata.__dict__ for schema_metadata in schema_test_data.test_schema_metadata]
@@ -43,7 +53,13 @@ def test_get_schema_metadata_with_incorrect_key(test_client):
     when incorrect key is used to query schema metadata
     at get_schemas_metadata endpoint
     """
-    response = test_client.get("/v1/schema_metadata?incorrect_key=123")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA_METADATA,
+        params={
+            "incorrect_key": "123"
+        },
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search provided"
@@ -55,7 +71,13 @@ def test_get_schema_metadata_with_not_found_error(test_client):
     when schema metadata is not found at get_schemas_metadata
     endpoint
     """
-    response = test_client.get(f"/v1/schema_metadata?survey_id={schema_test_data.test_survey_id}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA_METADATA,
+        params={
+            "survey_id": schema_test_data.test_survey_id
+        },
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No results found"
@@ -86,7 +108,10 @@ def test_get_all_schema_metadata_collection_200_response(schema_collection_mock,
         mock_guid=schema_test_data.test_guid_3,
     )
 
-    response = test_client.get("/v1/all_schema_metadata")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_ALL_SCHEMA_METADATA,
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == [schema_metadata.__dict__ for schema_metadata in schema_test_data.test_all_schema_metadata]
@@ -96,7 +121,10 @@ def test_get_all_schema_metadata_collection_404_response(test_client):
     """
     When the schema metadata collection is not found in firestore there should be a 404 status code and expected response.
     """
-    response = test_client.get("/v1/all_schema_metadata")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_ALL_SCHEMA_METADATA,
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No results found"
@@ -112,14 +140,21 @@ def test_global_error(firestore_mock, test_client_no_server_exception):
     """
     firestore_mock.get_schemas_collection = MagicMock(side_effect=Exception)
 
-    response = test_client_no_server_exception.get(
-        f"/v1/schema_metadata?survey_id={schema_test_data.test_survey_id}"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_SCHEMA_METADATA,
+        params={
+            "survey_id": schema_test_data.test_survey_id
+        },
     )
+
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"
 
-    response = test_client_no_server_exception.get(
-        f"/v1/all_schema_metadata"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_ALL_SCHEMA_METADATA,
     )
+
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"

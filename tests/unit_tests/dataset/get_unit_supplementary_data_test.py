@@ -1,9 +1,14 @@
+import os
 from unittest.mock import MagicMock
 
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, GET_UNIT_DATA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import shared_test_data, dataset_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_get_unit_supplementary_data_200_response(dataset_collection_mock, test_client):
@@ -21,8 +26,13 @@ def test_get_unit_supplementary_data_200_response(dataset_collection_mock, test_
         sub_collection_guid=dataset_test_data.identifier
     )
 
-    response = test_client.get(
-        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&identifier={dataset_test_data.identifier}",
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_UNIT_DATA,
+        params={
+            "dataset_id": shared_test_data.test_guid,
+            "identifier": dataset_test_data.identifier
+        },
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -33,8 +43,13 @@ def test_get_unit_supplementary_data_404_response(test_client):
     """
     The e2e journey for retrieving unit supplementary data from firestore,with repository boundaries mocked
     """
-    response = test_client.get(
-        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&identifier={dataset_test_data.identifier}"
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_UNIT_DATA,
+        params={
+            "dataset_id": shared_test_data.test_guid,
+            "identifier": dataset_test_data.identifier
+        },
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -47,10 +62,18 @@ def test_get_unit_supplementary_data_with_incorrect_key(test_client):
     when incorrect key is used to query unit supplementary data
     at get_unit_supplementary_data endpoint
     """
-    response = test_client.get(f"/v1/unit_data?incorrect_key=123")
+    # This test is only relevant to the deprecated endpoint
+    if os.environ.get("ENDPOINTS_DEPRECATED") == "true":
+        response = endpoints_loader.send_request(
+            client=test_client,
+            key=GET_UNIT_DATA,
+            params={
+                "incorrect_key": "123",
+            },
+        )
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json()["message"] == "Validation has failed"
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Validation has failed"
 
 
 def test_global_error(firestore_mock, test_client_no_server_exception):
@@ -63,8 +86,13 @@ def test_global_error(firestore_mock, test_client_no_server_exception):
     """
     firestore_mock.get_datasets_collection = MagicMock(side_effect=Exception)
 
-    response = test_client_no_server_exception.get(
-        f"/v1/unit_data?dataset_id={shared_test_data.test_guid}&identifier={dataset_test_data.identifier}"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_UNIT_DATA,
+        params={
+            "dataset_id": shared_test_data.test_guid,
+            "identifier": dataset_test_data.identifier
+        },
     )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

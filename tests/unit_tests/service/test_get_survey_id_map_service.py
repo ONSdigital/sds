@@ -3,7 +3,11 @@ from fastapi import status
 import requests
 
 from app.services.shared.utility_functions import UtilityFunctions
+from tests.test_config.endpoints import ENDPOINTS, GET_SURVEYS_MAPPING
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import schema_test_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def mock_response(status_code, json_data) -> MagicMock:
@@ -24,7 +28,10 @@ def test_request_survey_id_mapping_200_response(test_client):
         json_data=schema_test_data.test_survey_id_map
     )
 
-    response = test_client.get("/v1/survey_list")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SURVEYS_MAPPING,
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == schema_test_data.test_survey_id_map
@@ -40,7 +47,10 @@ def test_request_survey_id_mapping_empty_list_response(test_client):
         json_data=[]
     )
 
-    response = test_client.get("/v1/survey_list")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SURVEYS_MAPPING,
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No Survey IDs found"
@@ -56,7 +66,10 @@ def test_request_survey_id_mapping_404_response(test_client):
         json_data=None
     )
 
-    response = test_client.get("/v1/survey_list")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SURVEYS_MAPPING,
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No Survey IDs found"
@@ -68,7 +81,10 @@ def test_get_survey_id_map_500_response(test_client_no_server_exception):
     """
     UtilityFunctions.request_survey_id_mapping = MagicMock(side_effect=Exception)
 
-    response = test_client_no_server_exception.get("/v1/survey_list")
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_SURVEYS_MAPPING,
+    )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"

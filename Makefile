@@ -25,8 +25,16 @@ unit-tests:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
-	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
-	uv run python -m coverage report --fail-under=90  -m
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+	make unit-tests-deprecated
+
+unit-tests-deprecated:
+	export CONF='unit' && \
+	export PROJECT_ID=mock-project-id && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export ENDPOINTS_DEPRECATED="true" && \
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit_deprecated -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 # Spinning up emulators in docker is required to run the local integration tests.
 integration-tests-local:

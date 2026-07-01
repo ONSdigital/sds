@@ -1,7 +1,11 @@
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, COLLECTION_END
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import dataset_test_data, shared_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_process_collection_exercise_end_message_through_endpoint(
@@ -31,9 +35,10 @@ def test_process_collection_exercise_end_message_through_endpoint(
         mock_guid=shared_test_data.test_guid_3,
     )
 
-    response = test_client.post(
-        "/collection-exercise-end",
-        json=dataset_test_data.test_data_collection_end.__dict__,
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=COLLECTION_END,
+        body=dataset_test_data.test_data_collection_end.__dict__,
     )
 
     assert response.status_code == status.HTTP_200_OK

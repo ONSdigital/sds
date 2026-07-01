@@ -1,8 +1,13 @@
+import os
 from unittest.mock import MagicMock
 from fastapi import status
 
+from tests.test_config.endpoints import ENDPOINTS, GET_SCHEMA, GET_SCHEMA_WITH_GUID
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data import schema_test_data
 from tests.unit_tests.helpers.firestore_helpers import setup_mock_data
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 def test_get_schema_from_firestore_200_response(schema_collection_mock, test_client):
@@ -19,7 +24,14 @@ def test_get_schema_from_firestore_200_response(schema_collection_mock, test_cli
         sub_collection_guid=schema_test_data.test_guid,
     )
 
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}&version=1")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": schema_test_data.test_survey_id,
+            "version": "1"
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == schema_test_data.test_schema
@@ -40,7 +52,13 @@ def test_get_latest_schema_from_firestore_without_version(schema_collection_mock
         sub_collection_guid=schema_test_data.test_guid,
     )
 
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": schema_test_data.test_survey_id,
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == schema_test_data.test_schema
@@ -61,7 +79,13 @@ def test_get_schema_from_firestore_with_guid(schema_collection_mock, test_client
         sub_collection_guid=schema_test_data.test_guid,
     )
 
-    response = test_client.get(f"/v2/schema?guid={schema_test_data.test_guid}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA_WITH_GUID,
+        params={
+            "guid": schema_test_data.test_guid,
+        },
+    )
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == schema_test_data.test_schema
@@ -78,7 +102,14 @@ def test_get_schema_from_firestore_404_response(schema_collection_mock, test_cli
         mock_guid=schema_test_data.test_guid,
     )
 
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}&version=1")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": schema_test_data.test_survey_id,
+            "version": "1"
+        },
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No schema found"
@@ -88,7 +119,14 @@ def test_get_schema_from_firestore_404_response_with_unfound_metadata(test_clien
     """
     When the guid is not found from firestore there should be a 404 status code and expected response.
     """
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}&version=2")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": schema_test_data.test_survey_id,
+            "version": "1"
+        },
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No schema found"
@@ -99,7 +137,13 @@ def test_get_latest_schema_from_firestore_without_version_404_response(test_clie
     When the schema is queried without version but no latest schema version is found,
     there should be a 404 status code and expected response
     """
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": schema_test_data.test_survey_id,
+        },
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No schema found"
@@ -109,7 +153,13 @@ def test_get_schema_from_firestore_with_guid_404_response(test_client):
     """
     When the schema is not found via guid there should be a 404 status code and expected response.
     """
-    response = test_client.get(f"/v2/schema?guid={schema_test_data.test_guid}")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA_WITH_GUID,
+        params={
+            "guid": schema_test_data.test_guid,
+        },
+    )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert response.json()["message"] == "No schema found"
@@ -125,9 +175,26 @@ def test_global_error(firestore_mock, test_client_no_server_exception):
     """
     firestore_mock.get_schemas_collection = MagicMock(side_effect=Exception)
 
-    response = test_client_no_server_exception.get(
-        "/v1/schema?survey_id=076&version=123"
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": "076",
+            "version": "123",
+        },
     )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.json()["message"] == "Unable to process request"
+
+    response = endpoints_loader.send_request(
+        client=test_client_no_server_exception,
+        key=GET_SCHEMA_WITH_GUID,
+        params={
+            "guid": schema_test_data.test_guid,
+        },
+    )
+
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"
 
@@ -138,7 +205,14 @@ def test_get_schema_with_invalid_version_error(test_client):
     and returns a 400 error with appropriate message at
     get_schema endpoint
     """
-    response = test_client.get(f"/v1/schema?survey_id={schema_test_data.test_survey_id}&version=xyz")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+        params={
+            "survey_id": "076",
+            "version": "xyz",
+        },
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search provided"
@@ -149,7 +223,10 @@ def test_get_schema_with_missing_survey_id_error(test_client):
     Checks that fastAPI return 400 error with appropriate msg
     when survey id is missing when querying schema at get schema endpoint
     """
-    response = test_client.get("/v1/schema")
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_SCHEMA,
+    )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Invalid search provided"
@@ -160,7 +237,12 @@ def test_get_schema_with_missing_guid_error(test_client):
     Checks that fastAPI return 400 error with appropriate msg
     when guid is missing when querying schema at get schema v2 endpoint
     """
-    response = test_client.get("/v2/schema")
+    # This test is only relevant to the deprecated endpoint
+    if os.environ.get("ENDPOINTS_DEPRECATED") == "true":
+        response = endpoints_loader.send_request(
+            client=test_client,
+            key=GET_SCHEMA_WITH_GUID,
+        )
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json()["message"] == "Invalid parameter provided"
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json()["message"] == "Invalid parameter provided"
