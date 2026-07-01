@@ -213,6 +213,7 @@ async def get_all_schema_metadata_collection(
     return schema_metadata_collection
 
 
+# This endpoint must be placed after the /schemas endpoint to avoid conflicts with the /schemas/{guid} path parameter.
 @router.get(
     "/schemas/{guid}",
     name="Get Schema with GUID",

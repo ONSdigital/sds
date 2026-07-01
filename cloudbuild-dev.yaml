@@ -69,7 +69,7 @@ steps:
       ]
 
   - name: python:3.13
-    id: "Run integration test"
+    id: "Run integration test on new endpoints"
     entrypoint: sh
     args:
       - "-c"
@@ -83,6 +83,27 @@ steps:
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export SECRET_ID=iap-secret
         export URL_SCHEME=''
+        pip install --upgrade pip --user
+        pip install uv
+        uv sync
+        uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+
+  - name: python:3.13
+    id: "Run integration test on deprecated endpoints"
+    entrypoint: sh
+    args:
+      - "-c"
+      - |
+        export CONF='cloudbuild-int-tests'
+        export LOG_LEVEL=${_LOG_LEVEL}
+        export PROJECT_ID=${PROJECT_ID}
+        export PUBLISH_SCHEMA_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
+        export API_URL=${_API_URL}
+        export SURVEY_MAP_URL=${_SURVEY_MAP_URL}
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
+        export SECRET_ID=iap-secret
+        export URL_SCHEME=''
+        export ENDPOINTS_DEPRECATED='true'
         pip install --upgrade pip --user
         pip install uv
         uv sync

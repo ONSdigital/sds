@@ -419,7 +419,7 @@ wheels = [
 
 [[package]]
 name = "google-cloud-iam"
-version = "2.21.0"
+version = "2.24.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "google-api-core", extra = ["grpc"] },
@@ -429,9 +429,9 @@ dependencies = [
     { name = "proto-plus" },
     { name = "protobuf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/0b/037b1e1eb601646d6f49bc06d62094c1d0996b373dcbf70c426c6c51572e/google_cloud_iam-2.21.0.tar.gz", hash = "sha256:fc560527e22b97c6cbfba0797d867cf956c727ba687b586b9aa44d78e92281a3", size = 499038, upload-time = "2026-01-15T13:15:08.243Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a3/13/d6c3f207c8147768f4b56406c1534bdda034be76712bd960a048412f7001/google_cloud_iam-2.24.0.tar.gz", hash = "sha256:199a2512723abec10a49d581e638ccdf5b8a9671e1d5d6ff3ffeaa727075435f", size = 559063, upload-time = "2026-06-22T23:21:31.061Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c8/44/02ac4e147ea034a3d641c11b54c9d8d0b80fc1ea6a8b7d6c1588d208d42a/google_cloud_iam-2.21.0-py3-none-any.whl", hash = "sha256:1b4a21302b186a31f3a516ccff303779638308b7c801fb61a2406b6a0c6293c4", size = 458958, upload-time = "2026-01-15T13:13:40.671Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/74/31220c86789d4591aa493652656b83a428dcdd46f62b518e2118f98f76bd/google_cloud_iam-2.24.0-py3-none-any.whl", hash = "sha256:29d52032f774b4d3c01b6d8e1f4a8d029ae61c3bdba60ddac402866be11159db", size = 514860, upload-time = "2026-06-22T23:19:15.287Z" },
 ]
 
 [[package]]
@@ -1379,7 +1379,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = "==1.1.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "ruff", specifier = "==0.13.2" },
-    { name = "sds-common", specifier = "==1.0.34" },
+    { name = "sds-common", specifier = "==1.0.36", index = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/simple/" },
     { name = "setuptools", specifier = "==80.9.0" },
     { name = "tomlkit", specifier = "==0.13.3" },
     { name = "uvicorn", specifier = "===0.37.0" },
@@ -1393,7 +1393,7 @@ version-check = [
 
 [[package]]
 name = "sds-common"
-version = "1.0.34"
+version = "1.0.36"
 source = { registry = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/simple/" }
 dependencies = [
     { name = "cloudevents" },
@@ -1412,9 +1412,9 @@ dependencies = [
     { name = "requests" },
     { name = "setuptools" },
 ]
-sdist = { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.34.tar.gz", hash = "sha256:f48474e7b7fef69bded3fa68298bd17ae10737bd24e37cbbc9b6c55d6d48d4df" }
+sdist = { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.36.tar.gz", hash = "sha256:d7658531590ce7e824b68ac6e2f23b00377631e44cf4fb00d506e0f79bfd27b5" }
 wheels = [
-    { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.34-py3-none-any.whl", hash = "sha256:86f33b2904c32a01799098963a352810bbebccdaf1f7834ea2858b0a90f805ec" },
+    { url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/sds-common/sds_common-1.0.36-py3-none-any.whl", hash = "sha256:097d4682e942518920ef51b6587d1273a13ae962dbcdd0f21a968abf44ac1b1d" },
 ]
 
 [[package]]

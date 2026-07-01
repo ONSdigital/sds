@@ -5,7 +5,7 @@ from fastapi.openapi.utils import get_openapi
 from app.exception import exceptions
 from app.exception.exception_interceptor import ExceptionInterceptor
 from app.logging_config import logging
-from app.routers import dataset_router, schema_router, status_router, dataset_router_restful, schema_router_restful
+from app.routers import dataset_router, dataset_router_restful, schema_router, schema_router_restful, status_router
 
 logger = logging.getLogger(__name__)
 app = FastAPI()

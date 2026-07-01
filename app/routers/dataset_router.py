@@ -18,7 +18,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/collection-exercise-end", status_code=200)
+@router.post("/collection-exercise-end", status_code=200, deprecated=True)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
@@ -63,6 +63,7 @@ async def post_collection_exercise_end_message(
             },
         },
     },
+    deprecated=True,
 )
 async def get_unit_supplementary_data(
     dataset_id: str,
@@ -117,6 +118,7 @@ async def get_unit_supplementary_data(
             },
         },
     },
+    deprecated=True,
 )
 async def get_dataset_metadata_collection(
     survey_id: str | None = None,
@@ -161,6 +163,7 @@ async def get_dataset_metadata_collection(
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True,
 )
 async def get_all_dataset_metadata_collection(
     dataset_service: DatasetService = Depends(get_dataset_service),

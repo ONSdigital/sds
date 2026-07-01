@@ -94,7 +94,7 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
         "query_parameters": True,
     },
     GET_SCHEMA_WITH_GUID: {
-        "url": f"/v2/schema",
+        "url": "/v2/schema",
         "method": "GET",
         "query_parameters": True,
     },
@@ -109,7 +109,7 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
         "query_parameters": True,
     },
     GET_UNIT_DATA: {
-        "url": "v1/unit_data",
+        "url": "/v1/unit_data",
         "method": "GET",
         "query_parameters": True,
     },

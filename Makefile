@@ -47,6 +47,19 @@ integration-tests-local:
 	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-local-deprecated
+
+integration-tests-local-deprecated:
+	export CONF='local-int-tests' && \
+	export PROJECT_ID='mock-project-id' && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export PUBLISH_SCHEMA_TOPIC_ID='emulated-sds-schema-topic' && \
+	export API_URL=${LOCAL_URL} && \
+	export URL_SCHEME='http' && \
+	export ENDPOINTS_DEPRECATED="true" && \
+	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 
 # Please run gcloud auth application-default login before running the following commands that interact with GCP services
 # Please ensure user account has role Service Account Token Creator
@@ -57,6 +70,17 @@ integration-tests-sandbox:
 	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
 	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
 	export URL_SCHEME='https' && \
+	export SECRET_ID='iap-secret' && \
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+
+integration-tests-sandbox-deprecated:
+	export CONF='sandbox-int-tests' && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export PROJECT_ID=${PROJECT_ID} && \
+	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
+	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
+	export URL_SCHEME='https' && \
+	export ENDPOINTS_DEPRECATED="true" && \
 	export SECRET_ID='iap-secret' && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 

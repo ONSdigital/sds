@@ -1,10 +1,13 @@
 import os
 from urllib.parse import quote, urlencode
 
-from tests.test_config.endpoints import ENDPOINTS_DEPRECATED, EndpointConfig, PLACEHOLDERS
+from tests.test_config.endpoints import ENDPOINTS_DEPRECATED, EndpointConfig
 
 
 class EndpointsLoader:
+    endpoints: dict[str, EndpointConfig]
+    endpoints_deprecated: bool
+
     def __init__(self, endpoints: dict[str, EndpointConfig]):
         """
         Load the endpoints config
@@ -17,12 +20,13 @@ class EndpointsLoader:
         # This logic can be removed once the deprecated endpoints are removed.
         if os.environ.get("ENDPOINTS_DEPRECATED") == "true":
             self.endpoints = ENDPOINTS_DEPRECATED
+            self.endpoints_deprecated = True
         else:
             self.endpoints = endpoints
+            self.endpoints_deprecated = False
 
-    def send_request(self, client, key: str, params: dict[str, str] = None, body: dict[str, str]|str = None):
-        url = self.formulate_url(key, params)
-        method = self.endpoints.get(key)["method"]
+    def send_request(self, client, key: str, params: dict[str, str]|None = None, body: dict[str, str]|str|None = None):
+        url, method = self.formulate_url_and_method(key, params)
 
         if method == "GET":
             return client.get(url)
@@ -35,8 +39,9 @@ class EndpointsLoader:
         else:
             raise ValueError(f"Unsupported HTTP method: {method}")
 
-    def formulate_url(self, key: str, params: dict[str, str] = None):
+    def formulate_url_and_method(self, key: str, params: dict[str, str]|None = None) -> tuple[str, str]:
         url = self.endpoints.get(key)["url"]
+        method = self.endpoints.get(key)["method"]
         has_query_parameters = self.endpoints.get(key).get("query_parameters", False)
 
         if params:
@@ -45,7 +50,7 @@ class EndpointsLoader:
             if has_query_parameters:
                 url = f"{url}?{urlencode(encoded_params)}"
 
-        return url
+        return url, method
 
     @staticmethod
     def encode_params(params: dict[str, str]):

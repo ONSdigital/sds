@@ -33,6 +33,7 @@ logger = logging.getLogger(__name__)
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True,
 )
 async def post_schema(
     survey_id: str,
@@ -84,6 +85,7 @@ async def post_schema(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema(
     survey_id: str | None = None,
@@ -152,6 +154,7 @@ async def get_schema(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema_with_guid(
     guid: str | None = None,
@@ -206,6 +209,7 @@ async def get_schema_with_guid(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema_metadata_collection(
     survey_id: str | None = None,
@@ -252,6 +256,7 @@ async def get_schema_metadata_collection(
             },
         },
     },
+    deprecated=True,
 )
 async def get_survey_id_map(
     schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),

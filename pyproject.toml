@@ -25,13 +25,16 @@ dependencies = [
     "ruff==0.13.2",
     "setuptools==80.9.0",
     "tomlkit==0.13.3",
-    "sds-common==1.0.34",
     "mock-firestore>=0.11.0",
+    "sds-common==1.0.36",
 ]
 
 [[tool.uv.index]]
 name = "sds-repo"
 url = "https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/simple/"
+
+[tool.uv.sources]
+sds-common = { index = "sds-repo" }
 
 [dependency-groups]
 version-check = [
