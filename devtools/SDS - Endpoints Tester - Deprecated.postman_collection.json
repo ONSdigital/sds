@@ -1,9 +1,9 @@
 {
   "info": {
-    "_postman_id": "36413b75-d39d-454a-bcda-8d0fe0a212ac",
-    "name": "SDS - Local Docker",
+    "_postman_id": "b7d16013-9961-4353-bac8-b7b30f2ddd53",
+    "name": "SDS - Endpoints Tester - Deprecated",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "30975257"
+    "_exporter_id": "27074658"
   },
   "item": [
     {
@@ -21,11 +21,11 @@
           }
         },
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/schema?survey_id=068",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v1", "schema"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{POST_SCHEMA_URL}}?survey_id=068",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{POST_SCHEMA_URL}}"
+          ],
           "query": [
             {
               "key": "survey_id",
@@ -42,11 +42,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/schema_metadata?survey_id=068",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v1", "schema_metadata"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_METADATA_URL}}?survey_id=068",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{GET_SCHEMA_METADATA_URL}}"
+          ],
           "query": [
             {
               "key": "survey_id",
@@ -57,28 +57,20 @@
       },
       "response": []
     },
-        {
+    {
       "name": "All Schema Metadata",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/all_schema_metadata",
-          "protocol": "http",
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_ALL_SCHEMA_METADATA_URL}}",
+          "protocol": "{{PROTOCOL}}",
           "host": [
-            "127",
-            "0",
-            "0",
-            "1"
-          ],
-          "port": "3033",
-          "path": [
-            "v1",
-            "all_schema_metadata"
-          ],
-          "response": []
+            "{{IP_ADDRESS}}{{GET_ALL_SCHEMA_METADATA_URL}}"
+          ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Schema",
@@ -86,11 +78,11 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/schema?survey_id=068&version=1",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v1", "schema"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_URL}}?survey_id=068&version=1",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{GET_SCHEMA_URL}}"
+          ],
           "query": [
             {
               "key": "survey_id",
@@ -111,15 +103,15 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v2/schema?guid=a51a2d0f-8398-4b73-a4e7-528edd918a7f",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v2", "schema"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_SCHEMA_WITH_GUID_URL}}?guid=7bdfd988-0c77-4bd5-b678-7279acb3ed36",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{GET_SCHEMA_WITH_GUID_URL}}"
+          ],
           "query": [
             {
               "key": "guid",
-              "value": "a51a2d0f-8398-4b73-a4e7-528edd918a7f"
+              "value": "7bdfd988-0c77-4bd5-b678-7279acb3ed36"
             }
           ]
         }
@@ -132,19 +124,19 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/dataset_metadata?survey_id=NRX&period_id=ttt",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v1", "dataset_metadata"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_DATASET_METADATA_URL}}?survey_id=068&period_id=211024",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{GET_DATASET_METADATA_URL}}"
+          ],
           "query": [
             {
               "key": "survey_id",
-              "value": "NRX"
+              "value": "068"
             },
             {
               "key": "period_id",
-              "value": "ttt"
+              "value": "211024"
             }
           ]
         }
@@ -157,22 +149,14 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/all_dataset_metadata",
-          "protocol": "http",
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_ALL_DATASET_METADATA_URL}}",
+          "protocol": "{{PROTOCOL}}",
           "host": [
-            "127",
-            "0",
-            "0",
-            "1"
-          ],
-          "port": "3033",
-          "path": [
-            "v1",
-            "all_dataset_metadata"
-          ],
-          "response": []
+            "{{IP_ADDRESS}}{{GET_ALL_DATASET_METADATA_URL}}"
+          ]
         }
-      }
+      },
+      "response": []
     },
     {
       "name": "Dataset Unit Data",
@@ -180,19 +164,19 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://127.0.0.1:3033/v1/unit_data?dataset_id=2485372e-f2ac-4fb7-9c08-588b8ed26b53&identifier=43532",
-          "protocol": "http",
-          "host": ["127", "0", "0", "1"],
-          "port": "3033",
-          "path": ["v1", "unit_data"],
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{GET_UNIT_DATA_URL}}?dataset_id=11a60c33-849e-4722-9d87-ad9e403d95ea&identifier=11275510298",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{GET_UNIT_DATA_URL}}"
+          ],
           "query": [
             {
               "key": "dataset_id",
-              "value": "2485372e-f2ac-4fb7-9c08-588b8ed26b53"
+              "value": "11a60c33-849e-4722-9d87-ad9e403d95ea"
             },
             {
               "key": "identifier",
-              "value": "43532"
+              "value": "11275510298"
             }
           ]
         }
@@ -207,9 +191,17 @@
         "url": {
           "raw": "http://127.0.0.1:3033/v1/survey_list",
           "protocol": "http",
-          "host": ["127", "0", "0", "1"],
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
           "port": "3033",
-          "path": ["v1", "survey_list"]
+          "path": [
+            "v1",
+            "survey_list"
+          ]
         }
       },
       "response": []
@@ -222,12 +214,119 @@
         "url": {
           "raw": "http://127.0.0.1:3033/status",
           "protocol": "http",
-          "host": ["127", "0", "0", "1"],
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
           "port": "3033",
-          "path": ["status"]
+          "path": [
+            "status"
+          ]
         }
       },
       "response": []
+    },
+    {
+      "name": "Collection Exercises End",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"dataset_guid\": \"11a60c33-849e-4722-9d87-ad9e403d95ea\",\n    \"survey_id\": \"068\",\n    \"period_id\": \"211024\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{PROTOCOL}}://{{IP_ADDRESS}}{{COLLECTION_EXERCISE_END_URL}}",
+          "protocol": "{{PROTOCOL}}",
+          "host": [
+            "{{IP_ADDRESS}}{{COLLECTION_EXERCISE_END_URL}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "PROTOCOL",
+      "value": "",
+      "description": "http or https"
+    },
+    {
+      "key": "IP_ADDRESS",
+      "value": "",
+      "description": "IP Address of SDS"
+    },
+    {
+      "key": "POST_SCHEMA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_SCHEMA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_SCHEMA_WITH_GUID_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_DATASET_METADATA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_UNIT_DATA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_ALL_SCHEMA_METADATA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_ALL_DATASET_METADATA_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_SURVEYS_URL",
+      "value": ""
+    },
+    {
+      "key": "GET_SCHEMA_METADATA_URL",
+      "value": ""
+    },
+    {
+      "key": "COLLECTION_EXERCISE_END_URL",
+      "value": ""
     }
   ]
 }

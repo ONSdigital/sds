@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.post(
-    "/v1/schema",
+    "/schemas",
     name="Post Schema",
     response_model=SchemaMetadata,
     responses={
@@ -33,7 +33,6 @@ logger = logging.getLogger(__name__)
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
-    deprecated=True,
 )
 async def post_schema(
     survey_id: str,
@@ -65,7 +64,7 @@ async def post_schema(
 
 
 @router.get(
-    "/v1/schema",
+    "/schemas",
     name="Get Schema",
     responses={
         400: {
@@ -85,7 +84,6 @@ async def post_schema(
             },
         },
     },
-    deprecated=True,
 )
 async def get_schema(
     survey_id: str | None = None,
@@ -134,7 +132,90 @@ async def get_schema(
 
 
 @router.get(
-    "/v2/schema",
+    "/schemas/metadata",
+    name="Get Schema Metadata",
+    response_model=list[SchemaMetadata],
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_invalid_search_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+        404: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_404_no_results_exception}
+            },
+        },
+    },
+)
+async def get_schema_metadata_collection(
+    survey_id: str | None = None,
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service)
+) -> list[SchemaMetadata]:
+    """
+    Get all schema metadata associated with a specific survey id.
+
+    Parameters:
+    survey_id (str): survey id of the collection
+    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
+    """
+    QueryParameterValidatorService.validate_survey_id_from_schema_metadata(survey_id)
+
+    logger.info("Getting schemas metadata...")
+    logger.debug(f"Input data: survey_id={survey_id}")
+
+    schema_metadata_collection = (
+        schema_processor_service.get_schema_metadata_collection_with_guid(survey_id)
+    )
+    if not schema_metadata_collection:
+        logger.error("Schemas metadata not found")
+        raise exceptions.ExceptionNoSchemaMetadataCollection
+
+    logger.info("Schemas metadata successfully retrieved.")
+    logger.debug(f"Schemas metadata: {schema_metadata_collection}")
+
+    return schema_metadata_collection
+
+
+@router.get(
+    "/schemas/all-metadata",
+    name="Get All Schema Metadata",
+    response_model=list[SchemaMetadata],
+    responses={
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
+async def get_all_schema_metadata_collection(
+    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
+) -> list[SchemaMetadata]:
+    """Retrieve all schema metadata from the schema collection.
+    """
+    logger.info("Getting all schema metadata collection...")
+
+    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection()
+
+    if not schema_metadata_collection:
+        logger.error("Schema metadata collection not found.")
+        raise exceptions.ExceptionNoSchemaMetadataCollection
+
+    logger.info("Schema metadata collection successfully retrieved.")
+    logger.debug(f"Schema metadata collection: {schema_metadata_collection}")
+
+    return schema_metadata_collection
+
+
+# This endpoint must be placed after the /schemas endpoint to avoid conflicts with the /schemas/{guid} path parameter.
+@router.get(
+    "/schemas/{guid}",
     name="Get Schema with GUID",
     responses={
         400: {
@@ -154,7 +235,6 @@ async def get_schema(
             },
         },
     },
-    deprecated=True,
 )
 async def get_schema_with_guid(
     guid: str | None = None,
@@ -188,60 +268,7 @@ async def get_schema_with_guid(
 
 
 @router.get(
-    "/v1/schema_metadata",
-    name="Get Schema Metadata",
-    response_model=list[SchemaMetadata],
-    responses={
-        400: {
-            "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_400_invalid_search_exception}
-            },
-        },
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-        404: {
-            "model": ExceptionResponseModel,
-            "content": {
-                "application/json": {"example": erm.erm_404_no_results_exception}
-            },
-        },
-    },
-    deprecated=True,
-)
-async def get_schema_metadata_collection(
-    survey_id: str | None = None,
-    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service)
-) -> list[SchemaMetadata]:
-    """
-    Get all schema metadata associated with a specific survey id.
-
-    Parameters:
-    survey_id (str): survey id of the collection
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
-    """
-    QueryParameterValidatorService.validate_survey_id_from_schema_metadata(survey_id)
-
-    logger.info("Getting schemas metadata...")
-    logger.debug(f"Input data: survey_id={survey_id}")
-
-    schema_metadata_collection = (
-        schema_processor_service.get_schema_metadata_collection_with_guid(survey_id)
-    )
-    if not schema_metadata_collection:
-        logger.error("Schemas metadata not found")
-        raise exceptions.ExceptionNoSchemaMetadataCollection
-
-    logger.info("Schemas metadata successfully retrieved.")
-    logger.debug(f"Schemas metadata: {schema_metadata_collection}")
-
-    return schema_metadata_collection
-
-
-@router.get(
-    "/v1/survey_list",
+    "/surveys",
     name="Get Survey Mapping",
     response_model=list[dict],
     responses={
@@ -256,7 +283,6 @@ async def get_schema_metadata_collection(
             },
         },
     },
-    deprecated=True,
 )
 async def get_survey_id_map(
     schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
@@ -272,33 +298,3 @@ async def get_survey_id_map(
         logger.error("No Survey IDs found")
         raise exceptions.ExceptionNoSurveyIDs
     return survey_id_map
-
-
-@router.get(
-    "/v1/all_schema_metadata",
-    name="Get All Schema Metadata",
-    response_model=list[SchemaMetadata],
-    responses={
-        500: {
-            "model": ExceptionResponseModel,
-            "content": {"application/json": {"example": erm.erm_500_global_exception}},
-        },
-    },
-)
-async def get_all_schema_metadata_collection(
-    schema_processor_service: SchemaProcessorService = Depends(get_schema_processor_service),
-) -> list[SchemaMetadata]:
-    """Retrieve all schema metadata from the schema collection.
-    """
-    logger.info("Getting all schema metadata collection...")
-
-    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection()
-
-    if not schema_metadata_collection:
-        logger.error("Schema metadata collection not found.")
-        raise exceptions.ExceptionNoSchemaMetadataCollection
-
-    logger.info("Schema metadata collection successfully retrieved.")
-    logger.debug(f"Schema metadata collection: {schema_metadata_collection}")
-
-    return schema_metadata_collection

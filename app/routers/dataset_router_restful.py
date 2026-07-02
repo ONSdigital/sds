@@ -18,7 +18,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/collection-exercise-end", status_code=200, deprecated=True)
+@router.post("/collection-exercises-end", status_code=200)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
@@ -42,7 +42,7 @@ async def post_collection_exercise_end_message(
 
 
 @router.get(
-    "/v1/unit_data",
+    "/datasets/{dataset_id}/unit-data/{identifier}",
     name="Get unit supplementary data",
     response_model=UnitDataset,
     responses={
@@ -63,7 +63,6 @@ async def post_collection_exercise_end_message(
             },
         },
     },
-    deprecated=True,
 )
 async def get_unit_supplementary_data(
     dataset_id: str,
@@ -95,7 +94,7 @@ async def get_unit_supplementary_data(
 
 
 @router.get(
-    "/v1/dataset_metadata",
+    "/datasets/metadata",
     name="Get dataset metadata",
     response_model=list[DatasetMetadata],
     responses={
@@ -118,7 +117,6 @@ async def get_unit_supplementary_data(
             },
         },
     },
-    deprecated=True,
 )
 async def get_dataset_metadata_collection(
     survey_id: str | None = None,
@@ -154,7 +152,7 @@ async def get_dataset_metadata_collection(
 
 
 @router.get(
-    "/v1/all_dataset_metadata",
+    "/datasets/all-metadata",
     name="Get all dataset metadata",
     response_model=list[DatasetMetadata],
     responses={
@@ -163,7 +161,6 @@ async def get_dataset_metadata_collection(
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
-    deprecated=True,
 )
 async def get_all_dataset_metadata_collection(
     dataset_service: DatasetService = Depends(get_dataset_service),
