@@ -6,7 +6,7 @@ from app.config import settings
 from app.util.firebase_loader import FirebaseLoader
 from app.services.dataset.dataset_deletion_service import DatasetDeletionService
 from app.services.dataset.dataset_service import DatasetService
-from app.services.schema.schema_processor_service import SchemaProcessorService
+from app.services.schema_service import SchemaService
 from app.services.shared.publisher_service import PublisherService
 
 
@@ -19,8 +19,8 @@ def get_firebase_loader() -> FirebaseLoader:
 def get_schema_processor_service(
         firebase_loader: FirebaseLoader = Depends(get_firebase_loader),
         publisher_service: PublisherService = Depends(get_publisher_service),
-) -> SchemaProcessorService:
-    return SchemaProcessorService(
+) -> SchemaService:
+    return SchemaService(
         firebase_loader=firebase_loader,
         publisher_service=publisher_service
     )

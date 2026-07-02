@@ -8,7 +8,7 @@ from app.models.schema_models import SchemaMetadata, SchemaModel
 from app.util.firebase_loader import FirebaseLoader
 
 
-class SchemaFirebaseRepository(SchemaStorageRepositoryInterface):
+class FirestoreSchemaStorageRepository(SchemaStorageRepositoryInterface):
 
     def __init__(self, firebase_loader: FirebaseLoader) -> None:
         self.firestore = firebase_loader

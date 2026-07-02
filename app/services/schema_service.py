@@ -5,10 +5,9 @@ from fastapi import status
 
 from app.config import settings
 from app.exception import exceptions
+from app.interfaces.schema_storage_repository_interface import SchemaStorageRepositoryInterface
 from app.logging_config import logging
 from app.models.schema_models import SchemaMetadata, SchemaModel
-from app.util.firebase_loader import FirebaseLoader
-from app.repositories.schema_storage.firestore_schema_storage_repository import SchemaFirebaseRepository
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.document_version_service import DocumentVersionService
 from app.services.shared.publisher_service import PublisherService
@@ -17,9 +16,13 @@ from app.services.shared.utility_functions import UtilityFunctions
 logger = logging.getLogger(__name__)
 
 
-class SchemaProcessorService:
-    def __init__(self, firebase_loader: FirebaseLoader, publisher_service: PublisherService) -> None:
-        self.schema_firebase_repository = SchemaFirebaseRepository(firebase_loader)
+class SchemaService:
+    def __init__(
+            self,
+            schema_repository: SchemaStorageRepositoryInterface,
+            publisher_service: PublisherService
+    ) -> None:
+        self.schema_repository = schema_repository
         self.publisher_service = publisher_service
 
     def process_raw_schema(self, schema: dict, survey_id: str) -> SchemaMetadata:
@@ -47,10 +50,10 @@ class SchemaProcessorService:
         return next_version_schema_metadata
 
     def process_raw_schema_in_transaction(
-        self,
-        schema_id: str,
-        next_version_schema_metadata: SchemaMetadata,
-        schema_model: SchemaModel,
+            self,
+            schema_id: str,
+            next_version_schema_metadata: SchemaMetadata,
+            schema_model: SchemaModel,
     ):
         """
         Process the new schema by calling a transactional function that wrap the procedures
@@ -89,11 +92,11 @@ class SchemaProcessorService:
         return schema_model
 
     def build_next_version_schema_metadata(
-        self,
-        schema_id: str,
-        stored_schema_filename: str,
-        schema: dict,
-        survey_id: str,
+            self,
+            schema_id: str,
+            stored_schema_filename: str,
+            schema: dict,
+            survey_id: str,
     ) -> SchemaMetadata:
         """
         Builds the next version of schema metadata being processed.
@@ -159,7 +162,7 @@ class SchemaProcessorService:
         return result
 
     def get_schema_metadata_collection_with_guid(
-        self, survey_id: str
+            self, survey_id: str
     ) -> list[SchemaMetadata]:
         """
         Gets the collection of schema metadata associated with a specific survey id from firestore.
@@ -183,7 +186,6 @@ class SchemaProcessorService:
 
         return schema_metadata_collection
 
-
     def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
         """
         Gets the filename of the schema in bucket. If version is omitted,
@@ -202,9 +204,8 @@ class SchemaProcessorService:
                 survey_id, version
             )
 
-
     def try_publish_schema_metadata_to_topic(
-        self, next_version_schema_metadata: SchemaMetadata
+            self, next_version_schema_metadata: SchemaMetadata
     ) -> None:
         """
         Publish schema metadata to pubsub topic
@@ -230,7 +231,6 @@ class SchemaProcessorService:
             logger.error("Error publishing schema metadata to topic.")
             raise exceptions.GlobalException from exc
 
-
     def get_schema_from_guid(self, guid: str) -> dict | None:
         """
         Gets the schema from the schema bucket using the guid of the schema.
@@ -239,7 +239,6 @@ class SchemaProcessorService:
         guid (str): the guid of the schema
         """
         return self.schema_firebase_repository.get_schema_from_guid(guid)
-
 
     def get_survey_id_map(self) -> list[str]:
         """
