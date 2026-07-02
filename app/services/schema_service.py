@@ -65,6 +65,8 @@ class SchemaService:
         schema (dict): The schema being stored.
         stored_schema_filename (str): Filename of uploaded json schema.
         """
+
+        # TODO make transaction logic generic
         try:
             logger.info("Beginning schema transaction...")
             self.schema_firebase_repository.perform_new_schema_transaction(
@@ -127,7 +129,7 @@ class SchemaService:
         Parameters:
         survey_id (str): the survey id of the schema.
         """
-        current_version_metadata: SchemaMetadata = self.schema_firebase_repository.get_latest_schema_metadata_with_survey_id(
+        current_version_metadata: SchemaMetadata | None = self.schema_repository.get_latest_schema_metadata(
             survey_id
         )
 
@@ -149,7 +151,7 @@ class SchemaService:
         """
         Get a child property from a nested dictionary
 
-        Paramenters:
+        Parameters:
         nested_dict (dict): A nested dictionary that is being fetched
         keys (list): A list of keys within the nested dictionary that lead to the child property
         """
@@ -171,7 +173,7 @@ class SchemaService:
         survey_id (str): the survey id of the schema metadata.
         """
         schema_metadata_collection = (
-            self.schema_firebase_repository.get_schema_metadata_collection(survey_id)
+            self.schema_repository.get_metadata(survey_id)
         )
 
         return schema_metadata_collection
@@ -181,7 +183,7 @@ class SchemaService:
         Gets the collection of all schema metadata from firestore.
         """
         schema_metadata_collection = (
-            self.schema_firebase_repository.get_all_schema_metadata_collection()
+            self.schema_repository.get_all_metadata()
         )
 
         return schema_metadata_collection
@@ -196,11 +198,11 @@ class SchemaService:
         version (str): the sds schema version of the schema
         """
         if version is None:
-            return self.schema_firebase_repository.get_latest_schema_guid(
+            return self.schema_repository.get_latest_guid(
                 survey_id
             )
         else:
-            return self.schema_firebase_repository.get_guid_with_survey_id_and_version(
+            return self.schema_repository.get_guid(
                 survey_id, version
             )
 
@@ -238,7 +240,7 @@ class SchemaService:
         Parameters:
         guid (str): the guid of the schema
         """
-        return self.schema_firebase_repository.get_schema_from_guid(guid)
+        return self.schema_repository.get_schema_from_guid(guid)
 
     def get_survey_id_map(self) -> list[str]:
         """
