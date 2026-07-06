@@ -160,10 +160,14 @@ class FirestoreSchemaStorageRepository(SchemaStorageRepositoryInterface):
         else:
             return schema_found.to_dict()["guid"]
 
-    def get_guid(self, survey_id: str, version: str) -> str | None:
+    def get_guid(
+            self,
+            survey_id: str,
+            version: int
+    ) -> str | None:
         schemas_result = (
             self.schemas_collection.where("survey_id", "==", survey_id)
-            .where("sds_schema_version", "==", int(version))
+            .where("sds_schema_version", "==", version)
             .stream()
         )
 

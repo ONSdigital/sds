@@ -37,7 +37,7 @@ class SchemaStorageRepositoryInterface(ABC):
     def get_guid(
             self,
             survey_id: str,
-            version: str
+            version: int
     ) -> str | None:
         """
         Get the guid of a schema with a specific survey id and version

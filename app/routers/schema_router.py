@@ -84,8 +84,8 @@ async def post_schema(
     },
 )
 async def get_schema(
-    survey_id: str | None = None,
-    version: str | None = None,
+    survey_id: str,
+    version: int | None = None,
     schema_processor_service: SchemaService = Depends(get_schema_processor_service),
 ) -> dict:
     """
@@ -103,13 +103,12 @@ async def get_schema(
     logger.info("Getting schema from Survey ID and Version...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
-    QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
-    QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
-
+    # Attempt to get the GUID of the schema from the input parameters
     guid = schema_processor_service.get_guid_with_survey_id_and_version(
         survey_id, version
     )
 
+    # If the GUID is not found based on these parameters
     if not guid:
         logger.error("Schema metadata not found from survey id and version")
         raise exceptions.ExceptionNoSchemaFound
@@ -117,8 +116,10 @@ async def get_schema(
     logger.info("GUID successfully retrieved. Getting schema from GUID...")
     logger.debug(f"GUID of the schema to retrieve: {guid}")
 
+    # Fetch the schema based on the found GUID
     schema = schema_processor_service.get_schema_from_guid(guid)
 
+    # If the schema cannot be found given the retrieved GUID
     if not schema:
         logger.error("Schema not found")
         raise exceptions.ExceptionNoSchemaFound

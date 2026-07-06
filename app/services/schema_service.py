@@ -198,14 +198,14 @@ class SchemaService:
 
         return schema_metadata_collection
 
-    def get_guid_with_survey_id_and_version(self, survey_id: str, version: str) -> str:
+    def get_guid_with_survey_id_and_version(self, survey_id: str, version: int | None) -> str | None:
         """
         Gets the filename of the schema in bucket. If version is omitted,
         the latest schema filename is retrieved
 
         Parameters:
         survey_id (str): the survey id of the schema
-        version (str): the sds schema version of the schema
+        version (str): the sds schema version of the schema (optional)
         """
         if version is None:
             return self.schema_repository.get_latest_guid(
