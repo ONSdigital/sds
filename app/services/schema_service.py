@@ -29,27 +29,37 @@ class SchemaService:
         """
         Processes incoming schema.
 
-        Parameters:
-        schema (dict): incoming schema.
+        :param schema: the schema being processed.
+        :param survey_id: the survey id of the schema.
         """
+
+        # Generate a new id for the schema
         schema_id = str(uuid.uuid4())
+
+        # Create a filename for schema
         stored_schema_filename = f"{survey_id}/{schema_id}.json"
 
-        next_version_schema_metadata = self.build_next_version_schema_metadata(
+        # Should this be v1 or work out next version
+        next_version_schema_metadata = self._build_next_version_schema_metadata(
             schema_id, stored_schema_filename, schema, survey_id
         )
 
-        schema_model = self.build_schema_model(schema)
+        # Create a dataclass model for this schema
+        schema_model = self._build_schema_model(schema)
 
-        self.process_raw_schema_in_transaction(
+        # Process this new schema
+        # if an exception occurs, raise an exceptions.GlobalException to trigger rollback
+        self._process_raw_schema_in_transaction(
             schema_id, next_version_schema_metadata, schema_model
         )
 
-        self.try_publish_schema_metadata_to_topic(next_version_schema_metadata)
+        # TODO move to protocol
+        # Trigger a publish event
+        self._try_publish_schema_metadata_to_topic(next_version_schema_metadata)
 
         return next_version_schema_metadata
 
-    def process_raw_schema_in_transaction(
+    def _process_raw_schema_in_transaction(
             self,
             schema_id: str,
             next_version_schema_metadata: SchemaMetadata,
@@ -80,7 +90,7 @@ class SchemaService:
             logger.error("Rolling back schema transaction")
             raise exceptions.GlobalException from exc
 
-    def build_schema_model(self, schema: dict) -> SchemaModel:
+    def _build_schema_model(self, schema: dict) -> SchemaModel:
         """
         Builds the schema model
 
@@ -93,7 +103,7 @@ class SchemaService:
         })
         return schema_model
 
-    def build_next_version_schema_metadata(
+    def _build_next_version_schema_metadata(
             self,
             schema_id: str,
             stored_schema_filename: str,
@@ -112,17 +122,17 @@ class SchemaService:
         next_version_schema_metadata = SchemaMetadata(**{
             "guid": schema_id,
             "schema_location": stored_schema_filename,
-            "sds_schema_version": self.calculate_next_schema_version(survey_id),
+            "sds_schema_version": self._calculate_next_schema_version(survey_id),
             "survey_id": survey_id,
             "sds_published_at": str(
                 DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
             ),
-            "schema_version": self.get_schema_version_from_properties(schema),
+            "schema_version": self._get_schema_version_from_properties(schema),
             "title": schema["title"],
         })
         return next_version_schema_metadata
 
-    def calculate_next_schema_version(self, survey_id: str) -> int:
+    def _calculate_next_schema_version(self, survey_id: str) -> int:
         """
         Calculates the next schema version for the metadata being built.
 
@@ -137,7 +147,7 @@ class SchemaService:
             current_version_metadata, "sds_schema_version"
         )
 
-    def get_schema_version_from_properties(self, schema: dict) -> str:
+    def _get_schema_version_from_properties(self, schema: dict) -> str:
         """
         Get schema version from the properties object of the schema.
 
@@ -145,9 +155,9 @@ class SchemaService:
         schema (dict); schema being processed.
         """
         level_keys = ["properties", "schema_version", "const"]
-        return self.get_child_property(schema, level_keys)
+        return self._get_child_property(schema, level_keys)
 
-    def get_child_property(self, nested_dict: dict, keys: list) -> str:
+    def _get_child_property(self, nested_dict: dict, keys: list) -> str:
         """
         Get a child property from a nested dictionary
 
@@ -206,7 +216,7 @@ class SchemaService:
                 survey_id, version
             )
 
-    def try_publish_schema_metadata_to_topic(
+    def _try_publish_schema_metadata_to_topic(
             self, next_version_schema_metadata: SchemaMetadata
     ) -> None:
         """
