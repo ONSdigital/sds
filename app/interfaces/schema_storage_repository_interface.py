@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.schema_models import SchemaMetadata
+from app.models.schema_models import SchemaMetadata, SchemaModel
 
 
 class SchemaStorageRepositoryInterface(ABC):
@@ -78,5 +78,21 @@ class SchemaStorageRepositoryInterface(ABC):
         Should only ever return one entry.
 
         :param guid: The guid of the schema being queried.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def store_schema(
+            self,
+            schema_id: str,
+            schema_metadata: SchemaMetadata,
+            schema_model: SchemaModel,
+    ):
+        """
+        Store the schema in storage
+
+        :param schema_id: The id of the schema to be stored
+        :param schema_metadata: The metadata of the schema to be added
+        :param schema_model: The schema being stored.
         """
         raise NotImplementedError

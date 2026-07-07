@@ -95,8 +95,6 @@ async def get_schema(
     Parameters:
     survey_id (str): survey id of the schema metadata.
     version (str) (optional): version of the survey.
-    schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
-        interacting with the schema collection in firestore.
     schema_processor_service (SchemaProcessorService): injected dependency for
         interacting with the schema collection in firestore.
     """

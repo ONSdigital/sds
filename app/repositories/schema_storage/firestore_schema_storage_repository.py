@@ -40,39 +40,28 @@ class FirestoreSchemaStorageRepository(SchemaStorageRepositoryInterface):
 
             return schema_metadata
 
-    def perform_new_schema_transaction(
+    def store_schema(
         self,
         schema_id: str,
         next_version_schema_metadata: SchemaMetadata,
         schema_model: SchemaModel,
-    ) -> None:
-        """
-        A transactional function that wrap schema creation and schema storage processes
-
-        Parameters:
-        schema_id (str): The unique id of the new schema.
-        next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
-        schema (dict): The schema being stored.
-        stored_schema_filename (str): Filename of uploaded json schema.
-        """
-
-        # TODO make this private and refactor external usages
+    ):
 
         # A stipulation of the @firestore.transactional decorator is the first parameter HAS
         # to be 'transaction', but since we're using classes the first parameter is always
         # 'self'. Encapsulating the transaction within this function circumvents the issue.
         @firestore.transactional
         def post_schema_transaction_run(transaction: Transaction):
-            self.create_schema_metadata_in_transaction(
+            self._create_schema_metadata_in_transaction(
                 transaction, schema_id, next_version_schema_metadata
             )
-            self.create_schema_in_transaction(
+            self._create_schema_in_transaction(
                 transaction, schema_id, schema_model
             )
 
         post_schema_transaction_run(self.firestore.set_transaction())
 
-    def create_schema_metadata_in_transaction(
+    def _create_schema_metadata_in_transaction(
         self,
         transaction: Transaction,
         schema_id: str,
@@ -91,7 +80,7 @@ class FirestoreSchemaStorageRepository(SchemaStorageRepositoryInterface):
             merge=True,
         )
 
-    def create_schema_in_transaction(
+    def _create_schema_in_transaction(
         self,
         transaction: Transaction,
         schema_id: str,

@@ -49,7 +49,7 @@ class SchemaService:
 
         # Process this new schema
         # if an exception occurs, raise an exceptions.GlobalException to trigger rollback
-        self._process_raw_schema_in_transaction(
+        self._process_raw_schema(
             schema_id, next_version_schema_metadata, schema_model
         )
 
@@ -59,36 +59,31 @@ class SchemaService:
 
         return next_version_schema_metadata
 
-    def _process_raw_schema_in_transaction(
+    def _process_raw_schema(
             self,
             schema_id: str,
-            next_version_schema_metadata: SchemaMetadata,
+            schema_metadata: SchemaMetadata,
             schema_model: SchemaModel,
     ):
         """
-        Process the new schema by calling a transactional function that wrap the procedures
-        Commit if the function is successful, rolling back otherwise.
+        Store a new schema in storage.
 
-        Parameters:
-        schema_id (str): The unique id of the new schema.
-        next_version_schema_metadata (SchemaMetadata): The schema metadata being added to firestore.
-        schema (dict): The schema being stored.
-        stored_schema_filename (str): Filename of uploaded json schema.
+        :param schema_id: the schema id of the schema being stored
+        :param schema_metadata: the metadata of the schema being stored
+        :param schema_model: the model of the schema being stored
         """
 
-        # TODO make transaction logic generic
+        logger.info("Starting process to store schema....")
         try:
-            logger.info("Beginning schema transaction...")
-            self.schema_firebase_repository.perform_new_schema_transaction(
-                schema_id, next_version_schema_metadata, schema_model
+            self.schema_repository.store_schema(
+                schema_id, schema_metadata, schema_model
             )
-
-            logger.info("Schema transaction committed successfully.")
-            return next_version_schema_metadata
         except Exception as exc:
-            logger.error(f"Performing schema transaction: exception raised: {exc}")
-            logger.error("Rolling back schema transaction")
+            logger.exception(f"Error occurred storing schema : exception raised: {exc}")
             raise exceptions.GlobalException from exc
+        else:
+            logger.info("Schema stored successfully")
+            return schema_metadata
 
     def _build_schema_model(self, schema: dict) -> SchemaModel:
         """
@@ -177,7 +172,7 @@ class SchemaService:
             self, survey_id: str
     ) -> list[SchemaMetadata]:
         """
-        Gets the collection of schema metadata associated with a specific survey id from firestore.
+        Gets the collection of schema metadata associated with a specific survey id.
 
         Parameters:
         survey_id (str): the survey id of the schema metadata.
@@ -190,7 +185,7 @@ class SchemaService:
 
     def get_all_schema_metadata_collection(self) -> list[SchemaMetadata]:
         """
-        Gets the collection of all schema metadata from firestore.
+        Gets the collection of all schema metadata.
         """
         schema_metadata_collection = (
             self.schema_repository.get_all_metadata()
