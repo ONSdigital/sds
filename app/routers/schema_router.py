@@ -84,8 +84,8 @@ async def post_schema(
     },
 )
 async def get_schema(
-    survey_id: str,
-    version: int | None = None,
+    survey_id: str | None = None,
+    version: str | None = None,
     schema_processor_service: SchemaService = Depends(get_schema_processor_service),
 ) -> dict:
     """
@@ -104,8 +104,8 @@ async def get_schema(
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
     # TODO find a way around this and take into account exception interception
-    #QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
-    #QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
+    QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
+    QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
 
     # Attempt to get the GUID of the schema from the input parameters
     guid = schema_processor_service.get_guid_with_survey_id_and_version(
@@ -156,7 +156,7 @@ async def get_schema(
     },
 )
 async def get_schema_with_guid(
-    guid: str,
+    guid: str | None = None,
     schema_processor_service: SchemaService = Depends(get_schema_processor_service),
 ) -> dict:
     """
@@ -169,11 +169,12 @@ async def get_schema_with_guid(
     logger.debug(f"Input data: guid={guid}")
 
     # TODO find a way around this including exception interception
-    #QueryParameterValidatorService.validate_guid_from_get_schema(guid)
+    QueryParameterValidatorService.validate_guid_from_get_schema(guid)
 
     # Attempt to fetch the schema using the GUID
     schema = schema_processor_service.get_schema_from_guid(guid)
 
+    # If the schema is not found, raise an exception
     if not schema:
         logger.error("Schema not found")
         raise exceptions.ExceptionNoSchemaFound
