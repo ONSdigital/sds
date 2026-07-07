@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends
 
 import app.exception.exception_response_models as erm
-from app.dependencies import get_schema_processor_service
+from app.dependencies import get_schema_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
@@ -36,14 +36,14 @@ logger = logging.getLogger(__name__)
 async def post_schema(
     survey_id: str,
     schema: dict = Body(...),
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service),
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> SchemaMetadata:
     """
     Posts the schema metadata to be processed.
 
     :param survey_id: survey id of the schema metadata.
     :param schema: schema to be processed.
-    :param schema_processor_service: injected dependency for processing the schema.
+    :param schema_service: injected dependency for processing the schema.
 
     """
     logger.info("Posting schema metadata...")
@@ -52,7 +52,7 @@ async def post_schema(
     QueryParameterValidatorService.validate_survey_id_from_post_schema(survey_id)
     SchemaValidatorService.validate_schema(schema)
 
-    posted_schema_metadata = schema_processor_service.process_raw_schema(
+    posted_schema_metadata = schema_service.process_raw_schema(
         schema, survey_id
     )
 
@@ -86,7 +86,7 @@ async def post_schema(
 async def get_schema(
     survey_id: str | None = None,
     version: str | None = None,
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service),
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> dict:
     """
     Gets the guid with specific survey id and version and uses that to retrieve a schema.
@@ -106,7 +106,7 @@ async def get_schema(
     QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
 
     # Attempt to get the GUID of the schema from the input parameters
-    guid = schema_processor_service.get_guid_with_survey_id_and_version(
+    guid = schema_service.get_guid_with_survey_id_and_version(
         survey_id, version
     )
 
@@ -119,7 +119,7 @@ async def get_schema(
     logger.debug(f"GUID of the schema to retrieve: {guid}")
 
     # Fetch the schema based on the found GUID
-    schema = schema_processor_service.get_schema_from_guid(guid)
+    schema = schema_service.get_schema_from_guid(guid)
 
     # If the schema cannot be found given the retrieved GUID
     if not schema:
@@ -155,13 +155,13 @@ async def get_schema(
 )
 async def get_schema_with_guid(
     guid: str | None = None,
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service),
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> dict:
     """
     Use the guid to retrieve a schema directly
 
     :param guid: guid of the schema to retrieve
-    :param schema_processor_service: injected dependency for fetching schema
+    :param schema_service: injected dependency for fetching schema
     """
     logger.info("Getting schema from GUID...")
     logger.debug(f"Input data: guid={guid}")
@@ -170,7 +170,7 @@ async def get_schema_with_guid(
     QueryParameterValidatorService.validate_guid_from_get_schema(guid)
 
     # Attempt to fetch the schema using the GUID
-    schema = schema_processor_service.get_schema_from_guid(guid)
+    schema = schema_service.get_schema_from_guid(guid)
 
     # If the schema is not found, raise an exception
     if not schema:
@@ -207,14 +207,14 @@ async def get_schema_with_guid(
 )
 async def get_schema_metadata_collection(
     survey_id: str | None = None,
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service)
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> list[SchemaMetadata]:
     """
     Get all schema metadata associated with a specific survey id.
 
     Parameters:
     survey_id (str): survey id of the collection
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the metadata collection.
+    schema_service (SchemaProcessorService): injected dependency for processing the metadata collection.
     """
     QueryParameterValidatorService.validate_survey_id_from_schema_metadata(survey_id)
 
@@ -222,7 +222,7 @@ async def get_schema_metadata_collection(
     logger.debug(f"Input data: survey_id={survey_id}")
 
     schema_metadata_collection = (
-        schema_processor_service.get_schema_metadata_collection_with_guid(survey_id)
+        schema_service.get_schema_metadata_collection_with_guid(survey_id)
     )
     if not schema_metadata_collection:
         logger.error("Schemas metadata not found")
@@ -251,14 +251,14 @@ async def get_schema_metadata_collection(
     },
 )
 async def get_survey_id_map(
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service),
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> list[str]:
     """
     Gets the Survey mapping data from the survey_map.json file in GitHub repository.
     Parameters:
-    schema_processor_service (SchemaProcessorService): injected dependency for processing the survey_map.json file.
+    schema_service (SchemaService): injected dependency for processing the survey_map.json file.
     """
-    survey_id_map = schema_processor_service.get_survey_id_map()
+    survey_id_map = schema_service.get_survey_id_map()
 
     if not survey_id_map:
         logger.error("No Survey IDs found")
@@ -277,13 +277,13 @@ async def get_survey_id_map(
     },
 )
 async def get_all_schema_metadata_collection(
-    schema_processor_service: SchemaService = Depends(get_schema_processor_service),
+    schema_service: SchemaService = Depends(get_schema_service),
 ) -> list[SchemaMetadata]:
     """Retrieve all schema metadata from the schema collection.
     """
     logger.info("Getting all schema metadata collection...")
 
-    schema_metadata_collection = schema_processor_service.get_all_schema_metadata_collection()
+    schema_metadata_collection = schema_service.get_all_schema_metadata_collection()
 
     if not schema_metadata_collection:
         logger.error("Schema metadata collection not found.")

@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
-from app.dependencies import get_dataset_deletion_service, get_dataset_service
+from app.dependencies import get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.dataset_models import DatasetMetadata
-from app.services.dataset.dataset_deletion_service import DatasetDeletionService
-from app.services.dataset.dataset_service import DatasetService
+from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
 )
@@ -21,7 +20,7 @@ logger = logging.getLogger(__name__)
 @router.post("/collection-exercise-end", status_code=200)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
-    dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
+    dataset_service: DatasetService = Depends(get_dataset_service),
 ):
     """
     Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
@@ -35,7 +34,7 @@ async def post_collection_exercise_end_message(
     """
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data}")
-    dataset_deletion_service.process_collection_exercise_end_message(
+    dataset_service.end_collection_exercise(
         collection_end_data
     )
     return {"message": "accepted"}
