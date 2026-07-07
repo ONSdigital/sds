@@ -52,6 +52,8 @@ class QueryParameterValidatorService:
         Parameters:
         guid: guid of the schema
         """
+
+        # TODO this needed?
         if guid is None:
             logger.error("GUID not set")
             raise exceptions.ExceptionIncorrectSchemaV2Key

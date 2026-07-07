@@ -41,10 +41,10 @@ async def post_schema(
     """
     Posts the schema metadata to be processed.
 
-    Parameters:
-    survey_id (str): survey_id of the schema
-    schema (dict): schema to be processed in JSON format.
-    schema_processor_service (SchemaProcessorService): injected processor service for processing the schema.
+    :param survey_id: survey id of the schema metadata.
+    :param schema: schema to be processed.
+    :param schema_processor_service: injected dependency for processing the schema.
+
     """
     logger.info("Posting schema metadata...")
     logger.debug(f"Input body: {{{schema}}}")
@@ -103,6 +103,10 @@ async def get_schema(
     logger.info("Getting schema from Survey ID and Version...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
+    # TODO find a way around this and take into account exception interception
+    #QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
+    #QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
+
     # Attempt to get the GUID of the schema from the input parameters
     guid = schema_processor_service.get_guid_with_survey_id_and_version(
         survey_id, version
@@ -152,24 +156,22 @@ async def get_schema(
     },
 )
 async def get_schema_with_guid(
-    guid: str | None = None,
+    guid: str,
     schema_processor_service: SchemaService = Depends(get_schema_processor_service),
 ) -> dict:
     """
     Use the guid to retrieve a schema directly
 
-    Parameters:
-    guid (str): GUID of the schema.
-    schema_firebase_repository (SchemaFirebaseRepository): injected dependency for
-        interacting with the schema collection in firestore.
-    schema_processor_service (SchemaProcessorService): injected dependency for
-        interacting with the schema collection in firestore.
+    :param guid: guid of the schema to retrieve
+    :param schema_processor_service: injected dependency for fetching schema
     """
     logger.info("Getting schema from GUID...")
     logger.debug(f"Input data: guid={guid}")
 
-    QueryParameterValidatorService.validate_guid_from_get_schema(guid)
+    # TODO find a way around this including exception interception
+    #QueryParameterValidatorService.validate_guid_from_get_schema(guid)
 
+    # Attempt to fetch the schema using the GUID
     schema = schema_processor_service.get_schema_from_guid(guid)
 
     if not schema:
