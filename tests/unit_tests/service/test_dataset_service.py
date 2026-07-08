@@ -1,5 +1,6 @@
 from unittest.mock import MagicMock, call
 
+from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.deletion_models import DeleteMetadata
 from app.services.dataset_service import DatasetService
 from tests.test_data import dataset_test_data
@@ -77,6 +78,32 @@ def test_get_unit_supplementary_data_calls_storage_repository():
     )
 
 
+def test_get_unit_supplementary_data_returns_none_when_not_found():
+    """
+    When unit supplementary data does not exist for the requested identifier,
+    DatasetService must return None.
+    """
+    dataset_storage_repository = MagicMock()
+    dataset_deletion_repository = MagicMock()
+    dataset_storage_repository.get_unit_supplementary_data.return_value = None
+
+    service = DatasetService(
+        dataset_deletion_repository=dataset_deletion_repository,
+        dataset_storage_repository=dataset_storage_repository,
+    )
+
+    result = service.get_unit_supplementary_data(
+        dataset_id=dataset_test_data.test_guid,
+        identifier=dataset_test_data.identifier,
+    )
+
+    assert result is None
+    dataset_storage_repository.get_unit_supplementary_data.assert_called_once_with(
+        dataset_test_data.test_guid,
+        dataset_test_data.identifier,
+    )
+
+
 def test_end_collection_exercise_marks_all_matching_datasets_for_deletion():
     """
     When a collection exercise end event includes dataset_guid, DatasetService
@@ -142,4 +169,53 @@ def test_end_collection_exercise_with_missing_dataset_guid_does_not_mark_for_del
     service.end_collection_exercise(dataset_test_data.test_data_collection_end_missing_id)
 
     dataset_storage_repository.get_metadata.assert_not_called()
+    dataset_deletion_repository.mark_dataset_for_deletion.assert_not_called()
+
+
+def test_end_collection_exercise_with_none_dataset_guid_does_not_mark_for_deletion():
+    """
+    When a collection exercise end event includes dataset_guid=None,
+    DatasetService must not mark any dataset for deletion.
+    """
+    dataset_storage_repository = MagicMock()
+    dataset_deletion_repository = MagicMock()
+
+    service = DatasetService(
+        dataset_deletion_repository=dataset_deletion_repository,
+        dataset_storage_repository=dataset_storage_repository,
+    )
+
+    collection_exercise_end_data = CollectionExerciseEndData(
+        survey_id=dataset_test_data.test_survey_id,
+        period_id=dataset_test_data.test_period_id,
+        dataset_guid=None,
+    )
+
+    service.end_collection_exercise(collection_exercise_end_data)
+
+    dataset_storage_repository.get_metadata.assert_not_called()
+    dataset_deletion_repository.mark_dataset_for_deletion.assert_not_called()
+
+
+def test_end_collection_exercise_with_no_matching_metadata_marks_nothing_for_deletion():
+    """
+    When collection exercise end event includes dataset_guid but no dataset
+    metadata exists for the survey/period, DatasetService must not mark
+    anything for deletion.
+    """
+    dataset_storage_repository = MagicMock()
+    dataset_deletion_repository = MagicMock()
+    dataset_storage_repository.get_metadata.return_value = []
+
+    service = DatasetService(
+        dataset_deletion_repository=dataset_deletion_repository,
+        dataset_storage_repository=dataset_storage_repository,
+    )
+
+    service.end_collection_exercise(dataset_test_data.test_data_collection_end)
+
+    dataset_storage_repository.get_metadata.assert_called_once_with(
+        dataset_test_data.test_survey_id,
+        dataset_test_data.test_period_id,
+    )
     dataset_deletion_repository.mark_dataset_for_deletion.assert_not_called()

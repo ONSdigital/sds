@@ -107,7 +107,7 @@ async def get_schema(
 
     # Attempt to get the GUID of the schema from the input parameters
     guid = schema_service.get_guid_with_survey_id_and_version(
-        survey_id, version
+        survey_id, int(version) if version is not None else None
     )
 
     # If the GUID is not found based on these parameters
