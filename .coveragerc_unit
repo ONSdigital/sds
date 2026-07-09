@@ -1,0 +1,4 @@
+[run]
+omit =
+    app/routers/schema_router.py
+    app/routers/dataset_router.py
