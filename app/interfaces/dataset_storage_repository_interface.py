@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from app.models.dataset_models import UnitDataset, DatasetMetadata
+from app.models.dataset_models import DatasetMetadata, UnitDataset
 
 
 class DatasetStorageRepositoryInterface(ABC):

@@ -20,7 +20,7 @@ class DatasetService:
     ):
         self.dataset_storage_repository = dataset_storage_repository
         self.dataset_deletion_repository = dataset_deletion_repository
-    
+
     def get_dataset_metadata_collection(
             self,
             survey_id: str,

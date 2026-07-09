@@ -7,9 +7,9 @@ from app.repositories.dataset_deletion.firestore_dataset_deletion_repository imp
 from app.repositories.dataset_storage.firestore_dataset_storage_repository import FirestoreDatasetStorageRepository
 from app.repositories.schema_storage.firestore_schema_storage_repository import FirestoreSchemaStorageRepository
 from app.services.dataset_service import DatasetService
-from app.util.firebase_loader import FirebaseLoader
 from app.services.schema_service import SchemaService
 from app.services.shared.publisher_service import PublisherService
+from app.util.firebase_loader import FirebaseLoader
 
 # ------------------------
 # New
