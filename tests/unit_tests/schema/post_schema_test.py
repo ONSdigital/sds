@@ -29,6 +29,7 @@ def test_200_response_first_schema_version(test_client):
             == schema_test_data.test_schema_metadata_1.__dict__
     )
 
+
 def test_200_response_updated_schema_version(schema_collection_mock, pubsub_mock, test_client):
     """
     Tests when a schema is posted, a 200 response and the schema metadata will be received
@@ -59,6 +60,7 @@ def test_200_response_updated_schema_version(schema_collection_mock, pubsub_mock
         settings.PUBLISH_SCHEMA_TOPIC_ID,
     )
 
+
 def test_post_schema_with_invalid_dict(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -73,6 +75,7 @@ def test_post_schema_with_invalid_dict(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_schema_with_missing_survey_id_400_response(test_client):
     """
@@ -89,6 +92,7 @@ def test_post_schema_with_missing_survey_id_400_response(test_client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
+
 def test_post_missing_fields_schema_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -103,6 +107,7 @@ def test_post_missing_fields_schema_400_response(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_empty_fields_schema_400_response(test_client):
     """
@@ -119,6 +124,7 @@ def test_post_empty_fields_schema_400_response(test_client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
+
 def test_post_invalid_type_fields_schema_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -133,6 +139,7 @@ def test_post_invalid_type_fields_schema_400_response(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_missing_schema_version_400_response(test_client):
     """
@@ -149,6 +156,7 @@ def test_post_missing_schema_version_400_response(test_client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
+
 def test_post_invalid_schema_version_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -163,6 +171,7 @@ def test_post_invalid_schema_version_400_response(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_invalid_schema_version_const_400_response(test_client):
     """
@@ -179,6 +188,7 @@ def test_post_invalid_schema_version_const_400_response(test_client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
+
 def test_post_empty_schema_version_const_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -193,6 +203,7 @@ def test_post_empty_schema_version_const_400_response(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_missing_title_400_response(test_client):
     """
@@ -209,6 +220,7 @@ def test_post_missing_title_400_response(test_client):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
 
+
 def test_post_empty_title_400_response(test_client):
     """
     Checks that fastAPI returns a 400 error with appropriate
@@ -223,6 +235,7 @@ def test_post_empty_title_400_response(test_client):
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["message"] == "Validation has failed"
+
 
 def test_post_schema_transaction_exception_500_response(firestore_mock, test_client):
     """
@@ -241,6 +254,7 @@ def test_post_schema_transaction_exception_500_response(firestore_mock, test_cli
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert response.json()["message"] == "Unable to process request"
+
 
 def test_publish_schema_exception_500_response(
         caplog, pubsub_mock, test_client):
