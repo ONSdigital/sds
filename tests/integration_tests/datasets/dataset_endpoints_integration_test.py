@@ -1,8 +1,12 @@
+import os
+
 import pytest
 
 from app.config import settings
 
 from tests.integration_tests.helpers.utils import make_iap_request
+from tests.test_config.endpoints import ENDPOINTS, GET_DATASET_METADATA, GET_ALL_DATASET_METADATA, GET_UNIT_DATA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.dataset_test_data import (
     dataset_metadata_collection_for_endpoints_test, 
     dataset_unit_data_collection_for_endpoints_test,
@@ -10,6 +14,8 @@ from tests.test_data.dataset_test_data import (
     dataset_404_test_data,
     random_string,
 )
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestDatasetEndpoints:
@@ -27,13 +33,15 @@ class TestDatasetEndpoints:
         - Sends a GET request to retrieve metadata for a dataset
         - Asserts the metadata retrieved matches the expected structure.
         """
-
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "survey_id": dataset_metadata_collection_for_endpoints_test[0].survey_id,
+                "period_id": dataset_metadata_collection_for_endpoints_test[0].period_id,
+            }
         )
+
+        response = make_iap_request(method, path=url)
         
         expected_data = [dataset_metadata_collection_for_endpoints_test[0].__dict__]
 
@@ -49,10 +57,11 @@ class TestDatasetEndpoints:
         - Asserts the metadata retrieved matches the expected structure.
         """
 
-        response = make_iap_request(
-            "GET",
-            f"/v1/all_dataset_metadata",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_ALL_DATASET_METADATA,
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 200
 
@@ -70,12 +79,15 @@ class TestDatasetEndpoints:
         - Get request to retrieve unit data for a dataset
         - Asserts if unit data matches the expected structure
         """
-
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}&identifier={dataset_unit_data_id[0]}",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "dataset_id": dataset_unit_data_collection_for_endpoints_test[0].dataset_id,
+                "identifier": dataset_unit_data_id[0],
+            }
         )
+
+        response = make_iap_request(method=method, path=url)
 
         assert response.status_code == 200
         assert response.json() == dataset_unit_data_collection_for_endpoints_test[0].__dict__
@@ -90,12 +102,15 @@ class TestDatasetEndpoints:
         - Checks if the metadata matches the expected structure without a title
         """
 
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[1].survey_id}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[1].period_id}",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "survey_id": dataset_metadata_collection_for_endpoints_test[1].survey_id,
+                "period_id": dataset_metadata_collection_for_endpoints_test[1].period_id,
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         expected_data = [dataset_metadata_collection_for_endpoints_test[1].__dict__]
 
@@ -111,12 +126,16 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "period_id": dataset_metadata_collection_for_endpoints_test[0].period_id,
+            }
         )
+
+        response = make_iap_request(method, path=url)
+
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
@@ -130,12 +149,15 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "survey_id": dataset_metadata_collection_for_endpoints_test[0].survey_id,
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
@@ -149,11 +171,12 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
@@ -167,12 +190,15 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"{random_string}",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "random_string": random_string,
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Invalid search parameters provided"
@@ -186,12 +212,16 @@ class TestDatasetEndpoints:
         - Assert status code is 404
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"survey_id={dataset_404_test_data['survey_id']}&period_id={dataset_404_test_data['period_id']}",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "survey_id": dataset_404_test_data['survey_id'],
+                "period_id": dataset_404_test_data['period_id'],
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 404
         assert response.json()["message"] == "No datasets found"
@@ -207,13 +237,15 @@ class TestDatasetEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_dataset_metadata_unauthorised on local environment")
 
-        response = make_iap_request(
-            "GET",
-            f"/v1/dataset_metadata?"
-            f"survey_id={dataset_metadata_collection_for_endpoints_test[0].survey_id}&"
-            f"period_id={dataset_metadata_collection_for_endpoints_test[0].period_id}",
-            unauthenticated=True
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_DATASET_METADATA,
+            params={
+                "survey_id": dataset_metadata_collection_for_endpoints_test[0].survey_id,
+                "period_id": dataset_metadata_collection_for_endpoints_test[0].period_id,
+            }
         )
+
+        response = make_iap_request(method, path=url, unauthenticated=True)
 
         assert response.status_code == 401
 
@@ -228,11 +260,11 @@ class TestDatasetEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_all_dataset_metadata_unauthorised on local environment")
 
-        response = make_iap_request(
-            "GET",
-            f"/v1/all_dataset_metadata",
-            unauthenticated=True
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_ALL_DATASET_METADATA,
         )
+
+        response = make_iap_request(method, path=url, unauthenticated=True)
 
         assert response.status_code == 401
 
@@ -245,12 +277,17 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"identifier={dataset_unit_data_id[0]}",
+        if not endpoints_loader.endpoints_deprecated:
+            pytest.skip("Skipping test_dataset_unit_data_without_dataset_id on new endpoint")
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "identifier": dataset_unit_data_id[0],
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -264,12 +301,17 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}",
+        if not endpoints_loader.endpoints_deprecated:
+            pytest.skip("Skipping test_dataset_unit_data_without_identifier on new endpoint")
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "dataset_id": dataset_unit_data_collection_for_endpoints_test[0].dataset_id,
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -283,12 +325,16 @@ class TestDatasetEndpoints:
         - Assert status code is 404
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"dataset_id={dataset_404_test_data['dataset_id']}&identifier={dataset_404_test_data['identifier']}",
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "dataset_id": dataset_404_test_data['dataset_id'],
+                "identifier": dataset_404_test_data['identifier'],
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 404
         assert response.json()["message"] == "No unit data found"
@@ -304,13 +350,15 @@ class TestDatasetEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_dataset_unit_data_unauthorised on local environment")
 
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"dataset_id={dataset_unit_data_collection_for_endpoints_test[0].dataset_id}&"
-            f"identifier={dataset_unit_data_id[0]}",
-            unauthenticated=True
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "dataset_id": dataset_unit_data_collection_for_endpoints_test[0].dataset_id,
+                "identifier": dataset_unit_data_id[0],
+            }
         )
+
+        response = make_iap_request(method, path=url, unauthenticated=True)
 
         assert response.status_code == 401
 
@@ -323,11 +371,14 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data",
+        if not endpoints_loader.endpoints_deprecated:
+            pytest.skip("Skipping test_dataset_unit_data_no_valid_query_params on new endpoint")
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"
@@ -341,12 +392,17 @@ class TestDatasetEndpoints:
         - Assert status code is 400
         - Checks the error message in the response
         """
-            
-        response = make_iap_request(
-            "GET",
-            f"/v1/unit_data?"
-            f"{random_string}",
+        if not endpoints_loader.endpoints_deprecated:
+            pytest.skip("Skipping test_dataset_unit_data_garbage_query_params on new endpoint")
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_UNIT_DATA,
+            params={
+                "random_string": random_string,
+            }
         )
+
+        response = make_iap_request(method, path=url)
 
         assert response.status_code == 400
         assert response.json()["message"] == "Validation has failed"

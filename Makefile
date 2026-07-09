@@ -25,8 +25,16 @@ unit-tests:
 	export PROJECT_ID=mock-project-id && \
 	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
-	uv run python -m pytest -vv  --cov=app ./tests/unit_tests/ -W ignore::DeprecationWarning
-	uv run python -m coverage report --fail-under=90  -m
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
+	make unit-tests-deprecated
+
+unit-tests-deprecated:
+	export CONF='unit' && \
+	export PROJECT_ID=mock-project-id && \
+	export PUBLISH_SCHEMA_TOPIC_ID=${PUBLISH_SCHEMA_TOPIC_ID} && \
+	export FIRESTORE_DB_NAME="the-firestore-db-name" && \
+	export ENDPOINTS_DEPRECATED="true" && \
+	uv run python -m pytest --cov=app --cov-fail-under=90 --cov-report term-missing --cov-config=.coveragerc_unit_deprecated -vv ./tests/unit_tests/ -W ignore::DeprecationWarning
 
 # Spinning up emulators in docker is required to run the local integration tests.
 integration-tests-local:
@@ -36,6 +44,19 @@ integration-tests-local:
 	export PUBLISH_SCHEMA_TOPIC_ID='emulated-sds-schema-topic' && \
 	export API_URL=${LOCAL_URL} && \
 	export URL_SCHEME='http' && \
+	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
+	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-local-deprecated
+
+integration-tests-local-deprecated:
+	export CONF='local-int-tests' && \
+	export PROJECT_ID='mock-project-id' && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export PUBLISH_SCHEMA_TOPIC_ID='emulated-sds-schema-topic' && \
+	export API_URL=${LOCAL_URL} && \
+	export URL_SCHEME='http' && \
+	export ENDPOINTS_DEPRECATED="true" && \
 	export PUBSUB_EMULATOR_HOST=localhost:8085 && \
 	export FIRESTORE_EMULATOR_HOST=localhost:8080 && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
@@ -49,6 +70,17 @@ integration-tests-sandbox:
 	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
 	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
 	export URL_SCHEME='https' && \
+	export SECRET_ID='iap-secret' && \
+	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+
+integration-tests-sandbox-deprecated:
+	export CONF='sandbox-int-tests' && \
+	export PYTHONPATH=${PYTHONPATH} && \
+	export PROJECT_ID=${PROJECT_ID} && \
+	export API_URL='${SANDBOX_IP_ADDRESS}.nip.io' && \
+	export FIRESTORE_DB_NAME='${PROJECT_ID}-sds' && \
+	export URL_SCHEME='https' && \
+	export ENDPOINTS_DEPRECATED="true" && \
 	export SECRET_ID='iap-secret' && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
 

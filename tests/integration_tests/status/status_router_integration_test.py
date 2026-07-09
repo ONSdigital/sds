@@ -4,6 +4,10 @@ import pytest
 from app.config import settings
 
 from tests.integration_tests.helpers.utils import make_iap_request
+from tests.test_config.endpoints import ENDPOINTS, GET_STATUS
+from tests.test_config.endpoints_loader import EndpointsLoader
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestHttpGetDeploymentStatus:
@@ -17,10 +21,11 @@ class TestHttpGetDeploymentStatus:
         - Asserts the response status code is 200
         - Asserts the response body contains the right version and status
         """
-        status_response = make_iap_request(
-            "GET",
-            f"/status",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_STATUS,
         )
+
+        status_response = make_iap_request(method, url)
 
         response_as_json = status_response.json()
 
@@ -39,9 +44,13 @@ class TestHttpGetDeploymentStatus:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_endpoint_returns_unauthorized_request on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_STATUS,
+        )
+
         status_response = make_iap_request(
-            "GET",
-            f"/status",
+            method=method,
+            path=url,
             unauthenticated=True
         )
 

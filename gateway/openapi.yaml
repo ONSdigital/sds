@@ -7,6 +7,23 @@ paths:
   /collection-exercise-end:
     post:
       summary: Post Collection Exercise End Message
+      description: 'Endpoint to receive collection exercise end message, process the
+        message and mark datasets for deletion
+
+        if dataset_guid is present in the message.
+
+
+        Parameters:
+
+        collection_end_data (CollectionExerciseEndData): The collection exercise end
+        message body, containing the GUID
+
+        of the dataset to be deleted and the survey_id and period id to find the relevant
+        dataset metadata for deletion.
+
+
+        This endpoint is currently not being used and is partially built without implementation
+        of unhappy path'
       operationId: post_collection_exercise_end_message_collection_exercise_end_post
       requestBody:
         content:
@@ -20,6 +37,7 @@ paths:
           content:
             application/json:
               schema: {}
+      deprecated: true
   /v1/unit_data:
     get:
       summary: Get Unit Supplementary Data
@@ -33,7 +51,8 @@ paths:
 
         identifier (str): The identifier of the particular unit on the data being
         queried.'
-      operationId: get_unit_supplementary_data_v1_unit_data_get
+      operationId: Get_unit_supplementary_data_v1_unit_data_get
+      deprecated: true
       parameters:
       - name: dataset_id
         in: query
@@ -52,7 +71,8 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/UnitDataset'
         '400':
           content:
             application/json:
@@ -82,7 +102,7 @@ paths:
           description: Not Found
   /v1/dataset_metadata:
     get:
-      summary: Get Dataset Metadata Collection
+      summary: Get Dataset Metadata
       description: 'Retrieve the matching dataset metadata, given the survey_id and
         period_id.
 
@@ -92,7 +112,8 @@ paths:
         survey_id (str): The survey id of the dataset being queried.
 
         period_id (str): The period id of the dataset being queried.'
-      operationId: get_dataset_metadata_collection_v1_dataset_metadata_get
+      operationId: Get_dataset_metadata_v1_dataset_metadata_get
+      deprecated: true
       parameters:
       - name: survey_id
         in: query
@@ -119,8 +140,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DatasetMetadata'
-                title: Response Get Dataset Metadata Collection V1 Dataset Metadata
-                  Get
+                title: Response Get Dataset Metadata V1 Dataset Metadata Get
         '400':
           content:
             application/json:
@@ -150,9 +170,9 @@ paths:
           description: Not Found
   /v1/all_dataset_metadata:
     get:
-      summary: Get All Dataset Metadata Collection
+      summary: Get All Dataset Metadata
       description: Retrieve all dataset metadata.
-      operationId: get_all_dataset_metadata_collection_v1_all_dataset_metadata_get
+      operationId: Get_all_dataset_metadata_v1_all_dataset_metadata_get
       responses:
         '200':
           description: Successful Response
@@ -162,8 +182,193 @@ paths:
                 items:
                   $ref: '#/components/schemas/DatasetMetadata'
                 type: array
-                title: Response Get All Dataset Metadata Collection V1 All Dataset
-                  Metadata Get
+                title: Response Get All Dataset Metadata V1 All Dataset Metadata Get
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+      deprecated: true
+  /collection-exercises-end:
+    post:
+      summary: Post Collection Exercise End Message
+      description: 'Endpoint to receive collection exercise end message, process the
+        message and mark datasets for deletion
+
+        if dataset_guid is present in the message.
+
+
+        Parameters:
+
+        collection_end_data (CollectionExerciseEndData): The collection exercise end
+        message body, containing the GUID
+
+        of the dataset to be deleted and the survey_id and period id to find the relevant
+        dataset metadata for deletion.
+
+
+        This endpoint is currently not being used and is partially built without implementation
+        of unhappy path'
+      operationId: post_collection_exercise_end_message_collection_exercises_end_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollectionExerciseEndData'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /datasets/{dataset_id}/unit-data/{identifier}:
+    get:
+      summary: Get Unit Supplementary Data
+      description: 'Retrieve supplementary data for a particular unit given the dataset
+        id and identifier, return 404 if no data is returned.
+
+
+        Parameters:
+
+        dataset_id (str): The unique id of the dataset being queried.
+
+        identifier (str): The identifier of the particular unit on the data being
+        queried.'
+      operationId: Get_unit_supplementary_data_datasets__dataset_id__unit_data__identifier__get
+      parameters:
+      - name: dataset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dataset Id
+      - name: identifier
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Identifier
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitDataset'
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation has failed
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No unit data found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+  /datasets/metadata:
+    get:
+      summary: Get Dataset Metadata
+      description: 'Retrieve the matching dataset metadata, given the survey_id and
+        period_id.
+
+
+        Parameters:
+
+        survey_id (str): The survey id of the dataset being queried.
+
+        period_id (str): The period id of the dataset being queried.'
+      operationId: Get_dataset_metadata_datasets_metadata_get
+      parameters:
+      - name: survey_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Id
+      - name: period_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Period Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasetMetadata'
+                title: Response Get Dataset Metadata Datasets Metadata Get
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid search parameters provided
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No datasets found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+  /datasets/all-metadata:
+    get:
+      summary: Get All Dataset Metadata
+      description: Retrieve all dataset metadata.
+      operationId: Get_all_dataset_metadata_datasets_all_metadata_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/DatasetMetadata'
+                type: array
+                title: Response Get All Dataset Metadata Datasets All Metadata Get
         '500':
           description: Internal Server Error
           content:
@@ -187,7 +392,8 @@ paths:
 
         schema_processor_service (SchemaProcessorService): injected processor service
         for processing the schema.'
-      operationId: post_schema_v1_schema_post
+      operationId: Post_Schema_v1_schema_post
+      deprecated: true
       parameters:
       - name: survey_id
         in: query
@@ -237,7 +443,8 @@ paths:
         \ (SchemaFirebaseRepository): injected dependency for\n    interacting with\
         \ the schema collection in firestore.\nschema_processor_service (SchemaProcessorService):\
         \ injected dependency for\n    interacting with the schema collection in firestore."
-      operationId: get_schema_v1_schema_get
+      operationId: Get_Schema_v1_schema_get
+      deprecated: true
       parameters:
       - name: survey_id
         in: query
@@ -299,7 +506,8 @@ paths:
         \ injected dependency for\n    interacting with the schema collection in firestore.\n\
         schema_processor_service (SchemaProcessorService): injected dependency for\n\
         \    interacting with the schema collection in firestore."
-      operationId: get_schema_with_guid_v2_schema_get
+      operationId: Get_Schema_with_GUID_v2_schema_get
+      deprecated: true
       parameters:
       - name: guid
         in: query
@@ -347,7 +555,7 @@ paths:
           description: Not Found
   /v1/schema_metadata:
     get:
-      summary: Get Schema Metadata Collection
+      summary: Get Schema Metadata
       description: 'Get all schema metadata associated with a specific survey id.
 
 
@@ -357,7 +565,8 @@ paths:
 
         schema_processor_service (SchemaProcessorService): injected dependency for
         processing the metadata collection.'
-      operationId: get_schema_metadata_collection_v1_schema_metadata_get
+      operationId: Get_Schema_Metadata_v1_schema_metadata_get
+      deprecated: true
       parameters:
       - name: survey_id
         in: query
@@ -376,8 +585,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SchemaMetadata'
-                title: Response Get Schema Metadata Collection V1 Schema Metadata
-                  Get
+                title: Response Get Schema Metadata V1 Schema Metadata Get
         '400':
           content:
             application/json:
@@ -407,7 +615,7 @@ paths:
           description: Not Found
   /v1/survey_list:
     get:
-      summary: Get Survey Id Map
+      summary: Get Survey Mapping
       description: 'Gets the Survey mapping data from the survey_map.json file in
         GitHub repository.
 
@@ -415,7 +623,7 @@ paths:
 
         schema_processor_service (SchemaProcessorService): injected dependency for
         processing the survey_map.json file.'
-      operationId: get_survey_id_map_v1_survey_list_get
+      operationId: Get_Survey_Mapping_v1_survey_list_get
       responses:
         '200':
           description: Successful Response
@@ -426,7 +634,7 @@ paths:
                   additionalProperties: true
                   type: object
                 type: array
-                title: Response Get Survey Id Map V1 Survey List Get
+                title: Response Get Survey Mapping V1 Survey List Get
         '500':
           description: Internal Server Error
           content:
@@ -445,11 +653,12 @@ paths:
               example:
                 status: error
                 message: No Survey IDs found
+      deprecated: true
   /v1/all_schema_metadata:
     get:
-      summary: Get All Schema Metadata Collection
+      summary: Get All Schema Metadata
       description: Retrieve all schema metadata from the schema collection.
-      operationId: get_all_schema_metadata_collection_v1_all_schema_metadata_get
+      operationId: Get_All_Schema_Metadata_v1_all_schema_metadata_get
       responses:
         '200':
           description: Successful Response
@@ -459,8 +668,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/SchemaMetadata'
                 type: array
-                title: Response Get All Schema Metadata Collection V1 All Schema Metadata
-                  Get
+                title: Response Get All Schema Metadata V1 All Schema Metadata Get
         '500':
           description: Internal Server Error
           content:
@@ -470,6 +678,301 @@ paths:
               example:
                 status: error
                 message: Unable to process request
+  /schemas:
+    post:
+      summary: Post Schema
+      description: 'Posts the schema metadata to be processed.
+
+
+        Parameters:
+
+        survey_id (str): survey_id of the schema
+
+        schema (dict): schema to be processed in JSON format.
+
+        schema_processor_service (SchemaProcessorService): injected processor service
+        for processing the schema.'
+      operationId: Post_Schema_schemas_post
+      parameters:
+      - name: survey_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Survey Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Schema
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaMetadata'
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Validation has failed
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+    get:
+      summary: Get Schema
+      description: "Gets the guid with specific survey id and version and uses that\
+        \ to retrieve a schema.\nLatest version schema will be retrieved if version\
+        \ is omitted\n\nParameters:\nsurvey_id (str): survey id of the schema metadata.\n\
+        version (str) (optional): version of the survey.\nschema_firebase_repository\
+        \ (SchemaFirebaseRepository): injected dependency for\n    interacting with\
+        \ the schema collection in firestore.\nschema_processor_service (SchemaProcessorService):\
+        \ injected dependency for\n    interacting with the schema collection in firestore."
+      operationId: Get_Schema_schemas_get
+      parameters:
+      - name: survey_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Id
+      - name: version
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Version
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Schema Schemas Get
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid search provided
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No schema found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+  /schemas/metadata:
+    get:
+      summary: Get Schema Metadata
+      description: 'Get all schema metadata associated with a specific survey id.
+
+
+        Parameters:
+
+        survey_id (str): survey id of the collection
+
+        schema_processor_service (SchemaProcessorService): injected dependency for
+        processing the metadata collection.'
+      operationId: Get_Schema_Metadata_schemas_metadata_get
+      parameters:
+      - name: survey_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaMetadata'
+                title: Response Get Schema Metadata Schemas Metadata Get
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid search provided
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No results found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+  /schemas/all-metadata:
+    get:
+      summary: Get All Schema Metadata
+      description: Retrieve all schema metadata from the schema collection.
+      operationId: Get_All_Schema_Metadata_schemas_all_metadata_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SchemaMetadata'
+                type: array
+                title: Response Get All Schema Metadata Schemas All Metadata Get
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+  /schemas/{guid}:
+    get:
+      summary: Get Schema With Guid
+      description: "Use the guid to retrieve a schema directly\n\nParameters:\nguid\
+        \ (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
+        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
+        schema_processor_service (SchemaProcessorService): injected dependency for\n\
+        \    interacting with the schema collection in firestore."
+      operationId: Get_Schema_with_GUID_schemas__guid__get
+      parameters:
+      - name: guid
+        in: path
+        required: true
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Guid
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Schema With Guid Schemas  Guid  Get
+        '400':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Invalid parameter provided
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Bad Request
+        '500':
+          content:
+            application/json:
+              example:
+                status: error
+                message: Unable to process request
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Internal Server Error
+        '404':
+          content:
+            application/json:
+              example:
+                status: error
+                message: No schema found
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+          description: Not Found
+  /surveys:
+    get:
+      summary: Get Survey Mapping
+      description: 'Gets the Survey mapping data from the survey_map.json file in
+        GitHub repository.
+
+        Parameters:
+
+        schema_processor_service (SchemaProcessorService): injected dependency for
+        processing the survey_map.json file.'
+      operationId: Get_Survey_Mapping_surveys_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response Get Survey Mapping Surveys Get
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: No Survey IDs found
   /status:
     get:
       summary: Http Get Status
@@ -635,6 +1138,32 @@ components:
       - title
       - guid
       title: SchemaMetadata
+    UnitDataset:
+      properties:
+        dataset_id:
+          type: string
+          title: Dataset Id
+        survey_id:
+          type: string
+          title: Survey Id
+        period_id:
+          type: string
+          title: Period Id
+        form_types:
+          items:
+            type: string
+          type: array
+          title: Form Types
+        data:
+          title: Data
+      type: object
+      required:
+      - dataset_id
+      - survey_id
+      - period_id
+      - form_types
+      - data
+      title: UnitDataset
     ValidationError:
       properties:
         loc:
