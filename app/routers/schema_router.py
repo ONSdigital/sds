@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 @router.post(
     "/v1/schema",
+    name="Post Schema",
     response_model=SchemaMetadata,
     responses={
         400: {
@@ -32,6 +33,7 @@ logger = logging.getLogger(__name__)
             "content": {"application/json": {"example": erm.erm_500_global_exception}},
         },
     },
+    deprecated=True,
 )
 async def post_schema(
     survey_id: str,
@@ -64,6 +66,7 @@ async def post_schema(
 
 @router.get(
     "/v1/schema",
+    name="Get Schema",
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -82,6 +85,7 @@ async def post_schema(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema(
     survey_id: str | None = None,
@@ -134,6 +138,7 @@ async def get_schema(
 
 @router.get(
     "/v2/schema",
+    name="Get Schema with GUID",
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -152,6 +157,7 @@ async def get_schema(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema_with_guid(
     guid: str | None = None,
@@ -185,6 +191,7 @@ async def get_schema_with_guid(
 
 @router.get(
     "/v1/schema_metadata",
+    name="Get Schema Metadata",
     response_model=list[SchemaMetadata],
     responses={
         400: {
@@ -204,6 +211,7 @@ async def get_schema_with_guid(
             },
         },
     },
+    deprecated=True,
 )
 async def get_schema_metadata_collection(
     survey_id: str | None = None,
@@ -236,6 +244,7 @@ async def get_schema_metadata_collection(
 
 @router.get(
     "/v1/survey_list",
+    name="Get Survey Mapping",
     response_model=list[dict],
     responses={
         500: {
@@ -249,6 +258,7 @@ async def get_schema_metadata_collection(
             },
         },
     },
+    deprecated=True,
 )
 async def get_survey_id_map(
     schema_service: SchemaService = Depends(get_schema_service),
@@ -268,6 +278,7 @@ async def get_survey_id_map(
 
 @router.get(
     "/v1/all_schema_metadata",
+    name="Get All Schema Metadata",
     response_model=list[SchemaMetadata],
     responses={
         500: {

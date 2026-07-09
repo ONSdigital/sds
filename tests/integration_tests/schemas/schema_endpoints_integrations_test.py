@@ -1,11 +1,18 @@
+import os
+
 import pytest
 
 from app.config import settings
 from tests.integration_tests.helpers.integration_helpers import is_json_response
 from tests.integration_tests.helpers.utils import make_iap_request
+from tests.test_config.endpoints import ENDPOINTS, GET_SCHEMA_METADATA, GET_ALL_SCHEMA_METADATA, GET_SCHEMA, \
+    GET_SCHEMA_WITH_GUID, GET_SURVEYS_MAPPING, POST_SCHEMA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.schema_test_data import test_survey_id_map
 from tests.test_data.shared_test_data import test_survey_id_list
 from tests.test_data.schema_test_data import invalid_survey_id, invalid_data, test_survey_id
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestSchemaEndpoints:
@@ -18,10 +25,16 @@ class TestSchemaEndpoints:
         * We retrieve and verify schema metadata
         """
         for survey_id in test_survey_id_list:
-            schema_metadata_response = make_iap_request(
-                "GET",
-                f"/v1/schema_metadata?survey_id={survey_id}"
+
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=GET_SCHEMA_METADATA,
+                params={
+                    "survey_id": survey_id,
+                }
             )
+
+            schema_metadata_response = make_iap_request(method, url)
+
 
             assert schema_metadata_response.status_code == 200
             schema_metadata_list = schema_metadata_response.json()
@@ -50,11 +63,12 @@ class TestSchemaEndpoints:
 
         * We retrieve and verify all schema metadata
         """
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_ALL_SCHEMA_METADATA,
+        )
 
-        all_schema_metadata_response = make_iap_request(
-                "GET",
-                f"/v1/all_schema_metadata"
-            )
+        all_schema_metadata_response = make_iap_request(method, url)
+
         expected_schema_count = len(test_schema_list) * len(test_survey_id_list)
         assert all_schema_metadata_response.status_code == 200
 
@@ -75,21 +89,28 @@ class TestSchemaEndpoints:
         * We retrieve the latest version of the schema and check the response
         """
         for survey_id in test_survey_id_list:
-
-            # Verify schema retrieval by version
-            set_version_schema_response = make_iap_request(
-                "GET",
-                f"/v1/schema?survey_id={survey_id}&version=1"
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=GET_SCHEMA,
+                params={
+                    "survey_id": survey_id,
+                    "version": "1",
+                }
             )
+
+            set_version_schema_response = make_iap_request(method, url)
 
             assert set_version_schema_response.status_code == 200
             assert set_version_schema_response.json() == test_schema_list[1]
 
             # verify schema retrieval by latest version
-            latest_version_schema_response = make_iap_request(
-                "GET",
-                f"/v1/schema?survey_id={survey_id}"
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=GET_SCHEMA,
+                params={
+                    "survey_id": survey_id,
+                }
             )
+
+            latest_version_schema_response = make_iap_request(method, url)
 
             assert latest_version_schema_response.status_code == 200
             assert latest_version_schema_response.json() == test_schema_list[0]
@@ -102,19 +123,27 @@ class TestSchemaEndpoints:
         * We retrieve the schema by GUID and check the response compared to the expected schema
         """
         for survey_id in test_survey_id_list:
-            schema_metadata_response = make_iap_request(
-                "GET",
-                f"/v1/schema_metadata?survey_id={survey_id}",
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=GET_SCHEMA_METADATA,
+                params={
+                    "survey_id": survey_id,
+                }
             )
+
+            schema_metadata_response = make_iap_request(method, url)
 
             schema_metadata_list = schema_metadata_response.json()
 
             for index, schema_metadata in enumerate(schema_metadata_list):
                 # Verify schema retrieval by GUID
-                set_guid_schema_response = make_iap_request(
-                    "GET",
-                    f"/v2/schema?guid={schema_metadata['guid']}"
+                url, method = endpoints_loader.formulate_url_and_method(
+                    key=GET_SCHEMA_WITH_GUID,
+                    params={
+                        "guid": schema_metadata['guid'],
+                    }
                 )
+
+                set_guid_schema_response = make_iap_request(method, url)
 
                 assert set_guid_schema_response.status_code == 200
                 assert set_guid_schema_response.json() == test_schema_list[index]
@@ -127,11 +156,11 @@ class TestSchemaEndpoints:
 
         * We retrieve the survey mapping data and check the response
         """
-
-        set_survey_id_map_response = make_iap_request(
-            "GET",
-            f"/v1/survey_list"
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SURVEYS_MAPPING,
         )
+
+        set_survey_id_map_response = make_iap_request(method, url)
 
         assert set_survey_id_map_response.status_code == 200
         assert set_survey_id_map_response.json() == test_survey_id_map
@@ -147,9 +176,16 @@ class TestSchemaEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_post_schema_unauthorized on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=POST_SCHEMA,
+            params={
+                "survey_id": test_survey_id,
+            }
+        )
+
         response = make_iap_request(
-            "POST",
-            f"/v1/schema?survey_id={test_survey_id}",
+            method=method,
+            path=url,
             json=test_schema_list[0],
             unauthenticated=True
         )
@@ -164,9 +200,16 @@ class TestSchemaEndpoints:
         * We test the POST /v1/schema endpoint by providing invalid data.
         * Assert status code: 400 Bad Request.
         """
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=POST_SCHEMA,
+            params={
+                "survey_id": test_survey_id,
+            }
+        )
+
         response = make_iap_request(
-            "POST",
-            f"/v1/schema?survey_id={test_survey_id}",
+            method=method,
+            path=url,
             json=invalid_data
         )
 
@@ -186,10 +229,14 @@ class TestSchemaEndpoints:
         * We send a request to the GET /v1/schema endpoint providing an invalid survey_id.
         * Assert status code: 404 Not Found.
         """
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema?survey_id={invalid_survey_id}",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA,
+            params={
+                "survey_id": invalid_survey_id,
+            }
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -209,9 +256,16 @@ class TestSchemaEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_get_schema_unauthorized on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA,
+            params={
+                "survey_id": test_survey_id,
+            }
+        )
+
         response = make_iap_request(
-            "GET",
-            f"/v1/schema?survey_id={test_survey_id}",
+            method=method,
+            path=url,
             unauthenticated=True
         )
 
@@ -228,10 +282,11 @@ class TestSchemaEndpoints:
         * Assert status code: 400 Bad Request.
         """
         # Test missing survey_id
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA,
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -241,10 +296,13 @@ class TestSchemaEndpoints:
         assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
         # Test nonsensical parameter
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema_metadata?randomparam=nonsense",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA,
+            params={
+                "randomparam": "nonsense",
+            }
         )
+        response = make_iap_request(method, url)
 
         assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -264,9 +322,16 @@ class TestSchemaEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_get_schema_metadata_unauthorized on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_METADATA,
+            params={
+                "survey_id": test_survey_id,
+            }
+        )
+
         response = make_iap_request(
-                "GET",
-            f"/v1/schema_metadata?survey_id={test_survey_id}",
+            method=method,
+            path=url,
             unauthenticated=True
         )
 
@@ -281,10 +346,11 @@ class TestSchemaEndpoints:
         * Assert status code: 400 Bad Request.
         """
         #Missing survey_id
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema_metadata",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_METADATA,
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -294,10 +360,14 @@ class TestSchemaEndpoints:
         assert response_data["message"] == "Invalid search provided", f"Unexpected message: {response_data['message']}"
 
         #Nonsensical parameter
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema_metadata?invalidparam=123",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_METADATA,
+            params={
+                "invalidparam": "123",
+            }
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -314,10 +384,15 @@ class TestSchemaEndpoints:
         * We send a request to the GET /v1/schema_metadata endpoint providing an invalid survey_id.
         * Assert status code: 404 Not Found.
         """
-        response = make_iap_request(
-            "GET",
-            f"/v1/schema_metadata?survey_id={invalid_survey_id}",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_METADATA,
+            params={
+                "survey_id": invalid_survey_id,
+            }
         )
+
+        response = make_iap_request(method, url)
+
         assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
 
@@ -336,9 +411,13 @@ class TestSchemaEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_get_all_schema_metadata_unauthorized on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_ALL_SCHEMA_METADATA,
+        )
+
         response = make_iap_request(
-            "GET",
-            f"/v1/all_schema_metadata",
+            method=method,
+            path=url,
             unauthenticated=True
         )
 
@@ -355,9 +434,16 @@ class TestSchemaEndpoints:
         if settings.CONF == "local-int-tests":
             pytest.skip("Skipping test_get_schema_v2_unauthorized on local environment")
 
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_WITH_GUID,
+            params={
+                "guid": "some_guid",
+            }
+        )
+
         response = make_iap_request(
-            "GET",
-            f"/v2/schema?guid=invalid_guid",
+            method=method,
+            path=url,
             unauthenticated=True
         )
 
@@ -371,10 +457,14 @@ class TestSchemaEndpoints:
         * We test the GET /v2/schema endpoint by providing an invalid GUID.
         * Assert status code: 400 Bad Request.
         """
-        response = make_iap_request(
-            "GET",
-            f"/v2/schema",
+        if not endpoints_loader.endpoints_deprecated:
+            pytest.skip("Skipping test_get_schema_v2_validation_error on new endpoint")
+
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_WITH_GUID,
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 400, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"
@@ -391,10 +481,14 @@ class TestSchemaEndpoints:
         * We send a request to the GET /v2/schema endpoint providing an invalid GUID.
         * Assert status code: 404 Not Found.
         """
-        response = make_iap_request(
-            "GET",
-            f"/v2/schema?guid=nonexistent_guid",
+        url, method = endpoints_loader.formulate_url_and_method(
+            key=GET_SCHEMA_WITH_GUID,
+            params={
+                "guid": "nonexistent_guid",
+            }
         )
+
+        response = make_iap_request(method, url)
 
         assert response.status_code == 404, f"Unexpected status code: {response.status_code}"
         assert is_json_response(response), "Response is not valid JSON"

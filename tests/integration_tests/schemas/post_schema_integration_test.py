@@ -1,6 +1,10 @@
 from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from tests.integration_tests.helpers.utils import make_iap_request
+from tests.test_config.endpoints import ENDPOINTS, POST_SCHEMA
+from tests.test_config.endpoints_loader import EndpointsLoader
 from tests.test_data.shared_test_data import test_schema_subscriber_id, test_survey_id_list
+
+endpoints_loader = EndpointsLoader(ENDPOINTS)
 
 
 class TestPostSchemaEndpoint:
@@ -15,11 +19,14 @@ class TestPostSchemaEndpoint:
         # Post v1 schema for each survey_id - v1 is stored in the second index of the test_schemas list
         for survey_id in test_survey_id_list:
 
-            schema_post_response = make_iap_request(
-                "POST",
-                f"/v1/schema?survey_id={survey_id}",
-                json=test_schema_list[1]
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=POST_SCHEMA,
+                params={
+                    "survey_id": survey_id,
+                }
             )
+
+            schema_post_response = make_iap_request(method, path=url, json=test_schema_list[1])
 
             assert schema_post_response.status_code == 200
             assert "guid" in schema_post_response.json()
@@ -35,11 +42,14 @@ class TestPostSchemaEndpoint:
         # Post v2 schema for each survey_id - v2 is stored in the first index of the test_schemas list
         for survey_id in test_survey_id_list:
 
-            schema_post_response = make_iap_request(
-                "POST",
-                f"/v1/schema?survey_id={survey_id}",
-                json=test_schema_list[0]
+            url, method = endpoints_loader.formulate_url_and_method(
+                key=POST_SCHEMA,
+                params={
+                    "survey_id": survey_id,
+                }
             )
+
+            schema_post_response = make_iap_request(method, path=url, json=test_schema_list[0])
 
             assert schema_post_response.status_code == 200
             assert "guid" in schema_post_response.json()
