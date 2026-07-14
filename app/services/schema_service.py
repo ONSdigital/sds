@@ -53,7 +53,6 @@ class SchemaService:
             schema_id, next_version_schema_metadata, schema_model
         )
 
-        # TODO move to protocol
         # Trigger a publish event
         self._try_publish_schema_metadata_to_topic(next_version_schema_metadata)
 

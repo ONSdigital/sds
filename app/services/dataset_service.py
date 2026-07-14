@@ -75,7 +75,7 @@ class DatasetService:
 
         :param collection_exercise_end_data: The collection exercise end data.
         """
-        # todo: validation on period_id and survey_id once we have go the 'real' message
+
         collection_has_dataset_guid = (
             self._check_if_collection_has_dataset_guid(
                 collection_exercise_end_data
