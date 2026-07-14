@@ -105,7 +105,6 @@ async def get_schema(
     logger.info("Getting schema from Survey ID and Version...")
     logger.debug(f"Input data: survey_id={survey_id}, version={version}")
 
-    # TODO find a way around this and take into account exception interception
     QueryParameterValidatorService.validate_survey_id_from_get_schema(survey_id)
     QueryParameterValidatorService.validate_schema_version_from_get_schema(version)
 
@@ -172,7 +171,6 @@ async def get_schema_with_guid(
     logger.info("Getting schema from GUID...")
     logger.debug(f"Input data: guid={guid}")
 
-    # TODO find a way around this including exception interception
     QueryParameterValidatorService.validate_guid_from_get_schema(guid)
 
     # Attempt to fetch the schema using the GUID

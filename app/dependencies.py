@@ -28,8 +28,6 @@ def get_schema_service(
     firebase_loader: FirebaseLoader = Depends(get_firebase_loader),
     publisher_service: PublisherService = Depends(get_publisher_service)
 ) -> SchemaService:
-
-    # TODO use profiles to change config
     return SchemaService(
         schema_repository=FirestoreSchemaStorageRepository(
             firebase_loader=firebase_loader,
@@ -41,8 +39,6 @@ def get_schema_service(
 def get_dataset_service(
     firebase_loader: FirebaseLoader = Depends(get_firebase_loader)
 ) -> DatasetService:
-
-    # TODO use profiles to change config
     return DatasetService(
         dataset_deletion_repository=FirestoreDatasetDeletionRepository(
             firebase_loader=firebase_loader,
