@@ -6,7 +6,7 @@ from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
-from app.models.dataset_models import DatasetMetadata
+from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
@@ -42,6 +42,8 @@ async def post_collection_exercise_end_message(
 
 @router.get(
     "/v1/unit_data",
+    name="Get unit supplementary data",
+    response_model=UnitDataset,
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -66,7 +68,7 @@ async def get_unit_supplementary_data(
     dataset_id: str,
     identifier: str,
     dataset_service: DatasetService = Depends(get_dataset_service),
-):
+) -> UnitDataset:
     """
     Retrieve supplementary data for a particular unit given the dataset id and identifier, return 404 if no data is returned.
 
@@ -93,6 +95,7 @@ async def get_unit_supplementary_data(
 
 @router.get(
     "/v1/dataset_metadata",
+    name="Get dataset metadata",
     response_model=list[DatasetMetadata],
     responses={
         400: {
@@ -151,6 +154,7 @@ async def get_dataset_metadata_collection(
 
 @router.get(
     "/v1/all_dataset_metadata",
+    name="Get all dataset metadata",
     response_model=list[DatasetMetadata],
     responses={
         500: {

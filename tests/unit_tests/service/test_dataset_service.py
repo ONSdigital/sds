@@ -1,24 +1,17 @@
-from unittest.mock import MagicMock, call
+from unittest.mock import call
 
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.deletion_models import DeleteMetadata
-from app.services.dataset_service import DatasetService
 from tests.test_data import dataset_test_data
 
 
-def test_get_dataset_metadata_collection_calls_storage_repository():
+def test_get_dataset_metadata_collection_calls_storage_repository(dataset_service_with_repositories):
     """
     When dataset metadata for a survey/period is requested, DatasetService must
     delegate to dataset storage repository and return the repository result.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, _ = dataset_service_with_repositories
     dataset_storage_repository.get_metadata.return_value = dataset_test_data.test_dataset_metadata
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     result = service.get_dataset_metadata_collection(
         survey_id=dataset_test_data.test_survey_id,
@@ -32,19 +25,13 @@ def test_get_dataset_metadata_collection_calls_storage_repository():
     )
 
 
-def test_get_all_dataset_metadata_collection_calls_storage_repository():
+def test_get_all_dataset_metadata_collection_calls_storage_repository(dataset_service_with_repositories):
     """
     When all dataset metadata is requested, DatasetService must delegate to
     dataset storage repository and return the repository result.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, _ = dataset_service_with_repositories
     dataset_storage_repository.get_all_metadata.return_value = dataset_test_data.test_all_dataset_metadata
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     result = service.get_all_dataset_metadata_collection()
 
@@ -52,19 +39,13 @@ def test_get_all_dataset_metadata_collection_calls_storage_repository():
     dataset_storage_repository.get_all_metadata.assert_called_once_with()
 
 
-def test_get_unit_supplementary_data_calls_storage_repository():
+def test_get_unit_supplementary_data_calls_storage_repository(dataset_service_with_repositories):
     """
     When unit supplementary data is requested, DatasetService must delegate to
     dataset storage repository and return the repository result.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, _ = dataset_service_with_repositories
     dataset_storage_repository.get_unit_supplementary_data.return_value = dataset_test_data.test_unit_data
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     result = service.get_unit_supplementary_data(
         dataset_id=dataset_test_data.test_guid,
@@ -78,19 +59,13 @@ def test_get_unit_supplementary_data_calls_storage_repository():
     )
 
 
-def test_get_unit_supplementary_data_returns_none_when_not_found():
+def test_get_unit_supplementary_data_returns_none_when_not_found(dataset_service_with_repositories):
     """
     When unit supplementary data does not exist for the requested identifier,
     DatasetService must return None.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, _ = dataset_service_with_repositories
     dataset_storage_repository.get_unit_supplementary_data.return_value = None
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     result = service.get_unit_supplementary_data(
         dataset_id=dataset_test_data.test_guid,
@@ -104,20 +79,14 @@ def test_get_unit_supplementary_data_returns_none_when_not_found():
     )
 
 
-def test_end_collection_exercise_marks_all_matching_datasets_for_deletion():
+def test_end_collection_exercise_marks_all_matching_datasets_for_deletion(dataset_service_with_repositories):
     """
     When a collection exercise end event includes dataset_guid, DatasetService
     must retrieve metadata for the survey/period and mark each dataset version
     for deletion.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, dataset_deletion_repository = dataset_service_with_repositories
     dataset_storage_repository.get_metadata.return_value = dataset_test_data.test_dataset_metadata
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     service.end_collection_exercise(dataset_test_data.test_data_collection_end)
 
@@ -153,18 +122,12 @@ def test_end_collection_exercise_marks_all_matching_datasets_for_deletion():
     assert dataset_deletion_repository.mark_dataset_for_deletion.call_count == 2
 
 
-def test_end_collection_exercise_with_missing_dataset_guid_does_not_mark_for_deletion():
+def test_end_collection_exercise_with_missing_dataset_guid_does_not_mark_for_deletion(dataset_service_with_repositories):
     """
     When a collection exercise end event does not include dataset_guid,
     DatasetService must not mark any dataset for deletion.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
+    service, dataset_storage_repository, dataset_deletion_repository = dataset_service_with_repositories
 
     service.end_collection_exercise(dataset_test_data.test_data_collection_end_missing_id)
 
@@ -172,18 +135,12 @@ def test_end_collection_exercise_with_missing_dataset_guid_does_not_mark_for_del
     dataset_deletion_repository.mark_dataset_for_deletion.assert_not_called()
 
 
-def test_end_collection_exercise_with_none_dataset_guid_does_not_mark_for_deletion():
+def test_end_collection_exercise_with_none_dataset_guid_does_not_mark_for_deletion(dataset_service_with_repositories):
     """
     When a collection exercise end event includes dataset_guid=None,
     DatasetService must not mark any dataset for deletion.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
-
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
+    service, dataset_storage_repository, dataset_deletion_repository = dataset_service_with_repositories
 
     collection_exercise_end_data = CollectionExerciseEndData(
         survey_id=dataset_test_data.test_survey_id,
@@ -197,20 +154,15 @@ def test_end_collection_exercise_with_none_dataset_guid_does_not_mark_for_deleti
     dataset_deletion_repository.mark_dataset_for_deletion.assert_not_called()
 
 
-def test_end_collection_exercise_with_no_matching_metadata_marks_nothing_for_deletion():
+def test_end_collection_exercise_with_no_matching_metadata_marks_nothing_for_deletion(dataset_service_with_repositories):
     """
     When collection exercise end event includes dataset_guid but no dataset
     metadata exists for the survey/period, DatasetService must not mark
     anything for deletion.
     """
-    dataset_storage_repository = MagicMock()
-    dataset_deletion_repository = MagicMock()
+    service, dataset_storage_repository, dataset_deletion_repository = dataset_service_with_repositories
     dataset_storage_repository.get_metadata.return_value = []
 
-    service = DatasetService(
-        dataset_deletion_repository=dataset_deletion_repository,
-        dataset_storage_repository=dataset_storage_repository,
-    )
 
     service.end_collection_exercise(dataset_test_data.test_data_collection_end)
 

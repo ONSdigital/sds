@@ -220,7 +220,7 @@ async def get_schema_metadata_collection(
 
     Parameters:
     survey_id (str): survey id of the collection
-    schema_service (SchemaProcessorService): injected dependency for processing the metadata collection.
+    schema_service (SchemaService): injected dependency for processing the metadata collection.
     """
     QueryParameterValidatorService.validate_survey_id_from_schema_metadata(survey_id)
 
