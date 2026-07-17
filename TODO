@@ -1,3 +1,0 @@
-- use profiles to change config
-- validation on period_id and survey_id once we have go the 'real' message (78 dataset service)
-- move to protocol (78 schema service)
