@@ -1,15 +1,17 @@
 import uuid
 from datetime import datetime
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
+import requests
 from fastapi.testclient import TestClient
 from google.cloud.firestore import Transaction
 from mockfirestore import MockFirestore
 
-from app.dependencies import get_publisher_service, get_firebase_loader, get_dataset_deletion_service
-from app.repositories.firebase.firebase_loader import FirebaseLoader
-from app.services.dataset.dataset_deletion_service import DatasetDeletionService
+from app.dependencies import get_publisher_service, get_firebase_loader
+from app.services.dataset_service import DatasetService
+from app.services.schema_service import SchemaService
+from app.util.firebase_loader import FirebaseLoader
 from app.services.shared.datetime_service import DatetimeService
 from app.services.shared.publisher_service import PublisherService
 from tests.test_data import shared_test_data
@@ -127,13 +129,61 @@ def test_client_no_server_exception():
 
 
 @pytest.fixture
-def dataset_delete_service_setup(firestore_mock, test_client):
-    """
-    Fixture to set up the DatasetDeletionService with mocked dependencies for unit testing.
-    """
-    app = test_client.app
+def dataset_service_with_repositories():
+    """Create DatasetService with mocked repositories for unit tests."""
+    dataset_storage_repository = MagicMock()
+    dataset_deletion_repository = MagicMock()
+    service = DatasetService(
+        dataset_deletion_repository=dataset_deletion_repository,
+        dataset_storage_repository=dataset_storage_repository,
+    )
 
-    setup_dataset_delete_service = DatasetDeletionService(firebase_loader=firestore_mock)
-    app.dependency_overrides[get_dataset_deletion_service] = lambda: setup_dataset_delete_service
+    return service, dataset_storage_repository, dataset_deletion_repository
 
-    yield setup_dataset_delete_service
+
+@pytest.fixture
+def schema_service_with_dependencies():
+    """Create SchemaService with mocked repository and publisher dependencies."""
+    schema_repository = MagicMock()
+    publisher_service = MagicMock()
+    service = SchemaService(
+        schema_repository=schema_repository,
+        publisher_service=publisher_service,
+    )
+
+    return service, schema_repository, publisher_service
+
+
+@pytest.fixture
+def publisher_service_factory():
+    """Build PublisherService with mocked client and temporary settings patch."""
+
+    def _factory(conf="unit"):
+        publisher_client = MagicMock()
+        publisher_client.topic_path.return_value = "projects/mock/topics/mock-topic"
+        publisher_client.get_topic.return_value = MagicMock()
+
+        with patch("app.services.shared.publisher_service.settings") as mock_settings:
+            mock_settings.PROJECT_ID = "mock-project"
+            mock_settings.PUBLISH_SCHEMA_TOPIC_ID = "mock-topic"
+            mock_settings.CONF = conf
+            service = PublisherService(publisher_client)
+
+        return service, publisher_client
+
+    return _factory
+
+
+@pytest.fixture
+def mock_http_response():
+    """Build mocked HTTP responses with status code and json payload."""
+
+    def _factory(status_code, json_data):
+        response = Mock(spec=requests.Response)
+        response.status_code = status_code
+        response.json.return_value = json_data
+        return response
+
+    return _factory
+
+

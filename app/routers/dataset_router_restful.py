@@ -1,14 +1,15 @@
+from typing import cast
+
 from fastapi import APIRouter, Depends
 
 import app.exception.exception_response_models as erm
-from app.dependencies import get_dataset_deletion_service, get_dataset_service
+from app.dependencies import get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.dataset_models import DatasetMetadata, UnitDataset
-from app.services.dataset.dataset_deletion_service import DatasetDeletionService
-from app.services.dataset.dataset_service import DatasetService
+from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
     QueryParameterValidatorService,
 )
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 @router.post("/collection-exercises-end", status_code=200)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
-    dataset_deletion_service: DatasetDeletionService = Depends(get_dataset_deletion_service),
+    dataset_service: DatasetService = Depends(get_dataset_service),
 ):
     """
     Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
@@ -35,9 +36,7 @@ async def post_collection_exercise_end_message(
     """
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data}")
-    dataset_deletion_service.process_collection_exercise_end_message(
-        collection_end_data
-    )
+    dataset_service.end_collection_exercise(collection_end_data)
     return {"message": "accepted"}
 
 
@@ -131,14 +130,18 @@ async def get_dataset_metadata_collection(
     period_id (str): The period id of the dataset being queried.
     """
     QueryParameterValidatorService.validate_survey_and_period_id_from_dataset_metadata(
-        survey_id, period_id
+        cast(str, survey_id), cast(str, period_id)
     )
+    validated_survey_id = cast(str, survey_id)
+    validated_period_id = cast(str, period_id)
 
     logger.info("Getting dataset metadata collection...")
-    logger.debug(f"Input data: survey_id={survey_id}, period_id={period_id}")
+    logger.debug(
+        f"Input data: survey_id={validated_survey_id}, period_id={validated_period_id}"
+    )
 
-    dataset_metadata_collection = (
-        dataset_service.get_dataset_metadata_collection(survey_id, period_id)
+    dataset_metadata_collection = dataset_service.get_dataset_metadata_collection(
+        validated_survey_id, validated_period_id
     )
 
     if not dataset_metadata_collection:
