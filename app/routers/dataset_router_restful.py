@@ -7,7 +7,7 @@ from app.dependencies import get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
-from app.models.collection_exericise_end_data import CollectionExerciseEndData
+from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndResponse
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
@@ -19,11 +19,27 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/collection-exercises-end", status_code=200)
+@router.post(
+    "/collection-exercises-end",
+    name="Collection exercise end message",
+    response_model=CollectionExerciseEndResponse,
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_validation_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
 async def post_collection_exercise_end_message(
     collection_end_data: CollectionExerciseEndData,
     dataset_service: DatasetService = Depends(get_dataset_service),
-):
+) -> CollectionExerciseEndResponse:
     """
     Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
     if dataset_guid is present in the message.
@@ -32,12 +48,19 @@ async def post_collection_exercise_end_message(
     collection_end_data (CollectionExerciseEndData): The collection exercise end message body, containing the GUID
     of the dataset to be deleted and the survey_id and period id to find the relevant dataset metadata for deletion.
 
-    This endpoint is currently not being used and is partially built without implementation of unhappy path
+    Returns:
+    CollectionExerciseEndResponse: A response indicating that the message was accepted and a list of dataset GUIDs
+    that were marked for deletion.
     """
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data}")
-    dataset_service.end_collection_exercise(collection_end_data)
-    return {"message": "accepted"}
+
+    dataset_delete_guid_list = dataset_service.end_collection_exercise(collection_end_data)
+
+    return CollectionExerciseEndResponse(
+        message="accepted",
+        dataset_delete_guid_list=dataset_delete_guid_list
+    )
 
 
 @router.get(

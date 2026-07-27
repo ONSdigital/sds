@@ -9,7 +9,7 @@ from tests.integration_tests.helpers.integration_helpers import load_json, clean
 from tests.integration_tests.helpers.pubsub_helper import schema_pubsub_helper
 from tests.integration_tests.helpers.utils import make_iap_request
 from tests.test_data.dataset_test_data import dataset_metadata_collection_for_endpoints_test, \
-    dataset_unit_data_collection_for_endpoints_test
+    dataset_unit_data_collection_for_endpoints_test, dataset_metadata_collection_for_collection_exercise_end_test
 from tests.test_data.shared_test_data import test_survey_id_list, test_schema_subscriber_id
 
 
@@ -64,6 +64,21 @@ def setup_dataset():
     dataset_metadata: list[DatasetMetadata] = upload_dataset(
         firestore_client,
         dataset_metadata_collection_for_endpoints_test,
+        dataset_unit_data_collection_for_endpoints_test
+    )
+
+    yield dataset_metadata
+
+    cleanup()
+
+@pytest.fixture
+def setup_dataset_for_collection_exercise_end():
+    cleanup()
+
+    firestore_client = firestore.Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
+    dataset_metadata: list[DatasetMetadata] = upload_dataset(
+        firestore_client,
+        dataset_metadata_collection_for_collection_exercise_end_test,
         dataset_unit_data_collection_for_endpoints_test
     )
 

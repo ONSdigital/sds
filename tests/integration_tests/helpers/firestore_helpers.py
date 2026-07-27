@@ -96,15 +96,13 @@ def upload_dataset(firestore_client: firestore.Client, metadata_collection: list
     uploaded_dataset: list[DatasetMetadata] = []
 
     for index, dataset_metadata in enumerate(metadata_collection):
-        document_id = str(index)
+        dataset_collection.document(dataset_metadata.dataset_id).set(dataset_metadata.__dict__)
 
-        dataset_collection.document(document_id).set(dataset_metadata.__dict__)
-
-        unit_collection = dataset_collection.document(document_id).collection("units")
+        unit_collection = dataset_collection.document(dataset_metadata.dataset_id).collection("units")
 
         for i, unit_data in enumerate(unit_data_collection):
             unit_document_id = dataset_unit_data_id[i]
-            unit_data.dataset_id = document_id
+            unit_data.dataset_id = dataset_metadata.dataset_id
             unit_collection.document(unit_document_id).set(unit_data.__dict__)
     
         uploaded_dataset.append(dataset_metadata)

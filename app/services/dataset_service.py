@@ -1,6 +1,7 @@
 import logging
 
 from app.config import settings
+from app.exception import exceptions
 from app.interfaces.dataset_deletion_repository_interface import DatasetDeletionRepositoryInterface
 from app.interfaces.dataset_storage_repository_interface import DatasetStorageRepositoryInterface
 from app.models.collection_exericise_end_data import CollectionExerciseEndData
@@ -68,12 +69,14 @@ class DatasetService:
     def end_collection_exercise(
             self,
             collection_exercise_end_data: CollectionExerciseEndData
-    ):
+    ) -> list[str] | None:
         """
         When a collection exercise ends, the message is received
         and the dataset is marked for deletion
 
         :param collection_exercise_end_data: The collection exercise end data.
+
+        returns: list of dataset ids marked for deletion or None if no dataset_guid is present in the message.
         """
 
         collection_has_dataset_guid = (
@@ -82,13 +85,37 @@ class DatasetService:
             )
         )
 
-        if collection_has_dataset_guid:
-            list_dataset_metadata = self._collect_metadata_for_period_and_survey(
-                collection_exercise_end_data
-            )
-            self._mark_collections_for_deletion(list_dataset_metadata)
-        else:
-            logger.debug("Supplementary data not data found")
+        # Ignore message if there is no dataset guid
+        if not collection_has_dataset_guid:
+            logger.info("No Dataset GUID found in collection exercise end message")
+            return None
+
+
+        logger.info("Collecting all dataset versions for period and survey")
+        logger.debug(
+            f"Collecting all dataset versions for survey_id: {collection_exercise_end_data.survey_id} and period_id: {collection_exercise_end_data.period_id}"
+        )
+
+        list_dataset_metadata: list[DatasetMetadata] = self.get_dataset_metadata_collection(
+            collection_exercise_end_data.survey_id,
+            collection_exercise_end_data.period_id
+        )
+
+        # Ignore message if no metadata is found using the survey_id and period_id
+        if not list_dataset_metadata:
+            logger.info("No supplementary data found")
+            return None
+
+        # Ignore message if the supplied dataset guid is not found in the metadata collection
+        if collection_exercise_end_data.dataset_guid not in [metadata.dataset_id for metadata in list_dataset_metadata]:
+            logger.info("Dataset GUID not found in dataset metadata collection")
+            return None
+
+        # Mark all dataset versions for deletion
+        dataset_delete_guid_list = self._mark_collections_for_deletion(list_dataset_metadata)
+
+        # Return the list of dataset ids marked for deletion
+        return dataset_delete_guid_list
 
     def _check_if_collection_has_dataset_guid(
             self, collection_exercise_end_data: CollectionExerciseEndData
@@ -102,32 +129,31 @@ class DatasetService:
             supplementary_data_available = True
         return supplementary_data_available
 
-    def _collect_metadata_for_period_and_survey(
-            self, collection_exercise_end_data: CollectionExerciseEndData
-    ) -> list[DatasetMetadata]:
-        logger.info("Collecting all dataset versions for period and survey")
-        logger.info(
-            f"Collecting all dataset versions for survey_id: {collection_exercise_end_data.survey_id} and period_id: {collection_exercise_end_data.period_id}")
-        return self.get_dataset_metadata_collection(
-            collection_exercise_end_data.survey_id, collection_exercise_end_data.period_id
-        )
-
     def _mark_collections_for_deletion(
             self, list_dataset_metadata: list[DatasetMetadata]
-    ):
+    ) -> list[str] | None:
         time_now = DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
-        for dataset_metadata in list_dataset_metadata:
-            logger.debug(f"Dataset_metadata {dataset_metadata}")
-            delete_metadata: DeleteMetadata = DeleteMetadata(
-                **{
-                    "dataset_guid": dataset_metadata.dataset_id,
-                    "period_id": dataset_metadata.period_id,
-                    "survey_id": dataset_metadata.survey_id,
-                    "sds_dataset_version": dataset_metadata.sds_dataset_version,
-                    "status": "Pending",
-                    "mark_deleted_at": time_now,
-                    "deleted_at": "n/a",
-                }
-            )
-            logger.debug(f"Marking dataset for deletion {delete_metadata}")
-            self.dataset_deletion_repository.mark_dataset_for_deletion(delete_metadata)
+
+        try:
+            for dataset_metadata in list_dataset_metadata:
+                logger.debug(f"Dataset_metadata {dataset_metadata}")
+                delete_metadata: DeleteMetadata = DeleteMetadata(
+                    **{
+                        "dataset_guid": dataset_metadata.dataset_id,
+                        "period_id": dataset_metadata.period_id,
+                        "survey_id": dataset_metadata.survey_id,
+                        "sds_dataset_version": dataset_metadata.sds_dataset_version,
+                        "status": "Pending",
+                        "mark_deleted_at": time_now,
+                        "deleted_at": "n/a",
+                    }
+                )
+
+                logger.debug(f"Marking dataset for deletion {delete_metadata}")
+                self.dataset_deletion_repository.mark_dataset_for_deletion(delete_metadata)
+        except Exception as exc:
+            logger.exception(f"Error occurred marking dataset for deletion : exception raised: {exc}")
+            raise exceptions.GlobalException from exc
+        else:
+            logger.info("Dataset marked for deletion successfully")
+            return [metadata.dataset_id for metadata in list_dataset_metadata]

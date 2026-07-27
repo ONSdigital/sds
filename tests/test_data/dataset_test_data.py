@@ -125,6 +125,15 @@ test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
 )
 
 # For testing collection exercise end endpoint and dataset deletion service
+test_data_collection_end_dataset_guid_not_found: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": test_guid_3,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
 test_data_collection_end_missing_id: CollectionExerciseEndData = (
     CollectionExerciseEndData(
         **{
@@ -200,3 +209,59 @@ dataset_404_test_data = {
 
 # e2e dataset integration test - random string to test invalid query params
 random_string = "random_string"
+
+# integration test - collection exercise end - test data
+# Dataset 0 and 1 are to be mark deleted while 2 should be omitted
+dataset_metadata_collection_for_collection_exercise_end_test: list[DatasetMetadata] = [
+    DatasetMetadata(**{
+        "dataset_id": "0",
+        "survey_id": f"{test_survey_id}",
+        "period_id": f"{test_period_id}",
+        "form_types": ["sda", "ajk", "iwu"],
+        "title": "Test dataset 1",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+    }),
+    DatasetMetadata(**{
+        "dataset_id": "1",
+        "survey_id": f"{test_survey_id}",
+        "period_id": f"{test_period_id}",
+        "form_types": ["390", "219", "12O"],
+        "title": "Test dataset 2",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+    }),
+    DatasetMetadata(**{
+        "dataset_id": "2",
+        "survey_id": f"{test_survey_id}_2",
+        "period_id": f"{test_period_id}_2",
+        "form_types": ["390", "219", "12O"],
+        "title": "Test dataset 2",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+    }),
+]
+
+# integration test - collection exercise end - test data
+collection_exercise_end_message: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": "1",
+        "survey_id": f"{test_survey_id}",
+        "period_id": f"{test_period_id}",
+    }
+)
+
+# integration test - collection exercise end - test data
+collection_exercise_end_message_without_dataset_guid: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": None,
+        "survey_id": f"{test_survey_id}",
+        "period_id": f"{test_period_id}",
+    }
+)
