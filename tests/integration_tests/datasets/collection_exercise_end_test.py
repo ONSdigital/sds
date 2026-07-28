@@ -1,4 +1,3 @@
-from app.models.collection_exericise_end_data import CollectionExerciseEndResponse
 from tests.integration_tests.helpers.utils import make_iap_request
 from tests.test_config.endpoints import ENDPOINTS, COLLECTION_END
 from tests.test_config.endpoints_loader import EndpointsLoader

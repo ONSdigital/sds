@@ -72,6 +72,7 @@ integration-tests-sandbox:
 	export URL_SCHEME='https' && \
 	export SECRET_ID='iap-secret' && \
 	uv run python -m pytest --order-scope=module tests/integration_tests -vv -W ignore::DeprecationWarning
+	make integration-tests-sandbox-deprecated
 
 integration-tests-sandbox-deprecated:
 	export CONF='sandbox-int-tests' && \
