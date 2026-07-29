@@ -1,5 +1,3 @@
-from unittest.mock import MagicMock
-
 from fastapi import status
 
 from tests.test_config.endpoints import ENDPOINTS, COLLECTION_END
@@ -37,7 +35,7 @@ def test_post_collection_exercise_end_200_response(dataset_collection_mock, dele
     response = endpoints_loader.send_request(
         client=test_client,
         key=COLLECTION_END,
-        body=dataset_test_data.test_data_collection_end.__dict__,
+        body=dataset_test_data.test_data_raw_collection_end.__dict__,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -71,7 +69,7 @@ def test_post_collection_exercise_end_dataset_not_found(dataset_collection_mock,
     response = endpoints_loader.send_request(
         client=test_client,
         key=COLLECTION_END,
-        body=dataset_test_data.test_data_collection_end_dataset_guid_not_found.__dict__,
+        body=dataset_test_data.test_data_raw_collection_end_dataset_guid_not_found.__dict__,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -90,7 +88,7 @@ def test_post_collection_exercise_end_missing_dataset_guid_200_response(test_cli
     response = endpoints_loader.send_request(
         client=test_client,
         key=COLLECTION_END,
-        body=dataset_test_data.test_data_collection_end_missing_id.__dict__,
+        body=dataset_test_data.test_data_raw_collection_end_missing_id.__dict__,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -137,7 +135,7 @@ def test_global_error(firestore_mock, dataset_collection_mock, test_client_no_se
     response = endpoints_loader.send_request(
         client=test_client_no_server_exception,
         key=COLLECTION_END,
-        body=dataset_test_data.test_data_collection_end.__dict__,
+        body=dataset_test_data.test_data_raw_collection_end.__dict__,
     )
 
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

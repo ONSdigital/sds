@@ -124,7 +124,7 @@ ENDPOINTS_DEPRECATED: dict[str, EndpointConfig] = {
         "query_parameters": False,
     },
     COLLECTION_END: {
-        "url": "/collection-exercise-end",
+        "url": "/collection-exercises-end",
         "method": "POST",
         "query_parameters": False,
     },

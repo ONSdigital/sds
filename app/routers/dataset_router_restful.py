@@ -7,7 +7,9 @@ from app.dependencies import get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
-from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndResponse
+from app.mappers.collection_exercise_end_data_mapper import CollectionExerciseEndDataMapper
+from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndResponse, \
+    CollectionExerciseEndDataRaw
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
@@ -37,7 +39,7 @@ logger = logging.getLogger(__name__)
     },
 )
 async def post_collection_exercise_end_message(
-    collection_end_data: CollectionExerciseEndData,
+    collection_end_data_raw: CollectionExerciseEndDataRaw,
     dataset_service: DatasetService = Depends(get_dataset_service),
 ) -> CollectionExerciseEndResponse:
     """
@@ -45,15 +47,19 @@ async def post_collection_exercise_end_message(
     if dataset_guid is present in the message.
 
     Parameters:
-    collection_end_data (CollectionExerciseEndData): The collection exercise end message body, containing the GUID
-    of the dataset to be deleted and the survey_id and period id to find the relevant dataset metadata for deletion.
+    collection_end_data (CollectionExerciseEndDataRaw): The collection exercise end message body from RAS/RM, containing
+    the GUID of the dataset to be deleted and the survey id and period id to find the relevant dataset metadata for
+    deletion, and the end date.
 
     Returns:
     CollectionExerciseEndResponse: A response indicating that the message was accepted and a list of dataset GUIDs
     that were marked for deletion.
     """
     logger.info("collection_exercise_end message received")
-    logger.debug(f"collection_exercise_end message received {collection_end_data}")
+    logger.debug(f"collection_exercise_end message received {collection_end_data_raw}")
+
+    # Map the raw collection exercise end data to the internal model
+    collection_end_data = CollectionExerciseEndDataMapper.map(collection_end_data_raw)
 
     dataset_delete_guid_list = dataset_service.end_collection_exercise(collection_end_data)
 

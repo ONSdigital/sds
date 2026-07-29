@@ -112,7 +112,9 @@ class DatasetService:
             return None
 
         # Mark all dataset versions for deletion
-        dataset_delete_guid_list = self._mark_collections_for_deletion(list_dataset_metadata)
+        dataset_delete_guid_list = self._mark_collections_for_deletion(
+            list_dataset_metadata, collection_exercise_end_data.end_date
+        )
 
         # Return the list of dataset ids marked for deletion
         return dataset_delete_guid_list
@@ -130,7 +132,7 @@ class DatasetService:
         return supplementary_data_available
 
     def _mark_collections_for_deletion(
-            self, list_dataset_metadata: list[DatasetMetadata]
+            self, list_dataset_metadata: list[DatasetMetadata], end_date: str
     ) -> list[str] | None:
         time_now = DatetimeService.get_current_date_and_time().strftime(settings.TIME_FORMAT)
 
@@ -142,6 +144,7 @@ class DatasetService:
                         "dataset_guid": dataset_metadata.dataset_id,
                         "period_id": dataset_metadata.period_id,
                         "survey_id": dataset_metadata.survey_id,
+                        "end_date": end_date,
                         "sds_dataset_version": dataset_metadata.sds_dataset_version,
                         "status": "Pending",
                         "mark_deleted_at": time_now,

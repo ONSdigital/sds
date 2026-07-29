@@ -1,4 +1,4 @@
-from app.models.collection_exericise_end_data import CollectionExerciseEndData
+from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndDataRaw
 from app.models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 from tests.test_data.shared_test_data import test_guid, test_survey_id, test_period_id, test_guid_2, test_guid_3
@@ -9,6 +9,7 @@ Local variables:
 first_dataset_version = 1
 updated_dataset_version = 2
 test_published_at = "2023-04-20T12:00:00Z"
+collection_exercise_end_date = "2025-12-31T12:00:00Z"
 
 """
 Unit Test data:
@@ -116,11 +117,44 @@ test_unit_data: UnitDataset = UnitDataset(**{
 })
 
 # For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": test_guid,
+        "surveyRef": test_survey_id,
+        "period": test_period_id,
+        "endDate": collection_exercise_end_date,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end_dataset_guid_not_found: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": test_guid_3,
+        "surveyRef": test_survey_id,
+        "period": test_period_id,
+        "endDate": collection_exercise_end_date,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end_missing_id: CollectionExerciseEndDataRaw = (
+    CollectionExerciseEndDataRaw(
+        **{
+            "SupplementaryDatasetId": "",
+            "surveyRef": test_survey_id,
+            "period": test_period_id,
+            "endDate": collection_exercise_end_date,
+        }
+    )
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
 test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
     **{
         "dataset_guid": test_guid,
         "survey_id": test_survey_id,
         "period_id": test_period_id,
+        "end_date": collection_exercise_end_date,
     }
 )
 
@@ -130,6 +164,7 @@ test_data_collection_end_dataset_guid_not_found: CollectionExerciseEndData = Col
         "dataset_guid": test_guid_3,
         "survey_id": test_survey_id,
         "period_id": test_period_id,
+        "end_date": collection_exercise_end_date,
     }
 )
 
@@ -140,6 +175,19 @@ test_data_collection_end_missing_id: CollectionExerciseEndData = (
             "dataset_guid": "",
             "survey_id": test_survey_id,
             "period_id": test_period_id,
+            "end_date": collection_exercise_end_date,
+        }
+    )
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_collection_end_id_is_none: CollectionExerciseEndData = (
+    CollectionExerciseEndData(
+        **{
+            "dataset_guid": None,
+            "survey_id": test_survey_id,
+            "period_id": test_period_id,
+            "end_date": collection_exercise_end_date,
         }
     )
 )
@@ -249,19 +297,21 @@ dataset_metadata_collection_for_collection_exercise_end_test: list[DatasetMetada
 ]
 
 # integration test - collection exercise end - test data
-collection_exercise_end_message: CollectionExerciseEndData = CollectionExerciseEndData(
+collection_exercise_end_message: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
     **{
-        "dataset_guid": "1",
-        "survey_id": f"{test_survey_id}",
-        "period_id": f"{test_period_id}",
+        "SupplementaryDatasetId": "1",
+        "surveyRef": f"{test_survey_id}",
+        "period": f"{test_period_id}",
+        "endDate": collection_exercise_end_date,
     }
 )
 
 # integration test - collection exercise end - test data
-collection_exercise_end_message_without_dataset_guid: CollectionExerciseEndData = CollectionExerciseEndData(
+collection_exercise_end_message_without_dataset_guid: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
     **{
-        "dataset_guid": None,
-        "survey_id": f"{test_survey_id}",
-        "period_id": f"{test_period_id}",
+        "SupplementaryDatasetId": None,
+        "surveyRef": f"{test_survey_id}",
+        "period": f"{test_period_id}",
+        "endDate": collection_exercise_end_date,
     }
 )
