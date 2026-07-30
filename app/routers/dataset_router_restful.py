@@ -8,8 +8,10 @@ from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
 from app.mappers.collection_exercise_end_data_mapper import CollectionExerciseEndDataMapper
-from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndResponse, \
-    CollectionExerciseEndDataRaw
+from app.models.collection_exericise_end_data import (
+    CollectionExerciseEndDataRaw,
+    CollectionExerciseEndResponse,
+)
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (

@@ -1,4 +1,4 @@
-from app.models.collection_exericise_end_data import CollectionExerciseEndDataRaw, CollectionExerciseEndData
+from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndDataRaw
 
 
 class CollectionExerciseEndDataMapper:
