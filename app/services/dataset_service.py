@@ -146,7 +146,7 @@ class DatasetService:
                         "survey_id": dataset_metadata.survey_id,
                         "end_date": end_date,
                         "sds_dataset_version": dataset_metadata.sds_dataset_version,
-                        "status": "Pending",
+                        "status": "pending",
                         "mark_deleted_at": time_now,
                         "deleted_at": "n/a",
                     }

@@ -1,6 +1,7 @@
+import json
 from typing import cast
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 import app.exception.exception_response_models as erm
 from app.dependencies import get_dataset_service
@@ -41,7 +42,7 @@ logger = logging.getLogger(__name__)
     },
 )
 async def post_collection_exercise_end_message(
-    collection_end_data_raw: CollectionExerciseEndDataRaw,
+    request: Request,
     dataset_service: DatasetService = Depends(get_dataset_service),
 ) -> CollectionExerciseEndResponse:
     """
@@ -57,6 +58,15 @@ async def post_collection_exercise_end_message(
     CollectionExerciseEndResponse: A response indicating that the message was accepted and a list of dataset GUIDs
     that were marked for deletion.
     """
+    message_body = await request.body()
+
+    message_dict = json.loads(message_body.decode("utf-8"))
+    try:
+        collection_end_data_raw = CollectionExerciseEndDataRaw(**message_dict)
+    except Exception as e:
+        logger.error(f"Error parsing collection exercise end message: {e}")
+        raise exceptions.ValidationException
+
     logger.info("collection_exercise_end message received")
     logger.debug(f"collection_exercise_end message received {collection_end_data_raw}")
 
