@@ -76,12 +76,13 @@ def setup_dataset_for_collection_exercise_end():
     cleanup()
 
     firestore_client = firestore.Client(project=settings.PROJECT_ID, database=settings.FIRESTORE_DB_NAME)
+    dataset_delection_collection = firestore_client.collection("marked_for_deletion")
     dataset_metadata: list[DatasetMetadata] = upload_dataset(
         firestore_client,
         dataset_metadata_collection_for_collection_exercise_end_test,
         dataset_unit_data_collection_for_endpoints_test
     )
 
-    yield dataset_metadata
+    yield dataset_metadata, dataset_delection_collection
 
     cleanup()

@@ -1,7 +1,7 @@
 import json
 from typing import cast
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response, status
 
 import app.exception.exception_response_models as erm
 from app.dependencies import get_dataset_service
@@ -11,7 +11,6 @@ from app.logging_config import logging
 from app.mappers.collection_exercise_end_data_mapper import CollectionExerciseEndDataMapper
 from app.models.collection_exericise_end_data import (
     CollectionExerciseEndDataRaw,
-    CollectionExerciseEndResponse,
 )
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 @router.post(
     "/collection-exercises-end",
     name="Collection exercise end message",
-    response_model=CollectionExerciseEndResponse,
+    status_code=status.HTTP_204_NO_CONTENT,
     responses={
         400: {
             "model": ExceptionResponseModel,
@@ -44,7 +43,7 @@ logger = logging.getLogger(__name__)
 async def post_collection_exercise_end_message(
     request: Request,
     dataset_service: DatasetService = Depends(get_dataset_service),
-) -> CollectionExerciseEndResponse:
+) -> Response:
     """
     Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
     if dataset_guid is present in the message.
@@ -55,30 +54,28 @@ async def post_collection_exercise_end_message(
     deletion, and the end date.
 
     Returns:
-    CollectionExerciseEndResponse: A response indicating that the message was accepted and a list of dataset GUIDs
-    that were marked for deletion.
+    Response: A response with status code 204 if the message is processed successfully, or an error response if there
+    is an issue with the message or processing.
     """
     message_body = await request.body()
 
-    message_dict = json.loads(message_body.decode("utf-8"))
+    logger.info("collection_exercise_end message received")
+
     try:
+        message_dict = json.loads(message_body.decode("utf-8"))
         collection_end_data_raw = CollectionExerciseEndDataRaw(**message_dict)
     except Exception as e:
-        logger.error(f"Error parsing collection exercise end message: {e}")
-        raise exceptions.ValidationException
+        logger.error(f"Error parsing collection_exercise_end message: {e}")
+        raise exceptions.ValidationException from e
 
-    logger.info("collection_exercise_end message received")
-    logger.debug(f"collection_exercise_end message received {collection_end_data_raw}")
+    logger.debug(f"collection_exercise_end message: {collection_end_data_raw}")
 
     # Map the raw collection exercise end data to the internal model
     collection_end_data = CollectionExerciseEndDataMapper.map(collection_end_data_raw)
 
-    dataset_delete_guid_list = dataset_service.end_collection_exercise(collection_end_data)
+    dataset_service.end_collection_exercise(collection_end_data)
 
-    return CollectionExerciseEndResponse(
-        message="accepted",
-        dataset_delete_guid_list=dataset_delete_guid_list
-    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get(

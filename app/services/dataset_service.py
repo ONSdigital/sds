@@ -69,7 +69,7 @@ class DatasetService:
     def end_collection_exercise(
             self,
             collection_exercise_end_data: CollectionExerciseEndData
-    ) -> list[str] | None:
+    ):
         """
         When a collection exercise ends, the message is received
         and the dataset is marked for deletion
@@ -112,12 +112,12 @@ class DatasetService:
             return None
 
         # Mark all dataset versions for deletion
-        dataset_delete_guid_list = self._mark_collections_for_deletion(
+        self._mark_collections_for_deletion(
             list_dataset_metadata, collection_exercise_end_data.end_date
         )
 
-        # Return the list of dataset ids marked for deletion
-        return dataset_delete_guid_list
+        return None
+
 
     def _check_if_collection_has_dataset_guid(
             self, collection_exercise_end_data: CollectionExerciseEndData
@@ -159,4 +159,3 @@ class DatasetService:
             raise exceptions.GlobalException from exc
         else:
             logger.info("Dataset marked for deletion successfully")
-            return [metadata.dataset_id for metadata in list_dataset_metadata]

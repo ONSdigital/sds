@@ -1,9 +1,38 @@
 import requests
+
 from app.config import settings
 from google.cloud import firestore
 
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from tests.test_data.dataset_test_data import dataset_unit_data_id
+
+
+def query_collection_with_test_survey_id(
+    collection_ref: firestore.CollectionReference, test_survey_id: str
+) -> list[dict] | None:
+    """
+    Queries the collection for documents of a test survey id
+
+    Parameters:
+    collection_ref (firestore.CollectionReference): the reference of the collection being queried.
+    test_survey_id (str): the survey id to query for.
+
+    Returns:
+    list[dict]: a list of dictionary data that match the query.
+    """
+
+    # \uf8ff is a unicode character that is greater than any other character
+    doc_collection = (
+        collection_ref.where('survey_id', '==', test_survey_id)
+        .stream()
+    )
+
+    doc_dict: list[dict] = []
+    for doc in doc_collection:
+        doc_dict.append(doc.to_dict())
+
+    return doc_dict
+
 
 def perform_delete_on_collection_with_test_survey_id(
     client: firestore.Client, collection_ref: firestore.CollectionReference, test_survey_id: str

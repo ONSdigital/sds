@@ -14,8 +14,3 @@ class CollectionExerciseEndData:
     period_id: str
     end_date: str
     dataset_guid: str | None = None
-
-@dataclass
-class CollectionExerciseEndResponse:
-    message: str
-    dataset_delete_guid_list: list[str] | None = None
