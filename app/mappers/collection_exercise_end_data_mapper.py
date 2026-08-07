@@ -8,5 +8,5 @@ class CollectionExerciseEndDataMapper:
             survey_id=raw_data.surveyRef,
             period_id=raw_data.period,
             end_date=raw_data.endDate,
-            dataset_guid=raw_data.SupplementaryDatasetId or None,
+            dataset_guid=raw_data.SupplementaryDatasetId,
         )
