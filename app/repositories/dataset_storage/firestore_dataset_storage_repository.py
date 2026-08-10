@@ -11,10 +11,6 @@ from app.util.firebase_loader import FirebaseLoader
 logger = logging.getLogger(__name__)
 
 
-def _dataclass_fields(dataclass_type: type[Any]) -> set[str]:
-    return {field.name for field in fields(dataclass_type)}
-
-
 class FirestoreDatasetStorageRepository(DatasetStorageRepositoryInterface):
 
     def __init__(self, firebase_loader: FirebaseLoader) -> None:
@@ -33,7 +29,7 @@ class FirestoreDatasetStorageRepository(DatasetStorageRepositoryInterface):
         :param extra_fields: extra fields
         """
         data_with_extras = {**model_data, **extra_fields}
-        allowed_fields = _dataclass_fields(dataclass_type)
+        allowed_fields = {field.name for field in fields(dataclass_type)}
         filtered_model_data = {
             key: value for key, value in data_with_extras.items() if key in allowed_fields
         }
