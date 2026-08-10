@@ -47,6 +47,41 @@ def test_get_dataset_metadata_collection_200_response(dataset_collection_mock, t
     assert response.json() == [dataset_metadata.__dict__ for dataset_metadata in dataset_test_data.test_dataset_metadata]
 
 
+def test_get_dataset_metadata_collection_ignores_unexpected_fields(dataset_collection_mock, test_client):
+    """
+    When Firestore metadata documents include unsupported fields, endpoint should
+    still return 200 and map only DatasetMetadata fields.
+    """
+    metadata_with_unexpected_fields = {
+        **dataset_test_data.test_dataset_metadata_1.__dict__,
+        "schema_version": "1.0.0",
+    }
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=metadata_with_unexpected_fields,
+        mock_guid=shared_test_data.test_guid,
+    )
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=dataset_test_data.test_dataset_metadata_2.__dict__,
+        mock_guid=shared_test_data.test_guid_2,
+    )
+
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_DATASET_METADATA,
+        params={
+            "survey_id": dataset_test_data.test_survey_id,
+            "period_id": dataset_test_data.test_period_id,
+        },
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == [dataset_metadata.__dict__ for dataset_metadata in dataset_test_data.test_dataset_metadata]
+
+
 def test_get_all_dataset_metadata_collection_200_response(dataset_collection_mock, test_client):
     """
     When the dataset metadata collection is retrieved successfully there should be a 200 status code and expected response
@@ -69,6 +104,43 @@ def test_get_all_dataset_metadata_collection_200_response(dataset_collection_moc
     setup_mock_data(
         mock_collection=dataset_collection_mock,
         mock_data=dataset_test_data.test_dataset_metadata_other.__dict__,
+        mock_guid=shared_test_data.test_guid_3,
+    )
+
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_ALL_DATASET_METADATA,
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == [dataset_metadata.__dict__ for dataset_metadata in dataset_test_data.test_all_dataset_metadata]
+
+
+def test_get_all_dataset_metadata_collection_ignores_unexpected_fields(dataset_collection_mock, test_client):
+    """
+    When Firestore metadata documents include unsupported fields, all metadata
+    endpoint should still return 200 and map only DatasetMetadata fields.
+    """
+    metadata_with_unexpected_fields = {
+        **dataset_test_data.test_dataset_metadata_other.__dict__,
+        "schema_version": "2.0.0",
+    }
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=dataset_test_data.test_dataset_metadata_1.__dict__,
+        mock_guid=shared_test_data.test_guid,
+    )
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=dataset_test_data.test_dataset_metadata_2.__dict__,
+        mock_guid=shared_test_data.test_guid_2,
+    )
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=metadata_with_unexpected_fields,
         mock_guid=shared_test_data.test_guid_3,
     )
 
