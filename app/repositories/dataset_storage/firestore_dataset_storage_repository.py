@@ -1,3 +1,5 @@
+from dataclasses import fields
+
 from firebase_admin import firestore
 
 from app.interfaces.dataset_storage_repository_interface import DatasetStorageRepositoryInterface
@@ -6,6 +8,7 @@ from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.util.firebase_loader import FirebaseLoader
 
 logger = logging.getLogger(__name__)
+UNIT_DATASET_FIELDS = {field.name for field in fields(UnitDataset)}
 
 
 class FirestoreDatasetStorageRepository(DatasetStorageRepositoryInterface):
@@ -23,7 +26,14 @@ class FirestoreDatasetStorageRepository(DatasetStorageRepositoryInterface):
         if not returned_unit_data.exists:
             return None
 
-        return UnitDataset(**returned_unit_data.to_dict())
+        unit_data_dict = returned_unit_data.to_dict()
+
+        # Ensure only fields on the dataclass get unpacked into the UnitDataset model, ignoring any unexpected fields
+        filtered_unit_data_dict = {
+            key: value for key, value in unit_data_dict.items() if key in UNIT_DATASET_FIELDS
+        }
+
+        return UnitDataset(**filtered_unit_data_dict)
 
     def get_metadata(
             self, survey_id: str, period_id: str
