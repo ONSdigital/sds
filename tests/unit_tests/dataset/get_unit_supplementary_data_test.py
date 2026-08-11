@@ -39,6 +39,38 @@ def test_get_unit_supplementary_data_200_response(dataset_collection_mock, test_
     assert response.json() == dataset_test_data.test_unit_data.__dict__
 
 
+def test_get_unit_supplementary_data_ignores_unexpected_fields(dataset_collection_mock, test_client):
+    """
+    When Firestore unit data includes fields outside UnitDataset, endpoint should
+    still return 200 and map only expected UnitDataset fields.
+    """
+    unit_data_with_unexpected_fields = {
+        **dataset_test_data.test_unit_data.__dict__,
+        "schema_version": "v1",
+    }
+
+    setup_mock_data(
+        mock_collection=dataset_collection_mock,
+        mock_data=dataset_test_data.test_dataset_metadata_1.__dict__,
+        mock_guid=shared_test_data.test_guid,
+        sub_collection_name=dataset_test_data.sub_collection_name,
+        sub_collection_data=unit_data_with_unexpected_fields,
+        sub_collection_guid=dataset_test_data.identifier,
+    )
+
+    response = endpoints_loader.send_request(
+        client=test_client,
+        key=GET_UNIT_DATA,
+        params={
+            "dataset_id": shared_test_data.test_guid,
+            "identifier": dataset_test_data.identifier,
+        },
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == dataset_test_data.test_unit_data.__dict__
+
+
 def test_get_unit_supplementary_data_404_response(test_client):
     """
     The e2e journey for retrieving unit supplementary data from firestore,with repository boundaries mocked
