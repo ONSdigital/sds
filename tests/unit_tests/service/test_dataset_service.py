@@ -1,8 +1,8 @@
 from unittest.mock import call
 
-from app.models.collection_exericise_end_data import CollectionExerciseEndData
 from app.models.deletion_models import DeleteMetadata
 from tests.test_data import dataset_test_data
+from tests.test_data.dataset_test_data import test_data_collection_end_id_is_none
 
 
 def test_get_dataset_metadata_collection_calls_storage_repository(dataset_service_with_repositories):
@@ -100,8 +100,9 @@ def test_end_collection_exercise_marks_all_matching_datasets_for_deletion(datase
             dataset_guid=dataset_test_data.test_dataset_metadata_2.dataset_id,
             period_id=dataset_test_data.test_period_id,
             survey_id=dataset_test_data.test_survey_id,
+            end_date=dataset_test_data.test_data_collection_end.end_date,
             sds_dataset_version=dataset_test_data.test_dataset_metadata_2.sds_dataset_version,
-            status="Pending",
+            status="pending",
             mark_deleted_at="2023-04-20T12:00:00Z",
             deleted_at="n/a",
         ),
@@ -109,8 +110,9 @@ def test_end_collection_exercise_marks_all_matching_datasets_for_deletion(datase
             dataset_guid=dataset_test_data.test_dataset_metadata_1.dataset_id,
             period_id=dataset_test_data.test_period_id,
             survey_id=dataset_test_data.test_survey_id,
+            end_date=dataset_test_data.test_data_collection_end.end_date,
             sds_dataset_version=dataset_test_data.test_dataset_metadata_1.sds_dataset_version,
-            status="Pending",
+            status="pending",
             mark_deleted_at="2023-04-20T12:00:00Z",
             deleted_at="n/a",
         ),
@@ -142,11 +144,7 @@ def test_end_collection_exercise_with_none_dataset_guid_does_not_mark_for_deleti
     """
     service, dataset_storage_repository, dataset_deletion_repository = dataset_service_with_repositories
 
-    collection_exercise_end_data = CollectionExerciseEndData(
-        survey_id=dataset_test_data.test_survey_id,
-        period_id=dataset_test_data.test_period_id,
-        dataset_guid=None,
-    )
+    collection_exercise_end_data = test_data_collection_end_id_is_none
 
     service.end_collection_exercise(collection_exercise_end_data)
 

@@ -6,7 +6,7 @@ info:
 paths:
   /collection-exercise-end:
     post:
-      summary: Post Collection Exercise End Message
+      summary: Collection Exercise End Message
       description: 'Endpoint to receive collection exercise end message, process the
         message and mark datasets for deletion
 
@@ -22,9 +22,13 @@ paths:
         dataset metadata for deletion.
 
 
-        This endpoint is currently not being used and is partially built without implementation
-        of unhappy path'
-      operationId: post_collection_exercise_end_message_collection_exercise_end_post
+        Returns:
+
+        CollectionExerciseEndResponse: A response indicating that the message was
+        accepted and a list of dataset GUIDs
+
+        that were marked for deletion.'
+      operationId: Collection_exercise_end_message_collection_exercise_end_post
       requestBody:
         content:
           application/json:
@@ -36,7 +40,26 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/CollectionExerciseEndResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Validation has failed
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
       deprecated: true
   /v1/unit_data:
     get:
@@ -195,7 +218,7 @@ paths:
       deprecated: true
   /collection-exercises-end:
     post:
-      summary: Post Collection Exercise End Message
+      summary: Collection Exercise End Message
       description: 'Endpoint to receive collection exercise end message, process the
         message and mark datasets for deletion
 
@@ -211,9 +234,13 @@ paths:
         dataset metadata for deletion.
 
 
-        This endpoint is currently not being used and is partially built without implementation
-        of unhappy path'
-      operationId: post_collection_exercise_end_message_collection_exercises_end_post
+        Returns:
+
+        CollectionExerciseEndResponse: A response indicating that the message was
+        accepted and a list of dataset GUIDs
+
+        that were marked for deletion.'
+      operationId: Collection_exercise_end_message_collection_exercises_end_post
       requestBody:
         content:
           application/json:
@@ -225,7 +252,26 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/CollectionExerciseEndResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Validation has failed
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponseModel'
+              example:
+                status: error
+                message: Unable to process request
   /datasets/{dataset_id}/unit-data/{identifier}:
     get:
       summary: Get Unit Supplementary Data
@@ -384,14 +430,11 @@ paths:
       description: 'Posts the schema metadata to be processed.
 
 
-        Parameters:
+        :param survey_id: survey id of the schema metadata.
 
-        survey_id (str): survey_id of the schema
+        :param schema: schema to be processed.
 
-        schema (dict): schema to be processed in JSON format.
-
-        schema_processor_service (SchemaProcessorService): injected processor service
-        for processing the schema.'
+        :param schema_service: injected dependency for processing the schema.'
       operationId: Post_Schema_v1_schema_post
       deprecated: true
       parameters:
@@ -439,10 +482,9 @@ paths:
       description: "Gets the guid with specific survey id and version and uses that\
         \ to retrieve a schema.\nLatest version schema will be retrieved if version\
         \ is omitted\n\nParameters:\nsurvey_id (str): survey id of the schema metadata.\n\
-        version (str) (optional): version of the survey.\nschema_firebase_repository\
-        \ (SchemaFirebaseRepository): injected dependency for\n    interacting with\
-        \ the schema collection in firestore.\nschema_processor_service (SchemaProcessorService):\
-        \ injected dependency for\n    interacting with the schema collection in firestore."
+        version (str) (optional): version of the survey.\nschema_processor_service\
+        \ (SchemaProcessorService): injected dependency for\n    interacting with\
+        \ the schema collection in firestore."
       operationId: Get_Schema_v1_schema_get
       deprecated: true
       parameters:
@@ -501,11 +543,12 @@ paths:
   /v2/schema:
     get:
       summary: Get Schema With Guid
-      description: "Use the guid to retrieve a schema directly\n\nParameters:\nguid\
-        \ (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
-        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
-        schema_processor_service (SchemaProcessorService): injected dependency for\n\
-        \    interacting with the schema collection in firestore."
+      description: 'Use the guid to retrieve a schema directly
+
+
+        :param guid: guid of the schema to retrieve
+
+        :param schema_service: injected dependency for fetching schema'
       operationId: Get_Schema_with_GUID_v2_schema_get
       deprecated: true
       parameters:
@@ -563,8 +606,8 @@ paths:
 
         survey_id (str): survey id of the collection
 
-        schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the metadata collection.'
+        schema_service (SchemaService): injected dependency for processing the metadata
+        collection.'
       operationId: Get_Schema_Metadata_v1_schema_metadata_get
       deprecated: true
       parameters:
@@ -621,8 +664,8 @@ paths:
 
         Parameters:
 
-        schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the survey_map.json file.'
+        schema_service (SchemaService): injected dependency for processing the survey_map.json
+        file.'
       operationId: Get_Survey_Mapping_v1_survey_list_get
       responses:
         '200':
@@ -690,8 +733,8 @@ paths:
 
         schema (dict): schema to be processed in JSON format.
 
-        schema_processor_service (SchemaProcessorService): injected processor service
-        for processing the schema.'
+        schema_service (SchemaService): injected processor service for processing
+        the schema.'
       operationId: Post_Schema_schemas_post
       parameters:
       - name: survey_id
@@ -738,9 +781,7 @@ paths:
       description: "Gets the guid with specific survey id and version and uses that\
         \ to retrieve a schema.\nLatest version schema will be retrieved if version\
         \ is omitted\n\nParameters:\nsurvey_id (str): survey id of the schema metadata.\n\
-        version (str) (optional): version of the survey.\nschema_firebase_repository\
-        \ (SchemaFirebaseRepository): injected dependency for\n    interacting with\
-        \ the schema collection in firestore.\nschema_processor_service (SchemaProcessorService):\
+        version (str) (optional): version of the survey.\nschema_service (SchemaService):\
         \ injected dependency for\n    interacting with the schema collection in firestore."
       operationId: Get_Schema_schemas_get
       parameters:
@@ -806,8 +847,8 @@ paths:
 
         survey_id (str): survey id of the collection
 
-        schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the metadata collection.'
+        schema_service (SchemaService): injected dependency for processing the metadata
+        collection.'
       operationId: Get_Schema_Metadata_schemas_metadata_get
       parameters:
       - name: survey_id
@@ -883,10 +924,8 @@ paths:
     get:
       summary: Get Schema With Guid
       description: "Use the guid to retrieve a schema directly\n\nParameters:\nguid\
-        \ (str): GUID of the schema.\nschema_firebase_repository (SchemaFirebaseRepository):\
-        \ injected dependency for\n    interacting with the schema collection in firestore.\n\
-        schema_processor_service (SchemaProcessorService): injected dependency for\n\
-        \    interacting with the schema collection in firestore."
+        \ (str): GUID of the schema.\nschema_service (SchemaService): injected dependency\
+        \ for\n    interacting with the schema collection in firestore."
       operationId: Get_Schema_with_GUID_schemas__guid__get
       parameters:
       - name: guid
@@ -941,8 +980,8 @@ paths:
 
         Parameters:
 
-        schema_processor_service (SchemaProcessorService): injected dependency for
-        processing the survey_map.json file.'
+        schema_service (SchemaService): injected dependency for processing the survey_map.json
+        file.'
       operationId: Get_Survey_Mapping_surveys_get
       responses:
         '200':
@@ -1026,6 +1065,22 @@ components:
       - survey_id
       - period_id
       title: CollectionExerciseEndData
+    CollectionExerciseEndResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+        dataset_delete_guid_list:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Dataset Delete Guid List
+      type: object
+      required:
+      - message
+      title: CollectionExerciseEndResponse
     DatasetMetadata:
       properties:
         dataset_id:

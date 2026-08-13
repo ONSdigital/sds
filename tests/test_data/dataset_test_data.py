@@ -1,4 +1,4 @@
-from app.models.collection_exericise_end_data import CollectionExerciseEndData
+from app.models.collection_exericise_end_data import CollectionExerciseEndData, CollectionExerciseEndDataRaw
 from app.models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 
 from tests.test_data.shared_test_data import test_guid, test_survey_id, test_period_id, test_guid_2, test_guid_3
@@ -9,6 +9,7 @@ Local variables:
 first_dataset_version = 1
 updated_dataset_version = 2
 test_published_at = "2023-04-20T12:00:00Z"
+collection_exercise_end_date = "2025-12-31T12:00:00Z"
 
 """
 Unit Test data:
@@ -116,11 +117,54 @@ test_unit_data: UnitDataset = UnitDataset(**{
 })
 
 # For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": test_guid,
+        "surveyRef": test_survey_id,
+        "period": test_period_id,
+        "endDate": collection_exercise_end_date,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end_dataset_guid_not_found: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": test_guid_3,
+        "surveyRef": test_survey_id,
+        "period": test_period_id,
+        "endDate": collection_exercise_end_date,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_raw_collection_end_missing_id: CollectionExerciseEndDataRaw = (
+    CollectionExerciseEndDataRaw(
+        **{
+            "SupplementaryDatasetId": "",
+            "surveyRef": test_survey_id,
+            "period": test_period_id,
+            "endDate": collection_exercise_end_date,
+        }
+    )
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
 test_data_collection_end: CollectionExerciseEndData = CollectionExerciseEndData(
     **{
         "dataset_guid": test_guid,
         "survey_id": test_survey_id,
         "period_id": test_period_id,
+        "end_date": collection_exercise_end_date,
+    }
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_collection_end_dataset_guid_not_found: CollectionExerciseEndData = CollectionExerciseEndData(
+    **{
+        "dataset_guid": test_guid_3,
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "end_date": collection_exercise_end_date,
     }
 )
 
@@ -131,6 +175,19 @@ test_data_collection_end_missing_id: CollectionExerciseEndData = (
             "dataset_guid": "",
             "survey_id": test_survey_id,
             "period_id": test_period_id,
+            "end_date": collection_exercise_end_date,
+        }
+    )
+)
+
+# For testing collection exercise end endpoint and dataset deletion service
+test_data_collection_end_id_is_none: CollectionExerciseEndData = (
+    CollectionExerciseEndData(
+        **{
+            "dataset_guid": None,
+            "survey_id": test_survey_id,
+            "period_id": test_period_id,
+            "end_date": collection_exercise_end_date,
         }
     )
 )
@@ -200,3 +257,61 @@ dataset_404_test_data = {
 
 # e2e dataset integration test - random string to test invalid query params
 random_string = "random_string"
+
+# integration test - collection exercise end - test data
+# Dataset 0 and 1 are to be mark deleted while 2 should be omitted
+dataset_metadata_collection_for_collection_exercise_end_test: list[DatasetMetadata] = [
+    DatasetMetadata(**{
+        "dataset_id": "0",
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "form_types": ["sda", "ajk", "iwu"],
+        "title": "Test dataset 1_1",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+    }),
+    DatasetMetadata(**{
+        "dataset_id": "1",
+        "survey_id": test_survey_id,
+        "period_id": test_period_id,
+        "form_types": ["390", "219", "12O"],
+        "title": "Test dataset 1_2",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": updated_dataset_version,
+        "filename": "test_filename.json",
+    }),
+    DatasetMetadata(**{
+        "dataset_id": "2",
+        "survey_id": f"{test_survey_id}_2",
+        "period_id": f"{test_period_id}_2",
+        "form_types": ["390", "219", "12O"],
+        "title": "Test dataset 2_1",
+        "sds_published_at": "2023-04-20T12:00:00Z",
+        "total_reporting_units": 2,
+        "sds_dataset_version": first_dataset_version,
+        "filename": "test_filename.json",
+    }),
+]
+
+# integration test - collection exercise end - test data
+collection_exercise_end_message: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": "1",
+        "surveyRef": f"{test_survey_id}",
+        "period": f"{test_period_id}",
+        "endDate": collection_exercise_end_date,
+    }
+)
+
+# integration test - collection exercise end - test data
+collection_exercise_end_message_without_dataset_guid: CollectionExerciseEndDataRaw = CollectionExerciseEndDataRaw(
+    **{
+        "SupplementaryDatasetId": None,
+        "surveyRef": f"{test_survey_id}",
+        "period": f"{test_period_id}",
+        "endDate": collection_exercise_end_date,
+    }
+)

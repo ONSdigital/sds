@@ -1,13 +1,17 @@
+import json
 from typing import cast
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, Response, status
 
 import app.exception.exception_response_models as erm
 from app.dependencies import get_dataset_service
 from app.exception import exceptions
 from app.exception.exception_response_models import ExceptionResponseModel
 from app.logging_config import logging
-from app.models.collection_exericise_end_data import CollectionExerciseEndData
+from app.mappers.collection_exercise_end_data_mapper import CollectionExerciseEndDataMapper
+from app.models.collection_exericise_end_data import (
+    CollectionExerciseEndDataRaw,
+)
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from app.services.dataset_service import DatasetService
 from app.services.validators.query_parameter_validator_service import (
@@ -19,25 +23,59 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.post("/collection-exercises-end", status_code=200)
+@router.post(
+    "/collection-exercises-end",
+    name="Collection exercise end message",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses={
+        400: {
+            "model": ExceptionResponseModel,
+            "content": {
+                "application/json": {"example": erm.erm_400_validation_exception}
+            },
+        },
+        500: {
+            "model": ExceptionResponseModel,
+            "content": {"application/json": {"example": erm.erm_500_global_exception}},
+        },
+    },
+)
 async def post_collection_exercise_end_message(
-    collection_end_data: CollectionExerciseEndData,
+    request: Request,
     dataset_service: DatasetService = Depends(get_dataset_service),
-):
+) -> Response:
     """
     Endpoint to receive collection exercise end message, process the message and mark datasets for deletion
     if dataset_guid is present in the message.
 
     Parameters:
-    collection_end_data (CollectionExerciseEndData): The collection exercise end message body, containing the GUID
-    of the dataset to be deleted and the survey_id and period id to find the relevant dataset metadata for deletion.
+    collection_end_data (CollectionExerciseEndDataRaw): The collection exercise end message body from RAS/RM, containing
+    the GUID of the dataset to be deleted and the survey id and period id to find the relevant dataset metadata for
+    deletion, and the end date.
 
-    This endpoint is currently not being used and is partially built without implementation of unhappy path
+    Returns:
+    Response: A response with status code 204 if the message is processed successfully, or an error response if there
+    is an issue with the message or processing.
     """
+    message_body = await request.body()
+
     logger.info("collection_exercise_end message received")
-    logger.debug(f"collection_exercise_end message received {collection_end_data}")
+
+    try:
+        message_dict = json.loads(message_body.decode("utf-8"))
+        collection_end_data_raw = CollectionExerciseEndDataRaw(**message_dict)
+    except Exception as e:
+        logger.error(f"Error parsing collection_exercise_end message: {e}")
+        raise exceptions.ValidationException from e
+
+    logger.debug(f"collection_exercise_end message: {collection_end_data_raw}")
+
+    # Map the raw collection exercise end data to the internal model
+    collection_end_data = CollectionExerciseEndDataMapper.map(collection_end_data_raw)
+
     dataset_service.end_collection_exercise(collection_end_data)
-    return {"message": "accepted"}
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get(

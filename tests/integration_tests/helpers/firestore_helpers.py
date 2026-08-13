@@ -1,9 +1,38 @@
 import requests
+
 from app.config import settings
 from google.cloud import firestore
 
 from app.models.dataset_models import DatasetMetadata, UnitDataset
 from tests.test_data.dataset_test_data import dataset_unit_data_id
+
+
+def query_collection_with_test_survey_id(
+    collection_ref: firestore.CollectionReference, test_survey_id: str
+) -> list[dict] | None:
+    """
+    Queries the collection for documents of a test survey id
+
+    Parameters:
+    collection_ref (firestore.CollectionReference): the reference of the collection being queried.
+    test_survey_id (str): the survey id to query for.
+
+    Returns:
+    list[dict]: a list of dictionary data that match the query.
+    """
+
+    # \uf8ff is a unicode character that is greater than any other character
+    doc_collection = (
+        collection_ref.where('survey_id', '==', test_survey_id)
+        .stream()
+    )
+
+    doc_dict: list[dict] = []
+    for doc in doc_collection:
+        doc_dict.append(doc.to_dict())
+
+    return doc_dict
+
 
 def perform_delete_on_collection_with_test_survey_id(
     client: firestore.Client, collection_ref: firestore.CollectionReference, test_survey_id: str
@@ -96,15 +125,13 @@ def upload_dataset(firestore_client: firestore.Client, metadata_collection: list
     uploaded_dataset: list[DatasetMetadata] = []
 
     for index, dataset_metadata in enumerate(metadata_collection):
-        document_id = str(index)
+        dataset_collection.document(dataset_metadata.dataset_id).set(dataset_metadata.__dict__)
 
-        dataset_collection.document(document_id).set(dataset_metadata.__dict__)
-
-        unit_collection = dataset_collection.document(document_id).collection("units")
+        unit_collection = dataset_collection.document(dataset_metadata.dataset_id).collection("units")
 
         for i, unit_data in enumerate(unit_data_collection):
             unit_document_id = dataset_unit_data_id[i]
-            unit_data.dataset_id = document_id
+            unit_data.dataset_id = dataset_metadata.dataset_id
             unit_collection.document(unit_document_id).set(unit_data.__dict__)
     
         uploaded_dataset.append(dataset_metadata)
